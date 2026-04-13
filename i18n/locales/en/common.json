@@ -1,0 +1,26 @@
+{
+  "brand": "Highbury International",
+  "tagline": "Premium Ready-Made Shirts for Every Occasion",
+  "nav": {
+    "home": "Home",
+    "products": "Products",
+    "blog": "Blog",
+    "about": "About Us",
+    "contact": "Contact",
+    "cart": "Cart",
+    "account": "My Account",
+    "login": "Login",
+    "logout": "Sign Out"
+  },
+  "hero": {
+    "title": "Premium Ready-Made Shirts",
+    "subtitle": "Men & Women · Multiple Colors · All Sizes · Delivered to You",
+    "cta": "Shop Now"
+  },
+  "featured": "Featured Products",
+  "viewAll": "View All",
+  "footer": {
+    "rights": "All rights reserved",
+    "contact": "Contact Us"
+  }
+}

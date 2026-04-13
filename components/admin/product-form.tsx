@@ -1,0 +1,287 @@
+"use client";
+
+import { useState } from "react";
+import { useForm, useFieldArray } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod/v3";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Separator } from "@/components/ui/separator";
+import { toast } from "sonner";
+import { Plus, Trash2 } from "lucide-react";
+
+const variantSchema = z.object({
+  id: z.string().optional(),
+  color: z.string().min(1),
+  colorHex: z.string().min(1),
+  size: z.string().min(1),
+  sku: z.string().min(1),
+  price: z.coerce.number().positive(),
+  stock: z.coerce.number().min(0),
+});
+
+const schema = z.object({
+  nameTh: z.string().min(1, "กรุณาระบุชื่อภาษาไทย"),
+  name: z.string().min(1),
+  descTh: z.string().optional(),
+  description: z.string().optional(),
+  basePrice: z.coerce.number().positive("ราคาต้องมากกว่า 0"),
+  categoryId: z.string().min(1, "กรุณาเลือกหมวดหมู่"),
+  status: z.enum(["ACTIVE", "INACTIVE", "ARCHIVED"]),
+  isFeatured: z.boolean(),
+  variants: z.array(variantSchema),
+});
+
+type FormValues = z.infer<typeof schema>;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default function AdminProductForm({ product, categories }: { product: any; categories: any[] }) {
+  const router = useRouter();
+  const [saving, setSaving] = useState(false);
+  const isNew = !product;
+
+  const form = useForm<FormValues>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      nameTh: product?.nameTh ?? "",
+      name: product?.name ?? "",
+      descTh: product?.descTh ?? "",
+      description: product?.description ?? "",
+      basePrice: product?.basePrice ?? 0,
+      categoryId: product?.categoryId ?? "",
+      status: product?.status ?? "ACTIVE",
+      isFeatured: product?.isFeatured ?? false,
+      variants: product?.variants?.map((v: any) => ({
+        id: v.id,
+        color: v.color,
+        colorHex: v.colorHex,
+        size: v.size,
+        sku: v.sku,
+        price: v.price,
+        stock: v.inventory?.reduce((s: number, inv: any) => s + inv.quantity, 0) ?? 0,
+      })) ?? [],
+    },
+  });
+
+  const { fields, append, remove } = useFieldArray({ control: form.control, name: "variants" });
+
+  async function onSubmit(values: FormValues) {
+    setSaving(true);
+    try {
+      const url = isNew ? "/api/admin/products" : `/api/admin/products/${product.id}`;
+      const res = await fetch(url, {
+        method: isNew ? "POST" : "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "บันทึกล้มเหลว");
+      toast.success("บันทึกสำเร็จ");
+      router.push("/admin/products");
+      router.refresh();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "เกิดข้อผิดพลาด");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        {/* Basic Info */}
+        <div className="border rounded-xl p-5 bg-card space-y-4">
+          <h2 className="font-semibold">ข้อมูลสินค้า</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <FormField control={form.control} name="nameTh" render={({ field }) => (
+              <FormItem>
+                <FormLabel>ชื่อ (ภาษาไทย) *</FormLabel>
+                <FormControl><Input {...field} /></FormControl>
+                <FormMessage />
+              </FormItem>
+            )} />
+            <FormField control={form.control} name="name" render={({ field }) => (
+              <FormItem>
+                <FormLabel>ชื่อ (English) *</FormLabel>
+                <FormControl><Input {...field} /></FormControl>
+                <FormMessage />
+              </FormItem>
+            )} />
+          </div>
+
+          <FormField control={form.control} name="descTh" render={({ field }) => (
+            <FormItem>
+              <FormLabel>รายละเอียด (ไทย)</FormLabel>
+              <FormControl><Textarea rows={3} {...field} /></FormControl>
+            </FormItem>
+          )} />
+
+          <FormField control={form.control} name="description" render={({ field }) => (
+            <FormItem>
+              <FormLabel>Description (English)</FormLabel>
+              <FormControl><Textarea rows={3} {...field} /></FormControl>
+            </FormItem>
+          )} />
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <FormField control={form.control} name="basePrice" render={({ field }) => (
+              <FormItem>
+                <FormLabel>ราคาเริ่มต้น (บาท) *</FormLabel>
+                <FormControl><Input type="number" {...field} /></FormControl>
+                <FormMessage />
+              </FormItem>
+            )} />
+            <FormField control={form.control} name="categoryId" render={({ field }) => (
+              <FormItem>
+                <FormLabel>หมวดหมู่ *</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger><SelectValue placeholder="เลือกหมวดหมู่" /></SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {categories.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>{c.nameTh}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )} />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
+            <FormField control={form.control} name="status" render={({ field }) => (
+              <FormItem>
+                <FormLabel>สถานะ</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="ACTIVE">เปิดขาย</SelectItem>
+                    <SelectItem value="INACTIVE">ปิดขาย</SelectItem>
+                    <SelectItem value="ARCHIVED">เก็บเข้า Archive</SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormItem>
+            )} />
+
+            <FormField control={form.control} name="isFeatured" render={({ field }) => (
+              <FormItem className="flex items-center gap-3">
+                <FormControl>
+                  <Switch checked={field.value} onCheckedChange={field.onChange} />
+                </FormControl>
+                <FormLabel className="!mt-0">แนะนำบนหน้าหลัก</FormLabel>
+              </FormItem>
+            )} />
+          </div>
+        </div>
+
+        {/* Variants */}
+        <div className="border rounded-xl p-5 bg-card space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="font-semibold">Variants (สี/ขนาด)</h2>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={() => append({ color: "", colorHex: "#000000", size: "", sku: "", price: 0, stock: 0 })}
+            >
+              <Plus className="w-3.5 h-3.5 mr-1" />
+              เพิ่ม Variant
+            </Button>
+          </div>
+
+          {fields.length === 0 && (
+            <p className="text-sm text-muted-foreground text-center py-4">ยังไม่มี Variant</p>
+          )}
+
+          <div className="space-y-3">
+            {fields.map((f, idx) => (
+              <div key={f.id} className="grid grid-cols-6 gap-2 items-end border rounded-lg p-3 bg-muted/20">
+                <FormField control={form.control} name={`variants.${idx}.color`} render={({ field }) => (
+                  <FormItem className="col-span-2">
+                    <FormLabel className="text-xs">สี</FormLabel>
+                    <FormControl><Input {...field} placeholder="เช่น ขาว" /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name={`variants.${idx}.colorHex`} render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">รหัสสี</FormLabel>
+                    <FormControl>
+                      <div className="flex gap-1">
+                        <input type="color" {...field} className="w-10 h-9 rounded border cursor-pointer" />
+                        <Input {...field} className="flex-1" />
+                      </div>
+                    </FormControl>
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name={`variants.${idx}.size`} render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">ขนาด</FormLabel>
+                    <FormControl><Input {...field} placeholder="S/M/L/XL" /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name={`variants.${idx}.sku`} render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">SKU</FormLabel>
+                    <FormControl><Input {...field} /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <div className="grid grid-cols-2 gap-2 col-span-2">
+                  <FormField control={form.control} name={`variants.${idx}.price`} render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs">ราคา</FormLabel>
+                      <FormControl><Input type="number" {...field} /></FormControl>
+                    </FormItem>
+                  )} />
+                  <FormField control={form.control} name={`variants.${idx}.stock`} render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs">Stock</FormLabel>
+                      <FormControl><Input type="number" {...field} /></FormControl>
+                    </FormItem>
+                  )} />
+                </div>
+                <div className="flex justify-end">
+                  <Button type="button" variant="ghost" size="sm" onClick={() => remove(idx)}>
+                    <Trash2 className="w-4 h-4 text-destructive" />
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex gap-3 justify-end">
+          <Button type="button" variant="outline" onClick={() => router.push("/admin/products")}>
+            ยกเลิก
+          </Button>
+          <Button type="submit" disabled={saving}>
+            {saving ? "กำลังบันทึก..." : "บันทึก"}
+          </Button>
+        </div>
+      </form>
+    </Form>
+  );
+}

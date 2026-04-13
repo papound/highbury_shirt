@@ -48,39 +48,48 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* ── Highbury International Brand Colors ─────────────────────────────────── */
+/* Primary: Deep Navy Blue #1E3A8A  |  Accent: Bright Blue #3B82F6           */
+/* Background: White #FFFFFF  |  Foreground: Near Black #0F172A              */
 :root {
+  /* Highbury brand – deep navy as primary */
   --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --foreground: oklch(0.13 0.02 261);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  --card-foreground: oklch(0.13 0.02 261);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.13 0.02 261);
+  --primary: oklch(0.36 0.19 261);       /* #1E3A8A deep navy */
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.96 0.01 261);
+  --secondary-foreground: oklch(0.36 0.19 261);
+  --muted: oklch(0.97 0.005 261);
+  --muted-foreground: oklch(0.50 0.05 261);
+  --accent: oklch(0.62 0.21 261);        /* #3B82F6 bright blue */
+  --accent-foreground: oklch(1 0 0);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --border: oklch(0.90 0.01 261);
+  --input: oklch(0.90 0.01 261);
+  --ring: oklch(0.62 0.21 261);
+  --chart-1: oklch(0.36 0.19 261);
+  --chart-2: oklch(0.62 0.21 261);
+  --chart-3: oklch(0.50 0.15 261);
+  --chart-4: oklch(0.75 0.12 261);
+  --chart-5: oklch(0.85 0.06 261);
+  --radius: 0.5rem;
+  --sidebar: oklch(0.15 0.04 261);        /* Dark navy sidebar */
+  --sidebar-foreground: oklch(0.97 0 0);
+  --sidebar-primary: oklch(0.62 0.21 261);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.25 0.06 261);
+  --sidebar-accent-foreground: oklch(0.97 0 0);
+  --sidebar-border: oklch(0.25 0.06 261);
+  --sidebar-ring: oklch(0.62 0.21 261);
+
+  /* Brand-specific tokens */
+  --brand-navy: oklch(0.36 0.19 261);
+  --brand-blue: oklch(0.62 0.21 261);
+  --brand-dark: oklch(0.13 0.02 261);
 }
 
 .dark {
