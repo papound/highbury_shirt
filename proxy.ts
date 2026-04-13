@@ -32,6 +32,15 @@ export default auth((req) => {
     }
   }
 
+  // Require login before checkout
+  if (pathname.startsWith("/checkout")) {
+    if (!session) {
+      const loginUrl = new URL("/auth/login", req.url);
+      loginUrl.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+  }
+
   return NextResponse.next();
 });
 
@@ -39,5 +48,7 @@ export const config = {
   matcher: [
     "/admin/:path*",
     "/account/:path*",
+    "/checkout/:path*",
+    "/checkout",
   ],
 };

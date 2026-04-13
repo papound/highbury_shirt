@@ -27,6 +27,9 @@ import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { Plus, Trash2 } from "lucide-react";
+import ProductImageUploader, { type ProductImage } from "./product-image-uploader";
+
+const DEFAULT_SIZES = ["SS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"];
 
 const variantSchema = z.object({
   id: z.string().optional(),
@@ -45,6 +48,7 @@ const schema = z.object({
   description: z.string().optional(),
   basePrice: z.coerce.number().positive("ราคาต้องมากกว่า 0"),
   categoryId: z.string().min(1, "กรุณาเลือกหมวดหมู่"),
+  warehouseId: z.string().min(1, "กรุณาเลือกคลังสินค้า"),
   status: z.enum(["ACTIVE", "INACTIVE", "ARCHIVED"]),
   isFeatured: z.boolean(),
   variants: z.array(variantSchema),
@@ -53,10 +57,16 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default function AdminProductForm({ product, categories }: { product: any; categories: any[] }) {
+export default function AdminProductForm({ product, categories, warehouses }: { product: any; categories: any[]; warehouses: any[] }) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
+  const [images, setImages] = useState<ProductImage[]>(
+    product?.images?.map((img: any) => ({ url: img.url, isPrimary: img.isPrimary })) ?? []
+  );
   const isNew = !product;
+
+  // Detect the warehouse used for the first variant's inventory (for edit mode)
+  const existingWarehouseId = product?.variants?.[0]?.inventory?.[0]?.warehouseId ?? warehouses[0]?.id ?? "";
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -67,6 +77,7 @@ export default function AdminProductForm({ product, categories }: { product: any
       description: product?.description ?? "",
       basePrice: product?.basePrice ?? 0,
       categoryId: product?.categoryId ?? "",
+      warehouseId: existingWarehouseId,
       status: product?.status ?? "ACTIVE",
       isFeatured: product?.isFeatured ?? false,
       variants: product?.variants?.map((v: any) => ({
@@ -90,7 +101,7 @@ export default function AdminProductForm({ product, categories }: { product: any
       const res = await fetch(url, {
         method: isNew ? "POST" : "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+        body: JSON.stringify({ ...values, images }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "บันทึกล้มเหลว");
@@ -107,6 +118,12 @@ export default function AdminProductForm({ product, categories }: { product: any
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        {/* Product Images */}
+        <div className="border rounded-xl p-5 bg-card space-y-3">
+          <h2 className="font-semibold">รูปภาพสินค้า</h2>
+          <ProductImageUploader value={images} onChange={setImages} />
+        </div>
+
         {/* Basic Info */}
         <div className="border rounded-xl p-5 bg-card space-y-4">
           <h2 className="font-semibold">ข้อมูลสินค้า</h2>
@@ -152,13 +169,17 @@ export default function AdminProductForm({ product, categories }: { product: any
             <FormField control={form.control} name="categoryId" render={({ field }) => (
               <FormItem>
                 <FormLabel>หมวดหมู่ *</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
-                    <SelectTrigger><SelectValue placeholder="เลือกหมวดหมู่" /></SelectTrigger>
+                    <SelectTrigger>
+                      <SelectValue placeholder="เลือกหมวดหมู่">
+                        {(val: string | null) => val ? (categories.find((c) => c.id === val)?.nameTh ?? val) : undefined}
+                      </SelectValue>
+                    </SelectTrigger>
                   </FormControl>
                   <SelectContent>
                     {categories.map((c) => (
-                      <SelectItem key={c.id} value={c.id}>{c.nameTh}</SelectItem>
+                      <SelectItem key={c.id} value={c.id} label={c.nameTh}>{c.nameTh}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -167,18 +188,52 @@ export default function AdminProductForm({ product, categories }: { product: any
             )} />
           </div>
 
+          <FormField control={form.control} name="warehouseId" render={({ field }) => (
+            <FormItem>
+              <FormLabel>คลังสินค้า *</FormLabel>
+              <Select onValueChange={field.onChange} value={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="เลือกคลังสินค้า">
+                      {(val: string | null) => {
+                        if (!val) return undefined;
+                        const w = warehouses.find((wh) => wh.id === val);
+                        return w ? w.name + (w.location ? ` — ${w.location}` : "") : val;
+                      }}
+                    </SelectValue>
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {warehouses.length === 0 ? (
+                    <SelectItem value="__none" label="ไม่มีคลังสินค้า" disabled>ไม่มีคลังสินค้า — กรุณาสร้างคลังก่อน</SelectItem>
+                  ) : (
+                    warehouses.map((w) => {
+                      const label = w.name + (w.location ? ` — ${w.location}` : "");
+                      return <SelectItem key={w.id} value={w.id} label={label}>{label}</SelectItem>;
+                    })
+                  )}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )} />
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
             <FormField control={form.control} name="status" render={({ field }) => (
               <FormItem>
                 <FormLabel>สถานะ</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectTrigger>
+                      <SelectValue>
+                        {(val: string | null) => val === "ACTIVE" ? "เปิดขาย" : val === "INACTIVE" ? "ปิดขาย" : val === "ARCHIVED" ? "เก็บเข้า Archive" : undefined}
+                      </SelectValue>
+                    </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="ACTIVE">เปิดขาย</SelectItem>
-                    <SelectItem value="INACTIVE">ปิดขาย</SelectItem>
-                    <SelectItem value="ARCHIVED">เก็บเข้า Archive</SelectItem>
+                    <SelectItem value="ACTIVE" label="เปิดขาย">เปิดขาย</SelectItem>
+                    <SelectItem value="INACTIVE" label="ปิดขาย">ปิดขาย</SelectItem>
+                    <SelectItem value="ARCHIVED" label="เก็บเข้า Archive">เก็บเข้า Archive</SelectItem>
                   </SelectContent>
                 </Select>
               </FormItem>
@@ -197,17 +252,30 @@ export default function AdminProductForm({ product, categories }: { product: any
 
         {/* Variants */}
         <div className="border rounded-xl p-5 bg-card space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-wrap gap-2">
             <h2 className="font-semibold">Variants (สี/ขนาด)</h2>
-            <Button
-              type="button"
-              size="sm"
-              variant="outline"
-              onClick={() => append({ color: "", colorHex: "#000000", size: "", sku: "", price: 0, stock: 0 })}
-            >
-              <Plus className="w-3.5 h-3.5 mr-1" />
-              เพิ่ม Variant
-            </Button>
+            <div className="flex items-center gap-2 flex-wrap justify-end">
+              <span className="text-xs text-muted-foreground hidden sm:inline">เพิ่มทุกขนาด:</span>
+              {DEFAULT_SIZES.map((size) => (
+                <button
+                  key={size}
+                  type="button"
+                  onClick={() => append({ color: "", colorHex: "#000000", size, sku: "", price: 0, stock: 0 })}
+                  className="text-xs px-2 py-1 border rounded-md hover:bg-muted transition-colors"
+                >
+                  {size}
+                </button>
+              ))}
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => append({ color: "", colorHex: "#000000", size: "", sku: "", price: 0, stock: 0 })}
+              >
+                <Plus className="w-3.5 h-3.5 mr-1" />
+                เพิ่ม Variant
+              </Button>
+            </div>
           </div>
 
           {fields.length === 0 && (
@@ -238,7 +306,14 @@ export default function AdminProductForm({ product, categories }: { product: any
                 <FormField control={form.control} name={`variants.${idx}.size`} render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-xs">ขนาด</FormLabel>
-                    <FormControl><Input {...field} placeholder="S/M/L/XL" /></FormControl>
+                    <FormControl>
+                      <>
+                        <Input {...field} placeholder="SS/S/M/L" list="size-options" />
+                        <datalist id="size-options">
+                          {DEFAULT_SIZES.map((s) => <option key={s} value={s} />)}
+                        </datalist>
+                      </>
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )} />

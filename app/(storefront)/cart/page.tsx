@@ -135,9 +135,14 @@ export default function CartPage() {
 
               {/* Qty + Price + Remove */}
               <div className="flex flex-col items-end gap-2 shrink-0">
-                <p className="font-semibold text-primary">
-                  ฿{(item.unitPrice * item.quantity).toLocaleString()}
-                </p>
+                <div className="text-right">
+                  <p className="font-semibold text-primary">
+                    ฿{(item.unitPrice * item.quantity).toLocaleString()}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    ฿{item.unitPrice.toLocaleString()} / ตัว
+                  </p>
+                </div>
                 <div className="flex items-center border rounded-md">
                   <button
                     className="px-2 py-1 hover:bg-secondary transition-colors"

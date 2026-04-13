@@ -1,8 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { OrderStatus } from "@prisma/client";
+import { getStatusLabel, getStatusBadgeClass } from "@/lib/order-status";
 
 const STATUS_TABS = [
   { key: "", label: "ทั้งหมด" },
@@ -14,16 +14,7 @@ const STATUS_TABS = [
   { key: "CANCELLED", label: "ยกเลิก" },
 ];
 
-const STATUS_LABELS: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-  PENDING: { label: "รอดำเนินการ", variant: "secondary" },
-  PAYMENT_UPLOADED: { label: "อัพโหลดสลิป", variant: "outline" },
-  PAYMENT_VERIFIED: { label: "ยืนยันแล้ว", variant: "default" },
-  PROCESSING: { label: "กำลังจัดส่ง", variant: "default" },
-  SHIPPED: { label: "จัดส่งแล้ว", variant: "default" },
-  DELIVERED: { label: "ได้รับแล้ว", variant: "default" },
-  CANCELLED: { label: "ยกเลิก", variant: "destructive" },
-  PAYMENT_REJECTED: { label: "ปฏิเสธ", variant: "destructive" },
-};
+
 
 interface Props {
   searchParams: Promise<{ status?: string; page?: string }>;
@@ -91,7 +82,6 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
             </thead>
             <tbody>
               {orders.map((order) => {
-                const statusInfo = STATUS_LABELS[order.status] ?? { label: order.status, variant: "secondary" as const };
                 return (
                   <tr key={order.id} className="border-b hover:bg-muted/20">
                     <td className="px-4 py-3 font-mono text-xs">#{order.orderNumber}</td>
@@ -104,7 +94,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
                     </td>
                     <td className="px-4 py-3 text-right font-medium">฿{order.total.toLocaleString()}</td>
                     <td className="px-4 py-3 text-center">
-                      <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>
+                      <span className={`inline-flex items-center text-xs px-2.5 py-0.5 rounded-full font-medium border ${getStatusBadgeClass(order.status)}`}>{getStatusLabel(order.status)}</span>
                       {order.paymentProofs.length > 0 && order.status === "PAYMENT_UPLOADED" && (
                         <span className="ml-1 text-xs text-orange-500">• สลิปรอตรวจ</span>
                       )}

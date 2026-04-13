@@ -35,17 +35,24 @@ async function getReportData() {
       by: ["variantId"],
       _sum: { quantity: true },
       orderBy: { _sum: { quantity: "desc" } },
-      take: 10,
+      take: 50,
     }).then(async (rows) => {
       const variantIds = rows.map((r) => r.variantId);
       const variants = await prisma.productVariant.findMany({
         where: { id: { in: variantIds } },
         include: { product: true },
       });
-      return rows.map((r) => {
+      // Merge quantities per product (multiple variants → same product)
+      const merged = new Map<string, { id: string; name: string; qty: number }>();
+      for (const r of rows) {
         const v = variants.find((v) => v.id === r.variantId);
-        return { name: v?.product.nameTh ?? r.variantId, qty: r._sum.quantity ?? 0 };
-      });
+        const productId = v?.productId ?? r.variantId;
+        const name = v?.product.nameTh ?? r.variantId;
+        const existing = merged.get(productId);
+        if (existing) existing.qty += r._sum.quantity ?? 0;
+        else merged.set(productId, { id: productId, name, qty: r._sum.quantity ?? 0 });
+      }
+      return [...merged.values()].sort((a, b) => b.qty - a.qty).slice(0, 10);
     }),
     prisma.order.groupBy({ by: ["status"], _count: true }),
   ]);
@@ -103,7 +110,7 @@ export default async function AdminReportsPage() {
           <CardContent>
             <div className="space-y-2">
               {data.topProducts.map((p, i) => (
-                <div key={p.name} className="flex items-center justify-between text-sm">
+                <div key={p.id} className="flex items-center justify-between text-sm">
                   <span className="flex items-center gap-2">
                     <span className="w-5 text-muted-foreground text-xs">{i + 1}.</span>
                     {p.name}

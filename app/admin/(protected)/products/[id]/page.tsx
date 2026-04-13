@@ -10,7 +10,7 @@ export default async function AdminProductEditPage({ params }: Props) {
   const { id } = await params;
   const isNew = id === "new";
 
-  const [product, categories] = await Promise.all([
+  const [product, categories, warehouses] = await Promise.all([
     isNew
       ? null
       : prisma.product.findUnique({
@@ -22,6 +22,7 @@ export default async function AdminProductEditPage({ params }: Props) {
           },
         }),
     prisma.category.findMany({ orderBy: { nameTh: "asc" } }),
+    prisma.warehouse.findMany({ where: { isActive: true }, orderBy: { name: "asc" } }),
   ]);
 
   if (!isNew && !product) notFound();
@@ -29,7 +30,7 @@ export default async function AdminProductEditPage({ params }: Props) {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <h1 className="text-2xl font-bold">{isNew ? "เพิ่มสินค้าใหม่" : `แก้ไข: ${product!.nameTh}`}</h1>
-      <AdminProductForm product={product} categories={categories} />
+      <AdminProductForm product={product} categories={categories} warehouses={warehouses} />
     </div>
   );
 }

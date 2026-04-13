@@ -16,15 +16,33 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   const { id } = await params;
   try {
     const body = await req.json();
-    const { nameTh, name, descTh, description, basePrice, categoryId, status, isFeatured, variants } = body;
+    const { nameTh, name, descTh, description, basePrice, categoryId, warehouseId, status, isFeatured, variants, images } = body;
 
-    const warehouse = await prisma.warehouse.findFirst();
+    // Use specified warehouse, fallback to first active warehouse
+    const warehouse = warehouseId
+      ? await prisma.warehouse.findUnique({ where: { id: warehouseId } })
+      : await prisma.warehouse.findFirst({ where: { isActive: true } });
 
     // Update product basic info
     await prisma.product.update({
       where: { id },
       data: { nameTh, name, descTh, description, basePrice, categoryId, status, isFeatured },
     });
+
+    // Replace images: delete old, create new
+    if (Array.isArray(images)) {
+      await prisma.productImage.deleteMany({ where: { productId: id } });
+      if (images.length > 0) {
+        await prisma.productImage.createMany({
+          data: images.map((img: { url: string; isPrimary: boolean }, i: number) => ({
+            productId: id,
+            url: img.url,
+            isPrimary: img.isPrimary ?? i === 0,
+            sortOrder: i,
+          })),
+        });
+      }
+    }
 
     // Upsert variants
     for (const v of variants) {

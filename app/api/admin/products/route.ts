@@ -18,12 +18,14 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { nameTh, name, descTh, description, basePrice, categoryId, status, isFeatured, variants } = body;
+    const { nameTh, name, descTh, description, basePrice, categoryId, warehouseId, status, isFeatured, variants, images } = body;
 
     const slug = slugify(name || nameTh, { lower: true, strict: true });
 
-    // Get default warehouse
-    const warehouse = await prisma.warehouse.findFirst();
+    // Use specified warehouse, fallback to first active warehouse
+    const warehouse = warehouseId
+      ? await prisma.warehouse.findUnique({ where: { id: warehouseId } })
+      : await prisma.warehouse.findFirst({ where: { isActive: true } });
 
     const product = await prisma.product.create({
       data: {
@@ -36,6 +38,15 @@ export async function POST(req: NextRequest) {
         categoryId,
         status,
         isFeatured,
+        images: images?.length
+          ? {
+              create: images.map((img: { url: string; isPrimary: boolean }, i: number) => ({
+                url: img.url,
+                isPrimary: img.isPrimary ?? i === 0,
+                sortOrder: i,
+              })),
+            }
+          : undefined,
         variants: {
           create: variants.map((v: any) => ({
             color: v.color,

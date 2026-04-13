@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
+import { getStatusLabel, getStatusBadgeClass } from "@/lib/order-status";
 import { Separator } from "@/components/ui/separator";
 import AdminOrderActions from "@/components/admin/order-actions";
 import Link from "next/link";
@@ -32,7 +33,9 @@ export default async function AdminOrderDetailPage({ params }: Props) {
           <Link href="/admin/orders"><ArrowLeft className="w-4 h-4" /></Link>
         </Button>
         <h1 className="text-2xl font-bold">#{order.orderNumber}</h1>
-        <Badge>{order.status}</Badge>
+        <span className={`inline-flex items-center text-xs px-2.5 py-0.5 rounded-full font-medium border ${getStatusBadgeClass(order.status)}`}>
+          {getStatusLabel(order.status)}
+        </span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -49,11 +52,21 @@ export default async function AdminOrderDetailPage({ params }: Props) {
         <div className="border rounded-xl p-4 bg-card space-y-2">
           <h2 className="font-semibold text-sm">ที่อยู่จัดส่ง</h2>
           <Separator />
-          <p className="text-sm">{order.shippingAddress}</p>
-          <p className="text-sm text-muted-foreground">
-            {order.shippingCity}, {order.shippingProvince} {order.shippingPostcode}
-          </p>
-          <p className="text-sm text-muted-foreground">{order.shippingPhone}</p>
+          {order.isPickup ? (
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-primary">🏪 รับที่ร้าน</p>
+              <p className="text-sm text-muted-foreground">Highbury International</p>
+              <p className="text-sm text-muted-foreground">โทร: 02-896-8066 ต่อ 9</p>
+            </div>
+          ) : (
+            <>
+              <p className="text-sm">{order.shippingAddress}</p>
+              <p className="text-sm text-muted-foreground">
+                {order.shippingCity}, {order.shippingProvince} {order.shippingPostcode}
+              </p>
+              <p className="text-sm text-muted-foreground">{order.shippingPhone}</p>
+            </>
+          )}
           {order.trackingNumber && (
             <p className="text-sm text-primary font-medium">เลขพัสดุ: {order.trackingNumber}</p>
           )}

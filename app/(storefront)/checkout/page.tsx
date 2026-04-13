@@ -18,7 +18,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
 import { useCartStore } from "@/hooks/use-cart";
 import { calcShippingFee, shippingFeeLabel } from "@/lib/shipping";
 import { toast } from "sonner";
@@ -158,7 +157,7 @@ export default function CheckoutPage() {
 
     return (
       <div className="container mx-auto px-4 py-8 max-w-lg">
-        <h1 className="text-2xl font-bold mb-2 text-center">ชำระเงินผ่าน PromptPay</h1>
+        <h1 className="text-2xl font-bold mb-2 text-center">ชำระเงิน</h1>
         <p className="text-center text-muted-foreground mb-6">
           หมายเลขคำสั่งซื้อ: <strong className="text-foreground">#{orderResult.orderNumber}</strong>
         </p>
@@ -177,26 +176,67 @@ export default function CheckoutPage() {
           <p className="text-sm text-muted-foreground">
             สแกน QR Code ด้วยแอปธนาคาร เพื่อชำระเงิน
           </p>
-          <Badge variant="outline" className="text-xs">
-            Highbury International PromptPay
-          </Badge>
+
+          {/* Payment options */}
+          <div className="space-y-3 text-left">
+            {/* PromptPay */}
+            <div className="border border-[#003F97]/30 rounded-lg p-4 bg-[#003F97]/5">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="bg-[#003F97] text-white rounded-md px-3 py-1 text-xs font-bold tracking-wide">PromptPay</span>
+              </div>
+              <div className="flex justify-between items-center mb-1">
+                <span className="text-xs text-muted-foreground">หมายเลข</span>
+                <span className="font-mono font-bold tracking-widest">098-146-6416</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-xs text-muted-foreground">ชื่อ</span>
+                <span className="text-sm font-semibold">นายประชา นาควังศาสตร์</span>
+              </div>
+            </div>
+
+            {/* SCB Bank */}
+            <div className="border border-[#4e2a8e]/30 rounded-lg p-4 bg-[#4e2a8e]/5">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="bg-[#4e2a8e] text-white rounded-md px-3 py-1 text-xs font-bold tracking-wide">SCB</span>
+                <span className="text-xs text-[#4e2a8e] font-medium">ไทยพาณิชย์</span>
+              </div>
+              <div className="flex justify-between items-center mb-1">
+                <span className="text-xs text-muted-foreground">เลขที่บัญชี</span>
+                <span className="font-mono font-bold tracking-widest">046-2-91316-6</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-xs text-muted-foreground">ชื่อบัญชี</span>
+                <span className="text-sm font-semibold">นายประชา นาควังศาสตร์</span>
+              </div>
+            </div>
+          </div>
         </div>
 
         <Separator className="my-6" />
 
         <div className="space-y-4">
           <h2 className="font-semibold">อัพโหลดหลักฐานการโอน</h2>
-          <div className="border-2 border-dashed rounded-lg p-6 text-center space-y-2">
+          <label className="flex flex-col items-center justify-center gap-3 border-2 border-dashed border-primary/40 rounded-xl p-8 cursor-pointer hover:bg-primary/5 transition-colors">
             <input
               type="file"
               accept="image/*"
+              className="hidden"
               onChange={(e) => setSlipFile(e.target.files?.[0] ?? null)}
-              className="w-full text-sm"
             />
-            {slipFile && (
-              <p className="text-xs text-muted-foreground">ไฟล์: {slipFile.name}</p>
+            {slipFile ? (
+              <>
+                <span className="text-3xl">🖼️</span>
+                <span className="text-sm font-medium text-primary">{slipFile.name}</span>
+                <span className="text-xs text-muted-foreground">คลิกเพื่อเปลี่ยนไฟล์</span>
+              </>
+            ) : (
+              <>
+                <span className="text-3xl">📎</span>
+                <span className="text-sm font-semibold">เลือกไฟล์สลิป</span>
+                <span className="text-xs text-muted-foreground">JPG, PNG — คลิกหรือลากไฟล์มาวาง</span>
+              </>
             )}
-          </div>
+          </label>
 
           <Button
             className="w-full"

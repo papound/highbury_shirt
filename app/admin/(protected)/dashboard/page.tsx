@@ -67,16 +67,7 @@ async function getDashboardData() {
   };
 }
 
-const STATUS_LABELS: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-  PENDING: { label: "รอดำเนินการ", variant: "secondary" },
-  PAYMENT_UPLOADED: { label: "อัพโหลดสลิปแล้ว", variant: "outline" },
-  PAYMENT_VERIFIED: { label: "ยืนยันการชำระแล้ว", variant: "default" },
-  PROCESSING: { label: "กำลังจัดส่ง", variant: "default" },
-  SHIPPED: { label: "จัดส่งแล้ว", variant: "default" },
-  DELIVERED: { label: "ได้รับสินค้าแล้ว", variant: "default" },
-  CANCELLED: { label: "ยกเลิก", variant: "destructive" },
-  PAYMENT_REJECTED: { label: "ปฏิเสธการชำระ", variant: "destructive" },
-};
+import { getStatusLabel, getStatusBadgeClass } from "@/lib/order-status";
 
 export default async function AdminDashboardPage() {
   const session = await auth();
@@ -169,7 +160,6 @@ export default async function AdminDashboardPage() {
               </thead>
               <tbody>
                 {data.recentOrders.map((order) => {
-                  const statusInfo = STATUS_LABELS[order.status] ?? { label: order.status, variant: "secondary" as const };
                   return (
                     <tr key={order.id} className="border-b hover:bg-muted/30">
                       <td className="px-4 py-3 font-mono">#{order.orderNumber}</td>
@@ -177,7 +167,7 @@ export default async function AdminDashboardPage() {
                       <td className="px-4 py-3 text-muted-foreground">{order.items.length} รายการ</td>
                       <td className="px-4 py-3 text-right">฿{order.total.toLocaleString()}</td>
                       <td className="px-4 py-3 text-center">
-                        <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>
+                        <span className={`inline-flex items-center text-xs px-2.5 py-0.5 rounded-full font-medium border ${getStatusBadgeClass(order.status)}`}>{getStatusLabel(order.status)}</span>
                       </td>
                     </tr>
                   );

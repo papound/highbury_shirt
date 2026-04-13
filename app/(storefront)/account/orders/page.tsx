@@ -2,19 +2,8 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-
-const STATUS_LABELS: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-  PENDING: { label: "รอดำเนินการ", variant: "secondary" },
-  PAYMENT_UPLOADED: { label: "อัพโหลดสลิปแล้ว", variant: "outline" },
-  PAYMENT_VERIFIED: { label: "ยืนยันการชำระแล้ว", variant: "default" },
-  PROCESSING: { label: "กำลังจัดส่ง", variant: "default" },
-  SHIPPED: { label: "จัดส่งแล้ว", variant: "default" },
-  DELIVERED: { label: "ได้รับสินค้าแล้ว", variant: "default" },
-  CANCELLED: { label: "ยกเลิก", variant: "destructive" },
-  PAYMENT_REJECTED: { label: "ปฏิเสธการชำระ", variant: "destructive" },
-};
+import { getStatusLabel, getStatusBadgeClass } from "@/lib/order-status";
 
 export default async function OrdersPage() {
   const session = await auth();
@@ -43,8 +32,7 @@ export default async function OrdersPage() {
       ) : (
         <div className="space-y-4">
           {orders.map((order) => {
-            const statusInfo = STATUS_LABELS[order.status] ?? { label: order.status, variant: "secondary" as const };
-            const proof = order.paymentProofs[0];
+const proof = order.paymentProofs[0];
 
             return (
               <div key={order.id} className="border rounded-xl p-5 bg-card space-y-3">
@@ -59,7 +47,7 @@ export default async function OrdersPage() {
                       })}
                     </p>
                   </div>
-                  <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>
+                  <span className={`inline-flex items-center text-xs px-2.5 py-0.5 rounded-full font-medium border ${getStatusBadgeClass(order.status)}`}>{getStatusLabel(order.status)}</span>
                 </div>
 
                 <div className="text-sm text-muted-foreground space-y-1">
@@ -80,9 +68,9 @@ export default async function OrdersPage() {
                   )}
 
                   {order.status === "PAYMENT_REJECTED" && (
-                    <Badge variant="destructive" className="text-xs">
+                    <span className="inline-flex items-center text-xs px-2.5 py-0.5 rounded-full font-medium border bg-red-100 text-red-800 border-red-200">
                       {(proof as { rejectionNote?: string })?.rejectionNote ?? "ไม่ผ่านการยืนยัน"}
-                    </Badge>
+                    </span>
                   )}
 
                   {order.trackingNumber && (

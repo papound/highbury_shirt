@@ -13,7 +13,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   }
 
   const { id } = await params;
-  const { status, rejectionNote, trackingNumber } = await req.json();
+  const { status, rejectionNote, trackingNumber, force } = await req.json();
 
   const order = await prisma.order.findUnique({
     where: { id },
@@ -30,7 +30,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     SHIPPED: ["DELIVERED"],
   };
 
-  if (validTransitions[order.status] && !validTransitions[order.status].includes(status)) {
+  if (!force && validTransitions[order.status] && !validTransitions[order.status].includes(status)) {
     return NextResponse.json({ error: `Cannot transition from ${order.status} to ${status}` }, { status: 400 });
   }
 

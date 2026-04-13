@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import prisma from "@/lib/prisma";
+import { auth } from "@/auth";
 import { generatePromptPayPayload } from "@/lib/promptpay";
 import { notifyAdminNewOrder } from "@/lib/line-notify";
 import { sendOrderConfirmation } from "@/lib/email";
@@ -23,7 +24,6 @@ const cartItemSchema = z.object({
 });
 
 const checkoutSchema = z.object({
-  userId: z.string().optional(),
   guestName: z.string().min(1),
   guestEmail: z.string().email(),
   guestPhone: z.string().min(9),
@@ -48,6 +48,7 @@ function generateOrderNumber(): string {
 
 export async function POST(req: NextRequest) {
   try {
+    const session = await auth();
     const body = await req.json();
     const parsed = checkoutSchema.safeParse(body);
 
@@ -107,13 +108,15 @@ export async function POST(req: NextRequest) {
     const total = Math.max(0, subtotal - discountAmount) + shippingFee;
 
     // Create order in DB
+    const isPickup = data.deliveryMethod === "pickup";
     const order = await prisma.order.create({
       data: {
         orderNumber: generateOrderNumber(),
-        userId: data.userId ?? null,
+        userId: session?.user?.id ?? null,
         guestName: data.guestName,
         guestEmail: data.guestEmail,
         guestPhone: data.guestPhone,
+        isPickup,
         shippingName: data.shippingName ?? "",
         shippingPhone: data.shippingPhone ?? "",
         shippingAddress: data.shippingAddress ?? "",
