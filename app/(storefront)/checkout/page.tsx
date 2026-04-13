@@ -6,6 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod/v3";
 import { useRouter } from "next/navigation";
 import QRCode from "react-qr-code";
+import { genUploader } from "uploadthing/client";
+import type { OurFileRouter } from "@/lib/uploadthing";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -21,6 +23,8 @@ import { Separator } from "@/components/ui/separator";
 import { useCartStore } from "@/hooks/use-cart";
 import { calcShippingFee, shippingFeeLabel } from "@/lib/shipping";
 import { toast } from "sonner";
+
+const { uploadFiles } = genUploader<OurFileRouter>({ package: "custom" });
 
 const schema = z.object({
   guestName: z.string().min(2, "กรุณาระบุชื่อ-นามสกุล"),
@@ -113,16 +117,19 @@ export default function CheckoutPage() {
     if (!slipFile || !orderResult) return;
     setSlipUploading(true);
     try {
-      const formData = new FormData();
-      formData.append("file", slipFile);
-      formData.append("orderId", orderResult.orderId);
+      // 1) Upload to UploadThing CDN
+      const results = await uploadFiles("paymentSlip", { files: [slipFile] });
+      const imageUrl = results[0]?.ufsUrl ?? results[0]?.url;
+      if (!imageUrl) throw new Error("อัพโหลดไฟล์ไม่สำเร็จ");
 
+      // 2) Save URL + update order status
       const res = await fetch("/api/payment-slip", {
         method: "POST",
-        body: formData,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ imageUrl, orderId: orderResult.orderId }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "อัพโหลดไม่สำเร็จ");
+      if (!res.ok) throw new Error(data.error ?? "บันทึกข้อมูลไม่สำเร็จ");
 
       setSlipUploaded(true);
       clearCart();

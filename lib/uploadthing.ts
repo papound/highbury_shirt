@@ -17,6 +17,15 @@ export const ourFileRouter = {
     .onUploadComplete(async ({ file }) => {
       return { url: file.ufsUrl ?? file.url };
     }),
+
+  paymentSlip: f({ image: { maxFileSize: "5MB", maxFileCount: 1 } })
+    .middleware(async () => {
+      // Payment slips can be uploaded by anyone (guest checkout)
+      return {};
+    })
+    .onUploadComplete(async ({ file }) => {
+      return { url: file.ufsUrl ?? file.url };
+    }),
 } satisfies FileRouter;
 
 export type OurFileRouter = typeof ourFileRouter;
