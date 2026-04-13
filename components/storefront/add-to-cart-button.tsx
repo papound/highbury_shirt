@@ -125,7 +125,7 @@ export default function AddToCartButton({ product }: { product: ProductData }) {
         <div>
           <p className="text-sm font-medium mb-2">ไซส์:</p>
           <div className="flex flex-wrap gap-2">
-            {["XS", "S", "M", "L", "XL", "2XL", "3XL"].map((size) => {
+            {["SS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"].map((size) => {
               const variant = product.variants.find(
                 (v) => v.color === selectedColor && v.size === size
               );
