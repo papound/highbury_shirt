@@ -16,12 +16,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   const { id } = await params;
   try {
     const body = await req.json();
-    const { nameTh, name, descTh, description, basePrice, categoryId, warehouseId, status, isFeatured, variants, images } = body;
-
-    // Use specified warehouse, fallback to first active warehouse
-    const warehouse = warehouseId
-      ? await prisma.warehouse.findUnique({ where: { id: warehouseId } })
-      : await prisma.warehouse.findFirst({ where: { isActive: true } });
+    const { nameTh, name, descTh, description, basePrice, categoryId, status, isFeatured, variants, images } = body;
 
     // Update product basic info
     await prisma.product.update({
@@ -46,27 +41,28 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
     // Upsert variants
     for (const v of variants) {
-      if (v.id) {
+      let variantId = v.id;
+      if (variantId) {
         await prisma.productVariant.update({
-          where: { id: v.id },
+          where: { id: variantId },
           data: { color: v.color, colorHex: v.colorHex, size: v.size, sku: v.sku, price: v.price },
         });
-        // Update inventory stock
-        if (warehouse) {
-          await prisma.inventory.upsert({
-            where: { variantId_warehouseId: { variantId: v.id, warehouseId: warehouse.id } },
-            update: { quantity: v.stock ?? 0 },
-            create: { variantId: v.id, warehouseId: warehouse.id, quantity: v.stock ?? 0 },
-          });
-        }
       } else {
         // Create new variant
         const newVariant = await prisma.productVariant.create({
           data: { productId: id, color: v.color, colorHex: v.colorHex, size: v.size, sku: v.sku, price: v.price },
         });
-        if (warehouse) {
-          await prisma.inventory.create({
-            data: { variantId: newVariant.id, warehouseId: warehouse.id, quantity: v.stock ?? 0 },
+        variantId = newVariant.id;
+      }
+
+      // Upsert inventory per warehouse
+      if (Array.isArray(v.inventoryByWarehouse)) {
+        for (const inv of v.inventoryByWarehouse) {
+          if (!inv.warehouseId) continue;
+          await prisma.inventory.upsert({
+            where: { variantId_warehouseId: { variantId, warehouseId: inv.warehouseId } },
+            update: { quantity: inv.quantity ?? 0 },
+            create: { variantId, warehouseId: inv.warehouseId, quantity: inv.quantity ?? 0 },
           });
         }
       }

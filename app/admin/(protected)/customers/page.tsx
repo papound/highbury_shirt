@@ -191,6 +191,39 @@ export default function AdminCustomersPage() {
               </div>
             )}
 
+            {/* Orders from registered users (found by order number search) */}
+            {result.orders.filter((o) => !!o.user).length > 0 && (
+              <div>
+                <p className="text-xs font-semibold text-muted-foreground uppercase mb-2">
+                  ออเดอร์ที่พบ ({result.orders.filter((o) => !!o.user).length})
+                </p>
+                <div className="space-y-2">
+                  {result.orders.filter((o) => !!o.user).map((order) => (
+                    <div key={order.id} className="border rounded-lg p-3 text-sm">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-semibold">{order.shippingName}</p>
+                          <p className="text-xs text-muted-foreground">{order.user?.name ?? order.user?.email}</p>
+                          <span className={`inline-flex items-center text-xs px-2 py-0.5 rounded-full font-medium mt-1 ${getStatusBadgeClass(order.status)}`}>
+                            {getStatusLabel(order.status)}
+                          </span>
+                        </div>
+                        <div className="flex flex-col items-end gap-1">
+                          <Link
+                            href={`/admin/orders/${order.id}`}
+                            className="text-xs text-primary hover:underline font-mono"
+                          >
+                            #{order.orderNumber}
+                          </Link>
+                          <span className="text-xs font-semibold">฿{order.total.toLocaleString()}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {result.users.length === 0 && result.orders.length === 0 && (
               <p className="text-muted-foreground text-sm">ไม่พบข้อมูลที่ตรงกัน</p>
             )}

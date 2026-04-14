@@ -40,6 +40,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
       include: {
         items: true,
         paymentProofs: { take: 1, orderBy: { uploadedAt: "desc" } },
+        user: { select: { name: true, email: true } },
       },
     }),
     prisma.order.count({ where }),
@@ -74,6 +75,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
               <tr className="border-b bg-muted/40">
                 <th className="text-left px-4 py-3 font-medium text-muted-foreground">หมายเลข</th>
                 <th className="text-left px-4 py-3 font-medium text-muted-foreground">ลูกค้า</th>
+                <th className="text-left px-4 py-3 font-medium text-muted-foreground">จัดส่งโดย</th>
                 <th className="text-left px-4 py-3 font-medium text-muted-foreground">วันที่</th>
                 <th className="text-right px-4 py-3 font-medium text-muted-foreground">ยอดรวม</th>
                 <th className="text-center px-4 py-3 font-medium text-muted-foreground">สถานะ</th>
@@ -86,8 +88,24 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
                   <tr key={order.id} className="border-b hover:bg-muted/20">
                     <td className="px-4 py-3 font-mono text-xs">#{order.orderNumber}</td>
                     <td className="px-4 py-3">
-                      <p>{order.shippingName}</p>
-                      <p className="text-xs text-muted-foreground">{order.guestPhone ?? ""}</p>
+                      <p className="font-medium">{order.shippingName}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {order.guestPhone ?? order.shippingPhone ?? ""}
+                      </p>
+                      {order.user && (
+                        <p className="text-xs text-blue-600">{order.user.name ?? order.user.email}</p>
+                      )}
+                    </td>
+                    <td className="px-4 py-3">
+                      {order.isPickup ? (
+                        <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200 font-medium">
+                          🏪 รับที่ร้าน
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-sky-50 text-sky-700 border border-sky-200 font-medium">
+                          📦 จัดส่งพัสดุ
+                        </span>
+                      )}
                     </td>
                     <td className="px-4 py-3 text-muted-foreground text-xs">
                       {new Date(order.createdAt).toLocaleDateString("th-TH")}

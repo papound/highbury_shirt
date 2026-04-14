@@ -41,7 +41,7 @@ async function getDashboardData() {
     prisma.order.findMany({
       take: 10,
       orderBy: { createdAt: "desc" },
-      include: { items: true },
+      include: { items: true, user: { select: { name: true, email: true } } },
     }),
     prisma.order.groupBy({
       by: ["createdAt"],
@@ -192,6 +192,11 @@ export default async function AdminDashboardPage() {
                       <td className="px-5 py-3.5 font-mono text-xs font-semibold text-slate-600">#{order.orderNumber}</td>
                       <td className="px-5 py-3.5">
                         <div className="font-medium text-slate-900">{order.shippingName}</div>
+                        {order.user ? (
+                          <div className="text-xs text-muted-foreground">{order.user.name || order.user.email}</div>
+                        ) : (
+                          <div className="text-xs text-muted-foreground">ผู้เยี่ยมชม</div>
+                        )}
                       </td>
                       <td className="px-5 py-3.5 text-slate-500 hidden md:table-cell font-medium">
                         {order.items.length} <span className="text-xs">รายการ</span>

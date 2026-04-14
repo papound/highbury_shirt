@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { getStatusLabel, getStatusBadgeClass } from "@/lib/order-status";
 import { Separator } from "@/components/ui/separator";
 import AdminOrderActions from "@/components/admin/order-actions";
+import PaymentSlipLightbox from "@/components/admin/payment-slip-lightbox";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
@@ -121,14 +122,7 @@ export default async function AdminOrderDetailPage({ params }: Props) {
           <div className="p-4 space-y-3">
             {order.paymentProofs.map((proof) => (
               <div key={proof.id} className="flex items-start gap-4">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <a href={proof.imageUrl} target="_blank" rel="noopener noreferrer">
-                  <img
-                    src={proof.imageUrl}
-                    alt="Payment slip"
-                    className="w-24 h-24 object-cover rounded border hover:opacity-80 transition"
-                  />
-                </a>
+                <PaymentSlipLightbox src={proof.imageUrl} />
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <Badge variant={proof.status === "APPROVED" ? "default" : proof.status === "REJECTED" ? "destructive" : "secondary"}>

@@ -21,7 +21,7 @@ export default function AdminReportsChart({ data }: Props) {
           tickFormatter={(v) => `฿${(v / 1000).toFixed(0)}k`}
         />
         <Tooltip formatter={(v) => [`฿${Number(v).toLocaleString()}`, "ยอดขาย"]} />
-        <Bar dataKey="revenue" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+        <Bar dataKey="revenue" fill="#3b82f6" radius={[4, 4, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   );

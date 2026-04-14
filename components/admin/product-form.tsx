@@ -38,7 +38,10 @@ const variantSchema = z.object({
   size: z.string().min(1),
   sku: z.string().min(1),
   price: z.coerce.number().positive(),
-  stock: z.coerce.number().min(0),
+  inventoryByWarehouse: z.array(z.object({
+    warehouseId: z.string(),
+    quantity: z.coerce.number().min(0),
+  })),
 });
 
 const schema = z.object({
@@ -48,7 +51,6 @@ const schema = z.object({
   description: z.string().optional(),
   basePrice: z.coerce.number().positive("ราคาต้องมากกว่า 0"),
   categoryId: z.string().min(1, "กรุณาเลือกหมวดหมู่"),
-  warehouseId: z.string().min(1, "กรุณาเลือกคลังสินค้า"),
   status: z.enum(["ACTIVE", "INACTIVE", "ARCHIVED"]),
   isFeatured: z.boolean(),
   variants: z.array(variantSchema),
@@ -65,9 +67,6 @@ export default function AdminProductForm({ product, categories, warehouses }: { 
   );
   const isNew = !product;
 
-  // Detect the warehouse used for the first variant's inventory (for edit mode)
-  const existingWarehouseId = product?.variants?.[0]?.inventory?.[0]?.warehouseId ?? warehouses[0]?.id ?? "";
-
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -77,7 +76,6 @@ export default function AdminProductForm({ product, categories, warehouses }: { 
       description: product?.description ?? "",
       basePrice: product?.basePrice ?? 0,
       categoryId: product?.categoryId ?? "",
-      warehouseId: existingWarehouseId,
       status: product?.status ?? "ACTIVE",
       isFeatured: product?.isFeatured ?? false,
       variants: product?.variants?.map((v: any) => ({
@@ -87,7 +85,10 @@ export default function AdminProductForm({ product, categories, warehouses }: { 
         size: v.size,
         sku: v.sku,
         price: v.price,
-        stock: v.inventory?.reduce((s: number, inv: any) => s + inv.quantity, 0) ?? 0,
+        inventoryByWarehouse: warehouses.map((wh: any) => ({
+          warehouseId: wh.id,
+          quantity: v.inventory?.find((inv: any) => inv.warehouseId === wh.id)?.quantity ?? 0,
+        })),
       })) ?? [],
     },
   });
@@ -188,36 +189,6 @@ export default function AdminProductForm({ product, categories, warehouses }: { 
             )} />
           </div>
 
-          <FormField control={form.control} name="warehouseId" render={({ field }) => (
-            <FormItem>
-              <FormLabel>คลังสินค้า *</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="เลือกคลังสินค้า">
-                      {(val: string | null) => {
-                        if (!val) return undefined;
-                        const w = warehouses.find((wh) => wh.id === val);
-                        return w ? w.name + (w.location ? ` — ${w.location}` : "") : val;
-                      }}
-                    </SelectValue>
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {warehouses.length === 0 ? (
-                    <SelectItem value="__none" label="ไม่มีคลังสินค้า" disabled>ไม่มีคลังสินค้า — กรุณาสร้างคลังก่อน</SelectItem>
-                  ) : (
-                    warehouses.map((w) => {
-                      const label = w.name + (w.location ? ` — ${w.location}` : "");
-                      return <SelectItem key={w.id} value={w.id} label={label}>{label}</SelectItem>;
-                    })
-                  )}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )} />
-
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
             <FormField control={form.control} name="status" render={({ field }) => (
               <FormItem>
@@ -260,7 +231,7 @@ export default function AdminProductForm({ product, categories, warehouses }: { 
                 <button
                   key={size}
                   type="button"
-                  onClick={() => append({ color: "", colorHex: "#000000", size, sku: "", price: 0, stock: 0 })}
+                  onClick={() => append({ color: "", colorHex: "#000000", size, sku: "", price: 0, inventoryByWarehouse: warehouses.map((wh: any) => ({ warehouseId: wh.id, quantity: 0 })) })}
                   className="text-xs px-2 py-1 border rounded-md hover:bg-muted transition-colors"
                 >
                   {size}
@@ -270,7 +241,7 @@ export default function AdminProductForm({ product, categories, warehouses }: { 
                 type="button"
                 size="sm"
                 variant="outline"
-                onClick={() => append({ color: "", colorHex: "#000000", size: "", sku: "", price: 0, stock: 0 })}
+                onClick={() => append({ color: "", colorHex: "#000000", size: "", sku: "", price: 0, inventoryByWarehouse: warehouses.map((wh: any) => ({ warehouseId: wh.id, quantity: 0 })) })}
               >
                 <Plus className="w-3.5 h-3.5 mr-1" />
                 เพิ่ม Variant
@@ -284,65 +255,80 @@ export default function AdminProductForm({ product, categories, warehouses }: { 
 
           <div className="space-y-3">
             {fields.map((f, idx) => (
-              <div key={f.id} className="grid grid-cols-6 gap-2 items-end border rounded-lg p-3 bg-muted/20">
-                <FormField control={form.control} name={`variants.${idx}.color`} render={({ field }) => (
-                  <FormItem className="col-span-2">
-                    <FormLabel className="text-xs">สี</FormLabel>
-                    <FormControl><Input {...field} placeholder="เช่น ขาว" /></FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )} />
-                <FormField control={form.control} name={`variants.${idx}.colorHex`} render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-xs">รหัสสี</FormLabel>
-                    <FormControl>
-                      <div className="flex gap-1">
-                        <input type="color" {...field} className="w-10 h-9 rounded border cursor-pointer" />
-                        <Input {...field} className="flex-1" />
-                      </div>
-                    </FormControl>
-                  </FormItem>
-                )} />
-                <FormField control={form.control} name={`variants.${idx}.size`} render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-xs">ขนาด</FormLabel>
-                    <FormControl>
-                      <div>
-                        <Input {...field} placeholder="SS/S/M/L" list="size-options" />
-                        <datalist id="size-options">
-                          {DEFAULT_SIZES.map((s) => <option key={s} value={s} />)}
-                        </datalist>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )} />
-                <FormField control={form.control} name={`variants.${idx}.sku`} render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-xs">SKU</FormLabel>
-                    <FormControl><Input {...field} /></FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )} />
-                <div className="grid grid-cols-2 gap-2 col-span-2">
+              <div key={f.id} className="border rounded-lg p-3 bg-muted/20 space-y-3">
+                <div className="grid grid-cols-6 gap-2 items-end">
+                  <FormField control={form.control} name={`variants.${idx}.color`} render={({ field }) => (
+                    <FormItem className="col-span-2">
+                      <FormLabel className="text-xs">สี</FormLabel>
+                      <FormControl><Input {...field} placeholder="เช่น ขาว" /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                  <FormField control={form.control} name={`variants.${idx}.colorHex`} render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs">รหัสสี</FormLabel>
+                      <FormControl>
+                        <div className="flex gap-1">
+                          <input type="color" {...field} className="w-10 h-9 rounded border cursor-pointer" />
+                          <Input {...field} className="flex-1" />
+                        </div>
+                      </FormControl>
+                    </FormItem>
+                  )} />
+                  <FormField control={form.control} name={`variants.${idx}.size`} render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs">ขนาด</FormLabel>
+                      <FormControl>
+                        <div>
+                          <Input {...field} placeholder="SS/S/M/L" list="size-options" />
+                          <datalist id="size-options">
+                            {DEFAULT_SIZES.map((s) => <option key={s} value={s} />)}
+                          </datalist>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                  <FormField control={form.control} name={`variants.${idx}.sku`} render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs">SKU</FormLabel>
+                      <FormControl><Input {...field} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
                   <FormField control={form.control} name={`variants.${idx}.price`} render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-xs">ราคา</FormLabel>
                       <FormControl><Input type="number" {...field} /></FormControl>
                     </FormItem>
                   )} />
-                  <FormField control={form.control} name={`variants.${idx}.stock`} render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-xs">Stock</FormLabel>
-                      <FormControl><Input type="number" {...field} /></FormControl>
-                    </FormItem>
-                  )} />
+                  <div className="flex justify-end">
+                    <Button type="button" variant="ghost" size="sm" onClick={() => remove(idx)}>
+                      <Trash2 className="w-4 h-4 text-destructive" />
+                    </Button>
+                  </div>
                 </div>
-                <div className="flex justify-end">
-                  <Button type="button" variant="ghost" size="sm" onClick={() => remove(idx)}>
-                    <Trash2 className="w-4 h-4 text-destructive" />
-                  </Button>
-                </div>
+
+                {warehouses.length > 0 && (
+                  <div className="border-t pt-2">
+                    <p className="text-xs text-muted-foreground mb-2">Stock ตามคลัง</p>
+                    <div className="flex flex-wrap gap-3">
+                      {warehouses.map((wh: any, whIdx: number) => (
+                        <FormField
+                          key={wh.id}
+                          control={form.control}
+                          name={`variants.${idx}.inventoryByWarehouse.${whIdx}.quantity`}
+                          render={({ field }) => (
+                            <FormItem className="w-32">
+                              <FormLabel className="text-xs">{wh.name}</FormLabel>
+                              <FormControl><Input type="number" min={0} {...field} /></FormControl>
+                            </FormItem>
+                          )}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>

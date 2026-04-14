@@ -53,7 +53,7 @@ export default function AdminSalesChart({ data }: Props) {
           formatter={(v) => [`฿${Number(v).toLocaleString()}`, "ยอดขาย"]}
           labelStyle={{ fontWeight: 500 }}
         />
-        <Bar dataKey="revenue" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+        <Bar dataKey="revenue" fill="#3b82f6" radius={[4, 4, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   );
