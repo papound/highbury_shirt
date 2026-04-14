@@ -11,6 +11,7 @@
 - **shadcn/ui** (base-nova style)
 - **UploadThing** — อัปโหลดรูปสินค้าและสลิปโอนเงิน
 - **Recharts**, **Tiptap**, **ExcelJS**, **PromptPay QR**
+- **react-markdown** — render เนื้อหาบทความ
 
 ## เริ่มต้นใช้งาน
 
@@ -51,11 +52,14 @@ npm start
 
 | URL | คำอธิบาย |
 |-----|----------|
-| `/` | หน้าแรก (สินค้าแนะนำ, หมวดหมู่, ติดต่อ) |
-| `/products` | รายการสินค้าทั้งหมด |
+| `/` | หน้าแรก (Hero, สินค้าแนะนำ, หมวดหมู่, สถิติแบรนด์) |
+| `/products` | รายการสินค้าทั้งหมด (กรอง/ค้นหา, ellipsis pagination) |
 | `/products/[slug]` | รายละเอียดสินค้า |
-| `/cart` | ตะกร้าสินค้า |
+| `/cart` | ตะกร้าสินค้า (จำกัดตาม stock จริง) |
 | `/checkout` | ชำระเงิน (PromptPay QR + อัปโหลดสลิป) |
+| `/about` | เกี่ยวกับแบรนด์ Highbury International |
+| `/blog` | รายการบทความทั้งหมด |
+| `/blog/[slug]` | เนื้อหาบทความ (Markdown) |
 | `/auth/login` | เข้าสู่ระบบลูกค้า |
 | `/auth/register` | สมัครสมาชิก |
 | `/account/orders` | ประวัติคำสั่งซื้อ |
@@ -196,6 +200,9 @@ app/
 ├── (storefront)/           # หน้าร้านค้า
 │   ├── auth/               # login/register ลูกค้า
 │   ├── account/            # หน้าบัญชีลูกค้า (ต้อง login)
+│   ├── about/              # เกี่ยวกับแบรนด์
+│   ├── blog/               # รายการบทความ + [slug]
+│   ├── cart/               # ตะกร้าสินค้า (stock-aware)
 │   └── checkout/           # กระบวนการสั่งซื้อ
 ├── admin/
 │   ├── login/              # login เฉพาะเจ้าหน้าที่
@@ -210,10 +217,13 @@ components/
 │   ├── product-form.tsx
 │   ├── product-import-dialog.tsx       # นำเข้าสินค้าจาก Excel
 │   └── ...
-├── storefront/             # Header, Footer, Cart
+├── storefront/             # Header (glassmorphism), Footer, Cart, Actions
 └── ui/                     # shadcn/ui base components
 
-lib/                        # utilities (prisma, auth, email, uploadthing, etc.)
+lib/
+├── mock-blog.ts            # Mock blog articles (ใช้ระหว่าง dev)
+└── ...                     # utilities (prisma, auth, email, uploadthing, etc.)
+
 prisma/
 ├── schema.prisma           # Database schema
 ├── seed.ts                 # ข้อมูลตัวอย่าง (admin users, สินค้า, คลังสินค้า)
@@ -226,3 +236,5 @@ prisma/
 - **Session**: JWT-based — หาก re-seed ฐานข้อมูล ต้อง sign out / sign in ใหม่เพื่อรับ user ID ที่ถูกต้อง
 - **libsql**: ไม่รองรับ interactive `$transaction(async tx => {})` — ใช้ sequential writes แทน
 - **Uploaded files**: `public/uploads/` ถูก exclude จาก git
+- **Blog**: ข้อมูลบทความอยู่ใน `lib/mock-blog.ts` (static) — เชื่อมกับ `BlogPost` model ใน DB สำหรับ production
+- **Cart**: จำนวนสินค้าถูก clamp ตาม stock จริง ทั้ง Zustand store และ UI (`add-to-cart-button.tsx`)
