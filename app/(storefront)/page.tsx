@@ -84,15 +84,32 @@ export default async function HomePage() {
     <div className="flex flex-col mx-auto w-full">
       {/* ── Promotion Banner ──────────────────────────────────────────── */}
       {promotions.length > 0 && (
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-medium py-2">
-          <div className="container mx-auto px-4 flex items-center justify-center gap-2">
-            <span>✨</span>
-            <div className="flex flex-wrap items-center justify-center gap-2">
-              {promotions.map((p) => (
-                <span key={p.id}>{p.nameTh ?? p.name}</span>
-              ))}
+        <div className="relative overflow-hidden bg-gradient-to-r from-rose-600 via-fuchsia-600 to-indigo-600 text-white shadow-lg z-10">
+          {/* Animated subtle pattern overlay */}
+          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/diagonal-stripes.png')] opacity-10"></div>
+          
+          <div className="container relative mx-auto px-4 py-3 sm:py-4">
+            <div className="flex items-center justify-center gap-3 sm:gap-6">
+              <span className="text-xl sm:text-2xl animate-pulse">✨</span>
+              
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                {promotions.map((p) => (
+                  <span 
+                    key={p.id} 
+                    className="text-sm sm:text-base md:text-lg font-bold tracking-widest uppercase drop-shadow-md"
+                  >
+                    {p.nameTh ?? p.name}
+                  </span>
+                ))}
+              </div>
+              
+              <span className="text-xl sm:text-2xl animate-pulse delay-75">✨</span>
             </div>
-            <span>✨</span>
+            
+            {/* Action text */}
+            <div className="mt-1 text-center text-xs sm:text-sm font-medium text-white/90 uppercase tracking-widest">
+              ช้อปเลย! สิทธิพิเศษมีจำนวนจำกัด
+            </div>
           </div>
         </div>
       )}
