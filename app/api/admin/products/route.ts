@@ -75,3 +75,29 @@ export async function GET() {
   });
   return NextResponse.json(products);
 }
+
+export async function DELETE() {
+  const session = await auth();
+  // Only SUPERADMIN can hard-delete all products
+  if (session?.user?.role !== "SUPERADMIN") {
+    return NextResponse.json({ error: "Unauthorized — SUPERADMIN only" }, { status: 403 });
+  }
+
+  try {
+    // Must delete in FK-safe order:
+    // 1. InventoryAdjustment → references Inventory (no cascade)
+    await prisma.inventoryAdjustment.deleteMany({});
+    // 2. StockTransfer → references ProductVariant (no cascade)
+    await prisma.stockTransfer.deleteMany({});
+    // 3. StockWithdrawal → references ProductVariant (no cascade)
+    await prisma.stockWithdrawal.deleteMany({});
+    // 4. OrderItem → references ProductVariant + Product (no cascade)
+    await prisma.orderItem.deleteMany({});
+    // 5. Product → cascades to ProductVariant → Inventory, ProductImage
+    const { count } = await prisma.product.deleteMany({});
+    return NextResponse.json({ deleted: count });
+  } catch (err) {
+    console.error("Clear products error:", err);
+    return NextResponse.json({ error: "Failed to clear products" }, { status: 500 });
+  }
+}
