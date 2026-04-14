@@ -50,10 +50,11 @@ export const useCartStore = create<CartStore>()(
           const existing = state.items.find(
             (i) => i.variantId === newItem.variantId
           );
+          const maxStock = newItem.stock ?? Infinity;
           const items = existing
             ? state.items.map((i) =>
                 i.variantId === newItem.variantId
-                  ? { ...i, quantity: i.quantity + newItem.quantity }
+                  ? { ...i, quantity: Math.min(maxStock, i.quantity + newItem.quantity), stock: maxStock }
                   : i
               )
             : [...state.items, newItem];
@@ -70,11 +71,13 @@ export const useCartStore = create<CartStore>()(
 
       updateQuantity(variantId, quantity) {
         set((state) => {
+          const existing = state.items.find((i) => i.variantId === variantId);
+          const capped = existing ? Math.min(existing.stock ?? Infinity, quantity) : quantity;
           const items =
-            quantity <= 0
+            capped <= 0
               ? state.items.filter((i) => i.variantId !== variantId)
               : state.items.map((i) =>
-                  i.variantId === variantId ? { ...i, quantity } : i
+                  i.variantId === variantId ? { ...i, quantity: capped } : i
                 );
           return { items, ...computeTotals(items, state.appliedPromotions) };
         });

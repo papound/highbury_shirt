@@ -32,6 +32,7 @@ export interface CartItem {
   imageUrl: string;
   unitPrice: number;
   quantity: number;
+  stock: number;
 }
 
 export interface AppliedPromotion {

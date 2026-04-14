@@ -152,8 +152,9 @@ export default function CartPage() {
                   </button>
                   <span className="px-3 text-sm">{item.quantity}</span>
                   <button
-                    className="px-2 py-1 hover:bg-secondary transition-colors"
+                    className="px-2 py-1 hover:bg-secondary transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                     onClick={() => updateQuantity(item.variantId, item.quantity + 1)}
+                    disabled={item.stock != null && item.quantity >= item.stock}
                   >
                     <Plus className="h-3 w-3" />
                   </button>

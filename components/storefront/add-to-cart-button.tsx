@@ -27,6 +27,7 @@ interface ProductData {
 
 export default function AddToCartButton({ product }: { product: ProductData }) {
   const addItem = useCartStore((s) => s.addItem);
+  const cartItems = useCartStore((s) => s.items);
 
   const colors = [...new Set(product.variants.map((v) => v.color))];
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
@@ -44,6 +45,11 @@ export default function AddToCartButton({ product }: { product: ProductData }) {
     (v) => v.color === selectedColor && v.size === selectedSize
   );
 
+  const cartQty = selectedVariant
+    ? (cartItems.find((i) => i.variantId === selectedVariant.id)?.quantity ?? 0)
+    : 0;
+  const remaining = selectedVariant ? Math.max(0, selectedVariant.stock - cartQty) : 0;
+
   const minPrice = Math.min(...product.variants.map((v) => v.price));
   const maxPrice = Math.max(...product.variants.map((v) => v.price));
   const displayPrice = selectedVariant
@@ -57,8 +63,8 @@ export default function AddToCartButton({ product }: { product: ProductData }) {
       toast.error("กรุณาเลือกสีและไซส์");
       return;
     }
-    if (selectedVariant.stock < qty) {
-      toast.error("สินค้าไม่เพียงพอ");
+    if (qty > remaining) {
+      toast.error(remaining === 0 ? "สินค้าหมดแล้ว" : `คงเหลือเพียง ${remaining} ตัว`);
       return;
     }
     addItem({
@@ -73,6 +79,7 @@ export default function AddToCartButton({ product }: { product: ProductData }) {
       imageUrl: product.imageUrl,
       unitPrice: selectedVariant.price,
       quantity: qty,
+      stock: selectedVariant.stock,
     });
     toast.success(`เพิ่ม "${product.nameTh}" ลงตะกร้าแล้ว 🛒`);
   }
@@ -155,12 +162,12 @@ export default function AddToCartButton({ product }: { product: ProductData }) {
       {selectedVariant && (
         <p className="text-sm text-muted-foreground">
           🏷 SKU: <code className="text-xs">{selectedVariant.sku}</code>{" "}
-          {selectedVariant.stock > 0 ? (
+          {remaining > 0 ? (
             <Badge variant="outline" className="text-green-600 border-green-300">
-              คงเหลือ {selectedVariant.stock} ตัว
+              คงเหลือ {remaining} ตัว
             </Badge>
           ) : (
-            <Badge variant="destructive">หมด</Badge>
+            <Badge variant="destructive">{selectedVariant.stock === 0 ? "หมด" : "เพิ่มในตะกร้าครบแล้ว"}</Badge>
           )}
         </p>
       )}
@@ -176,8 +183,9 @@ export default function AddToCartButton({ product }: { product: ProductData }) {
           </button>
           <span className="px-4 text-sm font-medium">{qty}</span>
           <button
-            className="px-3 py-2 hover:bg-secondary transition-colors"
-            onClick={() => setQty((q) => q + 1)}
+            className="px-3 py-2 hover:bg-secondary transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            onClick={() => setQty((q) => Math.min(remaining, q + 1))}
+            disabled={!selectedVariant || qty >= remaining}
           >
             +
           </button>
@@ -187,9 +195,9 @@ export default function AddToCartButton({ product }: { product: ProductData }) {
           size="lg"
           className="flex-1"
           onClick={handleAddToCart}
-          disabled={!selectedVariant || selectedVariant.stock === 0}
+          disabled={!selectedVariant || selectedVariant.stock === 0 || remaining === 0}
         >
-          🛒 เพิ่มลงตะกร้า
+          {remaining === 0 && selectedVariant ? "สินค้าหมด" : "🛒 เพิ่มลงตะกร้า"}
         </Button>
       </div>
     </div>
