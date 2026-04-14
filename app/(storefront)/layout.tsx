@@ -20,7 +20,7 @@ export default function StorefrontLayout({
       <StorefrontHeader />
       <main className="flex-1">{children}</main>
       <StorefrontFooter />
-      <Toaster richColors position="top-right" />
+      <Toaster richColors position="top-right" closeButton />
     </>
   );
 }

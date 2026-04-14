@@ -18,7 +18,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <div className="absolute top-0 right-0 h-64 w-64 bg-blue-500/5 blur-[120px] rounded-full pointer-events-none" />
         <div className="p-4 lg:p-8 max-w-7xl mx-auto">{children}</div>
       </main>
-      <Toaster richColors position="top-right" />
+      <Toaster richColors position="top-right" closeButton />
     </div>
   );
 }
