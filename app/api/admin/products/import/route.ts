@@ -12,11 +12,12 @@ const DEFAULT_MAPPING: Record<string, number> = {
   name: 2,
   basePrice: 3,
   categoryNameTh: 4,
-  color: 5,
-  colorHex: 6,
-  size: 7,
-  sku: 8,
-  stock: 9,
+  parentSku: 5,
+  color: 6,
+  colorHex: 7,
+  size: 8,
+  sku: 9,
+  stock: 10,
 };
 
 export async function POST(req: NextRequest) {
@@ -58,6 +59,7 @@ export async function POST(req: NextRequest) {
       const name = getCell(mapping.name);
       const basePrice = parseFloat(getCell(mapping.basePrice));
       const categoryNameTh = getCell(mapping.categoryNameTh);
+      const parentSku = getCell(mapping.parentSku);
       const color = getCell(mapping.color);
       const colorHex = getCell(mapping.colorHex) || "#000000";
       const size = getCell(mapping.size);
@@ -70,16 +72,19 @@ export async function POST(req: NextRequest) {
       }
 
       try {
-        // Find or create category
-        let category = await prisma.category.findFirst({ where: { nameTh: categoryNameTh } });
-        if (!category && categoryNameTh) {
-          category = await prisma.category.create({
-            data: {
-              nameTh: categoryNameTh,
-              name: categoryNameTh,
-              slug: slugify(categoryNameTh, { lower: true, strict: true }),
-            },
-          });
+        // Find or create category — lookup by nameTh first, then create with a
+        // slug that won't collide (Thai slugify strips all chars → use cuid fallback)
+        let category = null;
+        if (categoryNameTh) {
+          category = await prisma.category.findFirst({ where: { nameTh: categoryNameTh } });
+          if (!category) {
+            const rawSlug = slugify(categoryNameTh, { lower: true, strict: true });
+            // If Thai text produces empty slug, fall back to a unique slug
+            const catSlug = rawSlug || `cat-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+            category = await prisma.category.create({
+              data: { nameTh: categoryNameTh, name: categoryNameTh, slug: catSlug },
+            });
+          }
         }
 
         if (!category) {
@@ -87,29 +92,27 @@ export async function POST(req: NextRequest) {
           continue;
         }
 
-        // Find or create product
-        const slug = slugify(name, { lower: true, strict: true });
-        let product = await prisma.product.findFirst({ where: { name } });
-        if (!product) {
-          product = await prisma.product.create({
-            data: {
-              nameTh,
-              name,
-              slug,
-              basePrice,
-              categoryId: category.id,
-              status: "ACTIVE",
-            },
-          });
-        }
+        // Find or create product — upsert by slug to avoid race condition on duplicate slug
+        const slug = parentSku || slugify(name, { lower: true, strict: true });
+        const product = await prisma.product.upsert({
+          where: { slug },
+          update: {},
+          create: {
+            nameTh,
+            name,
+            slug,
+            basePrice,
+            categoryId: category.id,
+            status: "ACTIVE",
+          },
+        });
 
-        // Upsert variant
-        let variant = await prisma.productVariant.findUnique({ where: { sku } });
-        if (!variant) {
-          variant = await prisma.productVariant.create({
-            data: { productId: product.id, color, colorHex, size, sku, price: basePrice },
-          });
-        }
+        // Upsert variant — upsert by sku to avoid duplicate on re-import
+        const variant = await prisma.productVariant.upsert({
+          where: { sku },
+          update: { color, colorHex, size, price: basePrice },
+          create: { productId: product.id, color, colorHex, size, sku, price: basePrice },
+        });
 
         // Upsert inventory
         if (warehouse) {

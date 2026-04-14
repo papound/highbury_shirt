@@ -36,6 +36,7 @@ const DB_FIELDS: DbField[] = [
   { key: "name", label: "ชื่อสินค้า (EN)", type: "String", required: true, table: "Product" },
   { key: "basePrice", label: "ราคาฐาน", type: "Float", required: true, table: "Product", description: "ตัวเลขทศนิยม เช่น 299.00" },
   { key: "categoryNameTh", label: "หมวดหมู่", type: "String", required: true, table: "Category", description: "จะสร้างใหม่อัตโนมัติหากยังไม่มี" },
+  { key: "parentSku", label: "Parent SKU", type: "String?", required: false, table: "Product", description: "slug ของสินค้าหลัก ใช้จัดกลุ่ม variants (export ให้อัตโนมัติ)" },
   { key: "color", label: "สี", type: "String", required: true, table: "ProductVariant" },
   { key: "colorHex", label: "Hex สี", type: "String?", required: false, table: "ProductVariant", description: "เช่น #FF0000 (เว้นว่างได้)" },
   { key: "size", label: "ขนาด / Size", type: "String", required: true, table: "ProductVariant" },
@@ -213,7 +214,7 @@ export default function AdminProductImportDialog() {
       </Button>
 
       <Dialog open={open} onOpenChange={handleClose}>
-        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="w-[95vw] max-w-[95vw] sm:max-w-[95vw] max-h-[92vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <FileSpreadsheet className="w-5 h-5 text-green-600" />
