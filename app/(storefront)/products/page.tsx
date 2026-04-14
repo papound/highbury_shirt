@@ -144,11 +144,11 @@ export default async function ProductsPage({ searchParams }: Props) {
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {products.map((product) => {
                   const primaryImage = product.images[0];
-                  const minPrice = Math.min(...product.variants.map((v) => v.price));
-                  const maxPrice = Math.max(...product.variants.map((v) => v.price));
+                  const minPrice = product.variants.length > 0 ? Math.min(...product.variants.map((v) => v.price)) : 0;
+                  const maxPrice = product.variants.length > 0 ? Math.max(...product.variants.map((v) => v.price)) : 0;
                   const colors = [...new Set(product.variants.map((v) => v.color))];
 
                   return (
@@ -158,7 +158,7 @@ export default async function ProductsPage({ searchParams }: Props) {
                     >
                       <CardContent className="p-0">
                         <Link href={`/products/${product.slug}`}>
-                          <div className="aspect-square relative overflow-hidden bg-gray-100">
+                          <div className="relative h-48 sm:h-52 md:h-56 overflow-hidden bg-gray-100">
                             {primaryImage ? (
                               <Image
                                 src={primaryImage.url}
