@@ -35,7 +35,7 @@ type Props = {
   searchParams: Promise<SearchParams>;
 };
 
-const PAGE_SIZE = 12;
+const PAGE_SIZE = 24;
 
 async function getProducts(sp: SearchParams) {
   const page = Math.max(1, Number(sp.page ?? 1));
@@ -220,20 +220,61 @@ export default async function ProductsPage({ searchParams }: Props) {
 
               {/* Pagination */}
               {totalPages > 1 && (
-                <div className="flex justify-center gap-2 mt-8">
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                <div className="flex justify-center items-center gap-1 mt-8 flex-wrap">
+                  {/* Prev */}
+                  {page > 1 && (
                     <Link
-                      key={p}
-                      href={`/products?${new URLSearchParams({ ...sp, page: String(p) })}`}
-                      className={`w-9 h-9 flex items-center justify-center rounded-md text-sm border transition-colors ${
-                        page === p
-                          ? "bg-primary text-primary-foreground border-primary"
-                          : "border-border hover:bg-secondary"
-                      }`}
+                      href={`/products?${new URLSearchParams({ ...sp, page: String(page - 1) })}`}
+                      className="w-9 h-9 flex items-center justify-center rounded-md text-sm border border-border hover:bg-secondary transition-colors"
                     >
-                      {p}
+                      ‹
                     </Link>
-                  ))}
+                  )}
+
+                  {(() => {
+                    const pages: (number | "...")[] = [];
+                    const delta = 2;
+                    const left = page - delta;
+                    const right = page + delta;
+
+                    for (let i = 1; i <= totalPages; i++) {
+                      if (i === 1 || i === totalPages || (i >= left && i <= right)) {
+                        pages.push(i);
+                      } else if (pages[pages.length - 1] !== "...") {
+                        pages.push("...");
+                      }
+                    }
+
+                    return pages.map((p, idx) =>
+                      p === "..." ? (
+                        <span key={`ellipsis-${idx}`} className="w-9 h-9 flex items-center justify-center text-sm text-muted-foreground">
+                          …
+                        </span>
+                      ) : (
+                        <Link
+                          key={p}
+                          href={`/products?${new URLSearchParams({ ...sp, page: String(p) })}`}
+                          className={`w-9 h-9 flex items-center justify-center rounded-md text-sm border transition-colors ${
+                            page === p
+                              ? "bg-primary text-primary-foreground border-primary"
+                              : "border-border hover:bg-secondary"
+                          }`}
+                        >
+                          {p}
+                        </Link>
+                      )
+                    );
+                  })()}
+
+                  {/* Next */}
+                  {page < totalPages && (
+                    <Link
+                      href={`/products?${new URLSearchParams({ ...sp, page: String(page + 1) })}`}
+                      className="w-9 h-9 flex items-center justify-center rounded-md text-sm border border-border hover:bg-secondary transition-colors"
+                    >
+                      ›
+                    </Link>
+                  )}
                 </div>
               )}
             </>
