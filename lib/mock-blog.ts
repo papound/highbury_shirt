@@ -15,7 +15,7 @@ export const blogPosts: BlogPost[] = [
     excerpt: "ทำความรู้จักความแตกต่างระหว่างผ้าฝ้ายแท้ และผ้าโพลีเอสเตอร์ เพื่อเลือกซื้อเสื้อเชิ้ตที่ตอบโจทย์ไลฟ์สไตล์การใช้งานของคุณ",
     category: "เนื้อผ้า",
     date: "2026-04-10",
-    imageUrl: "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&q=80&w=800",
+    imageUrl: "https://picsum.photos/seed/fabric/800/600",
     content: `
 ## ทำความเข้าใจเนื้อผ้า: ปัจจัยสำคัญสำหรับเสื้อเชิ้ต
 
@@ -41,7 +41,7 @@ export const blogPosts: BlogPost[] = [
     excerpt: "เสื้อเชิ้ตตัวโปรดจะอยู่กับคุณไปได้อีกนาน หากคุณรู้หลักการซัก รีด และเก็บรักษาอย่างถูกวิธี",
     category: "การดูแลรักษา",
     date: "2026-04-05",
-    imageUrl: "https://images.unsplash.com/photo-1582735689369-acf8fdce46cb?auto=format&fit=crop&q=80&w=800",
+    imageUrl: "https://picsum.photos/seed/care/800/600",
     content: `
 ## อย่าปล่อยให้เสื้อเชิ้ตตัวโปรดหมองและเสียทรง!
 
@@ -68,7 +68,7 @@ export const blogPosts: BlogPost[] = [
     excerpt: "เปิดกระบวนการผลิตเสื้อเชิ้ตคุณภาพ ตั้งแต่การขึ้นแพทเทิร์น การตัดเย็บ ไปจนถึงการตรวจสอบคุณภาพ",
     category: "การผลิต",
     date: "2026-03-28",
-    imageUrl: "https://images.unsplash.com/photo-1585802522776-90b9f02bb80d?auto=format&fit=crop&q=80&w=800",
+    imageUrl: "https://picsum.photos/seed/sewing/800/600",
     content: `
 ## จากม้วนผ้า... สู่เสื้อเชิ้ตตัวเนี๊ยบ
 
@@ -97,7 +97,7 @@ export const blogPosts: BlogPost[] = [
     excerpt: "แนวทางการแมทช์เสื้อเชิ้ตตัวเก่งในลุคต่างๆ ตั้่งแต่วันทำงานชิลๆ ไปจนถึงงานทางการที่ต้องการความน่าเชื่อถือ",
     category: "การแต่งตัว",
     date: "2026-03-15",
-    imageUrl: "https://images.unsplash.com/photo-1603252109303-2751441dd157?auto=format&fit=crop&q=80&w=800",
+    imageUrl: "https://picsum.photos/seed/style/800/600",
     content: `
 ## 1 เสื้อเชิ้ต... สร้างได้หลายลุค
 
