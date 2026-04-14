@@ -1,33 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Search } from "lucide-react";
 
 type GroupBy = "none" | "name" | "size" | "warehouse";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function AdminInventoryClient({ inventory, warehouses }: { inventory: any[]; warehouses: any[] }) {
-  const [search, setSearch] = useState("");
   const [groupBy, setGroupBy] = useState<GroupBy>("none");
   const [adjustingId, setAdjustingId] = useState<string | null>(null);
   const [adjustValue, setAdjustValue] = useState("");
   const [adjustNote, setAdjustNote] = useState("");
   const [loading, setLoading] = useState(false);
-
-  const filtered = inventory.filter((inv) => {
-    const q = search.toLowerCase();
-    return (
-      inv.variant.product.nameTh.toLowerCase().includes(q) ||
-      inv.variant.color.toLowerCase().includes(q) ||
-      inv.variant.size.toLowerCase().includes(q) ||
-      inv.variant.sku.toLowerCase().includes(q) ||
-      inv.warehouse.name.toLowerCase().includes(q)
-    );
-  });
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function getGroupKey(inv: any): string {
@@ -37,9 +24,9 @@ export default function AdminInventoryClient({ inventory, warehouses }: { invent
     return "__all__";
   }
 
-  const groups: { key: string; items: typeof filtered }[] = [];
-  const seen = new Map<string, typeof filtered>();
-  for (const inv of filtered) {
+  const groups: { key: string; items: typeof inventory }[] = [];
+  const seen = new Map<string, typeof inventory>();
+  for (const inv of inventory) {
     const key = getGroupKey(inv);
     if (!seen.has(key)) seen.set(key, []);
     seen.get(key)!.push(inv);
@@ -136,15 +123,6 @@ export default function AdminInventoryClient({ inventory, warehouses }: { invent
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-3">
-        <div className="relative flex-1 min-w-48 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input
-            placeholder="ค้นหาสินค้า, สี, ขนาด, SKU, คลัง..."
-            className="pl-9"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
         <div className="flex items-center gap-1 rounded-lg border bg-muted/30 p-1">
           {groupOptions.map((opt) => (
             <button
@@ -175,7 +153,7 @@ export default function AdminInventoryClient({ inventory, warehouses }: { invent
               </tr>
             </thead>
             {groupBy === "none"
-              ? <tbody>{filtered.map(renderRow)}</tbody>
+              ? <tbody>{inventory.map(renderRow)}</tbody>
               : groups.map(({ key, items }) => (
                   <tbody key={`group-${key}`}>
                     <tr className="bg-muted/50 border-b">
