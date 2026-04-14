@@ -67,14 +67,14 @@ npm start
 |-----|----------|
 | `/admin/login` | เข้าสู่ระบบเจ้าหน้าที่ (แยกจากลูกค้า) |
 | `/admin/dashboard` | ภาพรวมยอดขาย, คำสั่งซื้อ, สินค้า |
-| `/admin/products` | จัดการสินค้า (เพิ่ม/แก้ไข/ลบ) |
-| `/admin/inventory` | จัดการสต็อกคลังสินค้า |
+| `/admin/products` | จัดการสินค้า (เพิ่ม/แก้ไข/ลบ + นำเข้าจาก Excel) |
+| `/admin/inventory` | จัดการสต็อก (ปรับยอด, โอนระหว่างคลัง, เบิกสินค้า) |
 | `/admin/orders` | จัดการคำสั่งซื้อและสลิป |
 | `/admin/customers` | รายชื่อและข้อมูลลูกค้า |
 | `/admin/promotions` | จัดการโปรโมชั่น/คูปอง |
 | `/admin/reports` | รายงานยอดขาย (SUPERADMIN, ADMIN, ACCOUNTANT) |
 | `/admin/blog` | จัดการบทความ |
-| `/admin/settings` | ตั้งค่า (PromptPay, คลัง, ผู้ใช้) — SUPERADMIN, ADMIN |
+| `/admin/settings` | ตั้งค่า (PromptPay, คลังสินค้า, ผู้ใช้) — SUPERADMIN, ADMIN |
 
 > **หมายเหตุ:** หน้า `/admin/login` จะปฏิเสธบัญชีที่มี role `CUSTOMER` และหน้า `/auth/login` จะ redirect admin ไปยัง `/admin/dashboard` โดยอัตโนมัติ
 
@@ -127,26 +127,102 @@ NEXT_PUBLIC_APP_URL="http://localhost:3000"
 | `productImage` | Admin | อัปโหลดรูปสินค้า (max 4MB, สูงสุด 10 รูป) — ต้อง login เป็น admin |
 | `paymentSlip` | ลูกค้า | อัปโหลดสลิปโอนเงิน (max 5MB) — guest checkout ก็ใช้ได้ |
 
+## API Routes
+
+### Admin
+
+| Method | Path | คำอธิบาย |
+|--------|------|----------|
+| GET/POST | `/api/admin/products` | รายการ + สร้างสินค้า |
+| GET/PUT/DELETE | `/api/admin/products/[id]` | แก้ไข/ลบสินค้า |
+| POST | `/api/admin/products/import` | นำเข้าสินค้าจาก Excel |
+| POST | `/api/admin/products/import/preview` | Preview การนำเข้าสินค้า |
+| GET/POST | `/api/admin/inventory/adjust` | ปรับยอด Stock |
+| GET/POST | `/api/admin/inventory/transfer` | โอน Stock ระหว่างคลัง (พร้อม transaction ID) |
+| POST | `/api/admin/inventory/transfer/import` | โอน Stock แบบ bulk จาก Excel |
+| GET/POST | `/api/admin/inventory/withdraw` | เบิกสินค้าออกจากคลัง |
+| GET/POST | `/api/admin/warehouses` | รายการ + สร้างคลังสินค้า |
+| PUT/DELETE | `/api/admin/warehouses/[id]` | แก้ไข/ลบคลังสินค้า |
+| GET/POST | `/api/admin/orders` | รายการ + สร้างคำสั่งซื้อ |
+| GET/PUT | `/api/admin/orders/[id]` | รายละเอียด + แก้ไขคำสั่งซื้อ |
+| PUT | `/api/admin/orders/[id]/status` | อัปเดตสถานะ |
+| GET/POST | `/api/admin/promotions` | จัดการโปรโมชั่น |
+| GET/PUT/DELETE | `/api/admin/promotions/[id]` | แก้ไข/ลบโปรโมชั่น |
+| GET/POST | `/api/admin/blog` | จัดการบทความ |
+| GET/PUT/DELETE | `/api/admin/blog/[id]` | แก้ไข/ลบบทความ |
+| GET/PATCH | `/api/admin/settings` | ตั้งค่าระบบ |
+| GET/POST | `/api/admin/users` | จัดการผู้ใช้ |
+| PUT/DELETE | `/api/admin/users/[id]` | แก้ไข/ลบผู้ใช้ |
+| GET | `/api/admin/customers` | รายชื่อลูกค้า |
+| GET | `/api/admin/reports/export` | Export รายงาน |
+
+### Storefront / Public
+
+| Method | Path | คำอธิบาย |
+|--------|------|----------|
+| POST | `/api/auth/register` | สมัครสมาชิก |
+| GET/PUT | `/api/account/profile` | โปรไฟล์ลูกค้า |
+| POST | `/api/checkout` | สร้างคำสั่งซื้อ |
+| POST | `/api/checkout/cancel` | ยกเลิกคำสั่งซื้อ |
+| POST | `/api/payment-slip` | อัปโหลดสลิปโอนเงิน |
+| GET | `/api/promotions` | โปรโมชั่นที่ใช้งานอยู่ |
+| POST | `/api/promotions/validate-code` | ตรวจสอบโค้ดโปรโมชั่น |
+
+## Database Models
+
+| Model | คำอธิบาย |
+|-------|----------|
+| `User` | ผู้ใช้ (SUPERADMIN, ADMIN, STAFF, ACCOUNTANT, CUSTOMER) |
+| `Product` | สินค้า |
+| `ProductVariant` | รูปแบบสินค้า (สี/ไซส์) |
+| `ProductImage` | รูปสินค้า |
+| `Category` | หมวดหมู่สินค้า |
+| `Warehouse` | คลังสินค้า (มี `uniqueKey` สำหรับอ้างอิง) |
+| `Inventory` | สต็อกสินค้าต่อคลัง |
+| `InventoryAdjustment` | ประวัติการปรับยอด Stock |
+| `StockTransfer` | ประวัติการโอน Stock (มี `transactionId`) |
+| `StockWithdrawal` | ประวัติการเบิกสินค้า |
+| `Order` | คำสั่งซื้อ |
+| `OrderItem` | รายการสินค้าในคำสั่งซื้อ |
+| `PaymentProof` | สลิปโอนเงิน |
+| `Promotion` | โปรโมชั่น/คูปอง |
+| `BlogPost` | บทความ |
+| `SiteSetting` | ตั้งค่าระบบ (PromptPay, ฯลฯ) |
+
 ## โครงสร้างโปรเจค
 
 ```
 app/
-├── (storefront)/       # หน้าร้านค้า
-│   ├── auth/           # login/register ลูกค้า
-│   ├── account/        # หน้าบัญชีลูกค้า (ต้อง login)
-│   └── checkout/       # กระบวนการสั่งซื้อ
+├── (storefront)/           # หน้าร้านค้า
+│   ├── auth/               # login/register ลูกค้า
+│   ├── account/            # หน้าบัญชีลูกค้า (ต้อง login)
+│   └── checkout/           # กระบวนการสั่งซื้อ
 ├── admin/
-│   ├── login/          # login เฉพาะเจ้าหน้าที่
-│   └── (protected)/    # ทุกหน้า admin (ต้อง login + role ถูกต้อง)
-└── api/                # API Routes
+│   ├── login/              # login เฉพาะเจ้าหน้าที่
+│   └── (protected)/        # ทุกหน้า admin (ต้อง login + role ถูกต้อง)
+└── api/                    # API Routes
 
 components/
-├── admin/              # Sidebar, forms, charts สำหรับ admin
-├── storefront/         # Header, Footer, Cart สำหรับร้านค้า
-└── ui/                 # shadcn/ui base components
+├── admin/                  # Sidebar, forms, dialogs, charts
+│   ├── inventory-client.tsx
+│   ├── inventory-transfer-dialog.tsx   # โอน stock (staging table, TXN ID)
+│   ├── inventory-withdraw-dialog.tsx   # เบิกสินค้า
+│   ├── product-form.tsx
+│   ├── product-import-dialog.tsx       # นำเข้าสินค้าจาก Excel
+│   └── ...
+├── storefront/             # Header, Footer, Cart
+└── ui/                     # shadcn/ui base components
 
-lib/                    # utilities (prisma, auth, email, uploadthing, etc.)
+lib/                        # utilities (prisma, auth, email, uploadthing, etc.)
 prisma/
-├── schema.prisma       # Database schema
-└── seed.ts             # ข้อมูลตัวอย่าง (admin users, สินค้า, คลังสินค้า)
+├── schema.prisma           # Database schema
+├── seed.ts                 # ข้อมูลตัวอย่าง (admin users, สินค้า, คลังสินค้า)
+└── migrations/             # Prisma migration history
 ```
+
+## หมายเหตุสำหรับ Dev
+
+- **Database**: ไฟล์ `dev.db` ถูก exclude จาก git — ต้อง run `npx prisma migrate dev && npx prisma db seed` หลัง clone
+- **Session**: JWT-based — หาก re-seed ฐานข้อมูล ต้อง sign out / sign in ใหม่เพื่อรับ user ID ที่ถูกต้อง
+- **libsql**: ไม่รองรับ interactive `$transaction(async tx => {})` — ใช้ sequential writes แทน
+- **Uploaded files**: `public/uploads/` ถูก exclude จาก git
