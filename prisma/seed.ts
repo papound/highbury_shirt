@@ -97,6 +97,7 @@ async function main() {
     update: {},
     create: {
       id: "main-warehouse",
+      uniqueKey: "WH-MAIN1",
       name: "คลังสินค้าหลัก",
       location: "กรุงเทพมหานคร",
     },

@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod/v3";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import QRCode from "react-qr-code";
 import { genUploader } from "uploadthing/client";
 import type { OurFileRouter } from "@/lib/uploadthing";
@@ -52,17 +53,24 @@ interface OrderResult {
 
 export default function CheckoutPage() {
   const router = useRouter();
+  const { data: session } = useSession();
   const { items, total, discountAmount, subtotal, appliedPromotions, clearCart } = useCartStore();
   const [orderResult, setOrderResult] = useState<OrderResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [slipFile, setSlipFile] = useState<File | null>(null);
   const [slipUploading, setSlipUploading] = useState(false);
   const [slipUploaded, setSlipUploaded] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
   const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>("delivery");
+
+  const isLoggedIn = !!session?.user;
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
+      guestName: "",
+      guestEmail: "",
+      guestPhone: "",
       shippingName: "",
       shippingPhone: "",
       shippingAddress: "",
@@ -71,6 +79,23 @@ export default function CheckoutPage() {
       shippingPostcode: "",
     },
   });
+
+  // Pre-fill customer info from profile API when logged in
+  useEffect(() => {
+    if (!session?.user) return;
+    fetch("/api/account/profile")
+      .then((r) => r.json())
+      .then((profile) => {
+        form.setValue("guestName", profile.name ?? "");
+        form.setValue("guestEmail", profile.email ?? "");
+        form.setValue("guestPhone", profile.phone ?? "");
+      })
+      .catch(() => {
+        // fallback to session data if API fails
+        form.setValue("guestName", session.user.name ?? "");
+        form.setValue("guestEmail", session.user.email ?? "");
+      });
+  }, [session, form]);
 
   const isDelivery = deliveryMethod === "delivery";
   const totalQty = items.reduce((s, i) => s + i.quantity, 0);
@@ -110,6 +135,27 @@ export default function CheckoutPage() {
       toast.error(err instanceof Error ? err.message : "เกิดข้อผิดพลาด");
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleCancelOrder() {
+    if (!orderResult) return;
+    setCancelling(true);
+    try {
+      const res = await fetch("/api/checkout/cancel", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderId: orderResult.orderId }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "ยกเลิกไม่สำเร็จ");
+      clearCart();
+      toast.success("ยกเลิกคำสั่งซื้อเรียบร้อยแล้ว");
+      router.push("/");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "เกิดข้อผิดพลาด");
+    } finally {
+      setCancelling(false);
     }
   }
 
@@ -253,6 +299,22 @@ export default function CheckoutPage() {
           >
             {slipUploading ? "กำลังอัพโหลด..." : "อัพโหลดสลิป"}
           </Button>
+
+          <Separator />
+
+          <div className="rounded-lg border border-red-200 bg-red-50 p-4">
+            <p className="text-sm font-medium text-red-700 mb-1">ต้องการยกเลิกคำสั่งซื้อ?</p>
+            <p className="text-xs text-red-500 mb-3">สามารถยกเลิกได้เฉพาะก่อนอัพโหลดสลิป หลังจากยกเลิกจะไม่สามารถประมวลผลคืนได้</p>
+            <Button
+              variant="outline"
+              size="sm"
+              className="border-red-300 text-red-600 hover:bg-red-100 hover:text-red-700 w-full"
+              onClick={handleCancelOrder}
+              disabled={cancelling}
+            >
+              {cancelling ? "กำลังยกเลิก..." : "ยกเลิกคำสั่งซื้อ"}
+            </Button>
+          </div>
         </div>
       </div>
     );
@@ -269,19 +331,30 @@ export default function CheckoutPage() {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               {/* Customer Info */}
               <div className="space-y-4">
-                <h2 className="font-semibold text-lg">ข้อมูลผู้สั่งซื้อ</h2>
+                <div className="flex items-center justify-between">
+                  <h2 className="font-semibold text-lg">ข้อมูลผู้สั่งซื้อ</h2>
+                  {isLoggedIn && (
+                    <span className="text-xs text-blue-600 bg-blue-50 border border-blue-200 px-2 py-1 rounded-full">
+                      ดึงจากบัญชีของคุณโดยอัตโนมัติ
+                    </span>
+                  )}
+                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FormField control={form.control} name="guestName" render={({ field }) => (
                     <FormItem>
                       <FormLabel>ชื่อ-นามสกุล *</FormLabel>
-                      <FormControl><Input {...field} /></FormControl>
+                      <FormControl>
+                        <Input {...field} disabled={isLoggedIn} className={isLoggedIn ? "bg-slate-50 text-slate-500" : ""} />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )} />
                   <FormField control={form.control} name="guestPhone" render={({ field }) => (
                     <FormItem>
                       <FormLabel>เบอร์โทร *</FormLabel>
-                      <FormControl><Input type="tel" {...field} /></FormControl>
+                      <FormControl>
+                        <Input type="tel" {...field} disabled={isLoggedIn} className={isLoggedIn ? "bg-slate-50 text-slate-500" : ""} />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )} />
@@ -289,7 +362,9 @@ export default function CheckoutPage() {
                 <FormField control={form.control} name="guestEmail" render={({ field }) => (
                   <FormItem>
                     <FormLabel>อีเมล *</FormLabel>
-                    <FormControl><Input type="email" {...field} /></FormControl>
+                    <FormControl>
+                      <Input type="email" {...field} disabled={isLoggedIn} className={isLoggedIn ? "bg-slate-50 text-slate-500" : ""} />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )} />

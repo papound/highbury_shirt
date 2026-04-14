@@ -307,12 +307,12 @@ export default function AdminProductForm({ product, categories, warehouses }: { 
                   <FormItem>
                     <FormLabel className="text-xs">ขนาด</FormLabel>
                     <FormControl>
-                      <>
+                      <div>
                         <Input {...field} placeholder="SS/S/M/L" list="size-options" />
                         <datalist id="size-options">
                           {DEFAULT_SIZES.map((s) => <option key={s} value={s} />)}
                         </datalist>
-                      </>
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

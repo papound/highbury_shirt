@@ -13,6 +13,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Pencil, Trash2, Check, X, Key } from "lucide-react";
 
 const ROLE_LABELS: Record<string, string> = {
   SUPERADMIN: "Super Admin",
@@ -29,6 +37,14 @@ export default function AdminSettingsClient({ users: initialUsers, warehouses: i
   const [promptpayName, setPromptpayName] = useState(settingsMap["promptpay_name"] ?? "");
   const [newWarehouse, setNewWarehouse] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Warehouse edit state
+  const [editingWarehouseId, setEditingWarehouseId] = useState<string | null>(null);
+  const [editingWarehouseName, setEditingWarehouseName] = useState("");
+
+  // Delete confirm dialog state
+  const [deleteWarehouseTarget, setDeleteWarehouseTarget] = useState<{ id: string; name: string } | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   // New user form
   const [newUser, setNewUser] = useState({ name: "", email: "", password: "", role: "STAFF" });
@@ -106,6 +122,41 @@ export default function AdminSettingsClient({ users: initialUsers, warehouses: i
     }
   }
 
+  async function saveWarehouseName(warehouseId: string) {
+    if (!editingWarehouseName.trim()) return;
+    try {
+      const res = await fetch(`/api/admin/warehouses/${warehouseId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: editingWarehouseName }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setWarehouses((prev) => prev.map((w) => (w.id === warehouseId ? { ...w, name: data.name } : w)));
+      setEditingWarehouseId(null);
+      toast.success("แก้ไขชื่อคลังสำเร็จ");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "เกิดข้อผิดพลาด");
+    }
+  }
+
+  async function confirmDeleteWarehouse() {
+    if (!deleteWarehouseTarget) return;
+    setDeleteLoading(true);
+    try {
+      const res = await fetch(`/api/admin/warehouses/${deleteWarehouseTarget.id}`, { method: "DELETE" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setWarehouses((prev) => prev.filter((w) => w.id !== deleteWarehouseTarget.id));
+      setDeleteWarehouseTarget(null);
+      toast.success("ลบคลังสินค้าสำเร็จ");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "เกิดข้อผิดพลาด");
+    } finally {
+      setDeleteLoading(false);
+    }
+  }
+
   return (
     <div className="space-y-8">
       {/* PromptPay Settings */}
@@ -131,9 +182,56 @@ export default function AdminSettingsClient({ users: initialUsers, warehouses: i
         <Separator />
         <div className="space-y-2">
           {warehouses.map((w) => (
-            <div key={w.id} className="flex items-center justify-between">
-              <span className="text-sm">{w.name}</span>
-              <Badge variant="outline">Active</Badge>
+            <div key={w.id} className="flex items-center justify-between gap-3 py-1.5 px-3 rounded-lg hover:bg-muted/30">
+              {editingWarehouseId === w.id ? (
+                <div className="flex items-center gap-2 flex-1">
+                  <Input
+                    value={editingWarehouseName}
+                    onChange={(e) => setEditingWarehouseName(e.target.value)}
+                    className="h-8 text-sm max-w-xs"
+                    autoFocus
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") saveWarehouseName(w.id);
+                      if (e.key === "Escape") setEditingWarehouseId(null);
+                    }}
+                  />
+                  <Button size="icon" variant="ghost" className="h-7 w-7 text-green-600" onClick={() => saveWarehouseName(w.id)}>
+                    <Check className="w-4 h-4" />
+                  </Button>
+                  <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => setEditingWarehouseId(null)}>
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <span className="text-sm font-medium truncate">{w.name}</span>
+                  <span className="flex items-center gap-1 text-xs text-muted-foreground font-mono bg-muted px-2 py-0.5 rounded shrink-0">
+                    <Key className="w-3 h-3" />
+                    {w.uniqueKey}
+                  </span>
+                  <Badge variant="outline" className="text-xs shrink-0">Active</Badge>
+                </div>
+              )}
+              {editingWarehouseId !== w.id && (
+                <div className="flex items-center gap-1 shrink-0">
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="h-7 w-7"
+                    onClick={() => { setEditingWarehouseId(w.id); setEditingWarehouseName(w.name); }}
+                  >
+                    <Pencil className="w-3.5 h-3.5" />
+                  </Button>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="h-7 w-7 text-destructive hover:text-destructive"
+                    onClick={() => setDeleteWarehouseTarget({ id: w.id, name: w.name })}
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </Button>
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -143,10 +241,47 @@ export default function AdminSettingsClient({ users: initialUsers, warehouses: i
             value={newWarehouse}
             onChange={(e) => setNewWarehouse(e.target.value)}
             className="max-w-xs"
+            onKeyDown={(e) => e.key === "Enter" && addWarehouse()}
           />
           <Button variant="outline" onClick={addWarehouse}>เพิ่มคลัง</Button>
         </div>
+        <p className="text-xs text-muted-foreground">
+          Unique Key จะถูกสร้างอัตโนมัติและใช้สำหรับอ้างอิงในการย้ายสต็อกข้ามคลัง
+        </p>
       </section>
+
+      {/* Delete Warehouse Confirm Dialog */}
+      <Dialog open={!!deleteWarehouseTarget} onOpenChange={(o) => !o && setDeleteWarehouseTarget(null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-destructive">ยืนยันการลบคลังสินค้า</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 py-2">
+            <p className="text-sm">
+              คุณกำลังจะลบคลัง <strong>&quot;{deleteWarehouseTarget?.name}&quot;</strong>
+            </p>
+            <div className="rounded-lg bg-destructive/10 text-destructive text-sm px-4 py-3 space-y-1">
+              <p className="font-semibold">⚠️ คำเตือน</p>
+              <p>การลบคลังสินค้าจะลบข้อมูลต่อไปนี้ทั้งหมด:</p>
+              <ul className="list-disc list-inside space-y-0.5 ml-1">
+                <li>สต็อกสินค้าทั้งหมดในคลังนี้</li>
+                <li>ประวัติการปรับสต็อกทั้งหมด</li>
+                <li>ประวัติการโอนเข้า/ออกจากคลังนี้</li>
+                <li>ประวัติการเบิกสินค้าจากคลังนี้</li>
+              </ul>
+              <p className="font-medium mt-1">การกระทำนี้ไม่สามารถย้อนกลับได้</p>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setDeleteWarehouseTarget(null)} disabled={deleteLoading}>
+              ยกเลิก
+            </Button>
+            <Button variant="destructive" onClick={confirmDeleteWarehouse} disabled={deleteLoading}>
+              {deleteLoading ? "กำลังลบ..." : "ยืนยันลบ"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Users */}
       <section className="border rounded-xl p-5 bg-card space-y-4">

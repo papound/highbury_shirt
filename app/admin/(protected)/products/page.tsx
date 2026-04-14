@@ -2,8 +2,8 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Upload, Pencil } from "lucide-react";
-import AdminProductImportButton from "@/components/admin/product-import-button";
+import { Plus, Pencil } from "lucide-react";
+import AdminProductImportDialog from "@/components/admin/product-import-dialog";
 
 export default async function AdminProductsPage() {
   const products = await prisma.product.findMany({
@@ -23,7 +23,7 @@ export default async function AdminProductsPage() {
           <p className="text-muted-foreground text-sm">{products.length} รายการ</p>
         </div>
         <div className="flex items-center gap-2">
-          <AdminProductImportButton />
+          <AdminProductImportDialog />
           <Button asChild>
             <Link href="/admin/products/new">
               <Plus className="w-4 h-4 mr-1" />
