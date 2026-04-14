@@ -98,32 +98,43 @@ export default async function HomePage() {
       )}
 
       {/* ── Hero ─────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-slate-50 pt-20 pb-28 md:pt-32 md:pb-40">
-        {/* Glow blobs */}
-        <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/3 w-[800px] h-[800px] bg-blue-300/20 rounded-full blur-[100px] opacity-70 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 translate-y-1/3 -translate-x-1/3 w-[600px] h-[600px] bg-indigo-300/20 rounded-full blur-[100px] opacity-70 pointer-events-none" />
+      <section className="relative overflow-hidden pt-28 pb-32 md:pt-40 md:pb-48">
+        {/* Background Image & Overlay */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="https://images.unsplash.com/photo-1617137968427-85924c800a22?auto=format&fit=crop&w=1920&q=80"
+            alt="Premium shirts background"
+            fill
+            priority
+            className="object-cover object-center"
+            sizes="100vw"
+          />
+          {/* Gradient Overlay to make text readable */}
+          <div className="absolute inset-0 bg-gradient-to-b from-white/95 via-white/80 to-white/95 md:from-white/80 md:via-white/60 md:to-white/95" />
+          <div className="absolute inset-0 bg-slate-900/10" />
+        </div>
         
         <div className="container mx-auto px-4 relative z-10 text-center">
-          <Badge variant="secondary" className="mb-6 px-4 py-1.5 text-sm font-medium bg-blue-100 text-blue-800 hover:bg-blue-200 border-none transition-colors">
+          <Badge variant="secondary" className="mb-6 px-4 py-1.5 text-sm font-medium bg-blue-600 text-white hover:bg-blue-700 border-none transition-colors shadow-sm">
             เสื้อเชิ้ตคุณภาพระดับสากล
           </Badge>
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 mb-6 max-w-4xl mx-auto leading-tight">
+          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 mb-6 max-w-4xl mx-auto leading-tight drop-shadow-sm">
             ยกระดับบุคลิกภาพกับ <br className="hidden md:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-indigo-700 drop-shadow-sm">
               HIGHBURY
             </span>
           </h1>
-          <p className="text-lg md:text-xl text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg md:text-xl text-slate-700 mb-10 max-w-2xl mx-auto leading-relaxed font-medium drop-shadow-sm">
             เสื้อเชิ้ตสำเร็จรูปสำหรับผู้ชายและผู้หญิง ตัดเย็บด้วยความประณีต หลากสีสัน หลายไซส์ พร้อมส่งตรงถึงมือคุณแล้ววันนี้
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button size="lg" className="rounded-full px-8 bg-blue-600 hover:bg-blue-700 text-md h-14 shadow-lg shadow-blue-500/20 transition-all hover:-translate-y-1" asChild>
+            <Button size="lg" className="rounded-full px-8 bg-blue-600 hover:bg-blue-700 text-md h-14 shadow-lg shadow-blue-500/30 transition-all hover:-translate-y-1" asChild>
               <Link href="/products">
                 เลือกซื้อสินค้า
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
-            <Button size="lg" variant="outline" className="rounded-full px-8 text-md h-14 bg-white border-slate-200 hover:bg-slate-50 transition-all hover:-translate-y-1" asChild>
+            <Button size="lg" variant="outline" className="rounded-full px-8 text-md h-14 bg-white/90 backdrop-blur-sm border-slate-200 hover:bg-white text-slate-700 transition-all hover:-translate-y-1 shadow-sm" asChild>
               <Link href="/about">เกี่ยวกับเรา</Link>
             </Button>
           </div>
