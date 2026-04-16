@@ -13,6 +13,7 @@ var_disk="${var_disk:-8}"
 var_os="${var_os:-ubuntu}"
 var_version="${var_version:-22.04}"
 var_unprivileged="${var_unprivileged:-1}"
+var_dns="${var_dns:-8.8.8.8}"             # กำหนด DNS ตายตัว ไม่ต้องรอ inject
 
 STANDALONE_INSTALL_URL="https://raw.githubusercontent.com/papound/highbury_shirt/main/scripts/install/highbury-shirt-standalone.sh"
 

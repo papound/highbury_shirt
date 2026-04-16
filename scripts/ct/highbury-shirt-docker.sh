@@ -17,6 +17,7 @@ var_os="${var_os:-ubuntu}"
 var_version="${var_version:-22.04}"
 var_unprivileged="${var_unprivileged:-0}"  # Docker ต้องการ privileged
 var_features="${var_features:-nesting=1}"  # เปิด nesting ก่อน build เพื่อให้ Docker ใช้ได้ทันที
+var_dns="${var_dns:-8.8.8.8}"             # กำหนด DNS ตายตัว ไม่ต้องรอ inject
 
 DOCKER_INSTALL_URL="https://raw.githubusercontent.com/papound/highbury_shirt/main/scripts/install/highbury-shirt-docker.sh"
 
