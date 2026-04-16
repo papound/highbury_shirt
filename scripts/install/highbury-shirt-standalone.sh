@@ -162,7 +162,7 @@ msg_ok ".env.local created"
 # --------------------------------------------------------------------------- #
 msg_info "Installing Node.js dependencies (npm install)"
 cd "$APP_DIR"
-npm install >/dev/null
+npm install
 msg_ok "Node dependencies installed"
 
 # --------------------------------------------------------------------------- #
@@ -181,26 +181,28 @@ msg_ok "Schema patched"
 # --------------------------------------------------------------------------- #
 msg_info "Generating Prisma client"
 set -a; source "${APP_DIR}/.env.local"; set +a
-npx prisma generate >/dev/null
+npx prisma generate
 msg_ok "Prisma client generated"
 
 msg_info "Pushing schema to database"
-npx prisma db push >/dev/null
+npx prisma db push
 msg_ok "Schema pushed"
 
 # --------------------------------------------------------------------------- #
 # 10. Seed database (โหลดข้อมูลเริ่มต้น)
 # --------------------------------------------------------------------------- #
-msg_info "Seeding database"
+msg_info "Seeding database (seed-data.json ~3MB, อาจใช้เวลา 2-5 นาที)"
 set -a; source "${APP_DIR}/.env.local"; set +a
-npx tsx prisma/seed.ts >/dev/null
+# เพิ่ม --max-old-space-size=512 เพื่อป้องกัน OOM บน RAM 1GB
+# ไม่ suppress output เพื่อให้เห็น error ถ้าค้าง
+NODE_OPTIONS="--max-old-space-size=512" npx tsx prisma/seed.ts
 msg_ok "Database seeded"
 
 # --------------------------------------------------------------------------- #
 # 11. Build Next.js application
 # --------------------------------------------------------------------------- #
 msg_info "Building Next.js application (อาจใช้เวลา 2-5 นาที)"
-npm run build >/dev/null
+NODE_OPTIONS="--max-old-space-size=1536" npm run build
 msg_ok "Build complete"
 
 # --------------------------------------------------------------------------- #
