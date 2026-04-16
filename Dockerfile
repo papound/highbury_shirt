@@ -16,7 +16,7 @@ RUN apk add --no-cache openssl libc6-compat
 
 COPY package.json package-lock.json* ./
 RUN --mount=type=cache,target=/root/.npm \
-    npm ci --prefer-offline
+    npm install --prefer-offline
 
 
 # ---- Stage 2: builder ----
