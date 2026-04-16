@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+source <(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/misc/build.func)
+# Copyright (c) 2021-2026 tteck
+# Author: papound
+# License: MIT | https://github.com/community-scripts/ProxmoxVE/raw/main/LICENSE
+# Source: https://github.com/papound/highbury_shirt
+#
+# Approach: Docker Stack (Next.js + PostgreSQL ใน containers)
+# ใช้ script นี้แทน highbury-shirt.sh ถ้าต้องการ Docker approach
+
+APP="Highbury-Shirt"
+var_tags="${var_tags:-nextjs;ecommerce;docker}"
+var_cpu="${var_cpu:-2}"
+var_ram="${var_ram:-2048}"  # Docker ต้องการ RAM มากกว่า bare-metal เล็กน้อย
+var_disk="${var_disk:-12}"   # เผื่อ Docker images (~4-5 GB)
+var_os="${var_os:-ubuntu}"
+var_version="${var_version:-22.04}"
+var_unprivileged="${var_unprivileged:-0}"  # Docker ต้องการ privileged หรือ nesting
+
+DOCKER_INSTALL_URL="https://raw.githubusercontent.com/papound/highbury_shirt/main/scripts/install/highbury-shirt-docker.sh"
+
+header_info "$APP"
+color
+variables
+base_settings
+catch_errors
+
+function update_script() {
+  header_info
+  check_container_storage
+  check_container_resources
+
+  if [[ ! -d /opt/highbury-shirt ]]; then
+    msg_error "No ${APP} Installation Found!"
+    exit
+  fi
+
+  msg_info "Updating ${APP} Docker Stack"
+  cd /opt/highbury-shirt
+  git pull
+  docker compose up -d --build
+  msg_ok "Updated ${APP} successfully!"
+  exit
+}
+
+start
+build_container
+description
+
+# เปิด nesting features สำหรับ Docker ใน LXC
+msg_info "Enabling LXC nesting for Docker"
+pct set "$CTID" --features nesting=1
+msg_ok "Nesting enabled"
+
+# รัน Docker installer ใน LXC
+msg_info "Running ${APP} Docker installer inside LXC ${CTID}"
+pct exec "$CTID" -- bash -c "$(curl -fsSL ${DOCKER_INSTALL_URL})"
+msg_ok "Installer completed"
+
+msg_ok "Completed successfully!\n"
+echo -e "${CREATING}${GN}${APP} (Docker) setup has been successfully initialized!${CL}"
+echo -e "${INFO}${YW} Access it using the following URL:${CL}"
+echo -e "${TAB}${GATEWAY}${BGN}http://${IP}${CL}"
+echo -e "${INFO}${YW} App files located at:${CL}"
+echo -e "${TAB}${BGN}/opt/highbury-shirt${CL}"
+echo -e "${INFO}${YW} Edit env config at:${CL}"
+echo -e "${TAB}${BGN}/opt/highbury-shirt/.env${CL}"
+echo -e "${INFO}${YW} Docker commands (inside LXC):${CL}"
+echo -e "${TAB}${BGN}cd /opt/highbury-shirt && docker compose logs -f app${CL}"

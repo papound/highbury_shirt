@@ -1,0 +1,16 @@
+.git
+.gitignore
+.next
+node_modules
+npm-debug.log*
+.env*
+!.env.example
+README.md
+AGENTS.md
+CLAUDE.md
+*.sh
+scripts/
+prisma/dev.db
+prisma/dev.db-journal
+uploads/
+public/uploads/

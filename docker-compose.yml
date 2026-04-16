@@ -1,0 +1,48 @@
+# =============================================================================
+# Highbury Shirt — Docker Compose Stack
+# =============================================================================
+# วิธีใช้:
+#   1. copy ไฟล์นี้ไปยัง server
+#   2. สร้างไฟล์ .env (ดู .env.example)
+#   3. docker compose up -d --build
+# =============================================================================
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: highbury-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-highbury}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: ${DB_NAME:-highbury_db}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-highbury} -d ${DB_NAME:-highbury_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: highbury-app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://${DB_USER:-highbury}:${DB_PASS}@db:5432/${DB_NAME:-highbury_db}
+      AUTH_SECRET: ${AUTH_SECRET}
+      NEXTAUTH_URL: ${NEXTAUTH_URL}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
+      UPLOADTHING_TOKEN: ${UPLOADTHING_TOKEN:-CHANGE_ME}
+      LINE_NOTIFY_TOKEN: ${LINE_NOTIFY_TOKEN:-CHANGE_ME}
+      NODE_ENV: production
+    ports:
+      - "3000:3000"
+
+volumes:
+  postgres_data:
