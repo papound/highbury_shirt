@@ -13,8 +13,8 @@ var_tags="${var_tags:-nextjs;ecommerce;docker}"
 var_cpu="${var_cpu:-2}"
 var_ram="${var_ram:-2048}"  # Docker ต้องการ RAM มากกว่า bare-metal เล็กน้อย
 var_disk="${var_disk:-12}"   # เผื่อ Docker images (~4-5 GB)
-var_os="${var_os:-ubuntu}"
-var_version="${var_version:-22.04}"
+var_os="${var_os:-debian}"
+var_version="${var_version:-12}"
 var_unprivileged="${var_unprivileged:-0}"  # Docker ต้องการ privileged
 var_features="${var_features:-nesting=1}"  # เปิด nesting ก่อน build เพื่อให้ Docker ใช้ได้ทันที
 var_dns="${var_dns:-8.8.8.8}"             # กำหนด DNS ตายตัว ไม่ต้องรอ inject
