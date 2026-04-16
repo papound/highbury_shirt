@@ -180,6 +180,7 @@ msg_ok "Schema patched"
 # 9. Generate Prisma client และ push schema
 # --------------------------------------------------------------------------- #
 msg_info "Generating Prisma client"
+set -a; source "${APP_DIR}/.env.local"; set +a
 npx prisma generate >/dev/null
 msg_ok "Prisma client generated"
 
