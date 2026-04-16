@@ -75,9 +75,23 @@ export default async function BlogPostPage({ params }: Props) {
           prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline
           prose-img:rounded-xl prose-img:shadow-md
           prose-blockquote:border-l-blue-600 prose-blockquote:bg-blue-50/50 prose-blockquote:py-2 prose-blockquote:pr-6 prose-blockquote:rounded-r-lg
-          prose-li:marker:text-blue-500"
+          prose-li:marker:text-blue-500
+          prose-p:leading-relaxed prose-p:text-slate-700
+          prose-hr:border-slate-200 prose-hr:my-10
+          prose-strong:text-slate-900 prose-strong:font-bold"
         >
-          <ReactMarkdown>{post.content}</ReactMarkdown>
+          <ReactMarkdown
+            components={{
+              h2: ({ ...props }) => <h2 className="mt-12 mb-6" {...props} />,
+              h3: ({ ...props }) => <h3 className="mt-8 mb-4 flex items-center gap-2" {...props} />,
+              hr: () => <hr className="my-12 border-t-2 border-slate-100" />,
+              p: ({ children }) => <p className="mb-6">{children}</p>,
+              ul: ({ children }) => <ul className="space-y-3 mb-8">{children}</ul>,
+              li: ({ children }) => <li className="mb-1">{children}</li>,
+            }}
+          >
+            {post.content}
+          </ReactMarkdown>
         </div>
 
         {/* Footer / Navigation */}

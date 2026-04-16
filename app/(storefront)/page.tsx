@@ -14,7 +14,7 @@ async function getFeaturedProducts() {
   return prisma.product.findMany({
     where: { isFeatured: true, status: "ACTIVE" },
     include: {
-      images: { orderBy: { sortOrder: "asc" }, take: 1 },
+      images: { where: { variantId: null }, orderBy: { sortOrder: "asc" }, take: 1 },
       variants: true,
       category: true,
     },
