@@ -99,7 +99,7 @@ export async function GET() {
 
   const filename = `products_export_${new Date().toISOString().slice(0, 10)}.xlsx`;
 
-  return new NextResponse(buffer as Buffer, {
+  return new NextResponse(new Uint8Array(buffer as ArrayBuffer), {
     status: 200,
     headers: {
       "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
