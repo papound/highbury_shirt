@@ -120,9 +120,12 @@ async function main() {
   console.log(`[6/6] SiteSettings (${siteSettings.length})`);
   for (const row of siteSettings) {
     await prisma.siteSetting.upsert({
-      where: { id: row.id },
-      update: row,
-      create: row,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      where: { key: (row as any).key },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      update: row as any,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      create: row as any,
     });
   }
 
