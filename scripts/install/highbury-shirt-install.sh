@@ -62,12 +62,17 @@ msg_info "Patching schema for PostgreSQL"
 sed -i 's/provider = "sqlite"/provider = "postgresql"/' /opt/highbury-shirt/prisma/schema.prisma
 msg_ok "Patched schema"
 
-msg_info "Running Prisma db push"
-$STD npx prisma db push --skip-generate
+msg_info "Generating Prisma Client"
+$STD npx prisma generate
+msg_ok "Prisma Client Generated"
+
+msg_info "Pushing Database Schema"
+$STD npx prisma db push
 msg_ok "Schema pushed to database"
 
 msg_info "Seeding Database"
-$STD npm run db:seed
+set -a; source /opt/highbury-shirt/.env.local; set +a
+$STD npx tsx prisma/seed.ts
 msg_ok "Database Seeded"
 
 msg_info "Building Application"

@@ -15,8 +15,9 @@ var_version="${var_version:-22.04}"
 var_unprivileged="${var_unprivileged:-1}"
 
 header_info "$APP"
-variables
 color
+variables
+base_settings
 catch_errors
 
 function update_script() {
@@ -41,6 +42,14 @@ function update_script() {
   msg_info "Installing Dependencies"
   $STD npm ci
   msg_ok "Installed Dependencies"
+
+  msg_info "Patching schema for PostgreSQL"
+  sed -i 's/provider = "sqlite"/provider = "postgresql"/' prisma/schema.prisma
+  msg_ok "Patched schema"
+
+  msg_info "Syncing Database Schema"
+  $STD npx prisma db push
+  msg_ok "Database Schema Synced"
 
   msg_info "Building ${APP}"
   $STD npm run build
