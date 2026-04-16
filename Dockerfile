@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 # =============================================================================
 # Highbury Shirt — Multi-stage Dockerfile
 # =============================================================================
@@ -14,7 +15,8 @@ WORKDIR /app
 RUN apk add --no-cache openssl libc6-compat
 
 COPY package.json package-lock.json* ./
-RUN npm install
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --prefer-offline
 
 
 # ---- Stage 2: builder ----

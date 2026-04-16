@@ -46,7 +46,8 @@ if [[ "${1:-}" == "update" ]]; then
   msg_ok "Pulled latest code"
 
   msg_info "Rebuilding and restarting Docker stack"
-  docker compose up -d --build
+  docker compose build --progress=plain
+  docker compose up -d
   msg_ok "Stack updated"
 
   msg_ok "${APP} updated successfully!"
@@ -127,7 +128,8 @@ msg_ok ".env created"
 # --------------------------------------------------------------------------- #
 msg_info "Building Docker images and starting stack (อาจใช้เวลา 5-10 นาที)"
 cd "$APP_DIR"
-docker compose up -d --build
+docker compose build --progress=plain
+docker compose up -d
 msg_ok "Docker stack started"
 
 # --------------------------------------------------------------------------- #

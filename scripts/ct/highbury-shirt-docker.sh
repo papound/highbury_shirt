@@ -40,7 +40,8 @@ function update_script() {
   msg_info "Updating ${APP} Docker Stack"
   cd /opt/highbury-shirt
   git pull
-  docker compose up -d --build
+  docker compose build --progress=plain
+  docker compose up -d
   msg_ok "Updated ${APP} successfully!"
   exit
 }
