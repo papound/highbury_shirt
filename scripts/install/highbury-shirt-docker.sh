@@ -64,10 +64,9 @@ echo -e "${GREEN}========================================${RESET}\n"
 # --------------------------------------------------------------------------- #
 # 1. อัปเดต OS
 # --------------------------------------------------------------------------- #
-msg_info "Updating OS packages"
+msg_info "Updating OS package lists"
 apt-get update -y >/dev/null
-apt-get upgrade -y >/dev/null
-msg_ok "OS updated"
+msg_ok "Package lists updated"
 
 msg_info "Installing prerequisites"
 apt-get install -y curl git ca-certificates gnupg >/dev/null
