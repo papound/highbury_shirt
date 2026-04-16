@@ -65,6 +65,7 @@ if [[ "${1:-}" == "update" ]]; then
 
   msg_info "Patching Prisma schema for PostgreSQL"
   sed -i 's/provider = "sqlite"/provider = "postgresql"/' prisma/schema.prisma
+  sed -i '/^\s*url\s*=\s*env(/d' prisma/schema.prisma
   msg_ok "Schema patched"
 
   msg_info "Syncing database schema"
@@ -169,7 +170,10 @@ msg_ok "Node dependencies installed"
 #    (repo เก็บ schema เป็น sqlite สำหรับ local dev)
 # --------------------------------------------------------------------------- #
 msg_info "Patching Prisma schema for PostgreSQL"
+# เปลี่ยน provider sqlite → postgresql
 sed -i 's/provider = "sqlite"/provider = "postgresql"/' "${APP_DIR}/prisma/schema.prisma"
+# Prisma 7: ลบ url = env(...) ออกจาก datasource block (ย้ายไปอยู่ใน prisma.config.ts แล้ว)
+sed -i '/^\s*url\s*=\s*env(/d' "${APP_DIR}/prisma/schema.prisma"
 msg_ok "Schema patched"
 
 # --------------------------------------------------------------------------- #
