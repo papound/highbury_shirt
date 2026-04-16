@@ -60,7 +60,7 @@ if [[ "${1:-}" == "update" ]]; then
   msg_ok "Pulled latest code"
 
   msg_info "Installing dependencies"
-  npm ci
+  npm install
   msg_ok "Dependencies installed"
 
   msg_info "Patching Prisma schema for PostgreSQL"
@@ -159,9 +159,9 @@ msg_ok ".env.local created"
 # --------------------------------------------------------------------------- #
 # 7. ติดตั้ง Node.js dependencies
 # --------------------------------------------------------------------------- #
-msg_info "Installing Node.js dependencies (npm ci)"
+msg_info "Installing Node.js dependencies (npm install)"
 cd "$APP_DIR"
-npm ci >/dev/null
+npm install >/dev/null
 msg_ok "Node dependencies installed"
 
 # --------------------------------------------------------------------------- #
