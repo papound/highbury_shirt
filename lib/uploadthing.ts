@@ -18,7 +18,7 @@ export const ourFileRouter = {
       return { url: file.ufsUrl ?? file.url };
     }),
 
-  paymentSlip: f({ image: { maxFileSize: "5MB", maxFileCount: 1 } })
+  paymentSlip: f({ image: { maxFileSize: "4MB", maxFileCount: 1 } })
     .middleware(async () => {
       // Payment slips can be uploaded by anyone (guest checkout)
       return {};
