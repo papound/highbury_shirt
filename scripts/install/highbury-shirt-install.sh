@@ -62,12 +62,12 @@ msg_info "Patching schema for PostgreSQL"
 sed -i 's/provider = "sqlite"/provider = "postgresql"/' /opt/highbury-shirt/prisma/schema.prisma
 msg_ok "Patched schema"
 
-msg_info "Running Prisma Migrations"
-$STD npx prisma migrate deploy
-msg_ok "Database Migrated"
+msg_info "Running Prisma db push"
+$STD npx prisma db push --skip-generate
+msg_ok "Schema pushed to database"
 
 msg_info "Seeding Database"
-$STD npx prisma db seed
+$STD npm run db:seed
 msg_ok "Database Seeded"
 
 msg_info "Building Application"
