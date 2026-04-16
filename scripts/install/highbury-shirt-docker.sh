@@ -5,7 +5,7 @@
 # Copyright (c) 2021-2026 tteck | Author: papound | License: MIT
 # Source: https://github.com/papound/highbury_shirt
 #
-# วิธีใช้งาน (รันบน LXC Ubuntu 22.04 ด้วย root):
+# วิธีใช้งาน (รันบน LXC Debian 12 ด้วย root):
 #   bash <(curl -fsSL https://raw.githubusercontent.com/papound/highbury_shirt/main/scripts/install/highbury-shirt-docker.sh)
 # =============================================================================
 
@@ -58,7 +58,7 @@ fi
 # =========================================================================== #
 
 echo -e "\n${GREEN}========================================${RESET}"
-echo -e "${GREEN}  Installing ${APP} (Docker Stack)${RESET}"
+echo -e "${GREEN}  Installing ${APP} on Debian (Docker Stack)${RESET}"
 echo -e "${GREEN}========================================${RESET}\n"
 
 # --------------------------------------------------------------------------- #
@@ -77,13 +77,13 @@ msg_ok "Prerequisites installed"
 # --------------------------------------------------------------------------- #
 msg_info "Installing Docker Engine"
 install -m 0755 -d /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
+curl -fsSL https://download.docker.com/linux/debian/gpg | \
   gpg --dearmor -o /etc/apt/keyrings/docker.gpg >/dev/null
 chmod a+r /etc/apt/keyrings/docker.gpg
 
 echo \
   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
-  https://download.docker.com/linux/ubuntu \
+  https://download.docker.com/linux/debian \
   $(. /etc/os-release && echo "$VERSION_CODENAME") stable" \
   > /etc/apt/sources.list.d/docker.list
 

@@ -5,7 +5,7 @@
 # Copyright (c) 2021-2026 tteck | Author: papound | License: MIT
 # Source: https://github.com/papound/highbury_shirt
 #
-# วิธีใช้งาน (รันบน LXC Ubuntu 22.04 ด้วย root):
+# วิธีใช้งาน (รันบน LXC Debian 12 ด้วย root):
 #   bash <(curl -fsSL https://raw.githubusercontent.com/papound/highbury_shirt/main/scripts/install/highbury-shirt-standalone.sh)
 #
 # หรือ copy ไฟล์นี้ขึ้น LXC แล้วรัน:
