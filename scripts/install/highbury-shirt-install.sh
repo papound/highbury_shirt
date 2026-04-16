@@ -58,6 +58,10 @@ msg_info "Installing Node Dependencies"
 $STD npm ci
 msg_ok "Installed Node Dependencies"
 
+msg_info "Patching schema for PostgreSQL"
+sed -i 's/provider = "sqlite"/provider = "postgresql"/' /opt/highbury-shirt/prisma/schema.prisma
+msg_ok "Patched schema"
+
 msg_info "Running Prisma Migrations"
 $STD npx prisma migrate deploy
 msg_ok "Database Migrated"
