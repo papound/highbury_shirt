@@ -83,7 +83,8 @@ async function main() {
       products
         .slice(i, i + BATCH)
         .map((row: Record<string, unknown>) =>
-          prisma.product.upsert({ where: { id: row.id as string }, update: row, create: row })
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          prisma.product.upsert({ where: { id: row.id as string }, update: row as any, create: row as any })
         )
     );
     process.stdout.write(`\r  ${Math.min(i + BATCH, products.length)}/${products.length}`);
@@ -97,7 +98,8 @@ async function main() {
       productVariants
         .slice(i, i + BATCH)
         .map((row: Record<string, unknown>) =>
-          prisma.productVariant.upsert({ where: { id: row.id as string }, update: row, create: row })
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          prisma.productVariant.upsert({ where: { id: row.id as string }, update: row as any, create: row as any })
         )
     );
     process.stdout.write(`\r  ${Math.min(i + BATCH, productVariants.length)}/${productVariants.length}`);
