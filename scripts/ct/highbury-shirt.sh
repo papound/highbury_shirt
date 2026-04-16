@@ -14,6 +14,9 @@ var_os="${var_os:-ubuntu}"
 var_version="${var_version:-22.04}"
 var_unprivileged="${var_unprivileged:-1}"
 
+# ชี้ install script ไปที่ repo ของเราเอง แทนที่จะใช้ repo community-scripts
+INSTALL_URL="https://raw.githubusercontent.com/papound/highbury_shirt/main/scripts/install/highbury-shirt-install.sh"
+
 header_info "$APP"
 color
 variables
