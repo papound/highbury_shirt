@@ -8,7 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { Search } from "lucide-react";
 import Link from "next/link";
 import { getStatusLabel, getStatusBadgeClass } from "@/lib/order-status";
-import { formatCustomerNo } from "@/lib/customer-no";
+import { formatCustomerNo } from "@/lib/customer-no-format";
 
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
   PENDING: { label: "รอดำเนินการ", color: "bg-yellow-100 text-yellow-800" },

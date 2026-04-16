@@ -16,7 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { toast } from "sonner";
-import { formatCustomerNo } from "@/lib/customer-no";
+import { formatCustomerNo } from "@/lib/customer-no-format";
 
 const profileSchema = z.object({
   name: z.string().min(2, "กรุณาระบุชื่อ"),
