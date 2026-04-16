@@ -1,25 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
-import { Suspense } from "react";
+import { PaginationJump } from "@/components/storefront/pagination-jump";
 import { Shirt } from "lucide-react";
 import prisma from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Search, SlidersHorizontal } from "lucide-react";
 
 interface SearchParams {
@@ -56,7 +44,7 @@ async function getProducts(sp: SearchParams) {
     prisma.product.findMany({
       where,
       include: {
-        images: { where: { isPrimary: true }, take: 1 },
+        images: { where: { isPrimary: true, variantId: null }, take: 1 },
         variants: true,
         category: true,
       },
@@ -220,61 +208,111 @@ export default async function ProductsPage({ searchParams }: Props) {
 
               {/* Pagination */}
               {totalPages > 1 && (
-                <div className="flex justify-center items-center gap-1 mt-8 flex-wrap">
-                  {/* Prev */}
-                  {page > 1 && (
+                <div className="mt-10 flex flex-col items-center gap-4">
+                  {/* Button row */}
+                  <div className="flex items-center gap-1 flex-wrap justify-center">
+                    {/* First */}
+                    <Link
+                      href={`/products?${new URLSearchParams({ ...sp, page: "1" })}`}
+                      aria-disabled={page === 1}
+                      title="หน้าแรก"
+                      className={`w-9 h-9 flex items-center justify-center rounded-xl text-sm border transition-all ${
+                        page === 1
+                          ? "pointer-events-none opacity-30 border-slate-200 bg-white"
+                          : "border-slate-200 bg-white hover:bg-blue-50 hover:border-blue-300 shadow-sm"
+                      }`}
+                    >
+                      «
+                    </Link>
+
+                    {/* Prev */}
                     <Link
                       href={`/products?${new URLSearchParams({ ...sp, page: String(page - 1) })}`}
-                      className="w-9 h-9 flex items-center justify-center rounded-md text-sm border border-border hover:bg-secondary transition-colors"
+                      aria-disabled={page === 1}
+                      title="หน้าก่อนหน้า"
+                      className={`w-9 h-9 flex items-center justify-center rounded-xl text-sm border transition-all ${
+                        page === 1
+                          ? "pointer-events-none opacity-30 border-slate-200 bg-white"
+                          : "border-slate-200 bg-white hover:bg-blue-50 hover:border-blue-300 shadow-sm"
+                      }`}
                     >
                       ‹
                     </Link>
-                  )}
 
-                  {(() => {
-                    const pages: (number | "...")[] = [];
-                    const delta = 2;
-                    const left = page - delta;
-                    const right = page + delta;
-
-                    for (let i = 1; i <= totalPages; i++) {
-                      if (i === 1 || i === totalPages || (i >= left && i <= right)) {
-                        pages.push(i);
-                      } else if (pages[pages.length - 1] !== "...") {
-                        pages.push("...");
+                    {/* Ellipsis pages */}
+                    {(() => {
+                      const pages: (number | "...")[] = [];
+                      const delta = 2;
+                      const left = page - delta;
+                      const right = page + delta;
+                      for (let i = 1; i <= totalPages; i++) {
+                        if (i === 1 || i === totalPages || (i >= left && i <= right)) {
+                          pages.push(i);
+                        } else if (pages[pages.length - 1] !== "...") {
+                          pages.push("...");
+                        }
                       }
-                    }
+                      return pages.map((p, idx) =>
+                        p === "..." ? (
+                          <span key={`ellipsis-${idx}`} className="w-9 h-9 flex items-center justify-center text-sm text-slate-400">
+                            …
+                          </span>
+                        ) : (
+                          <Link
+                            key={p}
+                            href={`/products?${new URLSearchParams({ ...sp, page: String(p) })}`}
+                            className={`w-9 h-9 flex items-center justify-center rounded-xl text-sm border font-medium transition-all ${
+                              page === p
+                                ? "bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-500/25"
+                                : "border-slate-200 bg-white hover:bg-blue-50 hover:border-blue-300 shadow-sm"
+                            }`}
+                          >
+                            {p}
+                          </Link>
+                        )
+                      );
+                    })()}
 
-                    return pages.map((p, idx) =>
-                      p === "..." ? (
-                        <span key={`ellipsis-${idx}`} className="w-9 h-9 flex items-center justify-center text-sm text-muted-foreground">
-                          …
-                        </span>
-                      ) : (
-                        <Link
-                          key={p}
-                          href={`/products?${new URLSearchParams({ ...sp, page: String(p) })}`}
-                          className={`w-9 h-9 flex items-center justify-center rounded-md text-sm border transition-colors ${
-                            page === p
-                              ? "bg-primary text-primary-foreground border-primary"
-                              : "border-border hover:bg-secondary"
-                          }`}
-                        >
-                          {p}
-                        </Link>
-                      )
-                    );
-                  })()}
-
-                  {/* Next */}
-                  {page < totalPages && (
+                    {/* Next */}
                     <Link
                       href={`/products?${new URLSearchParams({ ...sp, page: String(page + 1) })}`}
-                      className="w-9 h-9 flex items-center justify-center rounded-md text-sm border border-border hover:bg-secondary transition-colors"
+                      aria-disabled={page === totalPages}
+                      title="หน้าถัดไป"
+                      className={`w-9 h-9 flex items-center justify-center rounded-xl text-sm border transition-all ${
+                        page === totalPages
+                          ? "pointer-events-none opacity-30 border-slate-200 bg-white"
+                          : "border-slate-200 bg-white hover:bg-blue-50 hover:border-blue-300 shadow-sm"
+                      }`}
                     >
                       ›
                     </Link>
-                  )}
+
+                    {/* Last */}
+                    <Link
+                      href={`/products?${new URLSearchParams({ ...sp, page: String(totalPages) })}`}
+                      aria-disabled={page === totalPages}
+                      title="หน้าสุดท้าย"
+                      className={`w-9 h-9 flex items-center justify-center rounded-xl text-sm border transition-all ${
+                        page === totalPages
+                          ? "pointer-events-none opacity-30 border-slate-200 bg-white"
+                          : "border-slate-200 bg-white hover:bg-blue-50 hover:border-blue-300 shadow-sm"
+                      }`}
+                    >
+                      »
+                    </Link>
+                  </div>
+
+                  {/* Page info + Jump */}
+                  <div className="flex items-center gap-4">
+                    <span className="text-sm text-slate-400">
+                      หน้า <span className="font-semibold text-slate-700">{page}</span> จาก <span className="font-semibold text-slate-700">{totalPages}</span>
+                    </span>
+                    <PaginationJump
+                      currentPage={page}
+                      totalPages={totalPages}
+                      searchParams={sp as Record<string, string | undefined>}
+                    />
+                  </div>
                 </div>
               )}
             </>
