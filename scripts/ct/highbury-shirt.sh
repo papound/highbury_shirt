@@ -14,8 +14,7 @@ var_os="${var_os:-ubuntu}"
 var_version="${var_version:-22.04}"
 var_unprivileged="${var_unprivileged:-1}"
 
-# ชี้ install script ไปที่ repo ของเราเอง แทนที่จะใช้ repo community-scripts
-INSTALL_URL="https://raw.githubusercontent.com/papound/highbury_shirt/main/scripts/install/highbury-shirt-install.sh"
+STANDALONE_INSTALL_URL="https://raw.githubusercontent.com/papound/highbury_shirt/main/scripts/install/highbury-shirt-standalone.sh"
 
 header_info "$APP"
 color
@@ -69,6 +68,12 @@ function update_script() {
 start
 build_container
 description
+
+# build_container สร้าง LXC เรียบร้อยแล้ว แต่ install script ของ community-scripts
+# ไม่มีในนั้น — รัน standalone installer ของเราเองผ่าน pct exec แทน
+msg_info "Running ${APP} standalone installer inside LXC ${CTID}"
+pct exec "$CTID" -- bash -c "$(curl -fsSL ${STANDALONE_INSTALL_URL})"
+msg_ok "Installer completed"
 
 msg_ok "Completed successfully!\n"
 echo -e "${CREATING}${GN}${APP} setup has been successfully initialized!${CL}"
