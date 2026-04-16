@@ -72,7 +72,7 @@ description
 # build_container สร้าง LXC เรียบร้อยแล้ว แต่ install script ของ community-scripts
 # ไม่มีในนั้น — รัน standalone installer ของเราเองผ่าน pct exec แทน
 msg_info "Running ${APP} standalone installer inside LXC ${CTID}"
-pct exec "$CTID" -- bash -c "$(curl -fsSL ${STANDALONE_INSTALL_URL})"
+curl -fsSL "${STANDALONE_INSTALL_URL}" | pct exec "$CTID" -- bash -s
 msg_ok "Installer completed"
 
 msg_ok "Completed successfully!\n"
