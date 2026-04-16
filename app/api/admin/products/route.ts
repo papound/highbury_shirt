@@ -42,24 +42,45 @@ export async function POST(req: NextRequest) {
               })),
             }
           : undefined,
-        variants: {
-          create: variants.map((v: any) => ({
-            color: v.color,
-            colorHex: v.colorHex,
-            size: v.size,
-            sku: v.sku,
-            price: v.price,
-            inventory: v.inventoryByWarehouse?.length
-              ? {
-                  create: v.inventoryByWarehouse
-                    .filter((inv: any) => inv.quantity > 0)
-                    .map((inv: any) => ({ warehouseId: inv.warehouseId, quantity: inv.quantity })),
-                }
-              : undefined,
-          })),
-        },
       },
     });
+
+    // Create variants one-by-one to support per-variant images
+    for (const v of variants ?? []) {
+      const variant = await prisma.productVariant.create({
+        data: {
+          productId: product.id,
+          color: v.color,
+          colorHex: v.colorHex,
+          size: v.size,
+          sku: v.sku,
+          price: v.price,
+        },
+      });
+
+      // Inventory per warehouse
+      if (v.inventoryByWarehouse?.length) {
+        for (const inv of v.inventoryByWarehouse.filter((i: any) => i.quantity > 0)) {
+          await prisma.inventory.create({
+            data: { variantId: variant.id, warehouseId: inv.warehouseId, quantity: inv.quantity },
+          });
+        }
+      }
+
+      // Variant images
+      const variantImages: { url: string; isPrimary: boolean }[] = v.variantImages ?? [];
+      if (variantImages.length > 0) {
+        await prisma.productImage.createMany({
+          data: variantImages.map((img, i) => ({
+            productId: product.id,
+            variantId: variant.id,
+            url: img.url,
+            isPrimary: img.isPrimary ?? i === 0,
+            sortOrder: i,
+          })),
+        });
+      }
+    }
 
     return NextResponse.json(product, { status: 201 });
   } catch (err) {
@@ -71,7 +92,7 @@ export async function POST(req: NextRequest) {
 export async function GET() {
   const products = await prisma.product.findMany({
     orderBy: { createdAt: "desc" },
-    include: { category: true, variants: true, images: true },
+    include: { category: true, variants: true, images: { where: { variantId: null } } },
   });
   return NextResponse.json(products);
 }

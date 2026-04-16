@@ -65,6 +65,12 @@ export default function AdminProductForm({ product, categories, warehouses }: { 
   const [images, setImages] = useState<ProductImage[]>(
     product?.images?.map((img: any) => ({ url: img.url, isPrimary: img.isPrimary })) ?? []
   );
+  // Per-variant images indexed by variant position
+  const [variantImagesMap, setVariantImagesMap] = useState<ProductImage[][]>(
+    () => (product?.variants ?? []).map((v: any) =>
+      (v.images ?? []).map((img: any) => ({ url: img.url, isPrimary: img.isPrimary }))
+    )
+  );
   const isNew = !product;
 
   const form = useForm<FormValues>({
@@ -95,6 +101,16 @@ export default function AdminProductForm({ product, categories, warehouses }: { 
 
   const { fields, append, remove } = useFieldArray({ control: form.control, name: "variants" });
 
+  function addVariant(defaults: Parameters<typeof append>[0]) {
+    append(defaults);
+    setVariantImagesMap((prev) => [...prev, []]);
+  }
+
+  function removeVariant(idx: number) {
+    remove(idx);
+    setVariantImagesMap((prev) => prev.filter((_, i) => i !== idx));
+  }
+
   async function onSubmit(values: FormValues) {
     setSaving(true);
     try {
@@ -102,7 +118,14 @@ export default function AdminProductForm({ product, categories, warehouses }: { 
       const res = await fetch(url, {
         method: isNew ? "POST" : "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...values, images }),
+        body: JSON.stringify({
+        ...values,
+        images,
+        variants: values.variants.map((v, i) => ({
+          ...v,
+          variantImages: variantImagesMap[i] ?? [],
+        })),
+      }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "บันทึกล้มเหลว");
@@ -231,7 +254,7 @@ export default function AdminProductForm({ product, categories, warehouses }: { 
                 <button
                   key={size}
                   type="button"
-                  onClick={() => append({ color: "", colorHex: "#000000", size, sku: "", price: 0, inventoryByWarehouse: warehouses.map((wh: any) => ({ warehouseId: wh.id, quantity: 0 })) })}
+                  onClick={() => addVariant({ color: "", colorHex: "#000000", size, sku: "", price: 0, inventoryByWarehouse: warehouses.map((wh: any) => ({ warehouseId: wh.id, quantity: 0 })) })}
                   className="text-xs px-2 py-1 border rounded-md hover:bg-muted transition-colors"
                 >
                   {size}
@@ -241,7 +264,7 @@ export default function AdminProductForm({ product, categories, warehouses }: { 
                 type="button"
                 size="sm"
                 variant="outline"
-                onClick={() => append({ color: "", colorHex: "#000000", size: "", sku: "", price: 0, inventoryByWarehouse: warehouses.map((wh: any) => ({ warehouseId: wh.id, quantity: 0 })) })}
+                onClick={() => addVariant({ color: "", colorHex: "#000000", size: "", sku: "", price: 0, inventoryByWarehouse: warehouses.map((wh: any) => ({ warehouseId: wh.id, quantity: 0 })) })}
               >
                 <Plus className="w-3.5 h-3.5 mr-1" />
                 เพิ่ม Variant
@@ -303,7 +326,7 @@ export default function AdminProductForm({ product, categories, warehouses }: { 
                     </FormItem>
                   )} />
                   <div className="flex justify-end">
-                    <Button type="button" variant="ghost" size="sm" onClick={() => remove(idx)}>
+                    <Button type="button" variant="ghost" size="sm" onClick={() => removeVariant(idx)}>
                       <Trash2 className="w-4 h-4 text-destructive" />
                     </Button>
                   </div>
@@ -329,6 +352,24 @@ export default function AdminProductForm({ product, categories, warehouses }: { 
                     </div>
                   </div>
                 )}
+
+                {/* Variant Images */}
+                <div className="border-t pt-3">
+                  <p className="text-xs font-medium text-muted-foreground mb-2">
+                    รูปภาพสำหรับสีนี้
+                    {form.watch(`variants.${idx}.color`) ? ` (${form.watch(`variants.${idx}.color`)})` : ""}
+                  </p>
+                  <ProductImageUploader
+                    value={variantImagesMap[idx] ?? []}
+                    onChange={(imgs) =>
+                      setVariantImagesMap((prev) => {
+                        const next = [...prev];
+                        next[idx] = imgs;
+                        return next;
+                      })
+                    }
+                  />
+                </div>
               </div>
             ))}
           </div>

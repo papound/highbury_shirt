@@ -16,8 +16,13 @@ export default async function AdminProductEditPage({ params }: Props) {
       : prisma.product.findUnique({
           where: { id },
           include: {
-            images: { orderBy: { sortOrder: "asc" } },
-            variants: { include: { inventory: { include: { warehouse: true } } } },
+            images: { where: { variantId: null }, orderBy: { sortOrder: "asc" } },
+            variants: {
+              include: {
+                inventory: { include: { warehouse: true } },
+                images: { orderBy: { sortOrder: "asc" } },
+              },
+            },
             category: true,
           },
         }),

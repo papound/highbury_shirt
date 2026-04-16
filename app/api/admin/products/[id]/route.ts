@@ -24,13 +24,14 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       data: { nameTh, name, descTh, description, basePrice, categoryId, status, isFeatured },
     });
 
-    // Replace images: delete old, create new
+    // Replace product-level images (variantId IS NULL only)
     if (Array.isArray(images)) {
-      await prisma.productImage.deleteMany({ where: { productId: id } });
+      await prisma.productImage.deleteMany({ where: { productId: id, variantId: null } });
       if (images.length > 0) {
         await prisma.productImage.createMany({
           data: images.map((img: { url: string; isPrimary: boolean }, i: number) => ({
             productId: id,
+            variantId: null,
             url: img.url,
             isPrimary: img.isPrimary ?? i === 0,
             sortOrder: i,
@@ -65,6 +66,21 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
             create: { variantId, warehouseId: inv.warehouseId, quantity: inv.quantity ?? 0 },
           });
         }
+      }
+
+      // Replace variant-level images
+      const variantImages: { url: string; isPrimary: boolean }[] = v.variantImages ?? [];
+      await prisma.productImage.deleteMany({ where: { variantId } });
+      if (variantImages.length > 0) {
+        await prisma.productImage.createMany({
+          data: variantImages.map((img, i) => ({
+            productId: id,
+            variantId,
+            url: img.url,
+            isPrimary: img.isPrimary ?? i === 0,
+            sortOrder: i,
+          })),
+        });
       }
     }
 
