@@ -49,10 +49,21 @@ start
 build_container
 description
 
-# ดาวน์โหลด installer script ก่อน แล้วส่งผ่าน stdin เข้า pct exec
-# (หลีกเลี่ยงปัญหา quoting ของ bash -c "...")
+# ดาวน์โหลด installer ลง Proxmox host ก่อน แล้ว push เข้า LXC
+# (วิธีนี้ reliable กว่า curl|pct exec bash -s สำหรับ long-running script)
+msg_info "Downloading ${APP} Docker installer"
+INSTALL_TMP=$(mktemp /tmp/highbury-shirt-docker-XXXXXX.sh)
+curl -fsSL "${DOCKER_INSTALL_URL}" -o "${INSTALL_TMP}"
+msg_ok "Downloaded installer"
+
+msg_info "Pushing installer into LXC ${CTID}"
+pct push "$CTID" "${INSTALL_TMP}" /root/install.sh
+pct exec "$CTID" -- chmod +x /root/install.sh
+rm -f "${INSTALL_TMP}"
+msg_ok "Installer ready"
+
 msg_info "Running ${APP} Docker installer inside LXC ${CTID}"
-curl -fsSL "${DOCKER_INSTALL_URL}" | pct exec "$CTID" -- bash -s
+pct exec "$CTID" -- bash /root/install.sh
 msg_ok "Installer completed"
 
 msg_ok "Completed successfully!\n"

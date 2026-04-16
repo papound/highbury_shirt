@@ -70,10 +70,20 @@ start
 build_container
 description
 
-# build_container สร้าง LXC เรียบร้อยแล้ว แต่ install script ของ community-scripts
-# ไม่มีในนั้น — รัน standalone installer ของเราเองผ่าน pct exec แทน
+# ดาวน์โหลด installer ลง Proxmox host ก่อน แล้ว push เข้า LXC
+msg_info "Downloading ${APP} standalone installer"
+INSTALL_TMP=$(mktemp /tmp/highbury-shirt-XXXXXX.sh)
+curl -fsSL "${STANDALONE_INSTALL_URL}" -o "${INSTALL_TMP}"
+msg_ok "Downloaded installer"
+
+msg_info "Pushing installer into LXC ${CTID}"
+pct push "$CTID" "${INSTALL_TMP}" /root/install.sh
+pct exec "$CTID" -- chmod +x /root/install.sh
+rm -f "${INSTALL_TMP}"
+msg_ok "Installer ready"
+
 msg_info "Running ${APP} standalone installer inside LXC ${CTID}"
-curl -fsSL "${STANDALONE_INSTALL_URL}" | pct exec "$CTID" -- bash -s
+pct exec "$CTID" -- bash /root/install.sh
 msg_ok "Installer completed"
 
 msg_ok "Completed successfully!\n"
