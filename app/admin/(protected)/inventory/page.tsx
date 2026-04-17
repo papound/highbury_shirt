@@ -4,6 +4,7 @@ import Link from "next/link";
 import AdminInventoryClient from "@/components/admin/inventory-client";
 import InventoryTransferDialog from "@/components/admin/inventory-transfer-dialog";
 import InventoryWithdrawDialog from "@/components/admin/inventory-withdraw-dialog";
+import InventoryImportDialog from "@/components/admin/inventory-import-dialog";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -62,6 +63,7 @@ export default async function AdminInventoryPage({ searchParams }: Props) {
           <p className="text-muted-foreground text-sm">{total} รายการ</p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
+          <InventoryImportDialog />
           <InventoryTransferDialog warehouses={warehouses} inventory={inventory} />
           {role === "SUPERADMIN" && (
             <InventoryWithdrawDialog warehouses={warehouses} inventory={inventory} />
