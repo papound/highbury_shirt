@@ -40,16 +40,22 @@ type ImportResult = {
   skipped: string[];
 };
 
-type HistoryRecord = {
+type HistoryItem = {
   id: string;
   delta: number;
   note: string;
-  createdAt: string;
   inventory: {
     variant: { sku: string; color: string; size: string; product: { nameTh: string } };
-    warehouse: { name: string };
   };
-  createdBy: { name: string; email: string };
+};
+
+type HistoryBatch = {
+  batchId: string;
+  createdAt: string;
+  createdBy: { name: string | null; email: string | null } | null;
+  totalItems: number;
+  totalQty: number;
+  items: HistoryItem[];
 };
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -62,7 +68,8 @@ export default function InventoryImportDialog() {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<PreviewResult | null>(null);
   const [result, setResult] = useState<ImportResult | null>(null);
-  const [history, setHistory] = useState<HistoryRecord[]>([]);
+  const [history, setHistory] = useState<HistoryBatch[]>([]);
+  const [expandedBatch, setExpandedBatch] = useState<string | null>(null);
   const [historyLoading, setHistoryLoading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -71,7 +78,7 @@ export default function InventoryImportDialog() {
     try {
       const res = await fetch("/api/admin/inventory/import-master");
       const data = await res.json();
-      if (res.ok) setHistory(data.records ?? []);
+      if (res.ok) setHistory(data.batches ?? []);
     } finally {
       setHistoryLoading(false);
     }
@@ -149,7 +156,7 @@ export default function InventoryImportDialog() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <FileSpreadsheet className="w-5 h-5" />
-              Import สต็อกเข้าคลัง Master (WH-MASTER)
+              Import สต็อกเข้าคลัง Master (WH-MAIN1)
             </DialogTitle>
           </DialogHeader>
 
@@ -293,46 +300,72 @@ export default function InventoryImportDialog() {
               ) : history.length === 0 ? (
                 <p className="text-sm text-muted-foreground text-center py-8">ยังไม่มีประวัติการ Import</p>
               ) : (
-                <div className="border rounded-lg overflow-hidden text-sm">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="bg-muted/40 border-b">
-                        <th className="text-left px-3 py-2 font-medium text-muted-foreground">สินค้า / SKU</th>
-                        <th className="text-left px-3 py-2 font-medium text-muted-foreground">สี / ไซส์</th>
-                        <th className="text-center px-3 py-2 font-medium text-muted-foreground">จำนวน</th>
-                        <th className="text-left px-3 py-2 font-medium text-muted-foreground">หมายเหตุ</th>
-                        <th className="text-left px-3 py-2 font-medium text-muted-foreground">โดย</th>
-                        <th className="text-left px-3 py-2 font-medium text-muted-foreground">วันที่</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {history.map((rec) => (
-                        <tr key={rec.id} className="border-b last:border-0 hover:bg-muted/10">
-                          <td className="px-3 py-2">
-                            <p className="font-medium">{rec.inventory.variant.product.nameTh}</p>
-                            <p className="text-xs text-muted-foreground">{rec.inventory.variant.sku}</p>
-                          </td>
-                          <td className="px-3 py-2 text-muted-foreground">
-                            {rec.inventory.variant.color} / {rec.inventory.variant.size}
-                          </td>
-                          <td className="px-3 py-2 text-center">
-                            <Badge variant="secondary">+{rec.delta}</Badge>
-                          </td>
-                          <td className="px-3 py-2 text-xs text-muted-foreground max-w-[160px] truncate">
-                            {rec.note.replace(/^IMPORT:WH-MASTER\s*\|?\s*/, "") || "—"}
-                          </td>
-                          <td className="px-3 py-2 text-xs text-muted-foreground">
-                            {rec.createdBy?.name ?? rec.createdBy?.email ?? "—"}
-                          </td>
-                          <td className="px-3 py-2 text-xs text-muted-foreground">
-                            {new Date(rec.createdAt).toLocaleDateString("th-TH")}
-                            {" "}
-                            {new Date(rec.createdAt).toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" })}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                <div className="border rounded-lg overflow-hidden text-sm divide-y">
+                  {history.map((batch) => (
+                    <div key={batch.batchId}>
+                      {/* Batch summary row */}
+                      <button
+                        className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-muted/20 text-left"
+                        onClick={() => setExpandedBatch(expandedBatch === batch.batchId ? null : batch.batchId)}
+                      >
+                        <span className="text-muted-foreground">
+                          {expandedBatch === batch.batchId ? "▼" : "▶"}
+                        </span>
+                        <span className="font-mono text-xs text-muted-foreground w-[120px] shrink-0">
+                          {batch.batchId}
+                        </span>
+                        <span className="grow">
+                          <span className="font-medium">
+                            {batch.createdBy?.name ?? batch.createdBy?.email ?? "—"}
+                          </span>
+                        </span>
+                        <Badge variant="secondary" className="shrink-0">{batch.totalItems} รายการ</Badge>
+                        <Badge variant="outline" className="shrink-0">+{batch.totalQty} ชิ้น</Badge>
+                        <span className="text-xs text-muted-foreground shrink-0">
+                          {new Date(batch.createdAt).toLocaleDateString("th-TH")}{" "}
+                          {new Date(batch.createdAt).toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" })}
+                        </span>
+                      </button>
+
+                      {/* Expanded items */}
+                      {expandedBatch === batch.batchId && (
+                        <div className="bg-muted/10 border-t">
+                          <table className="w-full">
+                            <thead>
+                              <tr className="bg-muted/30 border-b">
+                                <th className="text-left px-4 py-1.5 font-medium text-muted-foreground text-xs">สินค้า / SKU</th>
+                                <th className="text-left px-3 py-1.5 font-medium text-muted-foreground text-xs">สี / ไซส์</th>
+                                <th className="text-center px-3 py-1.5 font-medium text-muted-foreground text-xs">จำนวน</th>
+                                <th className="text-left px-3 py-1.5 font-medium text-muted-foreground text-xs">หมายเหตุ</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {batch.items.map((item) => {
+                                const userNote = item.note.replace(/^IMPORT:WH-MAIN1 \| BATCH:[A-Z0-9-]+( \| )?/, "").trim();
+                                return (
+                                  <tr key={item.id} className="border-b last:border-0">
+                                    <td className="px-4 py-1.5">
+                                      <p className="font-medium text-xs">{item.inventory.variant.product.nameTh}</p>
+                                      <p className="text-xs text-muted-foreground">{item.inventory.variant.sku}</p>
+                                    </td>
+                                    <td className="px-3 py-1.5 text-xs text-muted-foreground">
+                                      {item.inventory.variant.color} / {item.inventory.variant.size}
+                                    </td>
+                                    <td className="px-3 py-1.5 text-center">
+                                      <Badge variant="secondary" className="text-xs">+{item.delta}</Badge>
+                                    </td>
+                                    <td className="px-3 py-1.5 text-xs text-muted-foreground">
+                                      {userNote || "—"}
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+                    </div>
+                  ))}
                 </div>
               )}
             </TabsContent>

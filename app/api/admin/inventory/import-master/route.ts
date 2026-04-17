@@ -4,9 +4,9 @@ import { prisma } from "@/lib/prisma";
 import ExcelJS from "exceljs";
 
 const ALLOWED_ROLES = ["SUPERADMIN", "ADMIN", "STAFF"];
-const MASTER_KEY = "WH-MASTER";
+const MASTER_KEY = "WH-MAIN1";
 
-export const IMPORT_NOTE_PREFIX = "IMPORT:WH-MASTER";
+export const IMPORT_NOTE_PREFIX = "IMPORT:WH-MAIN1";
 
 // ── helpers ────────────────────────────────────────────────────────────────────
 
@@ -118,6 +118,9 @@ async function handleImport(req: NextRequest, userId: string) {
 
   const rows = await parseExcel(file);
 
+  // unique batch ID for this import session
+  const batchId = `IMP-${Date.now().toString(36).toUpperCase()}`;
+
   let created = 0;
   let updated = 0;
   const skipped: string[] = [];
@@ -143,7 +146,7 @@ async function handleImport(req: NextRequest, userId: string) {
         data: {
           inventoryId: existing.id,
           delta: row.quantity,
-          note: row.note ? `${IMPORT_NOTE_PREFIX} | ${row.note}` : IMPORT_NOTE_PREFIX,
+          note: `${IMPORT_NOTE_PREFIX} | BATCH:${batchId}${row.note ? ` | ${row.note}` : ""}`,
           createdById: userId,
         },
       });
@@ -156,7 +159,7 @@ async function handleImport(req: NextRequest, userId: string) {
         data: {
           inventoryId: inv.id,
           delta: row.quantity,
-          note: row.note ? `${IMPORT_NOTE_PREFIX} | ${row.note}` : `${IMPORT_NOTE_PREFIX}:INIT`,
+          note: `${IMPORT_NOTE_PREFIX} | BATCH:${batchId}${row.note ? ` | ${row.note}` : ""}`,
           createdById: userId,
         },
       });
@@ -164,7 +167,7 @@ async function handleImport(req: NextRequest, userId: string) {
     }
   }
 
-  return NextResponse.json({ created, updated, skipped });
+  return NextResponse.json({ created, updated, skipped, batchId });
 }
 
 // ── GET /history ─────────────────────────────────────────────────────────────
@@ -188,10 +191,45 @@ export async function GET(req: NextRequest) {
         createdBy: { select: { name: true, email: true } },
       },
       orderBy: { createdAt: "desc" },
-      take: 200,
+      take: 500,
     });
 
-    return NextResponse.json({ records });
+    // Group by batchId extracted from note
+    type BatchMap = Map<string, {
+      batchId: string;
+      createdAt: string;
+      createdBy: { name: string | null; email: string | null } | null;
+      totalItems: number;
+      totalQty: number;
+      items: typeof records;
+    }>;
+    const grouped: BatchMap = new Map();
+
+    for (const rec of records) {
+      const match = rec.note.match(/BATCH:([A-Z0-9-]+)/);
+      const batchId = match?.[1] ?? "LEGACY";
+
+      if (!grouped.has(batchId)) {
+        grouped.set(batchId, {
+          batchId,
+          createdAt: rec.createdAt.toISOString(),
+          createdBy: rec.createdBy,
+          totalItems: 0,
+          totalQty: 0,
+          items: [],
+        });
+      }
+      const batch = grouped.get(batchId)!;
+      batch.totalItems++;
+      batch.totalQty += rec.delta;
+      batch.items.push(rec);
+    }
+
+    const batches = Array.from(grouped.values()).sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+
+    return NextResponse.json({ batches });
   } catch (err) {
     console.error("import-master history error:", err);
     return NextResponse.json({ error: "เกิดข้อผิดพลาด" }, { status: 500 });
