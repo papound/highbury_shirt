@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -8,8 +8,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { FileSpreadsheet, Upload, Loader2, CheckCircle, XCircle, PackagePlus } from "lucide-react";
+import { FileSpreadsheet, Upload, Loader2, CheckCircle, XCircle, PackagePlus, History } from "lucide-react";
 import { toast } from "sonner";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -39,16 +40,46 @@ type ImportResult = {
   skipped: string[];
 };
 
+type HistoryRecord = {
+  id: string;
+  delta: number;
+  note: string;
+  createdAt: string;
+  inventory: {
+    variant: { sku: string; color: string; size: string; product: { nameTh: string } };
+    warehouse: { name: string };
+  };
+  createdBy: { name: string; email: string };
+};
+
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export default function InventoryImportDialog() {
   const [open, setOpen] = useState(false);
+  const [tab, setTab] = useState<"import" | "history">("import");
   const [step, setStep] = useState<"upload" | "preview" | "done">("upload");
   const [loading, setLoading] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<PreviewResult | null>(null);
   const [result, setResult] = useState<ImportResult | null>(null);
+  const [history, setHistory] = useState<HistoryRecord[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  const fetchHistory = useCallback(async () => {
+    setHistoryLoading(true);
+    try {
+      const res = await fetch("/api/admin/inventory/import-master");
+      const data = await res.json();
+      if (res.ok) setHistory(data.records ?? []);
+    } finally {
+      setHistoryLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (open && tab === "history") fetchHistory();
+  }, [open, tab, fetchHistory]);
 
   function reset() {
     setStep("upload");
@@ -122,6 +153,15 @@ export default function InventoryImportDialog() {
             </DialogTitle>
           </DialogHeader>
 
+          <Tabs value={tab} onValueChange={(v) => setTab(v as "import" | "history")}>
+            <TabsList className="mb-4">
+              <TabsTrigger value="import"><Upload className="w-3.5 h-3.5 mr-1.5" />Import</TabsTrigger>
+              <TabsTrigger value="history" onClick={fetchHistory}>
+                <History className="w-3.5 h-3.5 mr-1.5" />ประวัติ
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="import" className="mt-0">
           {/* ── Step 1: Upload ── */}
           {step === "upload" && (
             <div className="space-y-4">
@@ -238,10 +278,65 @@ export default function InventoryImportDialog() {
               )}
               <div className="flex justify-center gap-2 pt-2">
                 <Button variant="outline" onClick={() => { reset(); }}>Import อีกครั้ง</Button>
-                <Button onClick={() => { handleClose(); window.location.reload(); }}>เสร็จสิ้น</Button>
+                <Button onClick={() => { handleClose(); window.location.reload(); fetchHistory(); }}>เสร็จสิ้น</Button>
               </div>
             </div>
           )}
+            </TabsContent>
+
+            {/* ── History Tab ── */}
+            <TabsContent value="history" className="mt-0">
+              {historyLoading ? (
+                <div className="flex justify-center py-8">
+                  <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+                </div>
+              ) : history.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-8">ยังไม่มีประวัติการ Import</p>
+              ) : (
+                <div className="border rounded-lg overflow-hidden text-sm">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="bg-muted/40 border-b">
+                        <th className="text-left px-3 py-2 font-medium text-muted-foreground">สินค้า / SKU</th>
+                        <th className="text-left px-3 py-2 font-medium text-muted-foreground">สี / ไซส์</th>
+                        <th className="text-center px-3 py-2 font-medium text-muted-foreground">จำนวน</th>
+                        <th className="text-left px-3 py-2 font-medium text-muted-foreground">หมายเหตุ</th>
+                        <th className="text-left px-3 py-2 font-medium text-muted-foreground">โดย</th>
+                        <th className="text-left px-3 py-2 font-medium text-muted-foreground">วันที่</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {history.map((rec) => (
+                        <tr key={rec.id} className="border-b last:border-0 hover:bg-muted/10">
+                          <td className="px-3 py-2">
+                            <p className="font-medium">{rec.inventory.variant.product.nameTh}</p>
+                            <p className="text-xs text-muted-foreground">{rec.inventory.variant.sku}</p>
+                          </td>
+                          <td className="px-3 py-2 text-muted-foreground">
+                            {rec.inventory.variant.color} / {rec.inventory.variant.size}
+                          </td>
+                          <td className="px-3 py-2 text-center">
+                            <Badge variant="secondary">+{rec.delta}</Badge>
+                          </td>
+                          <td className="px-3 py-2 text-xs text-muted-foreground max-w-[160px] truncate">
+                            {rec.note.replace(/^IMPORT:WH-MASTER\s*\|?\s*/, "") || "—"}
+                          </td>
+                          <td className="px-3 py-2 text-xs text-muted-foreground">
+                            {rec.createdBy?.name ?? rec.createdBy?.email ?? "—"}
+                          </td>
+                          <td className="px-3 py-2 text-xs text-muted-foreground">
+                            {new Date(rec.createdAt).toLocaleDateString("th-TH")}
+                            {" "}
+                            {new Date(rec.createdAt).toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" })}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </TabsContent>
+          </Tabs>
         </DialogContent>
       </Dialog>
     </>

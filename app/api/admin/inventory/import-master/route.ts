@@ -6,6 +6,8 @@ import ExcelJS from "exceljs";
 const ALLOWED_ROLES = ["SUPERADMIN", "ADMIN", "STAFF"];
 const MASTER_KEY = "WH-MASTER";
 
+export const IMPORT_NOTE_PREFIX = "IMPORT:WH-MASTER";
+
 // ── helpers ────────────────────────────────────────────────────────────────────
 
 async function getMasterWarehouse() {
@@ -141,7 +143,7 @@ async function handleImport(req: NextRequest, userId: string) {
         data: {
           inventoryId: existing.id,
           delta: row.quantity,
-          note: row.note ?? `Import to ${MASTER_KEY}`,
+          note: row.note ? `${IMPORT_NOTE_PREFIX} | ${row.note}` : IMPORT_NOTE_PREFIX,
           createdById: userId,
         },
       });
@@ -154,7 +156,7 @@ async function handleImport(req: NextRequest, userId: string) {
         data: {
           inventoryId: inv.id,
           delta: row.quantity,
-          note: row.note ?? `Init stock in ${MASTER_KEY}`,
+          note: row.note ? `${IMPORT_NOTE_PREFIX} | ${row.note}` : `${IMPORT_NOTE_PREFIX}:INIT`,
           createdById: userId,
         },
       });
@@ -163,6 +165,37 @@ async function handleImport(req: NextRequest, userId: string) {
   }
 
   return NextResponse.json({ created, updated, skipped });
+}
+
+// ── GET /history ─────────────────────────────────────────────────────────────
+
+export async function GET(req: NextRequest) {
+  const session = await auth();
+  if (!session?.user?.role || !["SUPERADMIN", "ADMIN", "STAFF"].includes(session.user.role)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const records = await prisma.inventoryAdjustment.findMany({
+      where: { note: { startsWith: IMPORT_NOTE_PREFIX } },
+      include: {
+        inventory: {
+          include: {
+            variant: { include: { product: true } },
+            warehouse: true,
+          },
+        },
+        createdBy: { select: { name: true, email: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 200,
+    });
+
+    return NextResponse.json({ records });
+  } catch (err) {
+    console.error("import-master history error:", err);
+    return NextResponse.json({ error: "เกิดข้อผิดพลาด" }, { status: 500 });
+  }
 }
 
 // ── Router ─────────────────────────────────────────────────────────────────────
