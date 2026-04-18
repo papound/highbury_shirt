@@ -8,24 +8,26 @@ import ProductClearButton from "@/components/admin/product-clear-button";
 
 const PAGE_SIZE = 20;
 
-type Props = { searchParams: Promise<{ page?: string; q?: string }> };
+type Props = { searchParams: Promise<{ page?: string; q?: string; categoryId?: string }> };
 
 export default async function AdminProductsPage({ searchParams }: Props) {
-  const { page: pageParam, q } = await searchParams;
+  const { page: pageParam, q, categoryId } = await searchParams;
   const page = Math.max(1, parseInt(pageParam ?? "1"));
   const search = q?.trim() ?? "";
+  const catFilter = categoryId && categoryId !== "all" ? categoryId : undefined;
 
-  const where = search
-    ? {
-        OR: [
-          { nameTh: { contains: search } },
-          { name: { contains: search } },
-          { variants: { some: { sku: { contains: search } } } },
-        ],
-      }
-    : {};
+  const where = {
+    ...(search ? {
+      OR: [
+        { nameTh: { contains: search } },
+        { name: { contains: search } },
+        { variants: { some: { sku: { contains: search } } } },
+      ],
+    } : {}),
+    ...(catFilter ? { categoryId: catFilter } : {}),
+  };
 
-  const [total, products] = await Promise.all([
+  const [total, products, categories] = await Promise.all([
     prisma.product.count({ where }),
     prisma.product.findMany({
       where,
@@ -38,6 +40,7 @@ export default async function AdminProductsPage({ searchParams }: Props) {
         images: { take: 1, orderBy: { sortOrder: "asc" } },
       },
     }),
+    prisma.category.findMany({ orderBy: { name: "asc" } }),
   ]);
 
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
@@ -45,6 +48,7 @@ export default async function AdminProductsPage({ searchParams }: Props) {
   function pageUrl(p: number) {
     const params = new URLSearchParams();
     if (search) params.set("q", search);
+    if (catFilter) params.set("categoryId", catFilter);
     params.set("page", String(p));
     return `/admin/products?${params}`;
   }
@@ -77,16 +81,26 @@ export default async function AdminProductsPage({ searchParams }: Props) {
         </div>
       </div>
 
-      {/* Search */}
-      <form method="GET" action="/admin/products" className="flex gap-2 max-w-sm">
+      {/* Search + Category Filter */}
+      <form method="GET" action="/admin/products" className="flex flex-wrap gap-2">
         <input
           name="q"
           defaultValue={search}
           placeholder="ค้นหาชื่อ, SKU..."
-          className="flex-1 h-9 rounded-md border border-input bg-white px-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-blue-500/30"
+          className="h-9 rounded-md border border-input bg-white px-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-blue-500/30 w-56"
         />
+        <select
+          name="categoryId"
+          defaultValue={catFilter ?? "all"}
+          className="h-9 rounded-md border border-input bg-white px-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-blue-500/30"
+        >
+          <option value="all">ทุกหมวดหมู่</option>
+          {categories.map((cat) => (
+            <option key={cat.id} value={cat.id}>{cat.name}</option>
+          ))}
+        </select>
         <Button type="submit" size="sm" variant="outline" className="shadow-sm">ค้นหา</Button>
-        {search && (
+        {(search || catFilter) && (
           <Button asChild size="sm" variant="ghost">
             <Link href="/admin/products">ล้าง</Link>
           </Button>
