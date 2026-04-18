@@ -4,15 +4,11 @@ import { prisma } from "@/lib/prisma";
 import ExcelJS from "exceljs";
 
 const ALLOWED_ROLES = ["SUPERADMIN", "ADMIN", "STAFF"];
-const MASTER_KEY = "WH-MAIN1";
-
-export const IMPORT_NOTE_PREFIX = "IMPORT:WH-MAIN1";
+export const IMPORT_NOTE_PREFIX = "IMPORT:IMPORT";
 
 // ── helpers ────────────────────────────────────────────────────────────────────
 
-async function getMasterWarehouse() {
-  return prisma.warehouse.findFirst({ where: { uniqueKey: MASTER_KEY } });
-}
+
 
 async function parseExcel(file: File) {
   const bytes = await file.arrayBuffer();
@@ -37,12 +33,14 @@ async function parseExcel(file: File) {
 async function handlePreview(req: NextRequest) {
   const formData = await req.formData();
   const file = formData.get("file") as File | null;
+  const warehouseId = formData.get("warehouseId") as string | null;
   if (!file) return NextResponse.json({ error: "No file" }, { status: 400 });
+  if (!warehouseId) return NextResponse.json({ error: "กรุณาเลือกคลัง" }, { status: 400 });
 
-  const master = await getMasterWarehouse();
-  if (!master) {
+  const warehouse = await prisma.warehouse.findUnique({ where: { id: warehouseId } });
+  if (!warehouse) {
     return NextResponse.json(
-      { error: `ไม่พบคลัง ${MASTER_KEY} กรุณาสร้างคลังที่มี uniqueKey = "${MASTER_KEY}" ก่อน` },
+      { error: `ไม่พบคลังที่เลือก กรุณาตรวจสอบใหม่` },
       { status: 400 }
     );
   }
@@ -75,8 +73,9 @@ async function handlePreview(req: NextRequest) {
       continue;
     }
 
+
     const existingInv = await prisma.inventory.findUnique({
-      where: { variantId_warehouseId: { variantId: variant.id, warehouseId: master.id } },
+      where: { variantId_warehouseId: { variantId: variant.id, warehouseId: warehouse.id } },
     });
 
     items.push({
@@ -93,8 +92,8 @@ async function handlePreview(req: NextRequest) {
   }
 
   return NextResponse.json({
-    warehouseId: master.id,
-    warehouseName: master.name,
+    warehouseId: warehouse.id,
+    warehouseName: warehouse.name,
     newItems: items.filter((i) => i.isNew),
     existingItems: items.filter((i) => !i.isNew),
     unknownSkus,
@@ -106,12 +105,14 @@ async function handlePreview(req: NextRequest) {
 async function handleImport(req: NextRequest, userId: string) {
   const formData = await req.formData();
   const file = formData.get("file") as File | null;
+  const warehouseId = formData.get("warehouseId") as string | null;
   if (!file) return NextResponse.json({ error: "No file" }, { status: 400 });
+  if (!warehouseId) return NextResponse.json({ error: "กรุณาเลือกคลัง" }, { status: 400 });
 
-  const master = await getMasterWarehouse();
-  if (!master) {
+  const warehouse = await prisma.warehouse.findUnique({ where: { id: warehouseId } });
+  if (!warehouse) {
     return NextResponse.json(
-      { error: `ไม่พบคลัง ${MASTER_KEY}` },
+      { error: `ไม่พบคลังที่เลือก กรุณาตรวจสอบใหม่` },
       { status: 400 }
     );
   }
@@ -133,12 +134,12 @@ async function handleImport(req: NextRequest, userId: string) {
     }
 
     const existing = await prisma.inventory.findUnique({
-      where: { variantId_warehouseId: { variantId: variant.id, warehouseId: master.id } },
+      where: { variantId_warehouseId: { variantId: variant.id, warehouseId: warehouse.id } },
     });
 
     if (existing) {
       await prisma.inventory.update({
-        where: { variantId_warehouseId: { variantId: variant.id, warehouseId: master.id } },
+        where: { variantId_warehouseId: { variantId: variant.id, warehouseId: warehouse.id } },
         data: { quantity: { increment: row.quantity } },
       });
       // log adjustment
@@ -153,7 +154,7 @@ async function handleImport(req: NextRequest, userId: string) {
       updated++;
     } else {
       const inv = await prisma.inventory.create({
-        data: { variantId: variant.id, warehouseId: master.id, quantity: row.quantity },
+        data: { variantId: variant.id, warehouseId: warehouse.id, quantity: row.quantity },
       });
       await prisma.inventoryAdjustment.create({
         data: {

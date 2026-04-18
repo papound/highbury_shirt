@@ -71,7 +71,17 @@ export default function InventoryImportDialog() {
   const [history, setHistory] = useState<HistoryBatch[]>([]);
   const [expandedBatch, setExpandedBatch] = useState<string | null>(null);
   const [historyLoading, setHistoryLoading] = useState(false);
+  const [warehouses, setWarehouses] = useState<{ id: string; name: string; uniqueKey: string }[]>([]);
+  const [warehouseId, setWarehouseId] = useState<string>("");
   const fileRef = useRef<HTMLInputElement>(null);
+  // ดึงรายชื่อคลังเมื่อ dialog เปิด
+  useEffect(() => {
+    if (open) {
+      fetch("/api/admin/warehouses")
+        .then((res) => res.json())
+        .then((data) => setWarehouses(data ?? []));
+    }
+  }, [open]);
 
   const fetchHistory = useCallback(async () => {
     setHistoryLoading(true);
@@ -93,6 +103,7 @@ export default function InventoryImportDialog() {
     setFile(null);
     setPreview(null);
     setResult(null);
+    setWarehouseId("");
     if (fileRef.current) fileRef.current.value = "";
   }
 
@@ -102,11 +113,12 @@ export default function InventoryImportDialog() {
   }
 
   async function handlePreview() {
-    if (!file) return;
+    if (!file || !warehouseId) return;
     setLoading(true);
     try {
       const fd = new FormData();
       fd.append("file", file);
+      fd.append("warehouseId", warehouseId);
       const res = await fetch("/api/admin/inventory/import-master?action=preview", {
         method: "POST",
         body: fd,
@@ -123,11 +135,12 @@ export default function InventoryImportDialog() {
   }
 
   async function handleImport() {
-    if (!file) return;
+    if (!file || !warehouseId) return;
     setLoading(true);
     try {
       const fd = new FormData();
       fd.append("file", file);
+      fd.append("warehouseId", warehouseId);
       const res = await fetch("/api/admin/inventory/import-master?action=import", {
         method: "POST",
         body: fd,
@@ -148,15 +161,15 @@ export default function InventoryImportDialog() {
     <>
       <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
         <PackagePlus className="w-4 h-4 mr-2" />
-        Import สต็อก Master
+        Import สต็อกเข้าคลัง
       </Button>
 
       <Dialog open={open} onOpenChange={(v) => { if (!v) handleClose(); }}>
-        <DialogContent className="max-w-[95vw] w-[95vw] h-[95vh] max-h-[95vh] flex flex-col overflow-hidden">
+        <DialogContent className="max-w-[95vw] sm:max-w-[95vw] w-[95vw] h-[95vh] max-h-[95vh] flex flex-col overflow-hidden">
           <DialogHeader className="shrink-0">
             <DialogTitle className="flex items-center gap-2">
               <FileSpreadsheet className="w-5 h-5" />
-              Import สต็อกเข้าคลัง Master (WH-MAIN1)
+              Import สต็อกเข้าคลัง
             </DialogTitle>
           </DialogHeader>
 
@@ -177,6 +190,20 @@ export default function InventoryImportDialog() {
                 <code className="bg-muted px-1 rounded">จำนวน</code>{" "}
                 <code className="bg-muted px-1 rounded">หมายเหตุ (optional)</code>
               </p>
+              <div>
+                <label className="block mb-1 text-sm font-medium">เลือกคลังปลายทาง <span className="text-destructive">*</span></label>
+                <select
+                  className="w-full border rounded px-3 py-2 text-sm mb-2"
+                  value={warehouseId}
+                  onChange={e => setWarehouseId(e.target.value)}
+                  required
+                >
+                  <option value="">-- เลือกคลัง --</option>
+                  {warehouses.map(w => (
+                    <option key={w.id} value={w.id}>{w.name} ({w.uniqueKey})</option>
+                  ))}
+                </select>
+              </div>
               <div
                 className="border-2 border-dashed rounded-xl p-8 text-center cursor-pointer hover:bg-muted/30 transition-colors"
                 onClick={() => fileRef.current?.click()}
@@ -195,7 +222,7 @@ export default function InventoryImportDialog() {
               />
               <div className="flex justify-end gap-2">
                 <Button variant="ghost" onClick={handleClose}>ยกเลิก</Button>
-                <Button onClick={handlePreview} disabled={!file || loading}>
+                <Button onClick={handlePreview} disabled={!file || !warehouseId || loading}>
                   {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                   ตรวจสอบข้อมูล
                 </Button>
