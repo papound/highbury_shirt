@@ -152,23 +152,23 @@ export default function InventoryImportDialog() {
       </Button>
 
       <Dialog open={open} onOpenChange={(v) => { if (!v) handleClose(); }}>
-        <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
-          <DialogHeader>
+        <DialogContent className="max-w-[95vw] w-[95vw] h-[95vh] max-h-[95vh] flex flex-col overflow-hidden">
+          <DialogHeader className="shrink-0">
             <DialogTitle className="flex items-center gap-2">
               <FileSpreadsheet className="w-5 h-5" />
               Import สต็อกเข้าคลัง Master (WH-MAIN1)
             </DialogTitle>
           </DialogHeader>
 
-          <Tabs value={tab} onValueChange={(v) => setTab(v as "import" | "history")}>
-            <TabsList className="mb-4">
+          <Tabs value={tab} onValueChange={(v) => setTab(v as "import" | "history")} className="flex flex-col flex-1 min-h-0">
+            <TabsList className="mb-4 shrink-0">
               <TabsTrigger value="import"><Upload className="w-3.5 h-3.5 mr-1.5" />Import</TabsTrigger>
               <TabsTrigger value="history" onClick={fetchHistory}>
                 <History className="w-3.5 h-3.5 mr-1.5" />ประวัติ
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="import" className="mt-0">
+            <TabsContent value="import" className="mt-0 flex-1 overflow-y-auto min-h-0">
           {/* ── Step 1: Upload ── */}
           {step === "upload" && (
             <div className="space-y-4">
@@ -292,7 +292,7 @@ export default function InventoryImportDialog() {
             </TabsContent>
 
             {/* ── History Tab ── */}
-            <TabsContent value="history" className="mt-0">
+            <TabsContent value="history" className="mt-0 flex-1 overflow-y-auto min-h-0">
               {historyLoading ? (
                 <div className="flex justify-center py-8">
                   <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
