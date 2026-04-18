@@ -1,0 +1,96 @@
+name: Build & Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: true
+
+env:
+  REGISTRY: 192.168.1.117:5000
+  IMAGE: 192.168.1.117:5000/highbury/app
+
+jobs:
+  # ──────────────────────────────────────────────────────────────────────────
+  # JOB 1: Build และ Push image ไปยัง Private Registry
+  # ต้องใช้ Self-hosted Runner ที่อยู่ใน network เดียวกับ registry
+  # ──────────────────────────────────────────────────────────────────────────
+  build:
+    name: Build & Push Docker Image
+    runs-on: self-hosted   # ← Runner ที่ติดตั้งใน Proxmox LXC หรือ VM ใน network
+    outputs:
+      image_tag: ${{ steps.meta.outputs.sha_tag }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Generate image tags/metadata
+        id: meta
+        run: |
+          SHA_TAG="${{ env.IMAGE }}:${{ github.sha }}"
+          LATEST_TAG="${{ env.IMAGE }}:latest"
+          echo "sha_tag=${SHA_TAG}" >> "$GITHUB_OUTPUT"
+          echo "latest_tag=${LATEST_TAG}" >> "$GITHUB_OUTPUT"
+          echo "Building: ${SHA_TAG}"
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            --tag "${{ steps.meta.outputs.sha_tag }}" \
+            --tag "${{ steps.meta.outputs.latest_tag }}" \
+            --label "org.opencontainers.image.revision=${{ github.sha }}" \
+            --label "org.opencontainers.image.created=$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            .
+
+      - name: Push to private registry
+        run: |
+          docker push "${{ steps.meta.outputs.sha_tag }}"
+          docker push "${{ steps.meta.outputs.latest_tag }}"
+
+      - name: Clean up old local images (keep last 5)
+        run: |
+          docker images "${{ env.IMAGE }}" --format "{{.ID}}" | tail -n +6 | xargs -r docker rmi || true
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # JOB 2: Deploy — SSH เข้า Production LXC แล้ว pull image ใหม่
+  # ──────────────────────────────────────────────────────────────────────────
+  deploy:
+    name: Deploy to Production
+    runs-on: self-hosted
+    needs: build
+    environment: production   # ← ตั้ง Environment Protection Rules ใน GitHub ได้
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}        # IP หรือ hostname ของ LXC ที่รัน app
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: ${{ secrets.DEPLOY_PORT || 22 }}
+          script: |
+            set -e
+            cd /opt/highbury-shirt     # ← ปรับ path ตามจริง
+
+            echo "==> Pulling latest image from registry..."
+            docker compose pull app
+
+            echo "==> Restarting app container (zero-downtime)..."
+            docker compose up -d --no-build --wait app
+
+            echo "==> Running DB migrations..."
+            docker compose exec -T app npx prisma migrate deploy
+
+            echo "==> Verifying container health..."
+            docker compose ps app
+
+            echo "✓ Deploy completed at $(date)"
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "::error::Deploy failed! ตรวจสอบ logs ด้วย: docker compose logs --tail=50 app"
