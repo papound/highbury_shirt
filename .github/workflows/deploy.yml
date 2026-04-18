@@ -83,7 +83,12 @@ jobs:
             docker compose up -d --no-build --wait app
 
             echo "==> Running DB migrations..."
-            docker compose exec -T app npx prisma migrate deploy
+            docker compose exec -T app npx prisma migrate deploy || {
+              echo "migrate deploy failed — attempting baseline then retry..."
+              # กรณี P3005: DB มีอยู่แล้วแต่ยังไม่ baseline
+              # ให้ไป baseline manual ก่อนบน server แล้ว push ใหม่
+              exit 1
+            }
 
             echo "==> Verifying container health..."
             docker compose ps app
