@@ -206,7 +206,7 @@ export async function GET(req: NextRequest) {
     const grouped: BatchMap = new Map();
 
     for (const rec of records) {
-      const match = rec.note.match(/BATCH:([A-Z0-9-]+)/);
+      const match = (rec.note ?? "").match(/BATCH:([A-Z0-9-]+)/);
       const batchId = match?.[1] ?? "LEGACY";
 
       if (!grouped.has(batchId)) {
