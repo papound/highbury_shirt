@@ -8,7 +8,7 @@
 # =============================================================================
 
 # ---- Stage 1: deps ----
-FROM node:20-alpine AS deps
+FROM node:22-alpine AS deps
 WORKDIR /app
 
 # ติดตั้ง openssl สำหรับ Prisma
@@ -20,7 +20,7 @@ RUN --mount=type=cache,target=/root/.npm \
 
 
 # ---- Stage 2: builder ----
-FROM node:20-alpine AS builder
+FROM node:22-alpine AS builder
 WORKDIR /app
 
 RUN apk add --no-cache openssl
@@ -44,7 +44,7 @@ RUN npm run build
 
 
 # ---- Stage 3: runner ----
-FROM node:20-alpine AS runner
+FROM node:22-alpine AS runner
 WORKDIR /app
 
 RUN apk add --no-cache openssl
