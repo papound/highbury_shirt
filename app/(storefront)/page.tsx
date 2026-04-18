@@ -1,12 +1,10 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Truck, Shield, Clock, Star, Shirt } from "lucide-react";
+import { ArrowRight, Shirt, Shield, Wind, Star, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
-  CardContent,
-  CardFooter,
 } from "@/components/ui/card";
 import prisma from "@/lib/prisma";
 
@@ -44,32 +42,37 @@ async function getCategories() {
 
 const features = [
   {
-    Icon: Truck,
-    titleTh: "จัดส่งทั่วประเทศ",
-    titleEn: "Nationwide Delivery",
-    descTh: "ส่งด่วน รวดเร็ว ถึงมือคุณ",
-    descEn: "Fast delivery across Thailand",
+    Icon: Shirt,
+    titleEn: "Premium Fabric",
+    titleTh: "เนื้อผ้าพรีเมียม",
+    descTh: "ผลิตจากเส้นใยคุณภาพสูง นุ่มสบาย ยับยาก และไม่ต้องรีดบ่อย ให้คุณดูดีได้ตลอดวัน",
   },
   {
     Icon: Shield,
-    titleTh: "รับประกันคุณภาพ",
-    titleEn: "Quality Guaranteed",
-    descTh: "วัสดุเกรด A คุณภาพสูง",
-    descEn: "Premium Grade A materials",
+    titleEn: "Perfect Fit",
+    titleTh: "ทรงสวย พอดีตัว",
+    descTh: "แพทเทิร์นถูกออกแบบมาเพื่อสรีระคนเอเชียโดยเฉพาะ คัตติ้งเนี้ยบ เข้าทรงแต่ไม่อึดอัด",
   },
   {
-    Icon: Clock,
-    titleTh: "รับผลิต-OEM",
-    titleEn: "Custom OEM",
-    descTh: "รับงานสั่งทำตามต้องการ",
-    descEn: "Custom manufacturing available",
+    Icon: Wind,
+    titleEn: "Breathable Comfort",
+    titleTh: "ระบายอากาศได้ดี",
+    descTh: "ระบายอากาศและจัดการความชื้นได้ดีเป็นพิเศษ เหมาะกับสภาพอากาศร้อนอย่างประเทศไทย",
+  },
+];
+
+const reviews = [
+  {
+    name: "คุณธนภัทร",
+    text: "เนื้อผ้าดีมากครับ ซักแล้วแทบไม่ต้องรีด ทรงสวยถูกใจ ใส่ไปทำงานมั่นใจขึ้นเยอะเลยครับ",
   },
   {
-    Icon: Star,
-    titleTh: "ลูกค้าพึงพอใจ",
-    titleEn: "Customer Satisfaction",
-    descTh: "บริการที่ใส่ใจทุกรายละเอียด",
-    descEn: "Attentive service at every step",
+    name: "คุณทิพย์สุดา",
+    text: "ใส่สบาย ไม่ร้อนเลย เหมาะกับอากาศบ้านเรามาก แพทเทิร์นเชิ้ตผู้หญิงเข้ารูปกำลังสวย การตัดเย็บเนี้ยบเกินราคาจริงๆ ค่ะ",
+  },
+  {
+    name: "คุณกิตติกร",
+    text: "สั่งมา 3 ตัวแล้ว ทรงสวยพอดีตัวมาก แมทช์กับการแต่งตัวสุดๆ บริการจัดส่งก็ไวมากครับ ประทับใจ",
   },
 ];
 
@@ -81,95 +84,105 @@ export default async function HomePage() {
   ]);
 
   return (
-    <div className="flex flex-col mx-auto w-full">
-      {/* ── Promotion Banner ──────────────────────────────────────────── */}
+    <div className="flex flex-col mx-auto w-full font-sans">
+      {/* ── Top Bar (FOMO & Promo) ──────────────────────────────────────────── */}
+      <div className="bg-slate-900 text-white text-center py-2 px-4 text-sm font-medium tracking-wide">
+        🔥 โปรโมชันพิเศษต้อนรับลูกค้าใหม่ จัดส่งฟรีเมื่อสั่งซื้อครบ 1,000 บาท!
+      </div>
+
+      {/* ── Promotion Banner (Optional) ──────────────────────────────────────── */}
       {promotions.length > 0 && (
-        <div className="relative overflow-hidden bg-gradient-to-r from-rose-600 via-fuchsia-600 to-indigo-600 text-white shadow-lg z-10">
-          {/* Animated subtle pattern overlay */}
-          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/diagonal-stripes.png')] opacity-10"></div>
-          
-          <div className="container relative mx-auto px-4 py-3 sm:py-4">
-            <div className="flex items-center justify-center gap-3 sm:gap-6">
-              <span className="text-xl sm:text-2xl animate-pulse">✨</span>
-              
+        <div className="relative overflow-hidden bg-primary text-white shadow-md z-10 py-3 sm:py-4">
+          <div className="container relative mx-auto px-4">
+            <div className="flex flex-col items-center justify-center">
               <div className="flex flex-wrap items-center justify-center gap-3">
+                <span className="text-xl sm:text-2xl animate-pulse text-accent">✨</span>
                 {promotions.map((p) => (
                   <span 
                     key={p.id} 
-                    className="text-sm sm:text-base md:text-lg font-bold tracking-widest uppercase drop-shadow-md"
+                    className="text-sm sm:text-base font-bold tracking-widest uppercase drop-shadow-md"
                   >
                     {p.nameTh ?? p.name}
                   </span>
                 ))}
+                <span className="text-xl sm:text-2xl animate-pulse delay-75 text-accent">✨</span>
               </div>
-              
-              <span className="text-xl sm:text-2xl animate-pulse delay-75">✨</span>
-            </div>
-            
-            {/* Action text */}
-            <div className="mt-1 text-center text-xs sm:text-sm font-medium text-white/90 uppercase tracking-widest">
-              ช้อปเลย! สิทธิพิเศษมีจำนวนจำกัด
             </div>
           </div>
         </div>
       )}
 
-      {/* ── Hero ─────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden pt-28 pb-32 md:pt-40 md:pb-48">
-        {/* Background Image & Overlay */}
+      {/* ── Hero Section ─────────────────────────────────────────────────────── */}
+      <section className="relative overflow-hidden pt-24 pb-32 md:pt-32 md:pb-40 bg-slate-50">
         <div className="absolute inset-0 z-0">
           <Image
-            src="https://images.unsplash.com/photo-1617137968427-85924c800a22?auto=format&fit=crop&w=1920&q=80"
-            alt="Premium shirts background"
+            src="https://images.unsplash.com/photo-1598033129183-c4f50c736f10?auto=format&fit=crop&w=1920&q=80"
+            alt="Highbury premium shirts"
             fill
             priority
-            className="object-cover object-center"
+            className="object-cover object-center md:object-[center_30%]"
             sizes="100vw"
           />
-          {/* Gradient Overlay to make text readable */}
-          <div className="absolute inset-0 bg-gradient-to-b from-white/95 via-white/80 to-white/95 md:from-white/80 md:via-white/60 md:to-white/95" />
-          <div className="absolute inset-0 bg-slate-900/10" />
+          {/* Gradient Overlay ensuring text is perfectly readable */}
+          <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-transparent md:from-white/95 md:via-white/70" />
         </div>
         
-        <div className="container mx-auto px-4 relative z-10 text-center">
-          <Badge variant="secondary" className="mb-6 px-4 py-1.5 text-sm font-medium bg-blue-600 text-white hover:bg-blue-700 border-none transition-colors shadow-sm">
-            เสื้อเชิ้ตคุณภาพระดับสากล
-          </Badge>
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 mb-6 max-w-4xl mx-auto leading-tight drop-shadow-sm">
-            ยกระดับบุคลิกภาพกับ <br className="hidden md:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-indigo-700 drop-shadow-sm">
-              HIGHBURY
-            </span>
-          </h1>
-          <p className="text-lg md:text-xl text-slate-700 mb-10 max-w-2xl mx-auto leading-relaxed font-medium drop-shadow-sm">
-            เสื้อเชิ้ตสำเร็จรูปสำหรับผู้ชายและผู้หญิง ตัดเย็บด้วยความประณีต หลากสีสัน หลายไซส์ พร้อมส่งตรงถึงมือคุณแล้ววันนี้
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button size="lg" className="rounded-full px-8 bg-blue-600 hover:bg-blue-700 text-md h-14 shadow-lg shadow-blue-500/30 transition-all hover:-translate-y-1" asChild>
-              <Link href="/products">
-                เลือกซื้อสินค้า
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-            <Button size="lg" variant="outline" className="rounded-full px-8 text-md h-14 bg-white/90 backdrop-blur-sm border-slate-200 hover:bg-white text-slate-700 transition-all hover:-translate-y-1 shadow-sm" asChild>
-              <Link href="/about">เกี่ยวกับเรา</Link>
-            </Button>
+        <div className="container mx-auto px-4 relative z-10 flex items-center">
+          <div className="max-w-2xl text-left">
+            <Badge variant="secondary" className="mb-6 px-4 py-1.5 text-sm font-medium bg-accent text-white hover:bg-accent/90 border-none transition-colors shadow-sm">
+              NEW COLLECTION
+            </Badge>
+            <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-slate-900 mb-6 leading-[1.1] drop-shadow-sm">
+              สะท้อนความสำเร็จ<br className="hidden md:block" />ในแบบคุณ ด้วยเชิ้ตที่ใช่
+            </h1>
+            <p className="text-lg md:text-xl text-slate-700 mb-10 leading-relaxed font-medium max-w-xl">
+              เสื้อเชิ้ตดีไซน์ทันสมัยสำหรับทั้งผู้ชายและผู้หญิงยุคใหม่ คัตติ้งเนี้ยบ ทรงสวย พอดีตัว พร้อมเนื้อผ้าระบายอากาศได้ดีเยี่ยม ตอบโจทย์ทุกวันทำงานและทุกโอกาสของคุณ
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 items-start">
+              <Button size="lg" className="rounded-lg px-8 bg-accent hover:bg-accent/90 text-white text-md h-14 shadow-lg transition-all hover:-translate-y-1 w-full sm:w-auto" asChild>
+                <Link href="/products">
+                  เลือกชมคอลเลกชันใหม่
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
+              </Button>
+            </div>
+            
+            {/* Trust Signals Under CTA */}
+            <div className="mt-6 flex items-center gap-4 text-sm font-medium text-slate-600">
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4 text-green-600" />
+                <span>จัดส่งฟรี 1,000.- ขึ้นไป</span>
+              </div>
+              <div className="w-1 h-1 rounded-full bg-slate-300" />
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4 text-green-600" />
+                <span>เปลี่ยนไซส์ได้ฟรี</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ── Features ─────────────────────────────────────────────────── */}
-      <section className="py-20 bg-white">
+      {/* ── Value Proposition / Features ─────────────────────────────────────── */}
+      <section className="py-24 bg-white">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map(({ Icon, titleTh, descTh }) => (
-              <div key={titleTh} className="flex flex-col items-start gap-4 p-6 rounded-2xl bg-white border border-slate-100 shadow-sm hover:shadow-md hover:border-blue-100 transition-all">
-                <div className="p-3 rounded-xl bg-blue-50 text-blue-600">
-                  <Icon className="h-6 w-6" strokeWidth={1.5} />
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-primary mb-4">
+              ทำไมต้อง Highbury?
+            </h2>
+            <p className="text-lg text-slate-600">ความใส่ใจในทุกรายละเอียด คือสิ่งที่เรายึดมั่นเพื่อมอบเสื้อเชิ้ตที่ดีที่สุดให้กับคุณ</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+            {features.map(({ Icon, titleTh, titleEn, descTh }) => (
+              <div key={titleEn} className="flex flex-col items-center text-center gap-5 p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:shadow-lg transition-all duration-300">
+                <div className="p-4 rounded-full bg-primary/10 text-primary mb-2">
+                  <Icon className="h-8 w-8" strokeWidth={1.5} />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-900 mb-1.5">{titleTh}</h3>
-                  <p className="text-sm text-slate-500 leading-relaxed">{descTh}</p>
+                  <div className="text-xs uppercase tracking-widest text-accent font-semibold mb-1">{titleEn}</div>
+                  <h3 className="text-xl font-bold text-slate-900 mb-3">{titleTh}</h3>
+                  <p className="text-base text-slate-600 leading-relaxed">{descTh}</p>
                 </div>
               </div>
             ))}
@@ -177,20 +190,100 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* ── Product Showcase (Best Sellers) ────────────────────────────────── */}
+      {featuredProducts.length > 0 && (
+        <section className="py-24 bg-slate-50">
+          <div className="container mx-auto px-4">
+            <div className="flex flex-col md:flex-row items-center justify-between mb-12 gap-6">
+              <div className="text-center md:text-left">
+                <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 mb-3">Signature Collection ของเรา</h2>
+                <p className="text-lg text-slate-600">คอลเลกชันเสื้อเชิ้ตยอดนิยมที่ออกแบบมาเพื่อสไตล์ของคุณ</p>
+              </div>
+              <Button variant="outline" className="rounded-lg border-primary text-primary hover:bg-primary hover:text-white px-6 hidden md:flex transition-colors" asChild>
+                <Link href="/products">
+                  ดูสินค้าทั้งหมด <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+            
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
+              {featuredProducts.map((product) => {
+                const primaryImage = product.images[0];
+                const minPrice = Math.min(...product.variants.map((v) => v.price));
+                const maxPrice = Math.max(...product.variants.map((v) => v.price));
+                const colors = [...new Set(product.variants.map((v) => v.color))];
+                
+                return (
+                  <Card key={product.id} className="group overflow-hidden border-transparent hover:border-slate-200 hover:shadow-2xl transition-all duration-500 rounded-xl bg-white flex flex-col h-full relative">
+                    <Link href={`/products/${product.slug}`} className="flex-1 flex flex-col relative w-full h-full">
+                      <div className="aspect-[4/5] relative overflow-hidden bg-slate-100">
+                        {primaryImage ? (
+                          <Image
+                            src={primaryImage.url}
+                            alt={primaryImage.altText ?? product.nameTh}
+                            fill
+                            className="object-cover object-top group-hover:scale-105 transition-transform duration-700"
+                            sizes="(max-width: 768px) 50vw, 25vw"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50 gap-2">
+                            <Shirt className="w-12 h-12 text-slate-300" strokeWidth={1} />
+                          </div>
+                        )}
+                        {/* Hover Quick Action Overlay */}
+                        <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors duration-300 z-10 flex items-end justify-center opacity-0 group-hover:opacity-100 pb-4">
+                          <span className="bg-white text-primary text-sm font-semibold px-4 py-2 rounded-lg shadow-lg translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                            ดูรายละเอียด
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <div className="p-5 flex flex-col flex-1">
+                        <div className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">{product.category.nameTh}</div>
+                        <h3 className="font-semibold text-lg text-slate-900 mb-2 line-clamp-2 group-hover:text-primary transition-colors">{product.nameTh}</h3>
+                        
+                        <div className="mt-auto pt-4 flex items-center justify-between">
+                           <div className="font-bold text-lg text-primary">
+                            {minPrice === maxPrice
+                              ? `฿${minPrice.toLocaleString()}`
+                              : `฿${minPrice.toLocaleString()} - ฿${maxPrice.toLocaleString()}`}
+                          </div>
+                          
+                          {/* Color indicators */}
+                          {colors.length > 0 && (
+                             <div className="flex items-center gap-1">
+                              <span className="text-xs text-slate-500 mr-1">{colors.length} สี</span>
+                             </div>
+                          )}
+                        </div>
+                      </div>
+                    </Link>
+                  </Card>
+                );
+              })}
+            </div>
+            
+            {/* Mobile View All Button */}
+            <div className="text-center mt-8 md:hidden">
+              <Button variant="outline" className="rounded-lg border-primary text-primary hover:bg-primary hover:text-white w-full" asChild>
+                <Link href="/products">ดูสินค้าทั้งหมด</Link>
+              </Button>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* ── Categories ───────────────────────────────────────────────── */}
       {categories.length > 0 && (
-        <section className="py-16 bg-slate-50">
+        <section className="py-16 bg-white border-t border-slate-100">
           <div className="container mx-auto px-4">
-            <div className="flex flex-col items-center mb-10 text-center">
-              <h2 className="text-3xl font-bold tracking-tight text-slate-900">หมวดหมู่สินค้า</h2>
-              <div className="h-1 w-12 bg-blue-600 mt-4 rounded-full" />
-            </div>
-            <div className="flex flex-wrap justify-center gap-3 md:gap-4">
+            <div className="flex flex-wrap justify-center items-center gap-4">
+              <span className="px-4 py-2 font-semibold text-slate-700">หมวดหมู่สินค้า :</span>
               {categories.map((cat) => (
                 <Link
                   key={cat.id}
                   href={`/products?category=${cat.slug}`}
-                  className="group relative px-6 py-3.5 bg-white border border-slate-200 rounded-full hover:border-blue-400 hover:shadow-md hover:-translate-y-0.5 transition-all text-sm sm:text-base font-medium text-slate-700 hover:text-blue-600"
+                  className="px-5 py-2 bg-slate-50 border border-slate-200 rounded-full hover:border-accent hover:text-accent font-medium text-slate-600 transition-colors text-sm sm:text-base shadow-sm hover:shadow"
                 >
                   {cat.nameTh}
                 </Link>
@@ -200,196 +293,54 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* ── Featured Products ─────────────────────────────────────────── */}
-      {featuredProducts.length > 0 && (
-        <section className="py-20 bg-white">
-          <div className="container mx-auto px-4">
-            <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-10 gap-4">
-              <div>
-                <h2 className="text-3xl font-bold tracking-tight text-slate-900 mb-2">สินค้าแนะนำ</h2>
-                <p className="text-slate-500">คัดสรรคอลเลกชันที่ดีที่สุดสำหรับคุณ</p>
-              </div>
-              <Button variant="ghost" className="text-blue-600 hover:text-blue-700 hover:bg-blue-50" asChild>
-                <Link href="/products">
-                  ดูทั้งหมด <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-            </div>
-            
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-              {featuredProducts.map((product) => {
-                const primaryImage = product.images[0];
-                const minPrice = Math.min(...product.variants.map((v) => v.price));
-                const maxPrice = Math.max(...product.variants.map((v) => v.price));
-                const colors = [...new Set(product.variants.map((v) => v.color))];
-                const sizes = [...new Set(product.variants.map((v) => v.size))];
-                return (
-                  <Card key={product.id} className="group overflow-hidden border-slate-100 hover:border-blue-200 hover:shadow-xl transition-all duration-300 rounded-2xl bg-white">
-                    <CardContent className="p-0">
-                      <Link href={`/products/${product.slug}`}>
-                        <div className="aspect-[4/5] relative overflow-hidden bg-slate-50">
-                          {primaryImage ? (
-                            <Image
-                              src={primaryImage.url}
-                              alt={primaryImage.altText ?? product.nameTh}
-                              fill
-                              className="object-cover group-hover:scale-105 transition-transform duration-500"
-                              sizes="(max-width: 768px) 50vw, 25vw"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50 gap-2">
-                              <Shirt className="w-12 h-12 text-slate-300" strokeWidth={1} />
-                            </div>
-                          )}
-                          <div className="absolute top-3 left-3 flex flex-col gap-2">
-                            <Badge className="bg-white/90 text-slate-900 hover:bg-white backdrop-blur-sm border-none shadow-sm pointer-events-none">
-                              แนะนำ
-                            </Badge>
-                          </div>
-                        </div>
-                        <div className="p-4">
-                          <p className="text-xs font-medium text-blue-600 mb-1">{product.category.nameTh}</p>
-                          <h3 className="font-semibold text-slate-900 leading-tight mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">{product.nameTh}</h3>
-                          
-                          <div className="flex items-center gap-3 mt-3 text-xs text-slate-500">
-                            {colors.length > 0 && (
-                              <div className="flex items-center gap-1.5">
-                                <div className="flex -space-x-1">
-                                  {colors.slice(0, 3).map((c, i) => (
-                                    <div key={i} className="w-3.5 h-3.5 rounded-full border border-white bg-slate-300" title={c} />
-                                  ))}
-                                </div>
-                                <span>{colors.length} สี</span>
-                              </div>
-                            )}
-                            {sizes.length > 0 && (
-                              <div className="truncate">
-                                {sizes.slice(0, 3).join(", ")}{sizes.length > 3 && ", ..."}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </Link>
-                    </CardContent>
-                    <CardFooter className="p-4 pt-0 flex flex-col items-start gap-4">
-                      <div className="font-bold text-lg text-slate-900 border-t border-slate-100 w-full pt-4 mt-1">
-                        {minPrice === maxPrice
-                          ? `฿${minPrice.toLocaleString()}`
-                          : `฿${minPrice.toLocaleString()} - ฿${maxPrice.toLocaleString()}`}
-                      </div>
-                    </CardFooter>
-                  </Card>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ── Contact ─────────────────────────────────────────────────── */}
-      <section className="py-20 bg-slate-50 border-t border-slate-100">
-        <div className="container mx-auto px-4 max-w-5xl">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold tracking-tight text-slate-900 mb-4">พูดคุยกับเรา</h2>
-            <p className="text-slate-600 text-lg">สอบถามข้อมูลเพิ่มเติม หรือสั่งซื้อสินค้าผ่านช่องทางที่คุณสะดวก</p>
+      {/* ── Social Proof & Trust ────────────────────────────────────────────── */}
+      <section className="py-24 bg-primary text-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
+              เสียงตอบรับจากลูกค้าผู้ใช้งานจริง
+            </h2>
+            <p className="text-primary-foreground/80 text-lg">กว่า 10,000+ ความประทับใจ ที่เลือกใช้ Highbury</p>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <a
-              href="tel:028968066"
-              className="flex flex-col items-center justify-center gap-3 p-6 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:-translate-y-1 hover:border-green-200 transition-all text-center group"
-            >
-              <div className="w-12 h-12 flex items-center justify-center rounded-full bg-green-100 text-green-600 group-hover:bg-green-500 group-hover:text-white transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-                  <path fillRule="evenodd" d="M1.5 4.5a3 3 0 013-3h1.372c.86 0 1.61.586 1.819 1.42l1.105 4.423a1.875 1.875 0 01-.694 1.955l-1.293.97c-.135.101-.164.249-.126.352a11.285 11.285 0 006.697 6.697c.103.038.25.009.352-.126l.97-1.293a1.875 1.875 0 011.955-.694l4.423 1.105c.834.209 1.42.959 1.42 1.82V19.5a3 3 0 01-3 3h-2.25C8.552 22.5 1.5 15.448 1.5 6.75V4.5z" clipRule="evenodd" />
-                </svg>
-              </div>
-              <div className="flex flex-col flex-1">
-                <div className="text-sm text-slate-500 font-medium mb-1">โทรศัพท์</div>
-                <div className="font-semibold text-slate-900 group-hover:text-green-600 transition-colors truncate w-full max-w-[120px]">02-896-8066</div>
-              </div>
-            </a>
-
-            <a
-              href="https://line.me/ti/p/@highbury"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex flex-col items-center justify-center gap-3 p-6 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:-translate-y-1 hover:border-[#00b900]/30 transition-all text-center group"
-            >
-              <div className="w-12 h-12 flex items-center justify-center rounded-full bg-[#00b900]/10 text-[#00b900] group-hover:bg-[#00b900] group-hover:text-white transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-                  <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.022.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.070 9.436-6.975C23.176 14.393 24 12.458 24 10.314" />
-                </svg>
-              </div>
-              <div className="flex flex-col flex-1">
-                <div className="text-sm text-slate-500 font-medium mb-1">LINE Official</div>
-                <div className="font-semibold text-slate-900 group-hover:text-[#00b900] transition-colors truncate w-full max-w-[120px]">@highbury</div>
-              </div>
-            </a>
-
-            <a
-              href="https://facebook.com/highbury.shirt"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex flex-col items-center justify-center gap-3 p-6 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:-translate-y-1 hover:border-[#1877f2]/30 transition-all text-center group"
-            >
-              <div className="w-12 h-12 flex items-center justify-center rounded-full bg-[#1877f2]/10 text-[#1877f2] group-hover:bg-[#1877f2] group-hover:text-white transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                </svg>
-              </div>
-              <div className="flex flex-col flex-1">
-                <div className="text-sm text-slate-500 font-medium mb-1">Facebook</div>
-                <div className="font-semibold text-slate-900 group-hover:text-[#1877f2] transition-colors truncate w-full max-w-[120px]">highbury.shirt</div>
-              </div>
-            </a>
-
-            <a
-              href="mailto:thong_than@hotmail.com"
-              className="flex flex-col items-center justify-center gap-3 p-6 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:-translate-y-1 hover:border-red-200 transition-all text-center group"
-            >
-              <div className="w-12 h-12 flex items-center justify-center rounded-full bg-red-100 text-red-600 group-hover:bg-red-500 group-hover:text-white transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-                  <path d="M1.5 8.67v8.58a3 3 0 003 3h15a3 3 0 003-3V8.67l-8.928 5.493a3 3 0 01-3.144 0L1.5 8.67z" />
-                  <path d="M22.5 6.908V6.75a3 3 0 00-3-3h-15a3 3 0 00-3 3v.158l9.714 5.978a1.5 1.5 0 001.572 0L22.5 6.908z" />
-                </svg>
-              </div>
-              <div className="flex flex-col flex-1">
-                <div className="text-sm text-slate-500 font-medium mb-1">อีเมล</div>
-                <div className="font-semibold text-slate-900 group-hover:text-red-500 transition-colors truncate w-full max-w-[120px]" title="thong_than@hotmail.com">thong_than</div>
-              </div>
-            </a>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {reviews.map((review, idx) => (
+              <Card key={idx} className="bg-white/5 border-none text-white p-6 rounded-2xl backdrop-blur-sm hover:bg-white/10 transition-colors">
+                <div className="flex gap-1 mb-4 text-amber-400">
+                  {[...Array(5)].map((_, i) => <Star key={i} fill="currentColor" size={20} />)}
+                </div>
+                <p className="text-lg leading-relaxed mb-6 font-medium text-white/90">"{review.text}"</p>
+                <div className="flex items-center gap-3">
+                   <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center text-accent font-bold">
+                     {review.name.charAt(0)}
+                   </div>
+                   <div>
+                     <div className="font-semibold">{review.name}</div>
+                     <div className="text-xs text-white/60 flex items-center gap-1">
+                       <CheckCircle2 size={12} className="text-green-400" />
+                       ลูกค้าที่ซื้อจริง (Verified Buyer)
+                     </div>
+                   </div>
+                </div>
+              </Card>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ── CTA Banner ───────────────────────────────────────────────── */}
-      <section className="py-24 relative overflow-hidden bg-slate-900">
-        {/* Abstract background */}
-        <div className="absolute inset-0 opacity-20 pointer-events-none">
-           <svg className="absolute w-full h-full text-white" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern id="grid-pattern" width="40" height="40" patternUnits="userSpaceOnUse">
-                <path d="M0 40V0H40" fill="none" stroke="currentColor" strokeWidth="1"/>
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#grid-pattern)"/>
-          </svg>
-        </div>
-        <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-blue-600/30 to-transparent pointer-events-none" />
-
-        <div className="container mx-auto px-4 relative z-10 text-center">
-          <Badge variant="outline" className="mb-6 px-4 py-1.5 text-sm font-medium bg-white/10 text-white hover:bg-white/20 border-white/20 transition-colors">
-            บริการรับสั่งทำ (OEM)
-          </Badge>
-          <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white tracking-tight">
-            รับผลิตและสั่งทำชุดยูนิฟอร์มองค์กร
+      {/* ── Bottom Call to Action ────────────────────────────────────────────── */}
+      <section className="py-24 bg-slate-50">
+        <div className="container mx-auto px-4 text-center max-w-3xl">
+          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6 tracking-tight">
+            พร้อมจะยกระดับสไตล์ของคุณหรือยัง?
           </h2>
-          <p className="text-lg text-slate-300 mb-10 max-w-2xl mx-auto leading-relaxed">
-            พร้อมบริการตัดเย็บเสื้อเชิ้ตตามแบบที่คุณต้องการ ทั้งออกแบบโลโก้ เลือกเนื้อผ้า และสีที่ใช่ รับออเดอร์เริ่มต้นเพียง 25 ตัว
+          <p className="text-xl text-slate-600 mb-10 leading-relaxed">
+            สัมผัสความต่างของเสื้อเชิ้ต Highbury ได้แล้ววันนี้ พร้อมโปรโมชันพิเศษต้อนรับลูกค้าใหม่ ซื้อครบจบในที่เดียว
           </p>
-          <Button size="lg" className="rounded-full px-8 bg-blue-600 hover:bg-blue-500 text-white text-md h-14 border-none shadow-lg shadow-blue-900/20" asChild>
-            <Link href="/contact">ติดต่อสอบถามข้อมูล</Link>
+          <Button size="lg" className="rounded-lg px-10 py-7 text-lg bg-accent hover:bg-accent/90 text-white shadow-xl hover:shadow-accent/40 transition-all hover:scale-105" asChild>
+            <Link href="/products">
+              เริ่มต้นการสั่งซื้อของคุณเลย
+            </Link>
           </Button>
         </div>
       </section>
