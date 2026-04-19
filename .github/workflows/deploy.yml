@@ -100,7 +100,8 @@ jobs:
         run: |
           echo "::error::Deploy failed! ตรวจสอบ logs ด้วย: docker compose logs --tail=50 app"
 
-      - name: Cleanup docker artifacts
+      - name: Cleanup CI runner
         if: always()
         run: |
           docker system prune -af
+          rm -rf ~/actions-runner/_work/*
