@@ -99,3 +99,8 @@ jobs:
         if: failure()
         run: |
           echo "::error::Deploy failed! ตรวจสอบ logs ด้วย: docker compose logs --tail=50 app"
+
+      - name: Cleanup docker artifacts
+        if: always()
+        run: |
+          docker system prune -af
