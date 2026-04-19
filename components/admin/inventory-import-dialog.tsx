@@ -357,7 +357,8 @@ export default function InventoryImportDialog() {
                       {/* Expanded items */}
                       {expandedBatch === batch.batchId && (
                         <div className="bg-muted/10 border-t">
-                          <table className="w-full">
+                          <div className="overflow-x-auto">
+                            <table className="w-full min-w-[640px]">
                             <thead>
                               <tr className="bg-muted/30 border-b">
                                 <th className="text-left px-4 py-1.5 font-medium text-muted-foreground text-xs">สินค้า / SKU</th>
@@ -388,7 +389,8 @@ export default function InventoryImportDialog() {
                                 );
                               })}
                             </tbody>
-                          </table>
+                            </table>
+                          </div>
                         </div>
                       )}
                     </div>
@@ -407,8 +409,8 @@ export default function InventoryImportDialog() {
 
 function PreviewTable({ items, isNew }: { items: PreviewItem[]; isNew: boolean }) {
   return (
-    <div className="border rounded-lg overflow-hidden text-sm">
-      <table className="w-full">
+    <div className="border rounded-lg overflow-x-auto text-sm">
+      <table className="w-full min-w-[640px]">
         <thead>
           <tr className="bg-muted/40 border-b">
             <th className="text-left px-3 py-2 font-medium text-muted-foreground">สินค้า / SKU</th>
