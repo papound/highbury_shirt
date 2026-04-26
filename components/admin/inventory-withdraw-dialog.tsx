@@ -15,11 +15,10 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { PackageMinus, Loader2, History, AlertTriangle } from "lucide-react";
+import { PackageMinus, Loader2, History, AlertTriangle, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -30,6 +29,7 @@ type Warehouse = { id: string; name: string; uniqueKey: string; [k: string]: any
 type InventoryItem = { id: string; variantId: string; warehouseId: string; quantity: number; variant: any; warehouse: any };
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type WithdrawalRecord = { id: string; createdAt: string; quantity: number; reason?: string; warehouse: any; variant: any; performedBy: any };
+type WithdrawLineItem = { variantId: string; quantity: number };
 
 interface Props {
   warehouses: Warehouse[];
@@ -45,7 +45,8 @@ export default function InventoryWithdrawDialog({ warehouses, inventory }: Props
   const [warehouseId, setWarehouseId] = useState("");
   const [skuSearch, setSkuSearch] = useState("");
   const [selectedVariantId, setSelectedVariantId] = useState("");
-  const [quantity, setQuantity] = useState("");
+  const [itemQty, setItemQty] = useState("");
+  const [lineItems, setLineItems] = useState<WithdrawLineItem[]>([]);
   const [reason, setReason] = useState("");
 
   // ── Confirm step ──────────────────────────────────────────────────────────
@@ -88,34 +89,51 @@ export default function InventoryWithdrawDialog({ warehouses, inventory }: Props
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
-  function requestWithdraw() {
-    if (!warehouseId || !selectedVariantId || !quantity) {
-      toast.error("กรุณากรอกข้อมูลให้ครบ");
-      return;
-    }
-    const qty = parseInt(quantity);
+  function addLineItem() {
+    if (!selectedVariantId || !itemQty) { toast.error("กรุณาเลือกสินค้าและระบุจำนวน"); return; }
+    const qty = parseInt(itemQty);
     if (isNaN(qty) || qty <= 0) { toast.error("จำนวนต้องมากกว่า 0"); return; }
     if (selectedInv && qty > selectedInv.quantity) {
       toast.error(`Stock ไม่เพียงพอ (มี ${selectedInv.quantity})`);
+      return;
+    }
+    setLineItems((prev) => {
+      const existing = prev.find((li) => li.variantId === selectedVariantId);
+      if (existing) {
+        return prev.map((li) => li.variantId === selectedVariantId ? { ...li, quantity: qty } : li);
+      }
+      return [...prev, { variantId: selectedVariantId, quantity: qty }];
+    });
+    setSelectedVariantId("");
+    setSkuSearch("");
+    setItemQty("");
+  }
+
+  function removeLineItem(variantId: string) {
+    setLineItems((prev) => prev.filter((li) => li.variantId !== variantId));
+  }
+
+  function requestWithdraw() {
+    if (!warehouseId || lineItems.length === 0) {
+      toast.error("กรุณาเลือกคลังและเพิ่มสินค้าอย่างน้อย 1 รายการ");
       return;
     }
     setConfirmOpen(true);
   }
 
   async function executeWithdraw() {
-    const qty = parseInt(quantity);
     setWithdrawing(true);
     try {
       const res = await fetch("/api/admin/inventory/withdraw", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ warehouseId, variantId: selectedVariantId, quantity: qty, reason }),
+        body: JSON.stringify({ warehouseId, items: lineItems, reason }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "เบิกล้มเหลว");
-      toast.success("เบิกสินค้าสำเร็จ");
+      toast.success(`เบิกสินค้าสำเร็จ ${lineItems.length} รายการ`);
       setConfirmOpen(false);
-      setWarehouseId(""); setSkuSearch(""); setSelectedVariantId(""); setQuantity(""); setReason("");
+      setWarehouseId(""); setSkuSearch(""); setSelectedVariantId(""); setItemQty(""); setLineItems([]); setReason("");
       loadHistory();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "เกิดข้อผิดพลาด");
@@ -143,7 +161,12 @@ export default function InventoryWithdrawDialog({ warehouses, inventory }: Props
 
           <Tabs defaultValue="withdraw">
             <TabsList className="w-full">
-              <TabsTrigger value="withdraw" className="flex-1">เบิกสินค้า</TabsTrigger>
+              <TabsTrigger value="withdraw" className="flex-1">
+                เบิกสินค้า
+                {lineItems.length > 0 && (
+                  <Badge variant="secondary" className="ml-1.5 text-xs">{lineItems.length}</Badge>
+                )}
+              </TabsTrigger>
               <TabsTrigger value="history" className="flex-1" onClick={loadHistory}>
                 <History className="w-3.5 h-3.5 mr-1" />ประวัติการเบิก
               </TabsTrigger>
@@ -156,74 +179,147 @@ export default function InventoryWithdrawDialog({ warehouses, inventory }: Props
                 <span>การเบิกสินค้าจะลด Stock ออกจากคลังถาวร กรุณาตรวจสอบข้อมูลให้ถูกต้องก่อนยืนยัน</span>
               </div>
 
+              {/* Warehouse selector */}
               <div>
                 <label className="text-sm font-medium block mb-1">คลังสินค้า</label>
-                <Select value={warehouseId} onValueChange={(v) => { setWarehouseId(v ?? ""); setSelectedVariantId(""); setSkuSearch(""); }}>
-                  <SelectTrigger><SelectValue placeholder="เลือกคลังสินค้า" /></SelectTrigger>
+                <Select value={warehouseId} onValueChange={(v) => { setWarehouseId(v ?? ""); setSelectedVariantId(""); setSkuSearch(""); setLineItems([]); }}>
+                  <SelectTrigger>
+                    {warehouseId ? (
+                      <span className="flex items-center gap-1.5 overflow-hidden">
+                        <span className="truncate">{warehouses.find((w) => w.id === warehouseId)?.name}</span>
+                        <span className="text-muted-foreground text-xs font-mono shrink-0">[{warehouses.find((w) => w.id === warehouseId)?.uniqueKey}]</span>
+                      </span>
+                    ) : (
+                      <span className="text-muted-foreground">เลือกคลังสินค้า</span>
+                    )}
+                  </SelectTrigger>
                   <SelectContent>
                     {warehouses.map((w) => (
                       <SelectItem key={w.id} value={w.id}>
-                        {w.name} <span className="text-muted-foreground text-xs ml-1">[{w.uniqueKey}]</span>
+                        {w.name} [{w.uniqueKey}]
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
 
+              {/* Item search + add */}
               {warehouseId && (
-                <div>
-                  <label className="text-sm font-medium block mb-1">ค้นหาสินค้า (SKU / ชื่อ)</label>
+                <div className="rounded-lg border p-3 space-y-3 bg-muted/20">
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">เพิ่มรายการสินค้า</p>
                   <Input
                     placeholder="พิมพ์ SKU หรือชื่อสินค้า..."
                     value={skuSearch}
                     onChange={(e) => { setSkuSearch(e.target.value); setSelectedVariantId(""); }}
                   />
                   {filteredItems.length > 0 && (
-                    <div className="mt-2 border rounded-lg overflow-hidden max-h-48 overflow-y-auto">
-                      {filteredItems.map((inv) => (
-                        <button
-                          key={inv.variantId}
-                          className={`w-full text-left px-3 py-2 text-sm hover:bg-muted/40 flex justify-between items-center ${selectedVariantId === inv.variantId ? "bg-primary/10 font-medium" : ""}`}
-                          onClick={() => { setSelectedVariantId(inv.variantId); setSkuSearch(inv.variant.sku); }}
-                        >
-                          <span>
-                            <span className="font-mono text-xs text-muted-foreground mr-2">{inv.variant.sku}</span>
-                            {inv.variant.product.nameTh} — {inv.variant.color}/{inv.variant.size}
-                          </span>
-                          <Badge variant={inv.quantity <= 5 ? "destructive" : "secondary"} className="text-xs shrink-0">
-                            {inv.quantity} ชิ้น
-                          </Badge>
-                        </button>
-                      ))}
+                    <div className="border rounded-lg overflow-hidden max-h-44 overflow-y-auto bg-background">
+                      {filteredItems.map((inv) => {
+                        const alreadyAdded = lineItems.some((li) => li.variantId === inv.variantId);
+                        return (
+                          <button
+                            key={inv.variantId}
+                            className={`w-full text-left px-3 py-2 text-sm hover:bg-muted/40 flex justify-between items-center ${selectedVariantId === inv.variantId ? "bg-primary/10 font-medium" : ""}`}
+                            onClick={() => { setSelectedVariantId(inv.variantId); setSkuSearch(inv.variant.sku); }}
+                          >
+                            <span>
+                              <span className="font-mono text-xs text-muted-foreground mr-2">{inv.variant.sku}</span>
+                              {inv.variant.product.nameTh} — {inv.variant.color}/{inv.variant.size}
+                            </span>
+                            <div className="flex items-center gap-1.5 shrink-0">
+                              {alreadyAdded && <Badge variant="outline" className="text-xs text-green-600 border-green-600">✓</Badge>}
+                              <Badge variant={inv.quantity <= 5 ? "destructive" : "secondary"} className="text-xs">
+                                {inv.quantity} ชิ้น
+                              </Badge>
+                            </div>
+                          </button>
+                        );
+                      })}
                     </div>
                   )}
                   {selectedInv && (
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Stock ปัจจุบัน: <strong>{selectedInv.quantity} ชิ้น</strong>
-                    </p>
+                    <div className="flex items-center gap-2">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs text-muted-foreground truncate">
+                          <span className="font-mono mr-1">{selectedInv.variant.sku}</span>
+                          {selectedInv.variant.product.nameTh} — {selectedInv.variant.color}/{selectedInv.variant.size}
+                          <span className="ml-1 font-medium text-foreground">(Stock: {selectedInv.quantity})</span>
+                        </p>
+                      </div>
+                      <Input
+                        type="number"
+                        min={1}
+                        max={selectedInv.quantity}
+                        placeholder="จำนวน"
+                        className="w-24 shrink-0"
+                        value={itemQty}
+                        onChange={(e) => setItemQty(e.target.value)}
+                        onKeyDown={(e) => e.key === "Enter" && addLineItem()}
+                      />
+                      <Button size="sm" onClick={addLineItem} className="shrink-0">
+                        <Plus className="w-3.5 h-3.5 mr-1" />เพิ่ม
+                      </Button>
+                    </div>
                   )}
                 </div>
               )}
 
-              <div className="grid grid-cols-2 gap-4">
+              {/* Line items list */}
+              {lineItems.length > 0 && (
                 <div>
-                  <label className="text-sm font-medium block mb-1">จำนวนที่เบิก</label>
-                  <Input type="number" min={1} placeholder="จำนวน" value={quantity} onChange={(e) => setQuantity(e.target.value)} />
+                  <label className="text-sm font-medium block mb-1.5">รายการที่จะเบิก ({lineItems.length} รายการ)</label>
+                  <div className="border rounded-lg overflow-hidden">
+                    {lineItems.map((li, idx) => {
+                      const inv = warehouseInventory.find((i) => i.variantId === li.variantId);
+                      return (
+                        <div key={li.variantId} className={`flex items-center gap-2 px-3 py-2 text-sm ${idx < lineItems.length - 1 ? "border-b" : ""}`}>
+                          <div className="flex-1 min-w-0">
+                            <span className="font-mono text-xs text-muted-foreground mr-2">{inv?.variant.sku}</span>
+                            <span className="text-sm">{inv?.variant.product.nameTh} — {inv?.variant.color}/{inv?.variant.size}</span>
+                          </div>
+                          <div className="flex items-center gap-2 shrink-0">
+                            <Input
+                              type="number"
+                              min={1}
+                              max={inv?.quantity}
+                              className="w-20 h-7 text-xs"
+                              value={li.quantity}
+                              onChange={(e) => {
+                                const q = parseInt(e.target.value);
+                                if (!isNaN(q) && q > 0) {
+                                  setLineItems((prev) => prev.map((x) => x.variantId === li.variantId ? { ...x, quantity: q } : x));
+                                }
+                              }}
+                            />
+                            <span className="text-xs text-muted-foreground">/{inv?.quantity}</span>
+                            <button
+                              className="text-destructive hover:text-destructive/70 p-0.5"
+                              onClick={() => removeLineItem(li.variantId)}
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
-                <div>
-                  <label className="text-sm font-medium block mb-1">เหตุผล / หมายเหตุ</label>
-                  <Input placeholder="เหตุผลการเบิก..." value={reason} onChange={(e) => setReason(e.target.value)} />
-                </div>
+              )}
+
+              {/* Shared reason */}
+              <div>
+                <label className="text-sm font-medium block mb-1">เหตุผล / หมายเหตุ</label>
+                <Input placeholder="เหตุผลการเบิก..." value={reason} onChange={(e) => setReason(e.target.value)} />
               </div>
 
               <Button
                 variant="destructive"
                 onClick={requestWithdraw}
-                disabled={!warehouseId || !selectedVariantId || !quantity}
+                disabled={!warehouseId || lineItems.length === 0}
                 className="w-full"
               >
                 <PackageMinus className="w-4 h-4 mr-1" />
-                เบิกสินค้า (ต้องยืนยันอีกครั้ง)
+                เบิกสินค้า {lineItems.length > 0 ? `(${lineItems.length} รายการ)` : ""} — ต้องยืนยันอีกครั้ง
               </Button>
             </TabsContent>
 
@@ -281,7 +377,7 @@ export default function InventoryWithdrawDialog({ warehouses, inventory }: Props
 
       {/* ── Confirm Withdraw Dialog ────────────────────────────────────────── */}
       <Dialog open={confirmOpen} onOpenChange={(o) => !o && setConfirmOpen(false)}>
-        <DialogContent className="max-w-sm">
+        <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="text-orange-600 flex items-center gap-2">
               <AlertTriangle className="w-5 h-5" />
@@ -289,40 +385,45 @@ export default function InventoryWithdrawDialog({ warehouses, inventory }: Props
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-3 py-2 text-sm">
-            <p>คุณกำลังเบิกสินค้าออกจากคลัง:</p>
-            <div className="rounded-lg border bg-muted/40 px-4 py-3 space-y-1.5">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">สินค้า</span>
-                <span className="font-medium text-right">
-                  {selectedInv?.variant.product.nameTh}<br/>
-                  <span className="font-mono text-xs text-muted-foreground">{selectedInv?.variant.sku}</span>
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">สี / ขนาด</span>
-                <span>{selectedInv?.variant.color} / {selectedInv?.variant.size}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">คลัง</span>
-                <span>{warehouses.find((w) => w.id === warehouseId)?.name}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">จำนวนที่เบิก</span>
-                <span className="font-bold text-destructive">-{quantity} ชิ้น</span>
-              </div>
-              {reason && (
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">เหตุผล</span>
-                  <span>{reason}</span>
-                </div>
-              )}
+            <div className="flex justify-between text-muted-foreground text-xs">
+              <span>คลัง: <strong className="text-foreground">{warehouses.find((w) => w.id === warehouseId)?.name}</strong></span>
+              <span>{lineItems.length} รายการ</span>
             </div>
+            <div className="rounded-lg border overflow-hidden">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="bg-muted/40 border-b">
+                    <th className="text-left px-3 py-2 font-medium text-muted-foreground">สินค้า (SKU)</th>
+                    <th className="text-right px-3 py-2 font-medium text-muted-foreground">เบิก</th>
+                    <th className="text-right px-3 py-2 font-medium text-muted-foreground">คงเหลือ</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {lineItems.map((li) => {
+                    const inv = warehouseInventory.find((i) => i.variantId === li.variantId);
+                    return (
+                      <tr key={li.variantId} className="border-b last:border-0">
+                        <td className="px-3 py-2">
+                          <div>{inv?.variant.product.nameTh}</div>
+                          <div className="font-mono text-muted-foreground">{inv?.variant.sku} · {inv?.variant.color}/{inv?.variant.size}</div>
+                        </td>
+                        <td className="px-3 py-2 text-right font-bold text-destructive">-{li.quantity}</td>
+                        <td className="px-3 py-2 text-right text-muted-foreground">{(inv?.quantity ?? 0) - li.quantity}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            {reason && (
+              <p className="text-xs text-muted-foreground">เหตุผล: <span className="text-foreground">{reason}</span></p>
+            )}
             <p className="text-xs text-muted-foreground">การกระทำนี้จะลด Stock ถาวรและเก็บประวัติไว้</p>
           </div>
           <DialogFooter>
             <Button variant="ghost" onClick={() => setConfirmOpen(false)} disabled={withdrawing}>ยกเลิก</Button>
             <Button variant="destructive" onClick={executeWithdraw} disabled={withdrawing}>
-              {withdrawing ? <><Loader2 className="w-4 h-4 mr-1 animate-spin" />กำลังเบิก...</> : "ยืนยันเบิกสินค้า"}
+              {withdrawing ? <><Loader2 className="w-4 h-4 mr-1 animate-spin" />กำลังเบิก...</> : `ยืนยันเบิก ${lineItems.length} รายการ`}
             </Button>
           </DialogFooter>
         </DialogContent>

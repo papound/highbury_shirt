@@ -35,31 +35,61 @@ export async function POST(req: NextRequest) {
   if (!session) return NextResponse.json({ error: "เฉพาะ Super Admin เท่านั้น" }, { status: 403 });
 
   try {
-    const { warehouseId, variantId, quantity, reason } = await req.json();
+    const body = await req.json();
+    const { warehouseId, reason } = body;
 
-    if (!warehouseId || !variantId || !quantity) {
+    // Support both single-item (legacy) and multi-item payloads
+    const items: { variantId: string; quantity: number }[] =
+      Array.isArray(body.items)
+        ? body.items
+        : [{ variantId: body.variantId, quantity: body.quantity }];
+
+    if (!warehouseId || items.length === 0) {
       return NextResponse.json({ error: "ข้อมูลไม่ครบ" }, { status: 400 });
     }
-    if (quantity <= 0) {
-      return NextResponse.json({ error: "จำนวนต้องมากกว่า 0" }, { status: 400 });
+
+    for (const item of items) {
+      if (!item.variantId || !item.quantity || item.quantity <= 0) {
+        return NextResponse.json({ error: "ข้อมูลรายการสินค้าไม่ถูกต้อง" }, { status: 400 });
+      }
     }
 
-    const inv = await prisma.inventory.findUnique({
-      where: { variantId_warehouseId: { variantId, warehouseId } },
+    // Validate all stock levels before touching the DB
+    const inventoryRecords = await prisma.inventory.findMany({
+      where: {
+        warehouseId,
+        variantId: { in: items.map((i) => i.variantId) },
+      },
     });
-    if (!inv || inv.quantity < quantity) {
-      return NextResponse.json({ error: `Stock ไม่เพียงพอ (มี ${inv?.quantity ?? 0})` }, { status: 400 });
+
+    for (const item of items) {
+      const inv = inventoryRecords.find((r) => r.variantId === item.variantId);
+      if (!inv || inv.quantity < item.quantity) {
+        return NextResponse.json(
+          { error: `Stock ไม่เพียงพอสำหรับ variantId: ${item.variantId} (มี ${inv?.quantity ?? 0})` },
+          { status: 400 }
+        );
+      }
     }
 
-    await prisma.$transaction([
-      prisma.inventory.update({
-        where: { variantId_warehouseId: { variantId, warehouseId } },
-        data: { quantity: { decrement: quantity } },
-      }),
-      prisma.stockWithdrawal.create({
-        data: { warehouseId, variantId, quantity, reason: reason || null, performedById: session.user.id },
-      }),
-    ]);
+    // Execute all updates in a single transaction
+    await prisma.$transaction(
+      items.flatMap((item) => [
+        prisma.inventory.update({
+          where: { variantId_warehouseId: { variantId: item.variantId, warehouseId } },
+          data: { quantity: { decrement: item.quantity } },
+        }),
+        prisma.stockWithdrawal.create({
+          data: {
+            warehouseId,
+            variantId: item.variantId,
+            quantity: item.quantity,
+            reason: reason || null,
+            performedById: session.user.id,
+          },
+        }),
+      ])
+    );
 
     return NextResponse.json({ success: true });
   } catch (err) {
