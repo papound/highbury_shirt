@@ -89,6 +89,14 @@ export default function AdminSidebar({ role, name, email }: AdminSidebarProps) {
             </div>
           </div>
 
+          {role === "SUPERADMIN" && process.env.NEXT_PUBLIC_GIT_REVISION && (
+            <div className="px-1 mb-2">
+              <span className="text-[10px] font-mono text-sidebar-foreground/30 select-all">
+                rev {process.env.NEXT_PUBLIC_GIT_REVISION}
+              </span>
+            </div>
+          )}
+
           {!confirmLogout ? (
             <button
               onClick={() => setConfirmLogout(true)}
