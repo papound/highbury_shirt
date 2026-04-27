@@ -149,7 +149,12 @@ export default function InventoryWithdrawDialog({ warehouses, inventory }: Props
         เบิกสินค้า
       </Button>
 
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={open} onOpenChange={(o) => {
+        if (!o) {
+          setWarehouseId(""); setSkuSearch(""); setSelectedVariantId(""); setItemQty(""); setLineItems([]); setReason("");
+        }
+        setOpen(o);
+      }}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
