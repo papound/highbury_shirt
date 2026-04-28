@@ -74,19 +74,23 @@ jobs:
           port: ${{ secrets.DEPLOY_PORT || 22 }}
           script: |
             set -e
-            cd /opt/highbury-shirt     # ← ปรับ path ตามจริง
+            cd /opt/highbury-shirt
 
-            echo "==> Pulling latest image from registry..."
-            docker compose pull app
+            echo "==> Fixing git safe directory..."
+            git config --global --add safe.directory /opt/highbury-shirt
 
-            echo "==> Restarting app container (zero-downtime)..."
-            docker compose up -d --no-build --wait app
+            echo "==> Pulling latest code..."
+            git pull origin main
+
+            echo "==> Rebuilding Docker image..."
+            docker compose build app
+
+            echo "==> Restarting app container..."
+            docker compose up -d --wait app
 
             echo "==> Running DB migrations..."
             docker compose exec -T app npx prisma migrate deploy || {
-              echo "migrate deploy failed — attempting baseline then retry..."
-              # กรณี P3005: DB มีอยู่แล้วแต่ยังไม่ baseline
-              # ให้ไป baseline manual ก่อนบน server แล้ว push ใหม่
+              echo "migrate deploy failed"
               exit 1
             }
 
