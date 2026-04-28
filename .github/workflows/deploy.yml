@@ -85,6 +85,9 @@ jobs:
 
             cd /opt/highbury-shirt
 
+            echo "==> Pruning unused Docker data to free space..."
+            docker system prune -af
+
             echo "==> Pulling latest image from registry..."
             docker compose pull app
 
