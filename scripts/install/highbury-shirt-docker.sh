@@ -42,11 +42,12 @@ if [[ "${1:-}" == "update" ]]; then
 
   msg_info "Pulling latest code"
   cd "$APP_DIR"
+  git config --global --add safe.directory "$APP_DIR"
   git pull
   msg_ok "Pulled latest code"
 
   msg_info "Rebuilding and restarting Docker stack"
-  docker compose build --progress=plain
+  docker compose --progress plain build app
   docker compose up -d
   msg_ok "Stack updated"
 

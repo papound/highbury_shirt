@@ -39,6 +39,7 @@ function update_script() {
 
   msg_info "Updating ${APP}"
   cd /opt/highbury-shirt
+  git config --global --add safe.directory /opt/highbury-shirt
   $STD git pull
   msg_ok "Pulled Latest Code"
 
