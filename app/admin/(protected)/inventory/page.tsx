@@ -55,7 +55,7 @@ export default async function AdminInventoryPage({ searchParams }: Props) {
     if (maxQty) where.quantity.lte = parseInt(maxQty);
   }
 
-  const [total, inventory, warehouses] = await Promise.all([
+  const [total, inventory, warehouses, allInventory] = await Promise.all([
     prisma.inventory.count({ where }),
     prisma.inventory.findMany({
       where,
@@ -68,6 +68,13 @@ export default async function AdminInventoryPage({ searchParams }: Props) {
       take: PAGE_SIZE,
     }),
     prisma.warehouse.findMany({ orderBy: { name: "asc" } }),
+    prisma.inventory.findMany({
+      include: {
+        variant: { include: { product: true } },
+        warehouse: true,
+      },
+      orderBy: [{ warehouse: { name: "asc" } }, { variant: { product: { nameTh: "asc" } } }],
+    }),
   ]);
 
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
@@ -96,7 +103,7 @@ export default async function AdminInventoryPage({ searchParams }: Props) {
           <InventoryImportDialog />
           <InventoryTransferDialog warehouses={warehouses} inventory={inventory} />
           {role === "SUPERADMIN" && (
-            <InventoryWithdrawDialog warehouses={warehouses} inventory={inventory} />
+            <InventoryWithdrawDialog warehouses={warehouses} inventory={allInventory} />
           )}
         </div>
       </div>
