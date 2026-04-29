@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { randomUUID } from "crypto";
 
 async function authorizeSuperAdmin() {
   const session = await auth();
@@ -72,6 +73,9 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // Generate one transactionId shared by all items in this request
+    const transactionId = randomUUID();
+
     // Execute all updates in a single transaction
     await prisma.$transaction(
       items.flatMap((item) => [
@@ -81,6 +85,7 @@ export async function POST(req: NextRequest) {
         }),
         prisma.stockWithdrawal.create({
           data: {
+            transactionId,
             warehouseId,
             variantId: item.variantId,
             quantity: item.quantity,

@@ -28,7 +28,7 @@ type Warehouse = { id: string; name: string; uniqueKey: string; [k: string]: any
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type InventoryItem = { id: string; variantId: string; warehouseId: string; quantity: number; variant: any; warehouse: any };
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type WithdrawalRecord = { id: string; createdAt: string; quantity: number; reason?: string; warehouse: any; variant: any; performedBy: any };
+type WithdrawalRecord = { id: string; transactionId?: string; createdAt: string; quantity: number; reason?: string; warehouse: any; variant: any; performedBy: any };
 type WithdrawLineItem = { variantId: string; quantity: number };
 
 interface Props {
@@ -335,44 +335,48 @@ export default function InventoryWithdrawDialog({ warehouses, inventory }: Props
               ) : history.length === 0 ? (
                 <p className="text-center text-muted-foreground py-8 text-sm">ยังไม่มีประวัติการเบิก</p>
               ) : (
-                <div className="border rounded-lg overflow-hidden">
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-xs">
-                      <thead>
-                        <tr className="border-b bg-muted/40">
-                          <th className="text-left px-3 py-2.5 font-medium text-muted-foreground">วันที่</th>
-                          <th className="text-left px-3 py-2.5 font-medium text-muted-foreground">สินค้า (SKU)</th>
-                          <th className="text-center px-3 py-2.5 font-medium text-muted-foreground">จำนวน</th>
-                          <th className="text-left px-3 py-2.5 font-medium text-muted-foreground">คลัง</th>
-                          <th className="text-left px-3 py-2.5 font-medium text-muted-foreground">เหตุผล</th>
-                          <th className="text-left px-3 py-2.5 font-medium text-muted-foreground">เบิกโดย</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {history.map((h) => (
-                          <tr key={h.id} className="border-b last:border-0 hover:bg-muted/20">
-                            <td className="px-3 py-2 whitespace-nowrap text-muted-foreground">
-                              {new Date(h.createdAt).toLocaleString("th-TH", { dateStyle: "short", timeStyle: "short" })}
-                            </td>
-                            <td className="px-3 py-2">
-                              <div>{h.variant.product.nameTh}</div>
-                              <div className="font-mono text-muted-foreground">{h.variant.sku}</div>
-                              <div className="text-muted-foreground">{h.variant.color}/{h.variant.size}</div>
-                            </td>
-                            <td className="px-3 py-2 text-center">
-                              <span className="font-semibold text-destructive">-{h.quantity}</span>
-                            </td>
-                            <td className="px-3 py-2">
-                              <div>{h.warehouse.name}</div>
-                              <div className="font-mono text-muted-foreground">[{h.warehouse.uniqueKey}]</div>
-                            </td>
-                            <td className="px-3 py-2 text-muted-foreground">{h.reason ?? "—"}</td>
-                            <td className="px-3 py-2 text-muted-foreground">{h.performedBy.name ?? h.performedBy.email}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                <div className="space-y-3">
+                  {/* Group by transactionId; records without one each form their own group */}
+                  {Object.entries(
+                    history.reduce<Record<string, WithdrawalRecord[]>>((acc, h) => {
+                      const key = h.transactionId ?? h.id;
+                      (acc[key] ??= []).push(h);
+                      return acc;
+                    }, {})
+                  ).map(([txId, rows]) => {
+                    const first = rows[0];
+                    const totalQty = rows.reduce((s, r) => s + r.quantity, 0);
+                    return (
+                      <div key={txId} className="border rounded-lg overflow-hidden">
+                        {/* Transaction header */}
+                        <div className="bg-muted/40 px-3 py-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground border-b">
+                          <span className="font-medium text-foreground">
+                            {new Date(first.createdAt).toLocaleString("th-TH", { dateStyle: "short", timeStyle: "short" })}
+                          </span>
+                          <span>{first.warehouse.name} <span className="font-mono">[{first.warehouse.uniqueKey}]</span></span>
+                          <span>เบิกโดย: {first.performedBy.name ?? first.performedBy.email}</span>
+                          {first.reason && <span>เหตุผล: {first.reason}</span>}
+                          <span className="ml-auto font-semibold text-destructive">รวม -{totalQty} ชิ้น</span>
+                        </div>
+                        {/* Line items */}
+                        <table className="w-full text-xs">
+                          <tbody>
+                            {rows.map((h) => (
+                              <tr key={h.id} className="border-b last:border-0 hover:bg-muted/10">
+                                <td className="px-3 py-2">
+                                  <div>{h.variant.product.nameTh}</div>
+                                  <div className="font-mono text-muted-foreground">{h.variant.sku} · {h.variant.color}/{h.variant.size}</div>
+                                </td>
+                                <td className="px-3 py-2 text-right whitespace-nowrap">
+                                  <span className="font-semibold text-destructive">-{h.quantity}</span>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </TabsContent>
