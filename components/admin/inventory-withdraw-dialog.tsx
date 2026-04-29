@@ -34,12 +34,11 @@ type WithdrawLineItem = { variantId: string; quantity: number };
 
 interface Props {
   warehouses: Warehouse[];
-  inventory: InventoryItem[];
 }
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export default function InventoryWithdrawDialog({ warehouses, inventory }: Props) {
+export default function InventoryWithdrawDialog({ warehouses }: Props) {
   const [open, setOpen] = useState(false);
   const { setGlobalLoading } = useGlobalLoading();
 
@@ -51,6 +50,10 @@ export default function InventoryWithdrawDialog({ warehouses, inventory }: Props
   const [lineItems, setLineItems] = useState<WithdrawLineItem[]>([]);
   const [reason, setReason] = useState("");
 
+  // ── Inventory (lazy-loaded per warehouse) ─────────────────────────────────
+  const [inventory, setInventory] = useState<InventoryItem[]>([]);
+  const [inventoryLoading, setInventoryLoading] = useState(false);
+
   // ── Confirm step ──────────────────────────────────────────────────────────
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [withdrawing, setWithdrawing] = useState(false);
@@ -59,9 +62,20 @@ export default function InventoryWithdrawDialog({ warehouses, inventory }: Props
   const [history, setHistory] = useState<WithdrawalRecord[]>([]);
   const [historyLoading, setHistoryLoading] = useState(false);
 
-  const warehouseInventory = warehouseId
-    ? inventory.filter((inv) => inv.warehouseId === warehouseId)
-    : [];
+  async function fetchWarehouseInventory(whId: string) {
+    setInventoryLoading(true);
+    try {
+      const res = await fetch(`/api/admin/inventory/items?warehouseId=${whId}`);
+      const data = await res.json();
+      setInventory(data);
+    } catch {
+      toast.error("โหลดข้อมูลสินค้าล้มเหลว");
+    } finally {
+      setInventoryLoading(false);
+    }
+  }
+
+  const warehouseInventory = inventory;
 
   const filteredItems = skuSearch
     ? warehouseInventory.filter(
@@ -136,7 +150,7 @@ export default function InventoryWithdrawDialog({ warehouses, inventory }: Props
       if (!res.ok) throw new Error(data.error ?? "เบิกล้มเหลว");
       toast.success(`เบิกสินค้าสำเร็จ ${lineItems.length} รายการ`);
       setConfirmOpen(false);
-      setWarehouseId(""); setSkuSearch(""); setSelectedVariantId(""); setItemQty(""); setLineItems([]); setReason("");
+      setWarehouseId(""); setSkuSearch(""); setSelectedVariantId(""); setItemQty(""); setLineItems([]); setReason(""); setInventory([]);
       loadHistory();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "เกิดข้อผิดพลาด");
@@ -155,7 +169,7 @@ export default function InventoryWithdrawDialog({ warehouses, inventory }: Props
 
       <Dialog open={open} onOpenChange={(o) => {
         if (!o) {
-          setWarehouseId(""); setSkuSearch(""); setSelectedVariantId(""); setItemQty(""); setLineItems([]); setReason("");
+          setWarehouseId(""); setSkuSearch(""); setSelectedVariantId(""); setItemQty(""); setLineItems([]); setReason(""); setInventory([]);
         }
         setOpen(o);
       }}>
@@ -191,7 +205,7 @@ export default function InventoryWithdrawDialog({ warehouses, inventory }: Props
               {/* Warehouse selector */}
               <div>
                 <label className="text-sm font-medium block mb-1">คลังสินค้า</label>
-                <Select value={warehouseId} onValueChange={(v) => { setWarehouseId(v ?? ""); setSelectedVariantId(""); setSkuSearch(""); setLineItems([]); }}>
+                <Select value={warehouseId} onValueChange={(v) => { setWarehouseId(v ?? ""); setSelectedVariantId(""); setSkuSearch(""); setLineItems([]); setInventory([]); if (v) fetchWarehouseInventory(v); }}>
                   <SelectTrigger>
                     {warehouseId ? (
                       <span className="flex items-center gap-1.5 overflow-hidden">
@@ -213,7 +227,12 @@ export default function InventoryWithdrawDialog({ warehouses, inventory }: Props
               </div>
 
               {/* Item search + add */}
-              {warehouseId && (
+              {warehouseId && inventoryLoading && (
+                <div className="flex justify-center py-4">
+                  <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+                </div>
+              )}
+              {warehouseId && !inventoryLoading && (
                 <div className="rounded-lg border p-3 space-y-3 bg-muted/20">
                   <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">เพิ่มรายการสินค้า</p>
                   <Input

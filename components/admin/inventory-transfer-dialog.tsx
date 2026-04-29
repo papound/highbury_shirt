@@ -68,7 +68,6 @@ interface StageItem {
 
 interface Props {
   warehouses: Warehouse[];
-  inventory: InventoryItem[];
 }
 
 function generateTxnId(): string {
@@ -80,7 +79,7 @@ function generateTxnId(): string {
   return `TXN-${date}-${rand}`;
 }
 
-export default function InventoryTransferDialog({ warehouses, inventory }: Props) {
+export default function InventoryTransferDialog({ warehouses }: Props) {
   const fileRef = useRef<HTMLInputElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   const [open, setOpen] = useState(false);
@@ -102,7 +101,22 @@ export default function InventoryTransferDialog({ warehouses, inventory }: Props
   const [history, setHistory] = useState<TransferRecord[]>([]);
   const [historyLoading, setHistoryLoading] = useState(false);
 
-  const fromInventory = fromWH ? inventory.filter((i) => i.warehouseId === fromWH) : [];
+  // ── Inventory (lazy-loaded per from-warehouse) ───────────────────────────
+  const [fromInventory, setFromInventory] = useState<InventoryItem[]>([]);
+  const [inventoryLoading, setInventoryLoading] = useState(false);
+
+  async function fetchFromInventory(whId: string) {
+    setInventoryLoading(true);
+    try {
+      const res = await fetch(`/api/admin/inventory/items?warehouseId=${whId}`);
+      const data = await res.json();
+      setFromInventory(data);
+    } catch {
+      toast.error("โหลดข้อมูลสินค้าล้มเหลว");
+    } finally {
+      setInventoryLoading(false);
+    }
+  }
   const filteredResults =
     skuSearch.trim().length >= 1
       ? fromInventory
@@ -343,6 +357,8 @@ export default function InventoryTransferDialog({ warehouses, inventory }: Props
                       setFromWH(v ?? "");
                       setStageItems([]);
                       setSkuSearch("");
+                      setFromInventory([]);
+                      if (v) fetchFromInventory(v);
                     }}
                   >
                     <SelectTrigger className="w-full">
@@ -391,7 +407,12 @@ export default function InventoryTransferDialog({ warehouses, inventory }: Props
               </div>
 
               {/* SKU Search */}
-              {fromWH && (
+              {fromWH && inventoryLoading && (
+                <div className="flex justify-center py-4">
+                  <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+                </div>
+              )}
+              {fromWH && !inventoryLoading && (
                 <div className="relative">
                   <label className="text-sm font-medium block mb-1">
                     เพิ่มสินค้า{" "}
