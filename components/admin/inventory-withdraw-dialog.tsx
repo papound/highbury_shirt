@@ -144,6 +144,14 @@ export default function InventoryWithdrawDialog({ warehouses, inventory }: Props
 
   return (
     <>
+      {/* ── Loading backdrop ─────────────────────────────────────────────── */}
+      {withdrawing && (
+        <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center gap-3 bg-black/50 backdrop-blur-sm">
+          <Loader2 className="w-10 h-10 animate-spin text-white" />
+          <p className="text-white text-sm font-medium">กำลังเบิกสินค้า...</p>
+        </div>
+      )}
+
       <Button variant="outline" onClick={() => setOpen(true)}>
         <PackageMinus className="w-4 h-4 mr-1" />
         เบิกสินค้า
