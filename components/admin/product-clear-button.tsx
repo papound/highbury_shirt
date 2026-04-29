@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { useGlobalLoading } from "@/components/admin/global-loading-provider";
 import {
   Dialog,
   DialogContent,
@@ -16,6 +17,7 @@ import { Trash2, AlertTriangle } from "lucide-react";
 
 export default function ProductClearButton() {
   const router = useRouter();
+  const { setGlobalLoading } = useGlobalLoading();
   const [open, setOpen] = useState(false);
   const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
@@ -24,6 +26,7 @@ export default function ProductClearButton() {
 
   async function handleClear() {
     setLoading(true);
+    setGlobalLoading(true, "กำลังลบสินค้าทั้งหมด...");
     try {
       const res = await fetch("/api/admin/products", { method: "DELETE" });
       const data = await res.json();
@@ -36,6 +39,7 @@ export default function ProductClearButton() {
       toast.error(err instanceof Error ? err.message : "เกิดข้อผิดพลาด");
     } finally {
       setLoading(false);
+      setGlobalLoading(false);
     }
   }
 

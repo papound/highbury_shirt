@@ -19,6 +19,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Upload, FileSpreadsheet, ArrowRight, Loader2, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
+import { useGlobalLoading } from "@/components/admin/global-loading-provider";
 
 // ─── DB field definitions ────────────────────────────────────────────────────
 
@@ -74,6 +75,7 @@ type Mapping = Record<string, number>; // key → 1-indexed column (0 = not mapp
 
 export default function AdminProductImportDialog() {
   const inputRef = useRef<HTMLInputElement>(null);
+  const { setGlobalLoading } = useGlobalLoading();
 
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState<1 | 2>(1);
@@ -116,6 +118,7 @@ export default function AdminProductImportDialog() {
     if (!selected) return;
     setFile(selected);
     setLoadingPreview(true);
+    setGlobalLoading(true, "กำลังอ่านไฟล์...");
 
     try {
       const fd = new FormData();
@@ -133,6 +136,7 @@ export default function AdminProductImportDialog() {
       resetState();
     } finally {
       setLoadingPreview(false);
+      setGlobalLoading(false);
       if (inputRef.current) inputRef.current.value = "";
     }
   }
@@ -149,6 +153,7 @@ export default function AdminProductImportDialog() {
     }
 
     setImporting(true);
+    setGlobalLoading(true, "กำลัง Import สินค้า...");
     try {
       const fd = new FormData();
       fd.append("file", file);
@@ -167,8 +172,7 @@ export default function AdminProductImportDialog() {
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "เกิดข้อผิดพลาด");
     } finally {
-      setImporting(false);
-    }
+      setImporting(false);      setGlobalLoading(false);    }
   }
 
   // ── Helpers ───────────────────────────────────────────────────────────────

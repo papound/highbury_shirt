@@ -20,6 +20,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { PackageMinus, Loader2, History, AlertTriangle, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { useGlobalLoading } from "@/components/admin/global-loading-provider";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -40,6 +41,7 @@ interface Props {
 
 export default function InventoryWithdrawDialog({ warehouses, inventory }: Props) {
   const [open, setOpen] = useState(false);
+  const { setGlobalLoading } = useGlobalLoading();
 
   // ── Withdraw form state ───────────────────────────────────────────────────
   const [warehouseId, setWarehouseId] = useState("");
@@ -123,6 +125,7 @@ export default function InventoryWithdrawDialog({ warehouses, inventory }: Props
 
   async function executeWithdraw() {
     setWithdrawing(true);
+    setGlobalLoading(true, "กำลังเบิกสินค้า...");
     try {
       const res = await fetch("/api/admin/inventory/withdraw", {
         method: "POST",
@@ -139,19 +142,12 @@ export default function InventoryWithdrawDialog({ warehouses, inventory }: Props
       toast.error(err instanceof Error ? err.message : "เกิดข้อผิดพลาด");
     } finally {
       setWithdrawing(false);
+      setGlobalLoading(false);
     }
   }
 
   return (
     <>
-      {/* ── Loading backdrop ─────────────────────────────────────────────── */}
-      {withdrawing && (
-        <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center gap-3 bg-black/50 backdrop-blur-sm">
-          <Loader2 className="w-10 h-10 animate-spin text-white" />
-          <p className="text-white text-sm font-medium">กำลังเบิกสินค้า...</p>
-        </div>
-      )}
-
       <Button variant="outline" onClick={() => setOpen(true)}>
         <PackageMinus className="w-4 h-4 mr-1" />
         เบิกสินค้า

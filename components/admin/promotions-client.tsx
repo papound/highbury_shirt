@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { Plus, Trash2 } from "lucide-react";
+import { useGlobalLoading } from "@/components/admin/global-loading-provider";
 
 const schema = z.object({
   nameTh: z.string().min(1),
@@ -50,6 +51,7 @@ const TYPE_LABELS: Record<string, string> = {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function AdminPromotionsClient({ promotions: initialPromotions }: { promotions: any[] }) {
   const [promotions, setPromotions] = useState(initialPromotions);
+  const { setGlobalLoading } = useGlobalLoading();
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -89,6 +91,7 @@ export default function AdminPromotionsClient({ promotions: initialPromotions }:
 
   async function onSubmit(values: FormValues) {
     setSaving(true);
+    setGlobalLoading(true, "กำลังบันทึกโปรโมชั่น...");
     try {
       const url = editing ? `/api/admin/promotions/${editing.id}` : "/api/admin/promotions";
       const method = editing ? "PUT" : "POST";
@@ -108,6 +111,7 @@ export default function AdminPromotionsClient({ promotions: initialPromotions }:
       toast.error(err instanceof Error ? err.message : "เกิดข้อผิดพลาด");
     } finally {
       setSaving(false);
+      setGlobalLoading(false);
     }
   }
 

@@ -7,11 +7,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useGlobalLoading } from "@/components/admin/global-loading-provider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function AdminOrderActions({ order }: { order: any }) {
   const router = useRouter();
+  const { setGlobalLoading } = useGlobalLoading();
   const [loading, setLoading] = useState(false);
   const [rejectionNote, setRejectionNote] = useState("");
   const [trackingNumber, setTrackingNumber] = useState(order.trackingNumber ?? "");
@@ -34,6 +36,7 @@ export default function AdminOrderActions({ order }: { order: any }) {
 
   async function updateStatus(status: string, extra: object = {}) {
     setLoading(true);
+    setGlobalLoading(true, "กำลังอัพเดทสถานะ...");
     try {
       const res = await fetch(`/api/admin/orders/${order.id}/status`, {
         method: "POST",
@@ -48,11 +51,13 @@ export default function AdminOrderActions({ order }: { order: any }) {
       toast.error(err instanceof Error ? err.message : "เกิดข้อผิดพลาด");
     } finally {
       setLoading(false);
+      setGlobalLoading(false);
     }
   }
 
   async function saveEdit() {
     setLoading(true);
+    setGlobalLoading(true, "กำลังบันทึกข้อมูล...");
     try {
       const res = await fetch(`/api/admin/orders/${order.id}`, {
         method: "PUT",
@@ -67,6 +72,7 @@ export default function AdminOrderActions({ order }: { order: any }) {
       toast.error(err instanceof Error ? err.message : "เกิดข้อผิดพลาด");
     } finally {
       setLoading(false);
+      setGlobalLoading(false);
     }
   }
 

@@ -4,15 +4,18 @@ import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Upload } from "lucide-react";
 import { toast } from "sonner";
+import { useGlobalLoading } from "@/components/admin/global-loading-provider";
 
 export default function AdminProductImportButton() {
   const inputRef = useRef<HTMLInputElement>(null);
+  const { setGlobalLoading } = useGlobalLoading();
   const [loading, setLoading] = useState(false);
 
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
     setLoading(true);
+    setGlobalLoading(true, "กำลัง Import สินค้า...");
     try {
       const formData = new FormData();
       formData.append("file", file);
@@ -25,6 +28,7 @@ export default function AdminProductImportButton() {
       toast.error(err instanceof Error ? err.message : "เกิดข้อผิดพลาด");
     } finally {
       setLoading(false);
+      setGlobalLoading(false);
       if (inputRef.current) inputRef.current.value = "";
     }
   }

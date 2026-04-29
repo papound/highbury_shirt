@@ -4,12 +4,15 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import { toast } from "sonner";
+import { useGlobalLoading } from "@/components/admin/global-loading-provider";
 
 export default function AdminReportsExport() {
+  const { setGlobalLoading } = useGlobalLoading();
   const [loading, setLoading] = useState(false);
 
   async function handleExport() {
     setLoading(true);
+    setGlobalLoading(true, "กำลัง Export รายงาน...");
     try {
       const res = await fetch("/api/admin/reports/export");
       if (!res.ok) throw new Error("Export ล้มเหลว");
@@ -25,6 +28,7 @@ export default function AdminReportsExport() {
       toast.error(err instanceof Error ? err.message : "เกิดข้อผิดพลาด");
     } finally {
       setLoading(false);
+      setGlobalLoading(false);
     }
   }
 

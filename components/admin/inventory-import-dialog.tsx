@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { FileSpreadsheet, Upload, Loader2, CheckCircle, XCircle, PackagePlus, History } from "lucide-react";
 import { toast } from "sonner";
+import { useGlobalLoading } from "@/components/admin/global-loading-provider";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -62,6 +63,7 @@ type HistoryBatch = {
 
 export default function InventoryImportDialog() {
   const [open, setOpen] = useState(false);
+  const { setGlobalLoading } = useGlobalLoading();
   const [tab, setTab] = useState<"import" | "history">("import");
   const [step, setStep] = useState<"upload" | "preview" | "done">("upload");
   const [loading, setLoading] = useState(false);
@@ -115,6 +117,7 @@ export default function InventoryImportDialog() {
   async function handlePreview() {
     if (!file || !warehouseId) return;
     setLoading(true);
+    setGlobalLoading(true, "กำลังโหลดตัวอย่าง...");
     try {
       const fd = new FormData();
       fd.append("file", file);
@@ -131,12 +134,14 @@ export default function InventoryImportDialog() {
       toast.error(err instanceof Error ? err.message : "เกิดข้อผิดพลาด");
     } finally {
       setLoading(false);
+      setGlobalLoading(false);
     }
   }
 
   async function handleImport() {
     if (!file || !warehouseId) return;
     setLoading(true);
+    setGlobalLoading(true, "กำลัง Import สต็อก...");
     try {
       const fd = new FormData();
       fd.append("file", file);
@@ -154,6 +159,7 @@ export default function InventoryImportDialog() {
       toast.error(err instanceof Error ? err.message : "เกิดข้อผิดพลาด");
     } finally {
       setLoading(false);
+      setGlobalLoading(false);
     }
   }
 
