@@ -423,3 +423,50 @@ model SiteSetting {
 
   @@map("site_settings")
 }
+
+// ─────────────────────────────────────────────
+// LINE Chat & Bot State Management
+// ─────────────────────────────────────────────
+
+model ChatSession {
+  id            String        @id @default(cuid())
+  lineUserId    String        @unique
+  requiresAdmin Boolean       @default(false)
+  status        SessionStatus @default(ACTIVE)
+  metadataJson  String?       // JSON: { cartItems, shippingInfo, tempDetails }
+  lastActivity  DateTime      @default(now())
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  messages      ChatMessage[]
+
+  @@index([lineUserId])
+  @@map("chat_sessions")
+}
+
+enum SessionStatus {
+  ACTIVE
+  PAUSED
+  COMPLETED
+}
+
+model ChatMessage {
+  id           String      @id @default(cuid())
+  sessionId    String
+  sender       ChatSender
+  messageType  String      @default("text") // text, image, flex, postback
+  content      String
+  createdAt    DateTime    @default(now())
+
+  session      ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@map("chat_messages")
+}
+
+enum ChatSender {
+  CUSTOMER
+  BOT
+  ADMIN
+}
+

@@ -9,6 +9,7 @@ import {
   Settings,
   Warehouse,
   Users,
+  MessageSquare,
 } from "lucide-react";
 
 export type NavItem = {
@@ -24,6 +25,7 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/admin/inventory", label: "คลังสินค้า", icon: Warehouse },
   { href: "/admin/orders", label: "คำสั่งซื้อ", icon: ShoppingCart },
   { href: "/admin/customers", label: "ลูกค้า", icon: Users },
+  { href: "/admin/chats", label: "แชท LINE OA", icon: MessageSquare },
   { href: "/admin/promotions", label: "โปรโมชั่น", icon: Tag },
   { href: "/admin/reports", label: "รายงาน", icon: BarChart3, roles: ["SUPERADMIN", "ADMIN", "ACCOUNTANT"] },
   { href: "/admin/blog", label: "บทความ", icon: BookOpen },

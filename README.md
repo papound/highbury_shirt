@@ -10,6 +10,9 @@
 - **NextAuth v5** (JWT)
 - **shadcn/ui** (base-nova style)
 - **UploadThing** — อัปโหลดรูปสินค้าและสลิปโอนเงิน
+- **Gemini API** (`@google/generative-ai`) — ประมวลผล AI Agent & Function Calling Tools
+- **LINE Messaging API** — แชทบอท LINE OA
+- **LINE Notify API** — แจ้งเตือนแอดมินด่วนเมื่อต้องการความช่วยเหลือ/ออเดอร์ใหม่
 - **Recharts**, **Tiptap**, **ExcelJS**, **PromptPay QR**
 - **react-markdown** — render เนื้อหาบทความ
 - **Docker + Docker Compose** — production stack
@@ -135,6 +138,7 @@ Password: ดูจาก /opt/highbury-shirt/.env
 |-----|----------|
 | `/admin/login` | เข้าสู่ระบบเจ้าหน้าที่ (แยกจากลูกค้า) |
 | `/admin/dashboard` | ภาพรวมยอดขาย, คำสั่งซื้อ, สินค้า |
+| `/admin/chats` | จัดการแชทลูกค้าจาก LINE OA (ตรวจสอบความต้องการ/Pause บอทเพื่อเข้าคุยสด) |
 | `/admin/products` | จัดการสินค้า (เพิ่ม/แก้ไข/ลบ + นำเข้าจาก Excel) |
 | `/admin/inventory` | จัดการสต็อก (ปรับยอด, โอนระหว่างคลัง, เบิกสินค้า) |
 | `/admin/orders` | จัดการคำสั่งซื้อและสลิป |
@@ -179,6 +183,13 @@ UPLOADTHING_TOKEN="your-uploadthing-token"
 
 # LINE Notify (optional)
 LINE_NOTIFY_TOKEN_ADMIN="your-line-token"
+
+# LINE OA Messaging API
+LINE_CHANNEL_ACCESS_TOKEN="your-line-channel-access-token"
+LINE_CHANNEL_SECRET="your-line-channel-secret"
+
+# Gemini API (สำหรับ AI Chatbot "น้องไฮบิวรี่")
+GEMINI_API_KEY="your-gemini-api-key"
 
 # Email (Resend, optional)
 RESEND_API_KEY="your-resend-key"
@@ -228,6 +239,8 @@ NEXT_PUBLIC_APP_NAME="Highbury International"
 | PUT/DELETE | `/api/admin/users/[id]` | แก้ไข/ลบผู้ใช้ |
 | GET | `/api/admin/customers` | รายชื่อลูกค้า |
 | GET | `/api/admin/reports/export` | Export รายงาน |
+| GET/POST | `/api/admin/chats` | รายการห้องแชท LINE OA ทั้งหมด |
+| GET/PATCH | `/api/admin/chats/[id]` | รายละเอียดแชทเดี่ยว / สลับโหมดคุยสด / Pause บอท |
 
 ### Storefront / Public
 
@@ -240,6 +253,12 @@ NEXT_PUBLIC_APP_NAME="Highbury International"
 | POST | `/api/payment-slip` | อัปโหลดสลิปโอนเงิน |
 | GET | `/api/promotions` | โปรโมชั่นที่ใช้งานอยู่ |
 | POST | `/api/promotions/validate-code` | ตรวจสอบโค้ดโปรโมชั่น |
+
+### LINE Webhook
+
+| Method | Path | คำอธิบาย |
+|--------|------|----------|
+| POST | `/api/line/webhook` | รับ Webhook event จาก LINE Platform และประมวลผลสนทนาด้วย AI Agent |
 
 ## Database Models
 
@@ -261,6 +280,8 @@ NEXT_PUBLIC_APP_NAME="Highbury International"
 | `Promotion` | โปรโมชั่น/คูปอง |
 | `BlogPost` | บทความ |
 | `SiteSetting` | ตั้งค่าระบบ (PromptPay, ฯลฯ) |
+| `ChatSession` | ประวัติ/สถานะการเชื่อมต่อแชทของลูกค้าแต่ละคน (ACTIVE, PAUSED, COMPLETED) |
+| `ChatMessage` | ข้อความในห้องแชท (เก็บข้อมูลส่งโดย CUSTOMER, BOT, ADMIN) |
 
 ## โครงสร้างโปรเจค
 
@@ -276,10 +297,19 @@ app/
 ├── admin/
 │   ├── login/              # login เฉพาะเจ้าหน้าที่
 │   └── (protected)/        # ทุกหน้า admin (ต้อง login + role ถูกต้อง)
+│       ├── chats/          # หน้าจัดการห้องสนทนาของแอดมิน (Pause บอท/คุยสด)
+│       └── ...
 └── api/                    # API Routes
+    ├── line/
+    │   └── webhook/        # Webhook รับข้อความ LINE OA
+    ├── admin/
+    │   ├── chats/          # API ดึง/แก้ไขสถานะห้องแชท
+    │   └── ...
+    └── ...
 
 components/
 ├── admin/                  # Sidebar, forms, dialogs, charts
+│   ├── chat-window.tsx     # หน้าต่างแชทกับลูกค้า (คุยสด)
 │   ├── inventory-client.tsx
 │   ├── inventory-transfer-dialog.tsx   # โอน stock (staging table, TXN ID)
 │   ├── inventory-withdraw-dialog.tsx   # เบิกสินค้า
@@ -290,6 +320,9 @@ components/
 └── ui/                     # shadcn/ui base components
 
 lib/
+├── agent-skills.ts         # ความสามารถเฉพาะทางของบอท (เรียกใช้ผ่าน Tool Calling)
+├── llm-agent.ts            # การตั้งค่าโมเดล Gemini และระบบประมวลผลคำสนทนา
+├── line-bot.ts             # การจัดการ Webhook, Reply API และการรับสลิปภาพ
 ├── mock-blog.ts            # Mock blog articles (ใช้ระหว่าง dev)
 └── ...                     # utilities (prisma, auth, email, uploadthing, etc.)
 
@@ -308,3 +341,54 @@ prisma/
 - **Uploaded files**: `public/uploads/` ถูก exclude จาก git
 - **Blog**: ข้อมูลบทความอยู่ใน `lib/mock-blog.ts` (static) — เชื่อมกับ `BlogPost` model ใน DB สำหรับ production
 - **Cart**: จำนวนสินค้าถูก clamp ตาม stock จริง ทั้ง Zustand store และ UI (`add-to-cart-button.tsx`)
+
+---
+
+## LINE OA AI Assistant & Agent Skills (น้องไฮบิวรี่)
+
+แบรนด์ Highbury International มาพร้อมกับผู้ช่วยขายเสื้อเชิ้ตอัจฉริยะ **"น้องไฮบิวรี่" (Highbury Assistant)** ประจำแชท LINE OA (ประมวลผลด้วย **Gemini 1.5 Flash**) ซึ่งสามารถโต้ตอบ ปิดการขาย ค้นหาสินค้า และรับสลิปโอนเงินได้เสมือนมนุษย์ โดยอาศัย **Gemini Function Calling (Tools)** ในการดึงและบันทึกข้อมูลลงฐานข้อมูลจริง
+
+### 🛠️ Agent Skills (ความสามารถพิเศษของบอท)
+
+บอทเชื่อมต่อกับความสามารถพิเศษต่างๆ ใน [agent-skills.ts](file:///c:/Users/Lux-Graphic1/Documents/git/highbury_shirt/lib/agent-skills.ts) ดังนี้:
+
+1. **`searchProducts` (ค้นหาสินค้า):** ค้นหาเสื้อเชิ้ตพรีเมียม กรองตามคำค้นหาทั่วไป, หมวดหมู่ (men/women), ไซส์ (S-3XL) หรือสี (ขาว, ฟ้า, ชมพู, กรมท่า ฯลฯ)
+2. **`getProductDetails` (รายละเอียดสินค้า):** แสดงสี, ไซส์, สต็อกคงเหลือจริงของสินค้าแต่ละตัวเลือก และรูปภาพประกอบผ่าน slug ของสินค้า
+3. **`checkStock` (ตรวจสอบสต็อก):** ตรวจสอบสต็อกคงเหลือจริงของสินค้าตัวเลือกเฉพาะเจาะจงผ่านรหัส SKU (เช่น `HBI-OX-WHT-M`) จากทุกคลังสินค้า
+4. **`getActivePromotions` (โปรโมชั่นปัจจุบัน):** ดึงรายการโปรโมชั่นและส่วนลดทั้งหมดที่กำลังเปิดใช้งานอยู่ในปัจจุบันเสนอให้ลูกค้า (เช่น ซื้อ 3 แถม 1, ส่วนลด %, ลดราคาเป็นจำนวนเงิน, ส่งฟรี)
+5. **`validatePromoCode` (ตรวจสอบคูปอง):** ตรวจสอบโค้ดโปรโมชั่น/คูปองส่วนลดที่ลูกค้าพิมพ์กรอกว่าถูกต้องและใช้ร่วมกันได้หรือไม่
+6. **`createPendingOrder` (สร้างใบสั่งซื้อ):**
+   - รวบรวมข้อมูลจัดส่งของลูกค้า (ชื่อผู้รับ, เบอร์โทรศัพท์ติดต่ออย่างน้อย 9 หลัก, ที่อยู่จัดส่ง)
+   - สอบถามความประสงค์การรับใบกำกับภาษีเต็มรูปแบบ (VAT) ทุกครั้งก่อนสรุปออเดอร์ หากลูกค้าต้องการ จะบันทึกข้อมูลภาษี (`vatInfo`: ชื่อบริษัท/บุคคล, เลขประจำตัวผู้เสียภาษี 13 หลัก, ที่อยู่) ลงในระบบ
+   - คำนวณโปรโมชั่น, ส่วนลด และค่าจัดส่ง (พร้อมส่งฟรีตามเงื่อนไขโปรโมชั่น)
+   - สร้างออเดอร์สถานะ `PENDING` ในระบบ และสร้าง **PromptPay QR Code Payload** สำหรับสแกนชำระเงินโดยอัตโนมัติ
+7. **`submitPaymentProof` (แนบสลิป):** บันทึกหลักฐานการโอนเงินโดยแนบรูปภาพสลิปที่เก็บในระบบเข้ากับออเดอร์ `PENDING` ล่าสุด และระบบจะปรับสถานะออเดอร์เป็น `PAYMENT_UPLOADED`
+8. **`requestAdminIntervention` (ส่งต่อแอดมิน):** เมื่อลูกค้าคุยไม่รู้เรื่อง หรือต้องการแชทกับมนุษย์ บอทจะเรียกเครื่องมือนี้เพื่อเปลี่ยนสถานะแชทเป็น `PAUSED` และส่งแจ้งเตือนด่วนหาแอดมินผ่าน **LINE Notify** เพื่อเข้ามาคุยต่อแทนบอททันที
+
+### 💬 ระบบแอดมินดูแลแชทสด (Manual Takeover)
+
+เจ้าหน้าที่แอดมินสามารถติดตามประวัติและเข้าควบคุมแชทกับลูกค้าได้ที่เมนู `/admin/chats` ในระบบหลังบ้าน:
+- **ดูประวัติการสนทนา:** แสดงข้อความโต้ตอบทั้งหมดของลูกค้าย้อนหลังแบบ real-time
+- **สลับโหมดแชท (Pause/Resume บอท):** แอดมินสามารถกดปุ่ม **Pause Bot** เพื่อสนทนากับลูกค้าแบบตัวต่อตัว (คุยสด) โดยไม่มีบอทรบกวน และกด **Resume Bot** เพื่อให้บอทกลับมาทำหน้าที่ตอบคำถามอัจฉริยะตามปกติได้ตลอดเวลา
+
+---
+
+### 🏷️ โครงสร้างรหัสสินค้า (Product SKU Structure & Pattern Rules)
+
+เพื่อให้แชทบอทเข้าใจโครงสร้างคลังสินค้าแบบดั้งเดิม สินค้าหลักของระบบจะถูกตั้งค่ารหัส SKU ในรูปแบบมาตรฐานดังนี้:
+
+$$\text{[รหัสสินค้า (Product Code)]}\_\text{[รหัสสี (Color Code)]}\_\text{[ไซส์ (Size)]}$$
+
+ตัวอย่างเช่น: **`134813_4_S`**
+
+#### 1. การจำแนกรหัสสินค้า (Product Code Breakdown)
+รหัสสินค้า 5-7 หลักแรก (เช่น `134813`) มีความหมายเชิงสัญลักษณ์เพื่อระบุคุณลักษณะ:
+* **หลักที่ 1 (ประเภทแขนเสื้อ):** `1` = แขนยาว, `2` = แขนสั้น, `3` = แขนสามส่วน, `4` = เสื้อโปโล, `5` = แขนสองส่วน, `9` = กางเกง, `0` = เครื่องประดับ (เข็มขัด)
+* **หลักที่ 2 (เพศ):** `3` = เสื้อสำหรับผู้หญิง, `4` = เสื้อสำหรับผู้ชาย
+* **หลักที่ 3 (ลายเนื้อผ้า):** `1` = ลายริ้ว (Striped), `2` = ลายสก๊อต (Plaid/Checked), `3` = ลายจุด (Polka Dot), `4` = ผ้าพื้น (Solid), `5` = ผ้าพิมพ์/ลายพิมพ์ (Printed)
+
+#### 2. แผนที่สี (Color Code Mapping)
+รหัสตัวเลขตรงกลางระหว่างขีดล่าง (เช่น `_4_`) จะอ้างอิงจากแผนที่สีกว่า 40 สี ซึ่งจัดเก็บแยกไว้ที่:
+* **[color-map.json](file:///c:/Users/Lux-Graphic1/Documents/git/highbury_shirt/lib/color-map.json)** 
+* โค้ดของแชทบอท ([llm-agent.ts](file:///c:/Users/Lux-Graphic1/Documents/git/highbury_shirt/lib/llm-agent.ts)) จะทำการโหลดค่าจาก JSON ตัวนี้มาต่อเข้ากับคำสั่งระบบ (System Instruction) อัตโนมัติ เพื่อให้บอทตีความรหัสสีและตอบลูกค้าได้อย่างแม่นยำและบำรุงรักษาง่าย
+
