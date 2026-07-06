@@ -11,13 +11,13 @@ import { cache } from "react";
 
 const PAGE_SIZE = 50;
 
-type Props = { searchParams: Promise<{ page?: string; q?: string; sku?: string; color?: string; size?: string; categoryId?: string; minQty?: string; maxQty?: string }> };
+type Props = { searchParams: Promise<{ page?: string; q?: string; sku?: string; color?: string; size?: string; categoryId?: string; minQty?: string; maxQty?: string; warehouseId?: string }> };
 
 export default async function AdminInventoryPage({ searchParams }: Props) {
   const session = await auth();
   const role = session?.user?.role ?? "";
   const params = await searchParams;
-  const { page: pageParam, q, sku, color, size, categoryId, minQty, maxQty } = params;
+  const { page: pageParam, q, sku, color, size, categoryId, minQty, maxQty, warehouseId } = params;
   const page = Math.max(1, parseInt(pageParam ?? "1"));
   const search = q?.trim() ?? "";
 
@@ -54,6 +54,9 @@ export default async function AdminInventoryPage({ searchParams }: Props) {
     if (minQty) where.quantity.gte = parseInt(minQty);
     if (maxQty) where.quantity.lte = parseInt(maxQty);
   }
+  if (warehouseId) {
+    where.warehouseId = warehouseId;
+  }
 
   const [total, inventory, warehouses] = await Promise.all([
     prisma.inventory.count({ where }),
@@ -81,6 +84,7 @@ export default async function AdminInventoryPage({ searchParams }: Props) {
     if (categoryId) params.set("categoryId", categoryId);
     if (minQty) params.set("minQty", minQty);
     if (maxQty) params.set("maxQty", maxQty);
+    if (warehouseId) params.set("warehouseId", warehouseId);
     params.set("page", String(p));
     return `/admin/inventory?${params}`;
   }
@@ -142,6 +146,15 @@ export default async function AdminInventoryPage({ searchParams }: Props) {
             <option value="">ทั้งหมด</option>
             {categories.map((cat) => (
               <option key={cat.id} value={cat.id}>{cat.nameTh}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="block text-xs mb-1">คลังสินค้า</label>
+          <select key={`wh-${warehouseId}`} name="warehouseId" defaultValue={warehouseId || ""} className="h-9 rounded-md border border-input bg-white px-3 text-sm shadow-sm">
+            <option value="">ทั้งหมด</option>
+            {warehouses.map((wh) => (
+              <option key={wh.id} value={wh.id}>{wh.name}</option>
             ))}
           </select>
         </div>
