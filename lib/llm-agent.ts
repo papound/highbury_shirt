@@ -326,7 +326,7 @@ export async function runChatbotTurn(
     // ส่งข้อความไปประมวลผล
     let response = await generateContentWithRetry(model, { contents });
     let candidate = response.response.candidates?.[0];
-    let functionCalls = candidate?.content?.parts?.filter((part) => part.functionCall) || [];
+    let functionCalls = candidate?.content?.parts?.filter((part: any) => part.functionCall) || [];
 
     // วนลูปดำเนินการตาม Function Call ที่โมเดลร้องขอ (ถ้ามี)
     while (functionCalls.length > 0) {
@@ -421,7 +421,7 @@ export async function runChatbotTurn(
 
       response = await generateContentWithRetry(model, { contents });
       candidate = response.response.candidates?.[0];
-      functionCalls = candidate?.content?.parts?.filter((part) => part.functionCall) || [];
+      functionCalls = candidate?.content?.parts?.filter((part: any) => part.functionCall) || [];
     }
 
     const finalReplyText = response.response.text?.() || "ขออภัยด้วยครับ ผมยังไม่เข้าใจความต้องการของคุณ รบกวนแจ้งอีกครั้งได้ไหมครับ";
