@@ -11,7 +11,8 @@ import {
   Pause, 
   Play, 
   CheckCircle,
-  RefreshCw
+  RefreshCw,
+  ArrowLeft
 } from "lucide-react";
 
 interface ChatMessage {
@@ -237,16 +238,16 @@ export default function AdminChatsPage() {
   return (
     <div className="flex flex-col h-[calc(100vh-120px)] border border-slate-200 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-900 overflow-hidden shadow-sm">
       {/* Header */}
-      <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/50">
+      <div className="px-4 py-4 md:px-6 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 bg-slate-50/50 dark:bg-slate-900/50">
         <div className="flex items-center gap-2.5">
-          <MessageSquare className="w-5 h-5 text-blue-600" />
-          <h1 className="font-bold text-lg text-slate-800 dark:text-white">ศูนย์ช่วยเหลือลูกค้า LINE OA</h1>
+          <MessageSquare className="w-5 h-5 text-blue-600 shrink-0" />
+          <h1 className="font-bold text-base md:text-lg text-slate-800 dark:text-white truncate">ศูนย์ช่วยเหลือลูกค้า LINE OA</h1>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto">
           {/* Gemini Monitor Toggle */}
           <button
             onClick={() => setShowGeminiMonitor(!showGeminiMonitor)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium border rounded-lg transition-colors ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium border rounded-lg transition-colors flex-1 sm:flex-initial justify-center ${
               showGeminiMonitor
                 ? "bg-blue-50 border-blue-200 text-blue-700 dark:bg-blue-950/20 dark:border-blue-950/50 dark:text-blue-400"
                 : "border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300"
@@ -265,7 +266,7 @@ export default function AdminChatsPage() {
 
           <button
             onClick={() => fetchSessions()}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-600 dark:text-slate-300 transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-600 dark:text-slate-300 transition-colors flex-1 sm:flex-initial justify-center"
           >
             <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`} />
             รีเฟรชข้อมูล
@@ -276,7 +277,7 @@ export default function AdminChatsPage() {
       {/* Main split view */}
       <div className="flex flex-1 overflow-hidden">
         {/* Left side: Inbox List */}
-        <div className="w-80 border-r border-slate-200 dark:border-slate-800 flex flex-col bg-slate-50/20 dark:bg-slate-900/20 animate-in fade-in slide-in-from-left-4 duration-300">
+        <div className={`w-full md:w-80 border-r border-slate-200 dark:border-slate-800 flex flex-col bg-slate-50/20 dark:bg-slate-900/20 animate-in fade-in slide-in-from-left-4 duration-300 ${selectedSession ? "hidden md:flex" : "flex"}`}>
           <div className="p-4 border-b border-slate-200 dark:border-slate-800">
             <input
               type="text"
@@ -363,28 +364,36 @@ export default function AdminChatsPage() {
         </div>
 
         {/* Right side: Chat Thread & Action Controls */}
-        <div className="flex-1 flex flex-col bg-slate-50/10 dark:bg-slate-900/10 overflow-hidden">
+        <div className={`flex-1 flex flex-col bg-slate-50/10 dark:bg-slate-900/10 overflow-hidden ${selectedSession ? "flex" : "hidden md:flex"}`}>
           {selectedSession ? (
             <>
               {/* Session Control Panel */}
-              <div className="px-6 py-3 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 flex flex-wrap justify-between items-center gap-3">
-                <div className="flex items-center gap-2.5">
+              <div className="px-4 py-3 md:px-6 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 flex flex-wrap justify-between items-center gap-3">
+                <div className="flex items-center gap-2.5 min-w-0 flex-1 md:flex-initial">
+                  {/* Back Button for mobile */}
+                  <button
+                    onClick={() => setSelectedSession(null)}
+                    className="md:hidden p-1.5 -ml-1 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors shrink-0"
+                  >
+                    <ArrowLeft className="w-5 h-5" />
+                  </button>
+
                   {selectedSession.linePictureUrl ? (
                     <img 
                       src={selectedSession.linePictureUrl} 
                       alt={selectedSession.lineDisplayName || "LINE User"}
-                      className="w-8 h-8 rounded-full object-cover border border-slate-100 dark:border-slate-800"
+                      className="w-8 h-8 rounded-full object-cover border border-slate-100 dark:border-slate-800 shrink-0"
                     />
                   ) : (
-                    <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center shrink-0">
                       <UserIcon className="w-4 h-4 text-slate-400" />
                     </div>
                   )}
-                  <div className="flex flex-col">
-                    <span className="font-bold text-sm text-slate-800 dark:text-white">
+                  <div className="flex flex-col min-w-0">
+                    <span className="font-bold text-sm text-slate-800 dark:text-white truncate">
                       {selectedSession.lineDisplayName || "ลูกค้า LINE"}
                     </span>
-                    <span className="text-[10px] text-slate-400 font-mono">
+                    <span className="text-[10px] text-slate-400 font-mono truncate">
                       ID: {selectedSession.lineUserId}
                     </span>
                   </div>
@@ -485,7 +494,7 @@ export default function AdminChatsPage() {
                         {/* Message content bubble */}
                         <div className="flex flex-col gap-1">
                           <div
-                            className={`rounded-2xl px-4 py-2.5 text-sm whitespace-pre-wrap ${
+                            className={`rounded-2xl px-4 py-2.5 text-sm whitespace-pre-wrap break-words ${
                               isCustomer
                                 ? "bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-800"
                                 : isBot
@@ -565,7 +574,7 @@ export default function AdminChatsPage() {
 
         {/* Rightmost column: Gemini Monitor */}
         {showGeminiMonitor && (
-          <div className="w-80 border-l border-slate-200 dark:border-slate-800 flex flex-col bg-slate-50/20 dark:bg-slate-900/20 overflow-y-auto animate-in fade-in slide-in-from-right-4 duration-300">
+          <div className="fixed inset-y-0 right-0 z-50 w-full sm:w-80 md:static md:w-80 border-l border-slate-200 dark:border-slate-800 flex flex-col bg-slate-50 dark:bg-slate-900 md:bg-slate-50/20 md:dark:bg-slate-900/20 overflow-y-auto animate-in fade-in slide-in-from-right-4 duration-300 shadow-xl md:shadow-none">
             <div className="p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-white dark:bg-slate-950">
               <div className="flex items-center gap-2">
                 <BotIcon className="w-5 h-5 text-blue-600" />
