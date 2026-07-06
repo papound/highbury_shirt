@@ -52,6 +52,7 @@ export default function AdminChatsPage() {
     totalTokens: number;
     totalCost: number;
     budgetLimit: number;
+    creditBalance: number;
     remainingBudget: number;
   } | null>(null);
   const [showGeminiMonitor, setShowGeminiMonitor] = useState(false);
