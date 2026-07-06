@@ -15,12 +15,27 @@ export async function POST(req: NextRequest) {
     }
 
     const now = new Date();
+    const cleanCode = code.trim();
+    const isDefaultPromo = ["ซื้อ 3 แถม 1", "ซื้อ3แถม1", "buy3get1", "buy 3 get 1", "3get1", "3แถม1"].includes(cleanCode) || cleanCode.toLowerCase() === "promo-buy3get1";
     const promo = await prisma.promotion.findFirst({
       where: {
-        code: code.toUpperCase().trim(),
         isActive: true,
         OR: [{ startsAt: null }, { startsAt: { lte: now } }],
-        AND: [{ OR: [{ endsAt: null }, { endsAt: { gte: now } }] }],
+        AND: [
+          { OR: [{ endsAt: null }, { endsAt: { gte: now } }] },
+          isDefaultPromo
+            ? { id: "promo-buy3get1" }
+            : {
+                OR: [
+                  { code: cleanCode.toUpperCase() },
+                  { code: cleanCode },
+                  { name: cleanCode },
+                  { nameTh: cleanCode },
+                  { name: cleanCode.replace(/\s+/g, "") },
+                  { nameTh: cleanCode.replace(/\s+/g, "") }
+                ]
+              }
+        ],
       },
     });
 

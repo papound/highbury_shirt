@@ -293,9 +293,11 @@ export async function getActivePromotions() {
  */
 export async function validatePromoCode(code: string) {
   const now = new Date();
+  const cleanCode = code.trim();
+  const isDefaultPromo = ["ซื้อ 3 แถม 1", "ซื้อ3แถม1", "buy3get1", "buy 3 get 1", "3get1", "3แถม1"].includes(cleanCode) || cleanCode.toLowerCase() === "promo-buy3get1";
+
   const promo = await prisma.promotion.findFirst({
     where: {
-      code,
       isActive: true,
       OR: [
         { startsAt: null },
@@ -308,6 +310,17 @@ export async function validatePromoCode(code: string) {
             { endsAt: { gte: now } },
           ],
         },
+        isDefaultPromo
+          ? { id: "promo-buy3get1" }
+          : {
+              OR: [
+                { code: cleanCode },
+                { name: cleanCode },
+                { nameTh: cleanCode },
+                { name: cleanCode.replace(/\s+/g, "") },
+                { nameTh: cleanCode.replace(/\s+/g, "") }
+              ]
+            }
       ],
     },
   });
@@ -425,8 +438,21 @@ export async function createPendingOrder(params: CreateOrderParams) {
   const applicablePromos = evaluatePromotions(itemsMapped, allPromotions);
 
   if (promotionCode) {
+    const cleanCode = promotionCode.trim();
+    const isDefaultPromo = ["ซื้อ 3 แถม 1", "ซื้อ3แถม1", "buy3get1", "buy 3 get 1", "3get1", "3แถม1"].includes(cleanCode) || cleanCode.toLowerCase() === "promo-buy3get1";
     const codePromo = await prisma.promotion.findFirst({
-      where: { code: promotionCode, isActive: true },
+      where: isDefaultPromo
+        ? { id: "promo-buy3get1", isActive: true }
+        : {
+            isActive: true,
+            OR: [
+              { code: cleanCode },
+              { name: cleanCode },
+              { nameTh: cleanCode },
+              { name: cleanCode.replace(/\s+/g, "") },
+              { nameTh: cleanCode.replace(/\s+/g, "") }
+            ]
+          },
     });
     if (!codePromo) {
       throw new Error("รหัสโปรโมชั่นไม่ถูกต้องหรือไม่เปิดใช้งาน");
@@ -707,8 +733,21 @@ export async function previewOrder(params: {
   const applicablePromos = evaluatePromotions(itemsMapped, allPromotions);
 
   if (promotionCode) {
+    const cleanCode = promotionCode.trim();
+    const isDefaultPromo = ["ซื้อ 3 แถม 1", "ซื้อ3แถม1", "buy3get1", "buy 3 get 1", "3get1", "3แถม1"].includes(cleanCode) || cleanCode.toLowerCase() === "promo-buy3get1";
     const codePromo = await prisma.promotion.findFirst({
-      where: { code: promotionCode, isActive: true },
+      where: isDefaultPromo
+        ? { id: "promo-buy3get1", isActive: true }
+        : {
+            isActive: true,
+            OR: [
+              { code: cleanCode },
+              { name: cleanCode },
+              { nameTh: cleanCode },
+              { name: cleanCode.replace(/\s+/g, "") },
+              { nameTh: cleanCode.replace(/\s+/g, "") }
+            ]
+          },
     });
     if (!codePromo) {
       throw new Error("รหัสโปรโมชั่นไม่ถูกต้องหรือไม่เปิดใช้งาน");

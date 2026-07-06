@@ -80,8 +80,21 @@ export async function POST(req: NextRequest) {
 
     // Apply code-based promotion if provided
     if (data.promotionCode) {
+      const cleanCode = data.promotionCode.trim();
+      const isDefaultPromo = ["ซื้อ 3 แถม 1", "ซื้อ3แถม1", "buy3get1", "buy 3 get 1", "3get1", "3แถม1"].includes(cleanCode) || cleanCode.toLowerCase() === "promo-buy3get1";
       const codePromo = await prisma.promotion.findFirst({
-        where: { code: data.promotionCode, isActive: true },
+        where: isDefaultPromo
+          ? { id: "promo-buy3get1", isActive: true }
+          : {
+              isActive: true,
+              OR: [
+                { code: cleanCode },
+                { name: cleanCode },
+                { nameTh: cleanCode },
+                { name: cleanCode.replace(/\s+/g, "") },
+                { nameTh: cleanCode.replace(/\s+/g, "") }
+              ]
+            },
       });
       if (!codePromo) {
         return NextResponse.json({ error: "รหัสโปรโมชั่นไม่ถูกต้อง" }, { status: 400 });
