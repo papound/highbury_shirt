@@ -87,6 +87,10 @@ jobs:
 
             git config --global --add safe.directory /opt/highbury-shirt || true
 
+            echo "==> Resetting local workspace changes..."
+            git reset --hard
+            git clean -fd
+
             echo "==> Pulling latest code and compose configurations..."
             git pull origin main
 
