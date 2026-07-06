@@ -26,6 +26,8 @@ interface ChatMessage {
 interface ChatSession {
   id: string;
   lineUserId: string;
+  lineDisplayName?: string | null;
+  linePictureUrl?: string | null;
   requiresAdmin: boolean;
   status: "ACTIVE" | "PAUSED" | "COMPLETED";
   lastActivity: string;
@@ -159,8 +161,9 @@ export default function AdminChatsPage() {
   const filteredSessions = sessions.filter((s) => {
     const term = searchQuery.toLowerCase();
     const matchesId = s.lineUserId.toLowerCase().includes(term);
+    const matchesName = s.lineDisplayName?.toLowerCase().includes(term) || false;
     const matchesLastMsg = s.messages?.[0]?.content.toLowerCase().includes(term);
-    return matchesId || matchesLastMsg;
+    return matchesId || matchesName || matchesLastMsg;
   });
 
   return (
@@ -214,16 +217,31 @@ export default function AdminChatsPage() {
                         : "hover:bg-slate-50 dark:hover:bg-slate-800/30"
                     }`}
                   >
-                    <div className="flex justify-between items-center w-full">
-                      <span className="font-semibold text-sm text-slate-800 dark:text-slate-100 truncate">
-                        ID: {sessionItem.lineUserId.substring(0, 12)}...
-                      </span>
-                      {sessionItem.requiresAdmin && (
-                        <span className="flex items-center gap-0.5 px-2 py-0.5 text-[10px] font-bold bg-rose-500 text-white rounded-full">
-                          <ShieldAlert className="w-3 h-3" />
-                          ต้องการด่วน
-                        </span>
+                    <div className="flex items-center gap-2.5 w-full">
+                      {sessionItem.linePictureUrl ? (
+                        <img 
+                          src={sessionItem.linePictureUrl} 
+                          alt={sessionItem.lineDisplayName || "LINE User"}
+                          className="w-7 h-7 rounded-full object-cover shrink-0 border border-slate-100 dark:border-slate-800"
+                        />
+                      ) : (
+                        <div className="w-7 h-7 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center shrink-0">
+                          <UserIcon className="w-3.5 h-3.5 text-slate-400" />
+                        </div>
                       )}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex justify-between items-center w-full">
+                          <span className="font-semibold text-sm text-slate-800 dark:text-slate-100 truncate">
+                            {sessionItem.lineDisplayName || `ID: ${sessionItem.lineUserId.substring(0, 8)}`}
+                          </span>
+                          {sessionItem.requiresAdmin && (
+                            <span className="flex items-center gap-0.5 px-2 py-0.5 text-[9px] font-bold bg-rose-500 text-white rounded-full">
+                              <ShieldAlert className="w-2.5 h-2.5" />
+                              ด่วน
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </div>
 
                     <p className="text-xs text-slate-500 dark:text-slate-400 truncate w-full">
@@ -260,11 +278,26 @@ export default function AdminChatsPage() {
             <>
               {/* Session Control Panel */}
               <div className="px-6 py-3 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 flex flex-wrap justify-between items-center gap-3">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-slate-500">LINE User:</span>
-                  <code className="text-xs bg-slate-100 dark:bg-slate-850 px-2 py-0.5 rounded font-mono select-all">
-                    {selectedSession.lineUserId}
-                  </code>
+                <div className="flex items-center gap-2.5">
+                  {selectedSession.linePictureUrl ? (
+                    <img 
+                      src={selectedSession.linePictureUrl} 
+                      alt={selectedSession.lineDisplayName || "LINE User"}
+                      className="w-8 h-8 rounded-full object-cover border border-slate-100 dark:border-slate-800"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center">
+                      <UserIcon className="w-4 h-4 text-slate-400" />
+                    </div>
+                  )}
+                  <div className="flex flex-col">
+                    <span className="font-bold text-sm text-slate-800 dark:text-white">
+                      {selectedSession.lineDisplayName || "ลูกค้า LINE"}
+                    </span>
+                    <span className="text-[10px] text-slate-400 font-mono">
+                      ID: {selectedSession.lineUserId}
+                    </span>
+                  </div>
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -335,21 +368,29 @@ export default function AdminChatsPage() {
                         }`}
                       >
                         {/* Avatar icon */}
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white shrink-0 shadow-sm ${
-                          isCustomer 
-                            ? "bg-slate-500" 
-                            : isBot 
-                            ? "bg-blue-600" 
-                            : "bg-amber-600"
-                        }`}>
-                          {isCustomer ? (
-                            <UserIcon className="w-4 h-4" />
-                          ) : isBot ? (
-                            <BotIcon className="w-4 h-4" />
-                          ) : (
-                            <span className="text-xs font-bold font-mono">AD</span>
-                          )}
-                        </div>
+                        {isCustomer && selectedSession.linePictureUrl ? (
+                          <img 
+                            src={selectedSession.linePictureUrl} 
+                            alt={selectedSession.lineDisplayName || "LINE User"}
+                            className="w-8 h-8 rounded-full object-cover shrink-0 shadow-sm border border-slate-100 dark:border-slate-800"
+                          />
+                        ) : (
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white shrink-0 shadow-sm ${
+                            isCustomer 
+                              ? "bg-slate-500" 
+                              : isBot 
+                              ? "bg-blue-600" 
+                              : "bg-amber-600"
+                          }`}>
+                            {isCustomer ? (
+                              <UserIcon className="w-4 h-4" />
+                            ) : isBot ? (
+                              <BotIcon className="w-4 h-4" />
+                            ) : (
+                              <span className="text-xs font-bold font-mono">AD</span>
+                            )}
+                          </div>
+                        )}
 
                         {/* Message content bubble */}
                         <div className="flex flex-col gap-1">

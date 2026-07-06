@@ -79,6 +79,36 @@ export function verifySignature(body: string, signature: string): boolean {
 }
 
 /**
+ * ฟังก์ชันดึงชื่อโปรไฟล์และรูปภาพของลูกค้าจาก LINE API
+ */
+async function fetchLineProfile(lineUserId: string): Promise<{ displayName: string; pictureUrl?: string } | null> {
+  const token = process.env.LINE_CHANNEL_ACCESS_TOKEN;
+  if (!token) return null;
+
+  try {
+    const res = await fetch(`https://api.line.me/v2/bot/profile/${lineUserId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) {
+      console.warn(`[LINE BOT] Failed to fetch profile for ${lineUserId}, status: ${res.status}`);
+      return null;
+    }
+
+    const data = await res.json();
+    return {
+      displayName: data.displayName,
+      pictureUrl: data.pictureUrl,
+    };
+  } catch (err) {
+    console.error(`[LINE BOT] Error fetching profile for ${lineUserId}:`, err);
+    return null;
+  }
+}
+
+/**
  * จัดการ LINE Event เดี่ยวๆ เช่น ข้อความตัวอักษร, follow, หรือ postback
  */
 export async function handleLineEvent(event: any): Promise<void> {
@@ -96,15 +126,35 @@ export async function handleLineEvent(event: any): Promise<void> {
   });
 
   if (!session) {
+    const profile = await fetchLineProfile(lineUserId);
     session = await prisma.chatSession.create({
       data: {
         lineUserId,
         status: "ACTIVE",
+        lineDisplayName: profile?.displayName || null,
+        linePictureUrl: profile?.pictureUrl || null,
       },
       include: {
         messages: true,
       },
     });
+  } else if (!session.lineDisplayName) {
+    // ถ้าพบเซสชันเดิมแต่ไม่มีข้อมูลชื่อโปรไฟล์ ให้พยายามดึงข้อมูลและอัปเดตเสริมเข้าฐานข้อมูล
+    const profile = await fetchLineProfile(lineUserId);
+    if (profile) {
+      session = await prisma.chatSession.update({
+        where: { id: session.id },
+        data: {
+          lineDisplayName: profile.displayName,
+          linePictureUrl: profile.pictureUrl || null,
+        },
+        include: {
+          messages: {
+            orderBy: { createdAt: "asc" },
+          },
+        },
+      });
+    }
   }
 
   // 2. จัดการแชทตามประเภทเหตุการณ์ (Event Types)

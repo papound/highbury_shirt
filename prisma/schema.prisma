@@ -429,16 +429,18 @@ model SiteSetting {
 // ─────────────────────────────────────────────
 
 model ChatSession {
-  id            String        @id @default(cuid())
-  lineUserId    String        @unique
-  requiresAdmin Boolean       @default(false)
-  status        SessionStatus @default(ACTIVE)
-  metadataJson  String?       // JSON: { cartItems, shippingInfo, tempDetails }
-  lastActivity  DateTime      @default(now())
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  id              String        @id @default(cuid())
+  lineUserId      String        @unique
+  lineDisplayName String?
+  linePictureUrl  String?
+  requiresAdmin   Boolean       @default(false)
+  status          SessionStatus @default(ACTIVE)
+  metadataJson    String?       // JSON: { cartItems, shippingInfo, tempDetails }
+  lastActivity    DateTime      @default(now())
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 
-  messages      ChatMessage[]
+  messages        ChatMessage[]
 
   @@index([lineUserId])
   @@map("chat_sessions")
