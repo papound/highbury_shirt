@@ -49,7 +49,7 @@ export async function GET(req: NextRequest) {
       try {
         const genAI = new GoogleGenerativeAI(apiKey);
         const testModel = genAI.getGenerativeModel({ model: model });
-        await testModel.countTokens({ contents: [{ parts: [{ text: "ping" }] }] });
+        await testModel.countTokens("ping");
       } catch (err: any) {
         console.error("[Gemini Connection Test Error]:", err);
         status = "ERROR";

@@ -73,7 +73,7 @@ export default function AdminChatsPage() {
     }
   };
 
-  const handleUpdateGeminiConfig = async (updates: { modelName?: string; budgetLimit?: number }) => {
+  const handleUpdateGeminiConfig = async (updates: { modelName?: string; budgetLimit?: number; creditBalance?: number }) => {
     setIsSavingStats(true);
     try {
       const res = await fetch("/api/admin/gemini", {
