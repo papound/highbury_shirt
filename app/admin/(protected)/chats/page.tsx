@@ -769,7 +769,7 @@ export default function AdminChatsPage() {
                 </div>
 
                 {/* Reset Stats Control */}
-                <div className="pt-2">
+                <div className="pt-2 space-y-2">
                   <button
                     onClick={handleResetGeminiStats}
                     disabled={isResetting}
@@ -777,6 +777,15 @@ export default function AdminChatsPage() {
                   >
                     รีเซ็ตประวัติการใช้ API
                   </button>
+
+                  <a
+                    href="/api/admin/gemini/diagnostic"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="w-full flex items-center justify-center gap-1.5 py-2 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900/50 text-slate-600 dark:text-slate-400 text-xs font-semibold rounded-lg transition-colors text-center"
+                  >
+                    🔍 วินิจฉัยคลังสินค้า (เช็ค DB)
+                  </a>
                 </div>
               </div>
             ) : (
