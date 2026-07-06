@@ -368,8 +368,8 @@ export default function AdminChatsPage() {
           {selectedSession ? (
             <>
               {/* Session Control Panel */}
-              <div className="px-4 py-3 md:px-6 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 flex flex-wrap justify-between items-center gap-3">
-                <div className="flex items-center gap-2.5 min-w-0 flex-1 md:flex-initial">
+              <div className="px-4 py-3 md:px-6 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 flex flex-col md:flex-row md:justify-between md:items-center gap-3">
+                <div className="flex items-center gap-2.5 min-w-0 w-full md:w-auto">
                   {/* Back Button for mobile */}
                   <button
                     onClick={() => setSelectedSession(null)}
@@ -399,7 +399,7 @@ export default function AdminChatsPage() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap w-full md:w-auto justify-start md:justify-end">
                   {/* ปุ่มเปลี่ยนสถานะการหยุดบอท / คุยสด */}
                   {selectedSession.status === "ACTIVE" ? (
                     <button
