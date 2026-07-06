@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { getProductPlaceholderImage } from "@/lib/placeholders";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -149,7 +150,8 @@ export default async function AdminProductsPage({ searchParams }: Props) {
                                 // eslint-disable-next-line @next/next/no-img-element
                                 <img src={product.images[0].url} alt="" className="w-full h-full object-cover" />
                               ) : (
-                                <ImageIcon className="w-5 h-5 text-slate-400" />
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img src={getProductPlaceholderImage(product.slug)} alt="" className="w-full h-full object-cover" />
                               )}
                             </div>
                             <div className="flex flex-col">

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { Shirt } from "lucide-react";
 import prisma from "@/lib/prisma";
+import { getProductPlaceholderImage } from "@/lib/placeholders";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -93,9 +94,14 @@ export default async function ProductDetailPage({ params }: Props) {
                 priority
               />
             ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50 gap-3">
-                <Shirt className="w-20 h-20 text-slate-300" strokeWidth={1} />
-              </div>
+              <Image
+                src={getProductPlaceholderImage(product.slug)}
+                alt={product.nameTh}
+                fill
+                className="object-contain p-4 bg-[#FAF6EE]"
+                sizes="(max-width: 768px) 100vw, 50vw"
+                priority
+              />
             )}
           </div>
           {product.images.length > 1 && (

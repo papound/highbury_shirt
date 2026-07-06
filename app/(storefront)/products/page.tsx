@@ -3,6 +3,7 @@ import Link from "next/link";
 import { PaginationJump } from "@/components/storefront/pagination-jump";
 import { Shirt } from "lucide-react";
 import prisma from "@/lib/prisma";
+import { getProductPlaceholderImage, getColorHex } from "@/lib/placeholders";
 import { Prisma } from "@prisma/client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -106,19 +107,32 @@ export default async function ProductsPage({ searchParams }: Props) {
                 >
                   ทั้งหมด
                 </Link>
-                {categories.map((cat) => (
-                  <Link
-                    key={cat.id}
-                    href={`/products?category=${cat.slug}`}
-                    className={`block px-2 py-1.5 rounded text-sm transition-colors ${
-                      sp.category === cat.slug
-                        ? "bg-primary text-primary-foreground"
-                        : "hover:bg-secondary"
-                    }`}
-                  >
-                    {cat.nameTh}
-                  </Link>
-                ))}
+                {(() => {
+                  const filtered = categories.filter(
+                    (cat) => cat.slug !== "mens-shirts" && cat.slug !== "womens-shirts"
+                  );
+                  const othersIndex = filtered.findIndex(
+                    (cat) => cat.nameTh === "อื่นๆ" || cat.slug.toLowerCase().includes("other")
+                  );
+                  if (othersIndex !== -1) {
+                    const othersCat = filtered[othersIndex];
+                    filtered.splice(othersIndex, 1);
+                    filtered.push(othersCat);
+                  }
+                  return filtered.map((cat) => (
+                    <Link
+                      key={cat.id}
+                      href={`/products?category=${cat.slug}`}
+                      className={`block px-2 py-1.5 rounded text-sm transition-colors ${
+                        sp.category === cat.slug
+                          ? "bg-primary text-primary-foreground"
+                          : "hover:bg-secondary"
+                      }`}
+                    >
+                      {cat.nameTh}
+                    </Link>
+                  ));
+                })()}
               </div>
             </div>
           </div>
@@ -156,9 +170,13 @@ export default async function ProductsPage({ searchParams }: Props) {
                                 sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                               />
                             ) : (
-                              <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50 gap-2">
-                                <Shirt className="w-12 h-12 text-slate-300" strokeWidth={1} />
-                              </div>
+                              <Image
+                                src={getProductPlaceholderImage(product.slug)}
+                                alt={product.nameTh}
+                                fill
+                                className="object-contain p-2 bg-[#FAF6EE] group-hover:scale-105 transition-transform duration-300"
+                                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                              />
                             )}
                             {product.isFeatured && (
                               <Badge className="absolute top-2 left-2 text-xs">
@@ -173,17 +191,30 @@ export default async function ProductsPage({ searchParams }: Props) {
                             <h3 className="font-medium text-sm leading-tight line-clamp-2">
                               {product.nameTh}
                             </h3>
-                            <div className="flex flex-wrap gap-1 mt-1.5">
-                              {colors.slice(0, 4).map((c) => (
-                                <span
-                                  key={c}
-                                  className="text-xs bg-secondary px-1.5 py-0.5 rounded"
-                                >
-                                  {c}
-                                </span>
-                              ))}
+                            <div className="flex flex-wrap gap-1.5 mt-2">
+                              {colors.slice(0, 4).map((c) => {
+                                const isOthers = c.trim().toLowerCase() === "others";
+                                const bgHex = getColorHex(c);
+                                return (
+                                  <span
+                                    key={c}
+                                    className="inline-flex items-center gap-1.5 text-[10px] bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 px-2 py-0.5 rounded-full font-medium text-slate-600 dark:text-slate-300 shadow-sm"
+                                  >
+                                    <span
+                                      className="w-2.5 h-2.5 rounded-full border border-black/10 shrink-0"
+                                      style={{
+                                        backgroundColor: isOthers ? undefined : bgHex,
+                                        backgroundImage: isOthers
+                                          ? "linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet)"
+                                          : undefined
+                                      }}
+                                    />
+                                    {c}
+                                  </span>
+                                );
+                              })}
                               {colors.length > 4 && (
-                                <span className="text-xs text-muted-foreground">
+                                <span className="text-[10px] text-muted-foreground self-center pl-0.5">
                                   +{colors.length - 4}
                                 </span>
                               )}
@@ -197,7 +228,11 @@ export default async function ProductsPage({ searchParams }: Props) {
                             ? `฿${minPrice.toLocaleString()}`
                             : `฿${minPrice.toLocaleString()}+`}
                         </span>
-                        <Button size="sm" asChild>
+                        <Button 
+                          size="sm" 
+                          asChild
+                          className="bg-gradient-to-r from-[#0A2B5E] to-[#1A6CC8] hover:from-[#1A6CC8] hover:to-[#0A2B5E] text-white font-semibold text-xs px-4.5 py-1.5 rounded-lg shadow-sm hover:shadow-[0_4px_12px_rgba(26,108,200,0.2)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 border-0 cursor-pointer"
+                        >
                           <Link href={`/products/${product.slug}`}>เลือกสินค้า</Link>
                         </Button>
                       </CardFooter>

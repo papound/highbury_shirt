@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Shirt } from "lucide-react";
+import { getProductPlaceholderImage } from "@/lib/placeholders";
 import { Prisma } from "@prisma/client";
 import { Reveal, Marquee, FloatingBlobs, TiltCard, Typewriter } from "./home-v2-animations";
 
@@ -34,7 +35,6 @@ const trustItems = [
   { icon: "✂️", label: "ตัดเย็บโดยช่างมืออาชีพ" },
   { icon: "📐", label: "แพทเทิร์นสำหรับคนไทย" },
   { icon: "💨", label: "ระบายอากาศได้ดี" },
-  { icon: "🔄", label: "เปลี่ยนไซส์ได้ฟรี" },
   { icon: "📦", label: "จัดส่งทั่วประเทศ" },
 ];
 
@@ -98,10 +98,6 @@ const faqItems = [
   {
     q: "ไซส์เสื้อ Highbury เหมาะกับสรีระแบบไหน?",
     a: "แพทเทิร์นของเราออกแบบมาเพื่อสรีระคนเอเชียโดยเฉพาะ มีหลายไซส์ตั้งแต่ XS ถึง 3XL พร้อมตาราง Size Guide ละเอียดให้ดูก่อนสั่ง",
-  },
-  {
-    q: "สามารถเปลี่ยนหรือคืนสินค้าได้ไหม?",
-    a: "สามารถเปลี่ยนไซส์ได้ฟรีภายใน 14 วัน (สินค้าต้องอยู่ในสภาพดีไม่ผ่านการใช้งาน) โดยแจ้งผ่าน Line หรืออีเมลของเรา",
   },
   {
     q: "จัดส่งให้ในกี่วัน?",
@@ -322,7 +318,7 @@ export default function HomeV2({ featuredProducts, categories }: HomeV2Props) {
                   {p}
                 </span>
               ))}
-              {["จัดส่งทั่วประเทศ", "เปลี่ยนไซส์ได้ฟรี"].map((p) => (
+              {["จัดส่งทั่วประเทศ"].map((p) => (
                 <span
                   key={p}
                   className="bg-[#FFF0F0] border border-[#FFCACA] text-[#D42B2B] text-[15px] font-semibold px-4 py-1.5 rounded-full"
@@ -384,9 +380,13 @@ export default function HomeV2({ featuredProducts, categories }: HomeV2Props) {
                           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-[#E8F2FC]">
-                          <Shirt className="w-16 h-16 text-[#C8DDFA]" strokeWidth={1} />
-                        </div>
+                        <Image
+                          src={getProductPlaceholderImage(product.slug)}
+                          alt={product.nameTh}
+                          fill
+                          className="object-contain p-2 bg-[#FAF6EE] group-hover:scale-105 transition-transform duration-500"
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        />
                       )}
                       {/* Quick view overlay */}
                       <div className="absolute inset-0 bg-[#0A2B5E]/0 group-hover:bg-[#0A2B5E]/5 transition-colors duration-300 flex items-end justify-center pb-4 opacity-0 group-hover:opacity-100">
@@ -447,17 +447,30 @@ export default function HomeV2({ featuredProducts, categories }: HomeV2Props) {
               เลือกสินค้าตามหมวดหมู่
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {categories.map((cat) => (
-                <Link
-                  key={cat.id}
-                  href={`/products?category=${cat.slug}`}
-                  className="bg-white border-[1.5px] border-[#C8D8EE] rounded-xl p-6 hover:border-[#1A6CC8] hover:-translate-y-1 hover:shadow-[0_8px_28px_rgba(10,43,94,0.1)] transition-all duration-300 text-center"
-                >
-                  <div className="text-3xl mb-3">👔</div>
-                  <div className="font-bold text-[#0A2B5E] text-xl">{cat.nameTh}</div>
-                  <div className="text-[15px] text-[#4A6080] mt-1">{cat.name}</div>
-                </Link>
-              ))}
+              {(() => {
+                const filtered = categories.filter(
+                  (cat) => cat.slug !== "mens-shirts" && cat.slug !== "womens-shirts"
+                );
+                const othersIndex = filtered.findIndex(
+                  (cat) => cat.nameTh === "อื่นๆ" || cat.slug.toLowerCase().includes("other")
+                );
+                if (othersIndex !== -1) {
+                  const othersCat = filtered[othersIndex];
+                  filtered.splice(othersIndex, 1);
+                  filtered.push(othersCat);
+                }
+                return filtered.map((cat) => (
+                  <Link
+                    key={cat.id}
+                    href={`/products?category=${cat.slug}`}
+                    className="bg-white border-[1.5px] border-[#C8D8EE] rounded-xl p-6 hover:border-[#1A6CC8] hover:-translate-y-1 hover:shadow-[0_8px_28px_rgba(10,43,94,0.1)] transition-all duration-300 text-center"
+                  >
+                    <div className="text-3xl mb-3">👔</div>
+                    <div className="font-bold text-[#0A2B5E] text-xl">{cat.nameTh}</div>
+                    <div className="text-[15px] text-[#4A6080] mt-1">{cat.name}</div>
+                  </Link>
+                ));
+              })()}
             </div>
           </div>
         </section>
@@ -529,8 +542,7 @@ export default function HomeV2({ featuredProducts, categories }: HomeV2Props) {
               {[
                 { num: "01", title: "คำแนะนำการเลือกไซส์", desc: "ทีมงานพร้อมช่วยคุณเลือกไซส์ที่เหมาะสม มีตาราง Size Guide ละเอียด" },
                 { num: "02", title: "จัดส่งทั่วประเทศ", desc: "จัดส่งด้วยบริษัทขนส่งชั้นนำ ติดตามพัสดุได้แบบ Real-time" },
-                { num: "03", title: "เปลี่ยนไซส์ได้ฟรี", desc: "ไม่ถูกใจไซส์หรือทรง เปลี่ยนได้ฟรีภายใน 14 วัน ไม่มีเงื่อนไข" },
-                { num: "04", title: "บริการหลังการขาย", desc: "ทีมงานพร้อมให้คำปรึกษาและแก้ปัญหาให้คุณ 7 วันต่อสัปดาห์" },
+                { num: "03", title: "บริการหลังการขาย", desc: "ทีมงานพร้อมให้คำปรึกษาและแก้ปัญหาให้คุณ 7 วันต่อสัปดาห์" },
               ].map((svc) => (
                 <div
                   key={svc.num}
