@@ -60,6 +60,10 @@ export default function AdminChatsPage() {
   const [isResetting, setIsResetting] = useState(false);
   const [isSavingStats, setIsSavingStats] = useState(false);
 
+  const [showDiagnosticModal, setShowDiagnosticModal] = useState(false);
+  const [diagnosticData, setDiagnosticData] = useState<any>(null);
+  const [isFetchingDiagnostic, setIsFetchingDiagnostic] = useState(false);
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const fetchGeminiStats = async () => {
@@ -223,6 +227,24 @@ export default function AdminChatsPage() {
       fetchSessions(true);
     } catch (err: any) {
       toast.error(err.message);
+    }
+  };
+
+  // ดึงข้อมูลวินิจฉัยคลังสินค้า (เช็ค DB) และเปิด Popup Modal
+  const handleOpenDiagnostic = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsFetchingDiagnostic(true);
+    setShowDiagnosticModal(true);
+    try {
+      const res = await fetch("/api/admin/gemini/diagnostic");
+      if (!res.ok) throw new Error("ดึงข้อมูลวินิจฉัยล้มเหลว");
+      const data = await res.json();
+      setDiagnosticData(data);
+    } catch (err: any) {
+      toast.error(err.message);
+      setShowDiagnosticModal(false);
+    } finally {
+      setIsFetchingDiagnostic(false);
     }
   };
 
@@ -787,14 +809,12 @@ export default function AdminChatsPage() {
                     รีเซ็ตประวัติการใช้ API
                   </button>
 
-                  <a
-                    href="/api/admin/gemini/diagnostic"
-                    target="_blank"
-                    rel="noreferrer"
+                  <button
+                    onClick={handleOpenDiagnostic}
                     className="w-full flex items-center justify-center gap-1.5 py-2 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900/50 text-slate-600 dark:text-slate-400 text-xs font-semibold rounded-lg transition-colors text-center"
                   >
                     🔍 วินิจฉัยคลังสินค้า (เช็ค DB)
-                  </a>
+                  </button>
                 </div>
               </div>
             ) : (
@@ -803,6 +823,37 @@ export default function AdminChatsPage() {
           </div>
         )}
       </div>
+
+      {/* Diagnostic Modal (Popup showing plain text JSON) */}
+      {showDiagnosticModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-slate-900 rounded-xl max-w-3xl w-full flex flex-col max-h-[85vh] border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/50">
+              <h2 className="font-bold text-sm text-slate-800 dark:text-white flex items-center gap-2">
+                🔍 วินิจฉัยคลังสินค้า (Plain Text JSON)
+              </h2>
+              <button
+                onClick={() => {
+                  setShowDiagnosticModal(false);
+                  setDiagnosticData(null);
+                }}
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm font-semibold"
+              >
+                ปิด
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto flex-1 bg-slate-950">
+              {isFetchingDiagnostic ? (
+                <div className="text-center text-slate-400 text-sm py-12">กำลังดึงข้อมูลและวินิจฉัยคลังสินค้า...</div>
+              ) : (
+                <pre className="text-xs text-emerald-400 font-mono whitespace-pre overflow-x-auto select-all">
+                  {diagnosticData ? JSON.stringify(diagnosticData, null, 2) : "ไม่มีข้อมูล"}
+                </pre>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
