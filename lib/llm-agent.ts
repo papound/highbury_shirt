@@ -1,6 +1,15 @@
 import { GoogleGenerativeAI, FunctionDeclaration, SchemaType, Content } from "@google/generative-ai";
 import * as skills from "./agent-skills";
 import colorMap from "./color-map.json";
+import { prisma } from "./prisma";
+
+const MODEL_PRICING: Record<string, { input: number; output: number }> = {
+  "gemini-2.5-flash": { input: 0.075 / 1_000_000, output: 0.30 / 1_000_000 },
+  "gemini-2.5-pro": { input: 1.25 / 1_000_000, output: 5.00 / 1_000_000 },
+  "gemini-2.0-flash": { input: 0.075 / 1_000_000, output: 0.30 / 1_000_000 },
+  "gemini-1.5-flash": { input: 0.075 / 1_000_000, output: 0.30 / 1_000_000 },
+  "gemini-1.5-pro": { input: 1.25 / 1_000_000, output: 5.00 / 1_000_000 },
+};
 
 // ตรวจสอบ API Key
 const apiKey = process.env.GEMINI_API_KEY || "";
@@ -244,7 +253,10 @@ const SYSTEM_INSTRUCTION = `
 10. รันเครื่องมือทันที: เมื่อบอกจะเช็ค/ค้นหา/สั่งซื้อ ต้องรันเครื่องมือที่เกี่ยวข้องในเทิร์นนั้นทันที ห้ามบอกให้รอเปล่าๆ โดยไม่รันเครื่องมือ
 11. การรับรูปภาพ (Multimodal): เมื่อลูกค้าส่งภาพมาให้วิเคราะห์ด้วยตา:
     - รูปสลิป: รัน submitPaymentProof ทันทีโดยค้นหาหรือถามเลขออเดอร์ และใช้ imageUrl จากแชท
-    - รูปเสื้อ/แฟชั่น: วิเคราะห์สี/แบบเสื้อแล้วเสนอสินค้าที่คล้ายกันในร้าน
+    - รูปเสื้อ/แฟชั่น:
+      * ทำการอ่านข้อความ ตัวเลข หรือรหัสสินค้าที่ปรากฏบนรูปภาพก่อนเป็นอันดับแรก (OCR) เพื่อตรวจสอบว่ามีรหัสสินค้าหรือสีระบุอยู่หรือไม่ (เช่น รหัสรูปแบบ 123456_7 หรือ 123456_7/สี)
+      * หากพบตัวเลขรหัสสินค้า ให้ใช้รหัสที่ถอดได้นั้นค้นหารุ่นสินค้าทันทีด้วยเครื่องมือ searchProducts เพื่อแสดงข้อมูลของสินค้าตรงรุ่นที่ถูกต้อง พร้อมรายงานสต็อกและราคาที่ตรงตัวให้ลูกค้าก่อน
+      * หากอ่านรหัสไม่พบ หรือค้นหารหัสตรงตัวไม่เจอในฐานข้อมูล จึงค่อยวิเคราะห์สไตล์ คอเสื้อ ความยาวแขน สี หรือลักษณะเนื้อผ้าของเสื้อจากรูปภาพ เพื่อใช้เครื่องมือ searchProducts ค้นหาสินค้าที่มีลักษณะใกล้เคียงที่สุดในระบบมานำเสนอเพิ่มเติม
     - รูปอื่นๆ: ตอบกลับสุภาพตามความเหมาะสม
 12. ยกเลิกออเดอร์: ใช้ cancelOrder ได้เฉพาะออเดอร์สถานะ PENDING เท่านั้น หากจ่ายเงินหรือเปลี่ยนสถานะแล้วต้องแจ้งว่ายกเลิกผ่านบอทไม่ได้
 13. การคำนวณและประเมินราคา (Price Calculation & Preview): เมื่อลูกค้าถามยอดรวม สรุปราคา หรือถามว่ามีส่วนลดใดๆ หรือไม่ ให้ใช้เครื่องมือ 'previewOrder' เพื่อสรุปยอดรวม ส่วนลดโปรโมชั่นของทางร้าน และค่าจัดส่งจริงให้ลูกค้าทราบเสมอ
@@ -254,7 +266,8 @@ const SYSTEM_INSTRUCTION = `
     - แสดงชื่อหัวข้อแต่ละสีเป็นตัวหนาโดยตัดรหัสตัวเลขนำหน้าชื่อสินค้าออก แล้วต่อท้ายด้วยเว้นวรรคและรหัส [รหัสสินค้า]_[รหัสสี] ตรงๆ (ห้ามมีคำว่า "Base SKU" หรืออื่น ๆ หน้าตัวเลขรหัส) เช่น:
       * **เสื้อเชิ้ตผู้หญิงแขนยาวผ้าลายริ้ว สีดำ 131065_5**
     - ห้ามแสดงบรรทัด "SKU ตัวอย่าง" หรือข้อมูล SKU รายไซส์ในผลลัพธ์การค้นหาเด็ดขาด
-    - หากไซส์ใดสต็อกเป็น 0 ตัว ให้เขียนระบุว่า "(ไม่มีสินค้า)" ห้ามพิมพ์คำว่า "0 ตัว" หรือ "สต็อก 0" เด็ดขาด
+    - ถ้าหากสินค้านั้นทุกไซส์ไม่มีสินค้าเลยก็ไม่ต้องแจ้งลูกค้า
+    - หรือหากมีสินค้าในบางไซส์ แต่หากไซส์ใดสต็อกเป็น 0 ตัว ให้เขียนระบุว่า "(ไม่มีสินค้า)" ห้ามพิมพ์คำว่า "0 ตัว" หรือ "สต็อก 0" เด็ดขาด
 `;
 
 export interface ChatMessageParam {
@@ -295,6 +308,9 @@ export async function runChatbotTurn(
 ): Promise<{ text: string; requiresAdmin: boolean; qrPayload?: string }> {
   let requiresAdmin = false;
   let qrPayload: string | undefined = undefined;
+  let totalPromptTokens = 0;
+  let totalCompletionTokens = 0;
+  let apiCallsCount = 0;
 
   try {
     if (!apiKey) {
@@ -305,8 +321,39 @@ export async function runChatbotTurn(
       };
     }
 
+    // 1. ตรวจสอบ Budget / Credit คงเหลือ (THB)
+    try {
+      const creditSetting = await prisma.siteSetting.findUnique({
+        where: { key: "gemini_credit_balance" },
+      });
+      const creditBalance = parseFloat(creditSetting?.value || "500.00");
+
+      if (creditBalance <= 0.05) {
+        console.warn(`[Gemini API] Credit balance depleted (฿${creditBalance}). Falling back to admin.`);
+        return {
+          text: "ขออภัยด้วยครับ ทางร้านขอส่งต่อบทสนทนานี้ให้กับแอดมินดูแลโดยตรงนะครับ รอแอดมินตอบกลับสักครู่ครับ",
+          requiresAdmin: true,
+        };
+      }
+    } catch (err) {
+      console.error("[Gemini credit check error]:", err);
+    }
+
+    // 2. ดึงโมเดลที่จะใช้จากฐานข้อมูล
+    let modelName = "gemini-2.5-flash";
+    try {
+      const modelSetting = await prisma.siteSetting.findUnique({
+        where: { key: "gemini_model_name" },
+      });
+      if (modelSetting?.value) {
+        modelName = modelSetting.value;
+      }
+    } catch (err) {
+      console.error("[Gemini model name fetch error]:", err);
+    }
+
     const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash",
+      model: modelName,
       systemInstruction: SYSTEM_INSTRUCTION,
       tools: tools,
     });
@@ -330,6 +377,11 @@ export async function runChatbotTurn(
 
     // ส่งข้อความไปประมวลผล
     let response = await generateContentWithRetry(model, { contents });
+    apiCallsCount++;
+    if (response?.response?.usageMetadata) {
+      totalPromptTokens += response.response.usageMetadata.promptTokenCount || 0;
+      totalCompletionTokens += response.response.usageMetadata.candidatesTokenCount || 0;
+    }
     let candidate = response.response.candidates?.[0];
     let functionCalls = candidate?.content?.parts?.filter((part: any) => part.functionCall) || [];
 
@@ -425,11 +477,73 @@ export async function runChatbotTurn(
       });
 
       response = await generateContentWithRetry(model, { contents });
+      apiCallsCount++;
+      if (response?.response?.usageMetadata) {
+        totalPromptTokens += response.response.usageMetadata.promptTokenCount || 0;
+        totalCompletionTokens += response.response.usageMetadata.candidatesTokenCount || 0;
+      }
       candidate = response.response.candidates?.[0];
       functionCalls = candidate?.content?.parts?.filter((part: any) => part.functionCall) || [];
     }
 
     const finalReplyText = response.response.text?.() || "ขออภัยด้วยครับ ผมยังไม่เข้าใจความต้องการของคุณ รบกวนแจ้งอีกครั้งได้ไหมครับ";
+
+    // 3. บันทึกสถิติการใช้งาน
+    try {
+      const pricing = MODEL_PRICING[modelName] || MODEL_PRICING["gemini-2.5-flash"];
+      const USD_TO_THB = 36.5;
+      const turnCostUsd = (totalPromptTokens * pricing.input) + (totalCompletionTokens * pricing.output);
+      const turnCost = turnCostUsd * USD_TO_THB; // THB Cost
+
+      const keys = [
+        "gemini_total_input_tokens",
+        "gemini_total_output_tokens",
+        "gemini_total_calls",
+        "gemini_total_cost",
+        "gemini_credit_balance"
+      ];
+      const existingSettings = await prisma.siteSetting.findMany({
+        where: { key: { in: keys } }
+      });
+      const settingsMap = Object.fromEntries(existingSettings.map(s => [s.key, s.value]));
+
+      const currentInput = parseInt(settingsMap["gemini_total_input_tokens"] || "0", 10);
+      const currentOutput = parseInt(settingsMap["gemini_total_output_tokens"] || "0", 10);
+      const currentCalls = parseInt(settingsMap["gemini_total_calls"] || "0", 10);
+      const currentCost = parseFloat(settingsMap["gemini_total_cost"] || "0.0");
+      const currentCredit = parseFloat(settingsMap["gemini_credit_balance"] || "500.00");
+
+      await Promise.all([
+        prisma.siteSetting.upsert({
+          where: { key: "gemini_total_input_tokens" },
+          update: { value: String(currentInput + totalPromptTokens) },
+          create: { key: "gemini_total_input_tokens", value: String(totalPromptTokens) }
+        }),
+        prisma.siteSetting.upsert({
+          where: { key: "gemini_total_output_tokens" },
+          update: { value: String(currentOutput + totalCompletionTokens) },
+          create: { key: "gemini_total_output_tokens", value: String(totalCompletionTokens) }
+        }),
+        prisma.siteSetting.upsert({
+          where: { key: "gemini_total_calls" },
+          update: { value: String(currentCalls + apiCallsCount) },
+          create: { key: "gemini_total_calls", value: String(apiCallsCount) }
+        }),
+        prisma.siteSetting.upsert({
+          where: { key: "gemini_total_cost" },
+          update: { value: String((currentCost + turnCost).toFixed(6)) },
+          create: { key: "gemini_total_cost", value: String(turnCost.toFixed(6)) }
+        }),
+        prisma.siteSetting.upsert({
+          where: { key: "gemini_credit_balance" },
+          update: { value: String(Math.max(0, currentCredit - turnCost).toFixed(6)) },
+          create: { key: "gemini_credit_balance", value: String(Math.max(0, 500.00 - turnCost).toFixed(6)) }
+        }),
+      ]);
+    } catch (err) {
+      console.error("[Gemini stats update error]:", err);
+    }
+
     return {
       text: finalReplyText,
       requiresAdmin,

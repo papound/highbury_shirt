@@ -43,7 +43,72 @@ export default function AdminChatsPage() {
   const [isSending, setIsSending] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
+  const [geminiStats, setGeminiStats] = useState<{
+    model: string;
+    status: "CONNECTED" | "ERROR" | "MISSING_KEY";
+    totalCalls: number;
+    inputTokens: number;
+    outputTokens: number;
+    totalTokens: number;
+    totalCost: number;
+    budgetLimit: number;
+    remainingBudget: number;
+  } | null>(null);
+  const [showGeminiMonitor, setShowGeminiMonitor] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
+  const [isSavingStats, setIsSavingStats] = useState(false);
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const fetchGeminiStats = async () => {
+    try {
+      const res = await fetch("/api/admin/gemini");
+      if (res.ok) {
+        const data = await res.json();
+        setGeminiStats(data);
+      }
+    } catch (err) {
+      console.error("Failed to fetch Gemini stats:", err);
+    }
+  };
+
+  const handleUpdateGeminiConfig = async (updates: { modelName?: string; budgetLimit?: number }) => {
+    setIsSavingStats(true);
+    try {
+      const res = await fetch("/api/admin/gemini", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updates),
+      });
+      if (!res.ok) throw new Error("อัปเดตการตั้งค่าล้มเหลว");
+      toast.success("อัปเดตการตั้งค่า Gemini สำเร็จ");
+      fetchGeminiStats();
+    } catch (err: any) {
+      toast.error(err.message || "เกิดข้อผิดพลาด");
+    } finally {
+      setIsSavingStats(false);
+    }
+  };
+
+  const handleResetGeminiStats = async () => {
+    if (!confirm("คุณแน่ใจหรือไม่ว่าต้องการรีเซ็ตสถิติการใช้งานทั้งหมดกลับเป็นศูนย์?")) return;
+    
+    setIsResetting(true);
+    try {
+      const res = await fetch("/api/admin/gemini", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "reset" }),
+      });
+      if (!res.ok) throw new Error("รีเซ็ตสถิติล้มเหลว");
+      toast.success("รีเซ็ตสถิติการใช้งานเรียบร้อยแล้ว");
+      fetchGeminiStats();
+    } catch (err: any) {
+      toast.error(err.message || "เกิดข้อผิดพลาด");
+    } finally {
+      setIsResetting(false);
+    }
+  };
 
   // ดึงรายการ Sessions ทั้งหมด
   const fetchSessions = async (silent = false) => {
@@ -82,10 +147,12 @@ export default function AdminChatsPage() {
 
   useEffect(() => {
     fetchSessions();
+    fetchGeminiStats();
 
     // ดึงข้อมูลอัปเดตแชทเบื้องหลังทุก 10 วินาที
     const timer = setInterval(() => {
       fetchSessions(true);
+      fetchGeminiStats();
     }, 10000);
 
     return () => clearInterval(timer);
@@ -174,19 +241,41 @@ export default function AdminChatsPage() {
           <MessageSquare className="w-5 h-5 text-blue-600" />
           <h1 className="font-bold text-lg text-slate-800 dark:text-white">ศูนย์ช่วยเหลือลูกค้า LINE OA</h1>
         </div>
-        <button
-          onClick={() => fetchSessions()}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-600 dark:text-slate-300 transition-colors"
-        >
-          <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`} />
-          รีเฟรชข้อมูล
-        </button>
+        <div className="flex items-center gap-2">
+          {/* Gemini Monitor Toggle */}
+          <button
+            onClick={() => setShowGeminiMonitor(!showGeminiMonitor)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium border rounded-lg transition-colors ${
+              showGeminiMonitor
+                ? "bg-blue-50 border-blue-200 text-blue-700 dark:bg-blue-950/20 dark:border-blue-950/50 dark:text-blue-400"
+                : "border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300"
+            }`}
+          >
+            <BotIcon className="w-4 h-4" />
+            มอนิเตอร์ Gemini
+            {geminiStats && (
+              <span className={`w-2 h-2 rounded-full ${
+                geminiStats.status === "CONNECTED"
+                  ? "bg-emerald-500 animate-pulse"
+                  : "bg-rose-500"
+              }`} />
+            )}
+          </button>
+
+          <button
+            onClick={() => fetchSessions()}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-600 dark:text-slate-300 transition-colors"
+          >
+            <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`} />
+            รีเฟรชข้อมูล
+          </button>
+        </div>
       </div>
 
       {/* Main split view */}
       <div className="flex flex-1 overflow-hidden">
         {/* Left side: Inbox List */}
-        <div className="w-80 border-r border-slate-200 dark:border-slate-800 flex flex-col bg-slate-50/20 dark:bg-slate-900/20">
+        <div className="w-80 border-r border-slate-200 dark:border-slate-800 flex flex-col bg-slate-50/20 dark:bg-slate-900/20 animate-in fade-in slide-in-from-left-4 duration-300">
           <div className="p-4 border-b border-slate-200 dark:border-slate-800">
             <input
               type="text"
@@ -472,6 +561,228 @@ export default function AdminChatsPage() {
             </div>
           )}
         </div>
+
+        {/* Rightmost column: Gemini Monitor */}
+        {showGeminiMonitor && (
+          <div className="w-80 border-l border-slate-200 dark:border-slate-800 flex flex-col bg-slate-50/20 dark:bg-slate-900/20 overflow-y-auto animate-in fade-in slide-in-from-right-4 duration-300">
+            <div className="p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-white dark:bg-slate-950">
+              <div className="flex items-center gap-2">
+                <BotIcon className="w-5 h-5 text-blue-600" />
+                <h2 className="font-bold text-sm text-slate-800 dark:text-white">มอนิเตอร์ Gemini</h2>
+              </div>
+              <button
+                onClick={() => setShowGeminiMonitor(false)}
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs font-semibold"
+              >
+                ปิด
+              </button>
+            </div>
+
+            {geminiStats ? (
+              <div className="p-5 space-y-5">
+                {/* Connection Status Card */}
+                <div className="bg-white dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-slate-400">สถานะการต่อเชื่อม</span>
+                    <span className={`px-2 py-0.5 text-[10px] font-extrabold rounded-full flex items-center gap-1 ${
+                      geminiStats.status === "CONNECTED"
+                        ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400"
+                        : geminiStats.status === "MISSING_KEY"
+                        ? "bg-rose-50 text-rose-700 dark:bg-rose-950/20 dark:text-rose-400"
+                        : "bg-amber-50 text-amber-700 dark:bg-amber-950/20 dark:text-amber-400"
+                    }`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${
+                        geminiStats.status === "CONNECTED" ? "bg-emerald-500 animate-pulse" : "bg-rose-500"
+                      }`} />
+                      {geminiStats.status === "CONNECTED"
+                        ? "เชื่อมต่อสำเร็จ"
+                        : geminiStats.status === "MISSING_KEY"
+                        ? "ขาด API Key"
+                        : "ข้อผิดพลาด API"}
+                    </span>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">โมเดลประมวลผล (Model)</label>
+                    <select
+                      value={geminiStats.model}
+                      onChange={(e) => handleUpdateGeminiConfig({ modelName: e.target.value })}
+                      disabled={isSavingStats}
+                      className="w-full text-xs font-semibold border border-slate-200 dark:border-slate-800 rounded-lg p-2 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:opacity-50"
+                    >
+                      <option value="gemini-2.5-flash">Gemini 2.5 Flash (แนะนำ)</option>
+                      <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
+                      <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
+                      <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+                      <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Prepay Budget & Credit Card */}
+                <div className="bg-white dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+                  <div>
+                    <div className="flex justify-between items-baseline mb-1">
+                      <span className="text-xs text-slate-400">สัดส่วนที่ใช้ไป (Prepay)</span>
+                      <span className="text-xs font-bold text-slate-800 dark:text-white">
+                        ฿{Math.max(0, geminiStats.budgetLimit - geminiStats.creditBalance).toFixed(2)} / ฿{geminiStats.budgetLimit.toFixed(2)}
+                      </span>
+                    </div>
+                    
+                    {(() => {
+                      const spent = Math.max(0, geminiStats.budgetLimit - geminiStats.creditBalance);
+                      const percent = Math.min(100, Math.max(0, (spent / geminiStats.budgetLimit) * 100));
+                      const isHigh = percent >= 80;
+                      const isExceeded = geminiStats.creditBalance <= 0.05;
+                      return (
+                        <div className="space-y-2">
+                          <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2 overflow-hidden">
+                            <div
+                              className={`h-full transition-all duration-500 ${
+                                isExceeded
+                                  ? "bg-rose-500"
+                                  : isHigh
+                                  ? "bg-amber-500 animate-pulse"
+                                  : "bg-blue-600"
+                              }`}
+                              style={{ width: `${percent}%` }}
+                            />
+                          </div>
+                          <div className="flex justify-between text-[10px] text-slate-400">
+                            <span>ใช้ไป {percent.toFixed(1)}%</span>
+                            <span className="font-semibold text-slate-700 dark:text-slate-200">
+                              คงเหลือ ฿{geminiStats.creditBalance.toFixed(2)} THB
+                            </span>
+                          </div>
+                          
+                          {isExceeded && (
+                            <div className="bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 text-[10px] p-2.5 rounded-lg border border-rose-100 dark:border-rose-950/50 leading-normal font-medium">
+                              ⚠️ ยอดเงิน Credit คงเหลือหมดหรือเหลือน้อยเกินไป บอทจะหยุดตอบอัตโนมัติชั่วคราวและส่งต่อให้มนุษย์ดูแลทันที
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()}
+                  </div>
+
+                  <div className="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800/60">
+                    <div className="space-y-1">
+                      <div className="flex justify-between items-center">
+                        <label className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">ซิงค์เงินคงเหลือจริง (Credit Balance)</label>
+                        <span className="text-[9px] text-blue-500 font-medium font-mono">฿ THB</span>
+                      </div>
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        placeholder="เช่น 486.48"
+                        defaultValue={geminiStats.creditBalance}
+                        onBlur={(e) => {
+                          const val = parseFloat(e.target.value);
+                          if (!isNaN(val) && val >= 0 && val !== geminiStats.creditBalance) {
+                            handleUpdateGeminiConfig({ creditBalance: val });
+                          }
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            const val = parseFloat((e.target as HTMLInputElement).value);
+                            if (!isNaN(val) && val >= 0) {
+                              handleUpdateGeminiConfig({ creditBalance: val });
+                              (e.target as HTMLInputElement).blur();
+                            }
+                          }
+                        }}
+                        className="w-full text-xs border border-slate-200 dark:border-slate-800 rounded-lg px-2.5 py-1.5 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 font-semibold"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">เงินเติมตั้งต้น (Prepay Limit)</label>
+                      <input
+                        type="number"
+                        step="100"
+                        min="0"
+                        placeholder="เช่น 500"
+                        defaultValue={geminiStats.budgetLimit}
+                        onBlur={(e) => {
+                          const val = parseFloat(e.target.value);
+                          if (!isNaN(val) && val >= 0 && val !== geminiStats.budgetLimit) {
+                            handleUpdateGeminiConfig({ budgetLimit: val });
+                          }
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            const val = parseFloat((e.target as HTMLInputElement).value);
+                            if (!isNaN(val) && val >= 0) {
+                              handleUpdateGeminiConfig({ budgetLimit: val });
+                              (e.target as HTMLInputElement).blur();
+                            }
+                          }
+                        }}
+                        className="w-full text-xs border border-slate-200 dark:border-slate-800 rounded-lg px-2.5 py-1.5 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* API Request Stats Card */}
+                <div className="space-y-3">
+                  <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 px-1 block">ตัวเลขสถิติการใช้งาน</span>
+                  
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="bg-white dark:bg-slate-950 p-3 text-center rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                      <span className="text-[9px] text-slate-400 block mb-0.5">เรียก API (ครั้ง)</span>
+                      <span className="text-base font-extrabold text-slate-800 dark:text-white font-mono">
+                        {geminiStats.totalCalls.toLocaleString()}
+                      </span>
+                    </div>
+                    
+                    <div className="bg-white dark:bg-slate-950 p-3 text-center rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                      <span className="text-[9px] text-slate-400 block mb-0.5">โทเค็นสะสม</span>
+                      <span className="text-base font-extrabold text-slate-800 dark:text-white font-mono">
+                        {geminiStats.totalTokens.toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="bg-white dark:bg-slate-950 p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-2 text-xs">
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Tokens นำเข้า (Input)</span>
+                      <span className="font-semibold text-slate-700 dark:text-slate-300 font-mono">
+                        {geminiStats.inputTokens.toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Tokens ประมวลผล (Output)</span>
+                      <span className="font-semibold text-slate-700 dark:text-slate-300 font-mono">
+                        {geminiStats.outputTokens.toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="flex justify-between border-t border-slate-100 dark:border-slate-800/40 pt-2 mt-1">
+                      <span className="text-slate-400">ประมาณการค่าใช้จ่ายสะสม</span>
+                      <span className="font-bold text-slate-800 dark:text-white font-mono">
+                        ฿{geminiStats.totalCost.toFixed(4)} THB
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Reset Stats Control */}
+                <div className="pt-2">
+                  <button
+                    onClick={handleResetGeminiStats}
+                    disabled={isResetting}
+                    className="w-full flex items-center justify-center gap-1.5 py-2 border border-red-200 hover:bg-red-50 hover:text-red-700 text-red-600 dark:border-red-950/30 dark:hover:bg-red-950/20 dark:text-red-400 text-xs font-semibold rounded-lg transition-colors disabled:opacity-50"
+                  >
+                    รีเซ็ตประวัติการใช้ API
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="p-8 text-center text-slate-400 text-xs">กำลังคำนวณข้อมูล...</div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
