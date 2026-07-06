@@ -85,6 +85,9 @@ jobs:
 
             cd /opt/highbury-shirt
 
+            echo "==> Pulling latest code and compose configurations..."
+            git pull origin main
+
             echo "==> Pruning unused Docker data to free space..."
             docker system prune -af
 
