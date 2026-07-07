@@ -284,19 +284,26 @@ export async function handleLineEvent(event: any): Promise<void> {
         .replace(/'{3,}/g, "")
         .replace(/(?:qrPayload|QR PromptPay|QR Code|พร้อมเพย์|PromptPay)?\s*:\s*/gi, "")
         .trim();
+    }
 
-      if (!cleanedText) {
-        cleanedText = "คุณลูกค้าสามารถชำระเงินโดยสแกนคิวอาร์โค้ดพร้อมเพย์ตามรูปภาพด้านล่างนี้ได้เลยค่ะ:";
-      }
-
+    if (cleanedText) {
       messagesToSend.push({ type: "text", text: cleanedText });
+    }
+
+    if (botResult.flexMessage) {
+      messagesToSend.push(botResult.flexMessage);
+    }
+
+    if (qrImageUrl) {
       messagesToSend.push({
         type: "image",
         originalContentUrl: qrImageUrl,
         previewImageUrl: qrImageUrl,
       });
-    } else {
-      messagesToSend.push({ type: "text", text: cleanedText });
+    }
+
+    if (messagesToSend.length === 0) {
+      messagesToSend.push({ type: "text", text: "ทำรายการเรียบร้อยแล้วค่ะ" });
     }
 
     // ส่งตอบกลับ LINE

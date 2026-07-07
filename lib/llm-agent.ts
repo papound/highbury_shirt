@@ -298,6 +298,393 @@ async function generateContentWithRetry(model: any, options: any, maxRetries = 3
 }
 
 /**
+ * ฟังก์ชันสร้าง Flex Message สำหรับแสดงใบสรุปรายการหรือพรีวิวออเดอร์ของลูกค้า
+ */
+function buildOrderFlexMessage(data: {
+  isPreview: boolean;
+  orderNumber?: string;
+  createdAt?: Date;
+  items: any[];
+  subtotal: number;
+  discountAmount: number;
+  shippingFee: number;
+  total: number;
+  customerName?: string;
+  customerPhone?: string;
+  customerAddress?: string;
+}) {
+  const formattedDate = data.createdAt 
+    ? new Date(data.createdAt).toLocaleDateString("th-TH", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      })
+    : new Date().toLocaleDateString("th-TH", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+
+  const itemsContents = data.items.map((item: any) => {
+    const sleeveText = item.sku[0] === "1" ? "แขนยาว" : item.sku[0] === "2" ? "แขนสั้น" : "แขนสามส่วน";
+    const nameStr = `${item.productNameTh || item.productName || "เสื้อเชิ้ต"} (${sleeveText}) - ${item.color} / ${item.size}`;
+    
+    return {
+      "type": "box",
+      "layout": "horizontal",
+      "contents": [
+        {
+          "type": "text",
+          "text": nameStr,
+          "size": "sm",
+          "color": "#334155",
+          "flex": 4,
+          "wrap": true
+        },
+        {
+          "type": "text",
+          "text": `x ${item.quantity}`,
+          "size": "sm",
+          "color": "#64748B",
+          "flex": 1,
+          "align": "center"
+        },
+        {
+          "type": "text",
+          "text": `฿${(item.unitPrice * item.quantity).toLocaleString()}`,
+          "size": "sm",
+          "color": "#334155",
+          "flex": 2,
+          "align": "end",
+          "weight": "bold"
+        }
+      ],
+      "margin": "sm"
+    };
+  });
+
+  const summaryContents: any[] = [
+    {
+      "type": "box",
+      "layout": "horizontal",
+      "contents": [
+        {
+          "type": "text",
+          "text": "ยอดรวมสินค้า",
+          "size": "sm",
+          "color": "#64748B",
+          "flex": 4,
+          "wrap": true
+        },
+        {
+          "type": "text",
+          "text": `฿${data.subtotal.toLocaleString()}`,
+          "size": "sm",
+          "color": "#334155",
+          "align": "end",
+          "flex": 2
+        }
+      ]
+    }
+  ];
+
+  if (data.discountAmount > 0) {
+    summaryContents.push({
+      "type": "box",
+      "layout": "horizontal",
+      "contents": [
+        {
+          "type": "text",
+          "text": "ส่วนลดโปรโมชั่น",
+          "size": "sm",
+          "color": "#E11D48",
+          "flex": 4,
+          "wrap": true
+        },
+        {
+          "type": "text",
+          "text": `-฿${data.discountAmount.toLocaleString()}`,
+          "size": "sm",
+          "color": "#E11D48",
+          "align": "end",
+          "flex": 2
+        }
+      ],
+      "margin": "sm"
+    });
+  }
+
+  summaryContents.push(
+    {
+      "type": "box",
+      "layout": "horizontal",
+      "contents": [
+        {
+          "type": "text",
+          "text": "ค่าจัดส่ง",
+          "size": "sm",
+          "color": "#64748B",
+          "flex": 4,
+          "wrap": true
+        },
+        {
+          "type": "text",
+          "text": data.shippingFee > 0 ? `฿${data.shippingFee.toLocaleString()}` : "ฟรีค่าจัดส่ง",
+          "size": "sm",
+          "color": data.shippingFee > 0 ? "#334155" : "#10B981",
+          "align": "end",
+          "flex": 2
+        }
+      ],
+      "margin": "sm"
+    },
+    {
+      "type": "box",
+      "layout": "horizontal",
+      "contents": [
+        {
+          "type": "text",
+          "text": "ยอดสุทธิ",
+          "size": "lg",
+          "color": "#0A2B5E",
+          "weight": "bold",
+          "flex": 4,
+          "wrap": true
+        },
+        {
+          "type": "text",
+          "text": `฿${data.total.toLocaleString()}`,
+          "size": "lg",
+          "color": "#0A2B5E",
+          "align": "end",
+          "weight": "bold",
+          "flex": 2
+        }
+      ],
+      "margin": "md"
+    }
+  );
+
+  const footerButtons: any[] = [];
+  if (data.isPreview) {
+    footerButtons.push({
+      "type": "button",
+      "action": {
+        "type": "message",
+        "label": "ยืนยันสั่งซื้อสินค้า",
+        "text": "ยืนยันสั่งซื้อ"
+      },
+      "style": "primary",
+      "color": "#0A2B5E"
+    });
+  } else {
+    const promptpayId = process.env.PROMPTPAY_ID || "0981466416";
+    footerButtons.push({
+      "type": "button",
+      "action": {
+        "type": "uri",
+        "label": "สแกนชำระเงิน (PromptPay)",
+        "uri": `https://promptpay.io/${promptpayId}/${data.total.toFixed(2)}.png`
+      },
+      "style": "primary",
+      "color": "#0A2B5E"
+    });
+  }
+
+  footerButtons.push({
+    "type": "button",
+    "action": {
+      "type": "message",
+      "label": "คุยกับเจ้าหน้าที่",
+      "text": "ติดต่อแอดมิน"
+    },
+    "style": "secondary",
+    "margin": "sm"
+  });
+
+  const bubble: any = {
+    "type": "bubble",
+    "header": {
+      "type": "box",
+      "layout": "vertical",
+      "contents": [
+        {
+          "type": "text",
+          "text": "HIGHBURY",
+          "weight": "bold",
+          "color": "#1A6CC8",
+          "size": "sm"
+        },
+        {
+          "type": "text",
+          "text": data.isPreview ? "พรีวิวใบสั่งซื้อ" : "สรุปรายการสั่งซื้อ",
+          "weight": "bold",
+          "size": "xl",
+          "color": "#0A2B5E",
+          "margin": "xs"
+        },
+        {
+          "type": "box",
+          "layout": "horizontal",
+          "contents": [
+            {
+              "type": "text",
+              "text": data.isPreview ? "ยังไม่ได้สรุปออเดอร์" : "รอการชำระเงิน",
+              "size": "xs",
+              "color": data.isPreview ? "#475569" : "#D97706",
+              "weight": "bold",
+              "flex": 0
+            }
+          ],
+          "backgroundColor": data.isPreview ? "#F1F5F9" : "#FEF3C7",
+          "cornerRadius": "sm",
+          "paddingStart": "md",
+          "paddingEnd": "md",
+          "paddingTop": "xs",
+          "paddingBottom": "xs",
+          "margin": "md",
+          "alignItems": "center"
+        }
+      ],
+      "paddingBottom": "none"
+    },
+    "body": {
+      "type": "box",
+      "layout": "vertical",
+      "contents": [
+        {
+          "type": "box",
+          "layout": "horizontal",
+          "contents": [
+            {
+              "type": "text",
+              "text": data.isPreview ? "สถานะการทำรายการ:" : "เลขที่ออเดอร์:",
+              "size": "xs",
+              "color": "#94A3B8"
+            },
+            {
+              "type": "text",
+              "text": data.isPreview ? "ร่างพรีวิว" : `#${data.orderNumber}`,
+              "size": "xs",
+              "color": "#475569",
+              "align": "end",
+              "weight": "bold"
+            }
+          ]
+        },
+        {
+          "type": "box",
+          "layout": "horizontal",
+          "contents": [
+            {
+              "type": "text",
+              "text": "วันที่สั่งซื้อ:",
+              "size": "xs",
+              "color": "#94A3B8"
+            },
+            {
+              "type": "text",
+              "text": formattedDate,
+              "size": "xs",
+              "color": "#475569",
+              "align": "end"
+            }
+          ],
+          "margin": "xs"
+        },
+        {
+          "type": "separator",
+          "margin": "lg"
+        },
+        {
+          "type": "text",
+          "text": "รายการสินค้า",
+          "weight": "bold",
+          "size": "sm",
+          "color": "#0A2B5E",
+          "margin": "lg"
+        },
+        {
+          "type": "box",
+          "layout": "vertical",
+          "contents": itemsContents
+        },
+        {
+          "type": "separator",
+          "margin": "lg"
+        },
+        {
+          "type": "box",
+          "layout": "vertical",
+          "contents": summaryContents,
+          "margin": "lg"
+        }
+      ]
+    },
+    "footer": {
+      "type": "box",
+      "layout": "vertical",
+      "contents": footerButtons
+    }
+  };
+
+  if (data.customerName) {
+    bubble.body.contents.push(
+      {
+        "type": "separator",
+        "margin": "lg"
+      },
+      {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "text",
+            "text": "ข้อมูลจัดส่ง",
+            "weight": "bold",
+            "size": "sm",
+            "color": "#0A2B5E"
+          },
+          {
+            "type": "text",
+            "text": `คุณ ${data.customerName}`,
+            "size": "xs",
+            "color": "#334155",
+            "margin": "sm"
+          },
+          {
+            "type": "text",
+            "text": `โทร: ${data.customerPhone}`,
+            "size": "xs",
+            "color": "#334155",
+            "margin": "xs"
+          },
+          {
+            "type": "text",
+            "text": data.customerAddress || "",
+            "size": "xs",
+            "color": "#64748B",
+            "wrap": true,
+            "margin": "xs"
+          }
+        ],
+        "margin": "lg"
+      }
+    );
+  }
+
+  return {
+    "type": "flex",
+    "altText": data.isPreview ? "พรีวิวใบสั่งซื้อเสื้อเชิ้ต Highbury" : "สรุปรายการสั่งซื้อเสื้อเชิ้ต Highbury",
+    "contents": bubble
+  };
+}
+
+/**
  * ฟังก์ชันประมวลผลข้อความจากผู้ใช้ผ่าน LLM (Gemini) พร้อมรับผิดชอบการรัน Function Call
  */
 export async function runChatbotTurn(
@@ -305,9 +692,10 @@ export async function runChatbotTurn(
   userMessage: string,
   chatHistory: ChatMessageParam[],
   imagePart?: { inlineData: { data: string; mimeType: string } }
-): Promise<{ text: string; requiresAdmin: boolean; qrPayload?: string }> {
+): Promise<{ text: string; requiresAdmin: boolean; qrPayload?: string; flexMessage?: any }> {
   let requiresAdmin = false;
   let qrPayload: string | undefined = undefined;
+  let flexMessage: any = undefined;
   let totalPromptTokens = 0;
   let totalCompletionTokens = 0;
   let apiCallsCount = 0;
@@ -422,6 +810,25 @@ export async function runChatbotTurn(
               });
               functionResult = orderResult;
               qrPayload = orderResult.qrPayload;
+
+              // สร้าง Flex Message สำหรับออเดอร์ใหม่
+              try {
+                flexMessage = buildOrderFlexMessage({
+                  isPreview: false,
+                  orderNumber: orderResult.orderNumber,
+                  createdAt: orderResult.createdAt,
+                  items: orderResult.items,
+                  subtotal: orderResult.subtotal,
+                  discountAmount: orderResult.discountAmount,
+                  shippingFee: orderResult.shippingFee,
+                  total: orderResult.total,
+                  customerName: orderResult.customerName,
+                  customerPhone: orderResult.customerPhone,
+                  customerAddress: orderResult.customerAddress,
+                });
+              } catch (flexErr) {
+                console.error("[Flex Message Error createPendingOrder]:", flexErr);
+              }
               break;
             case "submitPaymentProof":
               functionResult = await skills.submitPaymentProof(
@@ -445,9 +852,24 @@ export async function runChatbotTurn(
               );
               break;
             case "previewOrder":
-              functionResult = await skills.previewOrder(
+              const previewResult = await skills.previewOrder(
                 call.args as any
               );
+              functionResult = previewResult;
+
+              // สร้าง Flex Message สำหรับพรีวิว
+              try {
+                flexMessage = buildOrderFlexMessage({
+                  isPreview: true,
+                  items: previewResult.items,
+                  subtotal: previewResult.subtotal,
+                  discountAmount: previewResult.discountAmount,
+                  shippingFee: previewResult.shippingFee,
+                  total: previewResult.total,
+                });
+              } catch (flexErr) {
+                console.error("[Flex Message Error previewOrder]:", flexErr);
+              }
               break;
             case "requestAdminIntervention":
               requiresAdmin = true;
@@ -548,6 +970,7 @@ export async function runChatbotTurn(
       text: finalReplyText,
       requiresAdmin,
       qrPayload,
+      flexMessage,
     };
   } catch (error) {
     console.error("[Gemini RunChatbotTurn Error]:", error);

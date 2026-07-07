@@ -536,6 +536,11 @@ export async function createPendingOrder(params: CreateOrderParams) {
     shippingFee,
     total,
     qrPayload,
+    items: itemsMapped,
+    customerName,
+    customerPhone,
+    customerAddress: `${order.shippingAddress || ""} ${order.shippingCity || ""} ${order.shippingProvince || ""} ${order.shippingPostcode || ""}`.trim(),
+    createdAt: order.createdAt,
   };
 }
 
@@ -784,5 +789,6 @@ export async function previewOrder(params: {
       name: p.name,
       discountAmount: p.discountAmount,
     })),
+    items: itemsMapped,
   };
 }
