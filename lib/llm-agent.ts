@@ -312,7 +312,41 @@ function buildOrderFlexMessage(data: {
   customerName?: string;
   customerPhone?: string;
   customerAddress?: string;
+  status?: string;
 }) {
+  let statusText = "รอการชำระเงิน";
+  let statusColor = "#D97706";
+  let statusBg = "#FEF3C7";
+
+  if (data.isPreview) {
+    statusText = "ยังไม่ได้สรุปออเดอร์";
+    statusColor = "#475569";
+    statusBg = "#F1F5F9";
+  } else if (data.status) {
+    const s = data.status;
+    if (s === "PAYMENT_UPLOADED") {
+      statusText = "ส่งหลักฐานแล้ว (รอตรวจสอบ)";
+      statusColor = "#2563EB";
+      statusBg = "#DBEAFE";
+    } else if (s === "PAYMENT_VERIFIED" || s === "PROCESSING") {
+      statusText = "ชำระเงินแล้ว (กำลังจัดเตรียม)";
+      statusColor = "#059669";
+      statusBg = "#D1FAE5";
+    } else if (s === "SHIPPED") {
+      statusText = "จัดส่งเรียบร้อยแล้ว";
+      statusColor = "#7C3AED";
+      statusBg = "#F3E8FF";
+    } else if (s === "DELIVERED") {
+      statusText = "ได้รับสินค้าแล้ว";
+      statusColor = "#10B981";
+      statusBg = "#D1FAE5";
+    } else if (s === "CANCELLED" || s === "REFUNDED") {
+      statusText = "ยกเลิกออเดอร์แล้ว";
+      statusColor = "#EF4444";
+      statusBg = "#FEE2E2";
+    }
+  }
+
   const formattedDate = data.createdAt 
     ? new Date(data.createdAt).toLocaleDateString("th-TH", {
         year: "numeric",
@@ -332,6 +366,7 @@ function buildOrderFlexMessage(data: {
   const itemsContents = data.items.map((item: any) => {
     const sleeveText = item.sku[0] === "1" ? "แขนยาว" : item.sku[0] === "2" ? "แขนสั้น" : "แขนสามส่วน";
     const nameStr = `${item.productNameTh || item.productName || "เสื้อเชิ้ต"} (${sleeveText}) - ${item.color} / ${item.size}`;
+    const unitPrice = item.unitPrice !== undefined ? item.unitPrice : item.price !== undefined ? item.price : 0;
     
     return {
       "type": "box",
@@ -369,7 +404,7 @@ function buildOrderFlexMessage(data: {
         },
         {
           "type": "text",
-          "text": `฿${(item.unitPrice * item.quantity).toLocaleString()}`,
+          "text": `฿${(unitPrice * item.quantity).toLocaleString()}`,
           "size": "sm",
           "color": "#334155",
           "flex": 2,
@@ -546,14 +581,14 @@ function buildOrderFlexMessage(data: {
           "contents": [
             {
               "type": "text",
-              "text": data.isPreview ? "ยังไม่ได้สรุปออเดอร์" : "รอการชำระเงิน",
+              "text": statusText,
               "size": "xs",
-              "color": data.isPreview ? "#475569" : "#D97706",
+              "color": statusColor,
               "weight": "bold",
               "flex": 0
             }
           ],
-          "backgroundColor": data.isPreview ? "#F1F5F9" : "#FEF3C7",
+          "backgroundColor": statusBg,
           "cornerRadius": "sm",
           "paddingStart": "md",
           "paddingEnd": "md",
@@ -860,9 +895,31 @@ export async function runChatbotTurn(
               );
               break;
             case "getOrderDetails":
-              functionResult = await skills.getOrderDetails(
+              const orderDetailsResult = await skills.getOrderDetails(
                 (call.args as any).orderNumber
               );
+              functionResult = orderDetailsResult;
+
+              if (orderDetailsResult.success) {
+                try {
+                  flexMessage = buildOrderFlexMessage({
+                    isPreview: false,
+                    orderNumber: orderDetailsResult.orderNumber,
+                    createdAt: orderDetailsResult.createdAt,
+                    items: orderDetailsResult.items || [],
+                    subtotal: (orderDetailsResult.subtotal ?? orderDetailsResult.total ?? 0) as number,
+                    discountAmount: (orderDetailsResult.discountAmount ?? 0) as number,
+                    shippingFee: (orderDetailsResult.shippingFee ?? 0) as number,
+                    total: (orderDetailsResult.total ?? 0) as number,
+                    customerName: orderDetailsResult.shippingName,
+                    customerPhone: orderDetailsResult.shippingPhone,
+                    customerAddress: orderDetailsResult.shippingAddress,
+                    status: orderDetailsResult.status,
+                  });
+                } catch (flexErr) {
+                  console.error("[Flex Message Error getOrderDetails]:", flexErr);
+                }
+              }
               break;
             case "previewOrder":
               const previewResult = await skills.previewOrder(

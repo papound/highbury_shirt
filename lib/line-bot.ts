@@ -354,8 +354,15 @@ export async function handleLineEvent(event: any): Promise<void> {
     }
 
     if (botResult.flexMessage) {
-      // หากมี Flex Message สรุปยอด/พรีวิวออเดอร์ ให้ส่งเพียง Flex Message ใบเดียวเท่านั้น
+      // หากมี Flex Message สรุปยอด/พรีวิวออเดอร์ ให้ส่ง Flex Message คู่กับ QR Card (ถ้ามี) โดยไม่ส่งข้อความ Text ซ้ำซ้อน
       messagesToSend.push(botResult.flexMessage);
+      if (qrImageUrl) {
+        messagesToSend.push({
+          type: "image",
+          originalContentUrl: qrImageUrl,
+          previewImageUrl: qrImageUrl,
+        });
+      }
     } else {
       if (cleanedText) {
         messagesToSend.push({ type: "text", text: cleanedText });
