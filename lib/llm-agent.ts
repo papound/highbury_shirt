@@ -355,7 +355,7 @@ function buildOrderFlexMessage(data: {
               "size": "xs",
               "color": "#64748B",
               "margin": "xs",
-              "fontStyle": "italic"
+              "style": "italic"
             }
           ]
         },
