@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import Link from "next/link";
+import colorMap from "@/lib/color-map.json";
 import AdminInventoryClient from "@/components/admin/inventory-client";
 import InventoryTransferDialog from "@/components/admin/inventory-transfer-dialog";
 import InventoryWithdrawDialog from "@/components/admin/inventory-withdraw-dialog";
@@ -28,6 +29,11 @@ export default async function AdminInventoryPage({ searchParams }: Props) {
   ]);
   const allColors = [...new Set(allVariants.map((v) => v.color))].sort();
   const allSizes = [...new Set(allVariants.map((v) => v.size))].sort();
+
+  const thaiToCode: Record<string, string> = {};
+  for (const [code, info] of Object.entries(colorMap)) {
+    thaiToCode[(info as any).thai] = code;
+  }
 
   // Build where
   const where: any = {};
@@ -126,9 +132,13 @@ export default async function AdminInventoryPage({ searchParams }: Props) {
           <label className="block text-xs mb-1">สี</label>
           <select key={`color-${color}`} name="color" defaultValue={color || ""} className="h-9 rounded-md border border-input bg-white px-3 text-sm shadow-sm">
             <option value="">ทั้งหมด</option>
-            {allColors.map((c) => (
-              <option key={c} value={c}>{c}</option>
-            ))}
+            {allColors.map((c) => {
+              const code = thaiToCode[c];
+              const displayLabel = code ? `${c}(${code})` : c;
+              return (
+                <option key={c} value={c}>{displayLabel}</option>
+              );
+            })}
           </select>
         </div>
         <div>
