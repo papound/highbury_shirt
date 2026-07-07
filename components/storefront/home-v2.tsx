@@ -122,8 +122,8 @@ const uniformFeatures = [
 // ---------- Shared: Section label ----------
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <div className="inline-flex items-center gap-2.5 text-[13px] text-[#1A6CC8] font-bold tracking-[0.2em] uppercase mb-3">
-      <span className="w-7 h-[3px] bg-[#D42B2B] rounded-full" />
+    <div className="inline-flex items-center gap-2.5 text-[13px] text-primary dark:text-blue-400 font-bold tracking-[0.2em] uppercase mb-3">
+      <span className="w-7 h-[3px] bg-destructive rounded-full" />
       {children}
     </div>
   );
@@ -132,38 +132,37 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 // ---------- Main Component ----------
 export default function HomeV2({ featuredProducts, categories }: HomeV2Props) {
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col w-full bg-background text-foreground">
 
       {/* ─────────────────── HERO ─────────────────── */}
       <section
-        className="min-h-[calc(100vh-80px)] grid md:grid-cols-2 items-center overflow-hidden relative"
-        style={{ background: "linear-gradient(135deg, #F5F9FF 0%, #E8F2FC 60%, #C8DDFA 100%)" }}
+        className="min-h-[calc(100vh-80px)] grid md:grid-cols-2 items-center overflow-hidden relative bg-gradient-to-br from-slate-50 via-blue-50/10 to-slate-100 dark:from-slate-950 dark:via-slate-900/60 dark:to-blue-950/20"
       >
         {/* Radial bg pattern */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
             backgroundImage:
-              "radial-gradient(circle at 80% 20%, rgba(26,108,200,0.07) 0%, transparent 50%), radial-gradient(circle at 20% 80%, rgba(10,43,94,0.05) 0%, transparent 40%)",
+              "radial-gradient(circle at 80% 20%, rgba(59,130,246,0.06) 0%, transparent 50%), radial-gradient(circle at 20% 80%, rgba(10,43,94,0.04) 0%, transparent 40%)",
           }}
         />
-        {/* Dark navy diagonal right panel */}
+        {/* Diagonal right panel */}
         <div
-          className="absolute top-0 right-0 hidden md:block h-full bg-[#0A2B5E]"
+          className="absolute top-0 right-0 hidden md:block h-full bg-[#0A2B5E] dark:bg-slate-900/40 border-l dark:border-border/30"
           style={{ width: "55%", clipPath: "polygon(15% 0%, 100% 0%, 100% 100%, 0% 100%)" }}
         />
 
         {/* Left: text content */}
         <div className="relative z-10 px-8 md:px-[7vw] py-20">
           {/* Eyebrow */}
-          <div className="v2-hero-anim v2-hero-anim-d1 inline-flex items-center gap-2 bg-[rgba(10,43,94,0.08)] border border-[rgba(10,43,94,0.15)] text-[#0A2B5E] px-4 py-1.5 rounded-full text-[13px] font-bold tracking-[0.1em] uppercase mb-6">
+          <div className="v2-hero-anim v2-hero-anim-d1 inline-flex items-center gap-2 bg-primary/5 dark:bg-blue-500/10 border border-primary/10 dark:border-blue-500/20 text-[#0A2B5E] dark:text-blue-400 px-4 py-1.5 rounded-full text-[13px] font-bold tracking-[0.1em] uppercase mb-6">
             <span className="w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse" />
             เสื้อเชิ้ตคุณภาพพรีเมียม · ออกแบบสำหรับคนไทย
           </div>
 
           {/* Headline */}
           <h1
-            className="v2-hero-anim v2-hero-anim-d2 font-black leading-[1.15] text-[#0A2B5E] mb-5"
+            className="v2-hero-anim v2-hero-anim-d2 font-black leading-[1.15] text-[#0A2B5E] dark:text-foreground mb-5"
             style={{ fontSize: "clamp(28px, 3.8vw, 54px)" }}
           >
             ดูดีได้ <span className="v2-shimmer-text">ทุกวัน</span>
@@ -172,13 +171,13 @@ export default function HomeV2({ featuredProducts, categories }: HomeV2Props) {
             <br />
             <Typewriter
               texts={["ที่ใช่สำหรับคุณ", "ที่ทำให้คุณมั่นใจ", "ที่ใส่สบายทั้งวัน"]}
-              className="text-[#1A6CC8]"
+              className="text-blue-600 dark:text-blue-400"
             />
           </h1>
 
           {/* Sub headline */}
           <p
-            className="v2-hero-anim v2-hero-anim-d3 text-[#3D5278] leading-[1.8] mb-9 max-w-[460px]"
+            className="v2-hero-anim v2-hero-anim-d3 text-muted-foreground leading-[1.8] mb-9 max-w-[460px]"
             style={{ fontSize: "clamp(16px, 1.5vw, 19px)" }}
           >
             Highbury International มุ่งมั่นสร้างเสื้อเชิ้ตคุณภาพสูงจากเนื้อผ้าพรีเมียม
@@ -187,21 +186,21 @@ export default function HomeV2({ featuredProducts, categories }: HomeV2Props) {
 
           {/* Stats row */}
           <div className="v2-hero-anim v2-hero-anim-d4 flex gap-7 mb-9">
-            <div className="pr-7 border-r border-[#C8D8EE]">
-              <div className="text-2xl font-black text-[#0A2B5E] leading-none">
-                หลาย<span className="text-[#D42B2B]">สี</span>
+            <div className="pr-7 border-r border-border">
+              <div className="text-2xl font-black text-[#0A2B5E] dark:text-foreground leading-none">
+                หลาย<span className="text-destructive">สี</span>
               </div>
-              <div className="text-[13px] text-[#4A6080] mt-1 font-medium">สีสันให้เลือกมากมาย</div>
+              <div className="text-[13px] text-muted-foreground mt-1 font-medium">สีสันให้เลือกมากมาย</div>
             </div>
-            <div className="pr-7 border-r border-[#C8D8EE]">
-              <div className="text-2xl font-black text-[#0A2B5E] leading-none">
-                7<span className="text-[#D42B2B]">+</span>
+            <div className="pr-7 border-r border-border">
+              <div className="text-2xl font-black text-[#0A2B5E] dark:text-foreground leading-none">
+                7<span className="text-destructive">+</span>
               </div>
-              <div className="text-[13px] text-[#4A6080] mt-1 font-medium">ไซส์ครบทุกรูปทรง</div>
+              <div className="text-[13px] text-muted-foreground mt-1 font-medium">ไซส์ครบทุกรูปทรง</div>
             </div>
             <div>
-              <div className="text-2xl font-black text-[#0A2B5E] leading-none">พรีเมียม</div>
-              <div className="text-[13px] text-[#4A6080] mt-1 font-medium">เนื้อผ้าอย่างดี</div>
+              <div className="text-2xl font-black text-[#0A2B5E] dark:text-foreground leading-none">พรีเมียม</div>
+              <div className="text-[13px] text-muted-foreground mt-1 font-medium">เนื้อผ้าอย่างดี</div>
             </div>
           </div>
 
@@ -209,13 +208,13 @@ export default function HomeV2({ featuredProducts, categories }: HomeV2Props) {
           <div className="v2-hero-anim v2-hero-anim-d5 flex gap-3 flex-wrap">
             <Link
               href="/products"
-              className="v2-btn-pulse inline-flex items-center gap-2 bg-[#0A2B5E] text-white px-7 py-3 rounded-md font-bold text-[17px] transition-all duration-200 hover:bg-[#2255A0] hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(10,43,94,0.3)]"
+              className="v2-btn-pulse inline-flex items-center gap-2 bg-[#0A2B5E] dark:bg-blue-600 text-white px-7 py-3 rounded-md font-bold text-[17px] transition-all duration-200 hover:bg-[#2255A0] dark:hover:bg-blue-500 hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(10,43,94,0.3)]"
             >
               ดูสินค้าทั้งหมด →
             </Link>
             <Link
               href="/products"
-              className="inline-flex items-center gap-2 border-2 border-[#0A2B5E] text-[#0A2B5E] px-7 py-3 rounded-md font-bold text-[17px] transition-all duration-200 hover:bg-[#0A2B5E] hover:text-white"
+              className="inline-flex items-center gap-2 border-2 border-[#0A2B5E] text-[#0A2B5E] dark:border-border dark:text-foreground px-7 py-3 rounded-md font-bold text-[17px] transition-all duration-200 hover:bg-[#0A2B5E] dark:hover:bg-white/5 hover:text-white"
             >
               เลือกตามหมวดหมู่
             </Link>
@@ -229,15 +228,15 @@ export default function HomeV2({ featuredProducts, categories }: HomeV2Props) {
               <Link
                 key={i}
                 href={card.href}
-                className="v2-hero-card-anim block bg-white/10 backdrop-blur-md border border-white/20 rounded-xl px-5 py-4 flex items-center gap-3.5 hover:bg-white/[0.18] hover:-translate-x-1 hover:scale-[1.02] transition-all duration-300"
+                className="v2-hero-card-anim block bg-white/10 dark:bg-slate-950/40 backdrop-blur-md border border-white/20 dark:border-border/30 rounded-xl px-5 py-4 flex items-center gap-3.5 hover:bg-white/[0.18] dark:hover:bg-slate-900/60 hover:-translate-x-1 hover:scale-[1.02] transition-all duration-300 shadow-sm"
                 style={{ animationDelay: `${0.15 + i * 0.1}s` }}
               >
-                <div className="w-11 h-11 bg-white/15 rounded-lg flex items-center justify-center text-xl flex-shrink-0">
+                <div className="w-11 h-11 bg-white/15 dark:bg-slate-800 rounded-lg flex items-center justify-center text-xl flex-shrink-0">
                   {card.icon}
                 </div>
                 <div>
                   <div className="font-bold text-[15px] text-white mb-0.5">{card.title}</div>
-                  <div className="text-[13px] text-white/65">{card.sub}</div>
+                  <div className="text-[13px] text-white/65 dark:text-muted-foreground">{card.sub}</div>
                 </div>
               </Link>
             ))}
@@ -246,10 +245,10 @@ export default function HomeV2({ featuredProducts, categories }: HomeV2Props) {
       </section>
 
       {/* ─────────────────── TRUST BAR (Marquee) ─────────────────── */}
-      <div className="bg-[#0A2B5E] py-4 px-0 overflow-hidden">
+      <div className="bg-[#0A2B5E] dark:bg-slate-900 py-4 px-0 overflow-hidden border-y dark:border-border/50">
         <Marquee speed={25} className="py-1">
           {trustItems.map((t, i) => (
-            <div key={i} className="flex items-center gap-2.5 text-white/85 text-[15px] font-semibold">
+            <div key={i} className="flex items-center gap-2.5 text-white/85 dark:text-foreground text-[15px] font-semibold">
               <span className="text-lg">{t.icon}</span>
               {t.label}
             </div>
@@ -258,7 +257,7 @@ export default function HomeV2({ featuredProducts, categories }: HomeV2Props) {
       </div>
 
       {/* ─────────────────── ABOUT ─────────────────── */}
-      <section className="py-[88px] px-[5vw] bg-white relative overflow-hidden">
+      <section className="py-[88px] px-[5vw] bg-background relative overflow-hidden">
         <FloatingBlobs />
         <div className="max-w-[1200px] mx-auto grid md:grid-cols-2 gap-20 items-center relative z-10">
           {/* Stats grid */}
@@ -267,27 +266,21 @@ export default function HomeV2({ featuredProducts, categories }: HomeV2Props) {
               {aboutStats.map((stat, i) => (
                 <TiltCard key={i}>
                   <div
-                    className={`relative overflow-hidden rounded-xl px-6 py-7 text-center border border-[#C8D8EE] bg-[#F5F9FF] hover:border-[#1A6CC8] hover:shadow-[0_4px_20px_rgba(26,108,200,0.12)] transition-all duration-300 ${
-                      stat.accent === "red" ? "before:bg-[#D42B2B]" : stat.accent === "gold" ? "before:bg-[#E8A800]" : "before:bg-[#1A6CC8]"
-                    }`}
-                style={{
-                  "--tw-before-bg":
-                    stat.accent === "red" ? "#D42B2B" : stat.accent === "gold" ? "#E8A800" : "#1A6CC8",
-                } as React.CSSProperties}
-              >
-                {/* top color bar */}
-                <div
-                  className="absolute top-0 left-0 right-0 h-1 rounded-t-xl"
-                  style={{
-                    background:
-                      stat.accent === "red" ? "#D42B2B" : stat.accent === "gold" ? "#E8A800" : "#1A6CC8",
-                  }}
-                />
-                <div className="text-3xl mb-2">{stat.icon}</div>
-                <div className="text-3xl font-black text-[#0A2B5E] leading-none">{stat.num}</div>
-                <div className="text-[15px] text-[#3D5278] mt-1.5 font-medium">{stat.label}</div>
-              </div>
-              </TiltCard>
+                    className={`relative overflow-hidden rounded-xl px-6 py-7 text-center border border-border bg-card hover:border-primary/20 hover:shadow-md transition-all duration-300`}
+                  >
+                    {/* top color bar */}
+                    <div
+                      className="absolute top-0 left-0 right-0 h-1 rounded-t-xl"
+                      style={{
+                        background:
+                          stat.accent === "red" ? "#D42B2B" : stat.accent === "gold" ? "#E8A800" : "#1A6CC8",
+                      }}
+                    />
+                    <div className="text-3xl mb-2">{stat.icon}</div>
+                    <div className="text-3xl font-black text-foreground leading-none">{stat.num}</div>
+                    <div className="text-[15px] text-muted-foreground mt-1.5 font-medium">{stat.label}</div>
+                  </div>
+                </TiltCard>
               ))}
             </div>
           </Reveal>
@@ -296,14 +289,14 @@ export default function HomeV2({ featuredProducts, categories }: HomeV2Props) {
           <Reveal direction="right" delay={200}>
             <SectionLabel>เกี่ยวกับเรา</SectionLabel>
             <h2
-              className="font-black text-[#0A2B5E] leading-[1.2] mb-4"
+              className="font-black text-foreground leading-[1.2] mb-4"
               style={{ fontSize: "clamp(26px, 3.5vw, 44px)" }}
             >
               Highbury International
               <br />
-              เสื้อเชิ้ตพรีเมียมสำหรับคนไทย
+              <span className="text-blue-600 dark:text-blue-400">เสื้อเชิ้ตพรีเมียมสำหรับคนไทย</span>
             </h2>
-            <p className="text-[18px] text-[#3D5278] leading-[1.85] mb-6">
+            <p className="text-[18px] text-muted-foreground leading-[1.85] mb-6">
               เราคือแบรนด์เสื้อเชิ้ตคุณภาพสูงที่ออกแบบและตัดเย็บโดยช่างมืออาชีพ
               ด้วยความใส่ใจในทุกรายละเอียดตั้งแต่การเลือกเนื้อผ้า การออกแบบแพทเทิร์น
               ไปจนถึงการตัดเย็บขั้นสุดท้าย เพื่อให้คุณได้รับเสื้อเชิ้ตที่ดีที่สุด
@@ -313,7 +306,7 @@ export default function HomeV2({ featuredProducts, categories }: HomeV2Props) {
               {["เสื้อเชิ้ตผู้ชาย", "เสื้อเชิ้ตผู้หญิง", "Cotton Premium", "Poplin", "Chambray", "Linen"].map((p) => (
                 <span
                   key={p}
-                  className="bg-[#E8F2FC] border border-[#C8DDFA] text-[#0A2B5E] text-[15px] font-semibold px-4 py-1.5 rounded-full"
+                  className="bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 text-[15px] font-semibold px-4 py-1.5 rounded-full"
                 >
                   {p}
                 </span>
@@ -321,7 +314,7 @@ export default function HomeV2({ featuredProducts, categories }: HomeV2Props) {
               {["จัดส่งทั่วประเทศ"].map((p) => (
                 <span
                   key={p}
-                  className="bg-[#FFF0F0] border border-[#FFCACA] text-[#D42B2B] text-[15px] font-semibold px-4 py-1.5 rounded-full"
+                  className="bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-[15px] font-semibold px-4 py-1.5 rounded-full"
                 >
                   {p}
                 </span>
@@ -333,24 +326,24 @@ export default function HomeV2({ featuredProducts, categories }: HomeV2Props) {
 
       {/* ─────────────────── FEATURED PRODUCTS ─────────────────── */}
       {featuredProducts.length > 0 && (
-        <section className="py-[88px] px-[5vw] bg-[#F5F9FF] relative overflow-hidden">
+        <section className="py-[88px] px-[5vw] bg-muted/20 relative overflow-hidden border-y border-border/30">
           <FloatingBlobs />
           <div className="max-w-[1200px] mx-auto relative z-10">
             <Reveal>
               <div className="mb-14">
                 <SectionLabel>สินค้าแนะนำ</SectionLabel>
-              <h2
-                className="font-black text-[#0A2B5E] leading-[1.2] mb-3"
-                style={{ fontSize: "clamp(26px, 3.5vw, 44px)" }}
-              >
-                Signature Collection ของเรา
-                <br />
-                <span className="text-[#1A6CC8]">เสื้อเชิ้ตยอดนิยม</span>
-              </h2>
-              <p className="text-[18px] text-[#3D5278] leading-[1.8] max-w-[540px]">
-                คอลเลกชันเสื้อเชิ้ตแนะนำ ออกแบบมาเพื่อทุกสไตล์การแต่งตัวของคุณ
-              </p>
-            </div>
+                <h2
+                  className="font-black text-foreground leading-[1.2] mb-3"
+                  style={{ fontSize: "clamp(26px, 3.5vw, 44px)" }}
+                >
+                  Signature Collection ของเรา
+                  <br />
+                  <span className="text-blue-600 dark:text-blue-400">เสื้อเชิ้ตยอดนิยม</span>
+                </h2>
+                <p className="text-[18px] text-muted-foreground leading-[1.8] max-w-[540px]">
+                  คอลเลกชันเสื้อเชิ้ตแนะนำ ออกแบบมาเพื่อทุกสไตล์การแต่งตัวของคุณ
+                </p>
+              </div>
             </Reveal>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 v2-stagger">
@@ -362,65 +355,69 @@ export default function HomeV2({ featuredProducts, categories }: HomeV2Props) {
 
                 return (
                   <Reveal key={product.id} delay={i * 100}>
-                  <Link
-                    href={`/products/${product.slug}`}
-                    className="v2-glow-card group relative bg-white border-[1.5px] border-[#C8D8EE] rounded-[14px] overflow-hidden hover:border-[#1A6CC8] hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(26,108,200,0.12)] transition-all duration-300"
-                  >
-                    {/* Bottom gradient accent on hover */}
-                    <div className="absolute bottom-0 left-0 right-0 h-1 rounded-b-[14px] bg-gradient-to-r from-[#0A2B5E] to-[#1A6CC8] scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 z-10" />
+                    <Link
+                      href={`/products/${product.slug}`}
+                      className="v2-glow-card group relative bg-card border border-border/50 rounded-xl overflow-hidden hover:border-primary/20 hover:-translate-y-1 hover:shadow-md transition-all duration-300 flex flex-col h-full"
+                    >
+                      {/* Bottom gradient accent on hover */}
+                      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 to-indigo-600 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 z-10" />
 
-                    {/* Product image */}
-                    <div className="aspect-[4/5] relative bg-slate-100 overflow-hidden">
-                      {img ? (
-                        <Image
-                          src={img.url}
-                          alt={img.altText ?? product.nameTh}
-                          fill
-                          className="object-cover object-top group-hover:scale-105 transition-transform duration-500"
-                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        />
-                      ) : (
-                        <Image
-                          src={getProductPlaceholderImage(product.slug)}
-                          alt={product.nameTh}
-                          fill
-                          className="object-contain p-2 bg-[#FAF6EE] group-hover:scale-105 transition-transform duration-500"
-                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        />
-                      )}
-                      {/* Quick view overlay */}
-                      <div className="absolute inset-0 bg-[#0A2B5E]/0 group-hover:bg-[#0A2B5E]/5 transition-colors duration-300 flex items-end justify-center pb-4 opacity-0 group-hover:opacity-100">
-                        <span className="bg-white text-[#0A2B5E] text-[15px] font-bold px-5 py-2 rounded-lg shadow-lg translate-y-3 group-hover:translate-y-0 transition-transform duration-300">
-                          ดูรายละเอียด
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Product info */}
-                    <div className="p-6">
-                      <div className="text-[13px] font-bold uppercase tracking-widest text-[#1A6CC8] mb-1.5">
-                        {product.category.nameTh}
-                      </div>
-                      <h3 className="font-bold text-[19px] text-[#0A2B5E] mb-3 leading-snug line-clamp-2 group-hover:text-[#1A6CC8] transition-colors">
-                        {product.nameTh}
-                      </h3>
-                      <div className="flex flex-wrap gap-1.5 mb-4">
-                        {[...new Set(product.variants.map((v) => v.size))].slice(0, 5).map((s) => (
-                          <span
-                            key={s}
-                            className="text-[12px] font-bold px-2 py-0.5 bg-[#E8F2FC] border border-[#C8DDFA] text-[#2255A0] rounded-full"
-                          >
-                            {s}
+                      {/* Product image */}
+                      <div className="aspect-[4/5] relative bg-muted/20 overflow-hidden">
+                        {img ? (
+                          <Image
+                            src={img.url}
+                            alt={img.altText ?? product.nameTh}
+                            fill
+                            className="object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          />
+                        ) : (
+                          <Image
+                            src={getProductPlaceholderImage(product.slug)}
+                            alt={product.nameTh}
+                            fill
+                            className="object-contain p-2 bg-[#FAF6EE] dark:bg-[#1f2125] group-hover:scale-105 transition-transform duration-500"
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          />
+                        )}
+                        {/* Quick view overlay */}
+                        <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors duration-300 flex items-end justify-center pb-4 opacity-0 group-hover:opacity-100">
+                          <span className="bg-background text-foreground text-[15px] font-bold px-5 py-2 rounded-lg shadow-md translate-y-3 group-hover:translate-y-0 transition-transform duration-300">
+                            ดูรายละเอียด
                           </span>
-                        ))}
+                        </div>
                       </div>
-                      <div className="font-black text-[20px] text-[#0A2B5E]">
-                        {minPrice === maxPrice
-                          ? `฿${minPrice.toLocaleString()}`
-                          : `฿${minPrice.toLocaleString()} – ฿${maxPrice.toLocaleString()}`}
+
+                      {/* Product info */}
+                      <div className="p-6 flex-1 flex flex-col justify-between">
+                        <div>
+                          <div className="text-[11px] font-bold uppercase tracking-widest text-primary dark:text-blue-400 mb-1.5">
+                            {product.category.nameTh}
+                          </div>
+                          <h3 className="font-bold text-[19px] text-foreground mb-3 leading-snug line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                            {product.nameTh}
+                          </h3>
+                        </div>
+                        <div>
+                          <div className="flex flex-wrap gap-1.5 mb-4">
+                            {[...new Set(product.variants.map((v) => v.size))].slice(0, 5).map((s) => (
+                              <span
+                                key={s}
+                                className="text-[11px] font-bold px-2 py-0.5 bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 rounded-full"
+                              >
+                                {s}
+                              </span>
+                            ))}
+                          </div>
+                          <div className="font-black text-[20px] text-foreground">
+                            {minPrice === maxPrice
+                              ? `฿${minPrice.toLocaleString()}`
+                              : `฿${minPrice.toLocaleString()} – ฿${maxPrice.toLocaleString()}`}
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </Link>
+                    </Link>
                   </Reveal>
                 );
               })}
@@ -429,7 +426,7 @@ export default function HomeV2({ featuredProducts, categories }: HomeV2Props) {
             <div className="text-center mt-10">
               <Link
                 href="/products"
-                className="inline-flex items-center gap-2 bg-[#0A2B5E] text-white px-8 py-3 rounded-md font-bold text-[17px] hover:bg-[#2255A0] hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(10,43,94,0.3)] transition-all duration-200"
+                className="inline-flex items-center gap-2 bg-[#0A2B5E] dark:bg-blue-600 text-white px-8 py-3 rounded-md font-bold text-[17px] hover:bg-[#2255A0] dark:hover:bg-blue-500 hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(10,43,94,0.3)] transition-all duration-200"
               >
                 ดูสินค้าทั้งหมด →
               </Link>
@@ -440,10 +437,10 @@ export default function HomeV2({ featuredProducts, categories }: HomeV2Props) {
 
       {/* ─────────────────── CATEGORIES (if no featured products) ─────────────────── */}
       {featuredProducts.length === 0 && categories.length > 0 && (
-        <section className="py-[88px] px-[5vw] bg-[#F5F9FF]">
+        <section className="py-[88px] px-[5vw] bg-muted/20 border-y border-border/30">
           <div className="max-w-[1200px] mx-auto">
             <SectionLabel>หมวดหมู่สินค้า</SectionLabel>
-            <h2 className="font-black text-[#0A2B5E] mb-10" style={{ fontSize: "clamp(26px, 3.5vw, 44px)" }}>
+            <h2 className="font-black text-foreground mb-10" style={{ fontSize: "clamp(26px, 3.5vw, 44px)" }}>
               เลือกสินค้าตามหมวดหมู่
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -463,11 +460,11 @@ export default function HomeV2({ featuredProducts, categories }: HomeV2Props) {
                   <Link
                     key={cat.id}
                     href={`/products?category=${cat.slug}`}
-                    className="bg-white border-[1.5px] border-[#C8D8EE] rounded-xl p-6 hover:border-[#1A6CC8] hover:-translate-y-1 hover:shadow-[0_8px_28px_rgba(10,43,94,0.1)] transition-all duration-300 text-center"
+                    className="bg-card border border-border rounded-xl p-6 hover:border-primary hover:-translate-y-1 hover:shadow-md transition-all duration-300 text-center"
                   >
                     <div className="text-3xl mb-3">👔</div>
-                    <div className="font-bold text-[#0A2B5E] text-xl">{cat.nameTh}</div>
-                    <div className="text-[15px] text-[#4A6080] mt-1">{cat.name}</div>
+                    <div className="font-bold text-foreground text-xl">{cat.nameTh}</div>
+                    <div className="text-[15px] text-muted-foreground mt-1">{cat.name}</div>
                   </Link>
                 ));
               })()}
@@ -477,24 +474,24 @@ export default function HomeV2({ featuredProducts, categories }: HomeV2Props) {
       )}
 
       {/* ─────────────────── FEATURES / WHY HIGHBURY ─────────────────── */}
-      <section className="py-[88px] px-[5vw] bg-white relative overflow-hidden">
+      <section className="py-[88px] px-[5vw] bg-background relative overflow-hidden">
         <FloatingBlobs />
         <div className="max-w-[1200px] mx-auto relative z-10">
           <Reveal>
             <div className="mb-14">
               <SectionLabel>ทำไมต้อง Highbury</SectionLabel>
-            <h2
-              className="font-black text-[#0A2B5E] leading-[1.2] mb-3"
-              style={{ fontSize: "clamp(26px, 3.5vw, 44px)" }}
-            >
-              คุณภาพในทุกรายละเอียด
-              <br />
-              <span className="text-[#1A6CC8]">ที่เราใส่ใจเพื่อคุณ</span>
-            </h2>
-            <p className="text-[18px] text-[#3D5278] leading-[1.8] max-w-[520px]">
-              ทุกขั้นตอนการผลิตถูกออกแบบมาเพื่อให้คุณได้เสื้อเชิ้ตที่ดีที่สุด
-            </p>
-          </div>
+              <h2
+                className="font-black text-foreground leading-[1.2] mb-3"
+                style={{ fontSize: "clamp(26px, 3.5vw, 44px)" }}
+              >
+                คุณภาพในทุกรายละเอียด
+                <br />
+                <span className="text-blue-600 dark:text-blue-400">ที่เราใส่ใจเพื่อคุณ</span>
+              </h2>
+              <p className="text-[18px] text-muted-foreground leading-[1.8] max-w-[520px]">
+                ทุกขั้นตอนการผลิตถูกออกแบบมาเพื่อให้คุณได้เสื้อเชิ้ตที่ดีที่สุด
+              </p>
+            </div>
           </Reveal>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -502,16 +499,16 @@ export default function HomeV2({ featuredProducts, categories }: HomeV2Props) {
               <Reveal key={feat.titleEn} delay={i * 120} direction="scale">
                 <TiltCard className="h-full">
                   <div
-                    className="v2-glow-card bg-[#F5F9FF] border-[1.5px] border-[#C8D8EE] rounded-[14px] p-8 text-center hover:border-[#0A2B5E] hover:shadow-[0_8px_28px_rgba(10,43,94,0.10)] transition-all duration-300 h-full"
+                    className="v2-glow-card bg-card border border-border rounded-xl p-8 text-center hover:border-primary/30 hover:shadow-md transition-all duration-300 h-full flex flex-col items-center"
                   >
-                    <div className="w-14 h-14 bg-[#E8F2FC] rounded-[14px] flex items-center justify-center text-2xl mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <div className="w-14 h-14 bg-muted rounded-[14px] flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
                       {feat.icon}
                     </div>
-                    <div className="text-[13px] font-bold uppercase tracking-widest text-[#1A6CC8] mb-2">
+                    <div className="text-[12px] font-bold uppercase tracking-widest text-primary dark:text-blue-400 mb-2">
                       {feat.titleEn}
                     </div>
-                    <h3 className="font-bold text-[18px] text-[#0A2B5E] mb-3">{feat.titleTh}</h3>
-                    <p className="text-[15px] text-[#3D5278] leading-[1.65]">{feat.desc}</p>
+                    <h3 className="font-bold text-[18px] text-foreground mb-3">{feat.titleTh}</h3>
+                    <p className="text-[15px] text-muted-foreground leading-[1.65]">{feat.desc}</p>
                   </div>
                 </TiltCard>
               </Reveal>
@@ -521,20 +518,20 @@ export default function HomeV2({ featuredProducts, categories }: HomeV2Props) {
       </section>
 
       {/* ─────────────────── SERVICES / SELLING POINTS ─────────────────── */}
-      <section className="py-[88px] px-[5vw] bg-[#F5F9FF]">
+      <section className="py-[88px] px-[5vw] bg-muted/20 border-y border-border/30">
         <div className="max-w-[1200px] mx-auto grid md:grid-cols-[1.1fr_1fr] gap-20 items-start">
           {/* Left: service list */}
           <Reveal direction="left">
             <SectionLabel>บริการของเรา</SectionLabel>
             <h2
-              className="font-black text-[#0A2B5E] leading-[1.2] mb-3"
+              className="font-black text-foreground leading-[1.2] mb-3"
               style={{ fontSize: "clamp(26px, 3.5vw, 44px)" }}
             >
               บริการครบวงจร
               <br />
               ตั้งแต่ต้นจนจบ
             </h2>
-            <p className="text-[18px] text-[#3D5278] leading-[1.8] mb-10 max-w-[460px]">
+            <p className="text-[18px] text-muted-foreground leading-[1.8] mb-10 max-w-[460px]">
               เราดูแลคุณตั้งแต่การเลือกสินค้าไปจนถึงหลังการขาย
             </p>
 
@@ -546,69 +543,69 @@ export default function HomeV2({ featuredProducts, categories }: HomeV2Props) {
               ].map((svc) => (
                 <div
                   key={svc.num}
-                  className="flex gap-5 px-[18px] py-[22px] rounded-xl border-[1.5px] border-transparent hover:border-[#C8D8EE] hover:bg-white hover:translate-x-1.5 transition-all duration-300"
+                  className="flex gap-5 px-[18px] py-[22px] rounded-xl border border-transparent hover:border-border hover:bg-card hover:translate-x-1.5 transition-all duration-300"
                 >
-                  <div className="text-3xl font-black text-[#C8DDFA] leading-none flex-shrink-0 w-11">
+                  <div className="text-3xl font-black text-blue-200 dark:text-blue-900 leading-none flex-shrink-0 w-11">
                     {svc.num}
                   </div>
                   <div>
-                    <div className="font-bold text-[19px] text-[#0A2B5E] mb-1.5">{svc.title}</div>
-                    <p className="text-[16px] text-[#3D5278] leading-[1.65]">{svc.desc}</p>
+                    <div className="font-bold text-[19px] text-foreground mb-1.5">{svc.title}</div>
+                    <p className="text-[16px] text-muted-foreground leading-[1.65]">{svc.desc}</p>
                   </div>
                 </div>
               ))}
             </div>
           </Reveal>
 
-          {/* Right: sticky coverage card → repurposed as "กลุ่มสินค้า" */}
+          {/* Right: channels card */}
           <Reveal direction="right" delay={200}>
-          <div className="bg-[#0A2B5E] rounded-2xl p-9 text-white md:sticky md:top-24">
-            <div className="font-black text-[22px] mb-1">ช่องทางการสั่งซื้อ</div>
-            <div className="text-[15px] text-white/60 mb-5">สะดวก รวดเร็ว ปลอดภัย</div>
-            <div className="grid grid-cols-2 gap-2">
-              {[
-                { label: "Website", highlight: true },
-                { label: "LINE Official" },
-                { label: "Facebook Shop" },
-                { label: "Instagram" },
-              ].map((ch) => (
-                <div
-                  key={ch.label}
-                  className={`flex items-center gap-2 text-[15px] font-semibold px-3.5 py-2.5 rounded-lg border transition-colors duration-200 hover:bg-white/15 ${
-                    ch.highlight
-                      ? "bg-[rgba(232,168,0,0.18)] border-[rgba(232,168,0,0.35)] text-[#E8A800]"
-                      : "bg-white/8 border-white/12"
-                  }`}
-                >
-                  <span className="text-lg">🛒</span>
-                  {ch.label}
-                </div>
-              ))}
+            <div className="bg-[#0A2B5E] dark:bg-card rounded-2xl p-9 text-white dark:text-foreground md:sticky md:top-24 border dark:border-border/60 shadow-lg">
+              <div className="font-black text-[22px] mb-1">ช่องทางการสั่งซื้อ</div>
+              <div className="text-[15px] text-white/60 dark:text-muted-foreground mb-5">สะดวก รวดเร็ว ปลอดภัย</div>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { label: "Website", highlight: true },
+                  { label: "LINE Official" },
+                  { label: "Facebook Shop" },
+                  { label: "Instagram" },
+                ].map((ch) => (
+                  <div
+                    key={ch.label}
+                    className={`flex items-center gap-2 text-[15px] font-semibold px-3.5 py-2.5 rounded-lg border transition-colors duration-200 hover:bg-white/15 dark:hover:bg-muted ${
+                      ch.highlight
+                        ? "bg-[rgba(232,168,0,0.18)] border-[rgba(232,168,0,0.35)] text-[#E8A800] dark:text-[#E8A800]"
+                        : "bg-white/10 dark:bg-background border-white/10 dark:border-border"
+                    }`}
+                  >
+                    <span className="text-lg">🛒</span>
+                    {ch.label}
+                  </div>
+                ))}
+              </div>
+              <div className="mt-5 pt-3.5 border-t border-white/10 dark:border-border/50 text-[13px] text-white/40 dark:text-muted-foreground text-center leading-relaxed">
+                รองรับการจ่ายเงินผ่าน Thai QR Promptpay
+              </div>
             </div>
-            <div className="mt-5 pt-3.5 border-t border-white/10 text-[13px] text-white/40 text-center leading-relaxed">
-              รองรับการจ่ายเงินผ่าน Thai QR Promptpay
-            </div>
-          </div>
           </Reveal>
         </div>
       </section>
 
       {/* ─────────────────── OEM & UNIFORM ─────────────────── */}
-      <section className="py-[88px] px-[5vw] bg-white relative overflow-hidden">
+      <section className="py-[88px] px-[5vw] bg-background relative overflow-hidden">
         <FloatingBlobs />
         <div className="max-w-[1200px] mx-auto relative z-10">
           <Reveal>
             <div className="text-center mb-16">
               <SectionLabel>บริการ B2B</SectionLabel>
               <h2
-                className="font-black text-[#0A2B5E] leading-[1.2] mb-3"
+                className="font-black text-foreground leading-[1.2] mb-3"
                 style={{ fontSize: "clamp(26px, 3.5vw, 44px)" }}
               >
                 บริการสำหรับองค์กรและธุรกิจ
                 <br />
-                <span className="text-[#1A6CC8]">OEM · ยูนิฟอร์มพนักงาน</span>
+                <span className="text-blue-600 dark:text-blue-400">OEM · ยูนิฟอร์มพนักงาน</span>
               </h2>
-              <p className="text-[18px] text-[#3D5278] leading-[1.8] max-w-[580px] mx-auto">
+              <p className="text-[18px] text-muted-foreground leading-[1.8] max-w-[580px] mx-auto">
                 รองรับทั้งการรับจ้างผลิต OEM และออกแบบเสื้อเชิ้ตยูนิฟอร์มพนักงานแบบครบวงจร
               </p>
             </div>
@@ -618,32 +615,32 @@ export default function HomeV2({ featuredProducts, categories }: HomeV2Props) {
           <div className="grid md:grid-cols-2 gap-6 mb-6">
             {/* OEM Card */}
             <Reveal direction="left">
-              <div className="bg-[#0A2B5E] rounded-2xl p-8 text-white flex flex-col h-full">
+              <div className="bg-gradient-to-br from-[#0A2B5E] to-[#143E7A] dark:from-card dark:to-card/80 border dark:border-border rounded-2xl p-8 text-white dark:text-foreground flex flex-col h-full shadow-lg">
                 <div className="inline-flex items-center gap-2 bg-[rgba(232,168,0,0.18)] border border-[rgba(232,168,0,0.35)] text-[#E8A800] px-3 py-1 rounded-full text-[12px] font-bold tracking-widest uppercase mb-5 self-start">
                   🏭 OEM Production
                 </div>
                 <h3 className="font-black text-[24px] mb-2">รับผลิต OEM ขั้นต่ำ</h3>
                 <div className="flex items-baseline gap-2 mb-4">
                   <span className="font-black text-[52px] leading-none text-[#E8A800]">3,500</span>
-                  <span className="text-white/65 text-[18px]">ตัว / เดือน</span>
+                  <span className="text-white/65 dark:text-muted-foreground text-[18px]">ตัว / เดือน</span>
                 </div>
-                <p className="text-white/70 text-[16px] leading-[1.75] mb-6">
+                <p className="text-white/75 dark:text-muted-foreground text-[16px] leading-[1.75] mb-6">
                   รองรับการผลิตเสื้อเชิ้ตในปริมาณมากด้วยกระบวนการที่ได้มาตรฐาน
                   มี QC ทุกขั้นตอน เหมาะสำหรับแบรนด์และผู้ประกอบการที่ต้องการพาร์ตเนอร์ผู้ผลิตที่เชื่อถือได้
                 </p>
                 <div className="grid grid-cols-2 gap-2 mb-7">
                   {oemFeatures.map((f) => (
-                    <div key={f.title} className="bg-white/[0.08] border border-white/[0.12] rounded-xl p-3.5">
+                    <div key={f.title} className="bg-white/[0.08] dark:bg-background border border-white/[0.12] dark:border-border rounded-xl p-3.5">
                       <div className="text-xl mb-1.5">{f.icon}</div>
-                      <div className="font-bold text-[14px] text-white mb-0.5">{f.title}</div>
-                      <div className="text-[13px] text-white/55 leading-snug">{f.desc}</div>
+                      <div className="font-bold text-[14px] text-white dark:text-foreground mb-0.5">{f.title}</div>
+                      <div className="text-[13px] text-white/60 dark:text-muted-foreground leading-snug">{f.desc}</div>
                     </div>
                   ))}
                 </div>
                 <div className="mt-auto">
                   <a
                     href="mailto:contact@highbury.co.th"
-                    className="inline-flex items-center gap-2 bg-[#E8A800] text-[#0A2B5E] px-6 py-3 rounded-md font-black text-[16px] hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(232,168,0,0.45)] transition-all duration-200"
+                    className="inline-flex items-center gap-2 bg-[#E8A800] text-[#0A2B5E] px-6 py-3 rounded-md font-black text-[16px] hover:-translate-y-0.5 hover:shadow-md transition-all duration-200"
                   >
                     สอบถามราคา OEM →
                   </a>
@@ -653,36 +650,36 @@ export default function HomeV2({ featuredProducts, categories }: HomeV2Props) {
 
             {/* Uniform Card */}
             <Reveal direction="right" delay={150}>
-              <div className="bg-[#F5F9FF] border-[2px] border-[#C8D8EE] rounded-2xl p-8 flex flex-col h-full hover:border-[#1A6CC8] hover:shadow-[0_12px_40px_rgba(26,108,200,0.10)] transition-all duration-300">
+              <div className="bg-card border border-border rounded-2xl p-8 flex flex-col h-full hover:border-primary/20 hover:shadow-md transition-all duration-300">
                 <div className="inline-flex items-center gap-2 bg-[#1A6CC8]/10 border border-[#1A6CC8]/25 text-[#1A6CC8] px-3 py-1 rounded-full text-[12px] font-bold tracking-widest uppercase mb-5 self-start">
                   🎽 Corporate Uniform
                 </div>
-                <h3 className="font-black text-[24px] text-[#0A2B5E] mb-2">เสื้อยูนิฟอร์มพนักงาน</h3>
-                <p className="text-[#3D5278] text-[16px] leading-[1.75] mb-6">
+                <h3 className="font-black text-[24px] text-foreground mb-2">เสื้อยูนิฟอร์มพนักงาน</h3>
+                <p className="text-muted-foreground text-[16px] leading-[1.75] mb-6">
                   ออกแบบและผลิตยูนิฟอร์มพนักงานแบบครบวงจร ตั้งแต่คอนเซ็ปต์ดีไซน์
                   ปักโลโก้ สีประจำองค์กร ไปจนถึงการจัดส่งถึงมือพนักงานทุกคน
                 </p>
                 <div className="grid grid-cols-2 gap-2 mb-6">
                   {uniformFeatures.map((f) => (
-                    <div key={f.title} className="bg-white border border-[#C8D8EE] rounded-xl p-3.5 hover:border-[#1A6CC8] transition-colors duration-200">
+                    <div key={f.title} className="bg-background border border-border rounded-xl p-3.5 hover:border-primary transition-colors duration-200">
                       <div className="text-xl mb-1.5">{f.icon}</div>
-                      <div className="font-bold text-[14px] text-[#0A2B5E] mb-0.5">{f.title}</div>
-                      <div className="text-[13px] text-[#4A6080] leading-snug">{f.desc}</div>
+                      <div className="font-bold text-[14px] text-foreground mb-0.5">{f.title}</div>
+                      <div className="text-[13px] text-muted-foreground leading-snug">{f.desc}</div>
                     </div>
                   ))}
                 </div>
                 {/* Suitable for */}
-                <div className="flex items-center gap-3 p-3.5 bg-white rounded-xl border border-[#C8D8EE] mb-6">
+                <div className="flex items-center gap-3 p-3.5 bg-background border border-border rounded-xl mb-6">
                   <span className="text-2xl">🏢</span>
                   <div>
-                    <div className="font-bold text-[15px] text-[#0A2B5E]">เหมาะสำหรับทุกประเภทองค์กร</div>
-                    <div className="text-[13px] text-[#4A6080]">SME · บริษัทขนาดกลาง-ใหญ่ · โรงแรม · โรงพยาบาล · ร้านอาหาร</div>
+                    <div className="font-bold text-[15px] text-foreground">เหมาะสำหรับทุกประเภทองค์กร</div>
+                    <div className="text-[13px] text-muted-foreground">SME · บริษัทขนาดกลาง-ใหญ่ · โรงแรม · โรงพยาบาล · ร้านอาหาร</div>
                   </div>
                 </div>
                 <div className="mt-auto">
                   <a
                     href="mailto:contact@highbury.co.th"
-                    className="inline-flex items-center gap-2 bg-[#0A2B5E] text-white px-6 py-3 rounded-md font-black text-[16px] hover:bg-[#2255A0] hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(10,43,94,0.3)] transition-all duration-200"
+                    className="inline-flex items-center gap-2 bg-[#0A2B5E] dark:bg-blue-600 text-white px-6 py-3 rounded-md font-black text-[16px] hover:bg-[#2255A0] dark:hover:bg-blue-500 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200"
                   >
                     ขอใบเสนอราคา →
                   </a>
@@ -693,10 +690,10 @@ export default function HomeV2({ featuredProducts, categories }: HomeV2Props) {
 
           {/* Process steps */}
           <Reveal delay={200}>
-            <div className="bg-[#F5F9FF] border border-[#C8D8EE] rounded-2xl p-8">
+            <div className="bg-card border border-border rounded-2xl p-8 shadow-sm">
               <div className="text-center mb-8">
-                <div className="font-bold text-[13px] uppercase tracking-widest text-[#1A6CC8] mb-1">ขั้นตอนการสั่งผลิต</div>
-                <h3 className="font-black text-[22px] text-[#0A2B5E]">ง่าย · รวดเร็ว · มืออาชีพ</h3>
+                <div className="font-bold text-[13px] uppercase tracking-widest text-primary dark:text-blue-400 mb-1">ขั้นตอนการสั่งผลิต</div>
+                <h3 className="font-black text-[22px] text-foreground">ง่าย · รวดเร็ว · มืออาชีพ</h3>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                 {[
@@ -706,15 +703,15 @@ export default function HomeV2({ featuredProducts, categories }: HomeV2Props) {
                   { step: "04", icon: "📦", title: "จัดส่งครบถ้วน", desc: "แพ็กแยกรายชื่อ จัดส่งพร้อมรายงานครบทุกไซส์" },
                 ].map((s, i) => (
                   <div key={s.step} className="text-center">
-                    <div className="relative w-14 h-14 rounded-full bg-[#E8F2FC] flex items-center justify-center text-2xl mx-auto mb-3">
+                    <div className="relative w-14 h-14 rounded-full bg-muted flex items-center justify-center text-2xl mx-auto mb-3">
                       {s.icon}
                       {i < 3 && (
-                        <div className="hidden md:block absolute left-full top-1/2 -translate-y-1/2 w-full h-[2px] bg-[#C8D8EE]" />
+                        <div className="hidden md:block absolute left-full top-1/2 -translate-y-1/2 w-full h-[2px] bg-border" />
                       )}
                     </div>
-                    <div className="text-[12px] font-black text-[#1A6CC8] tracking-widest mb-1">{s.step}</div>
-                    <div className="font-bold text-[15px] text-[#0A2B5E] mb-1">{s.title}</div>
-                    <p className="text-[13px] text-[#4A6080] leading-[1.55]">{s.desc}</p>
+                    <div className="text-[12px] font-black text-primary dark:text-blue-400 tracking-widest mb-1">{s.step}</div>
+                    <div className="font-bold text-[15px] text-foreground mb-1">{s.title}</div>
+                    <p className="text-[13px] text-muted-foreground leading-[1.55]">{s.desc}</p>
                   </div>
                 ))}
               </div>
@@ -724,34 +721,34 @@ export default function HomeV2({ featuredProducts, categories }: HomeV2Props) {
       </section>
 
       {/* ─────────────────── FAQ ─────────────────── */}
-      <section className="py-[88px] px-[5vw] bg-white">
+      <section className="py-[88px] px-[5vw] bg-background">
         <div className="max-w-[1200px] mx-auto">
           <Reveal>
-          <div className="mb-14">
-            <SectionLabel>คำถามที่พบบ่อย</SectionLabel>
-            <h2
-              className="font-black text-[#0A2B5E] leading-[1.2]"
-              style={{ fontSize: "clamp(26px, 3.5vw, 44px)" }}
-            >
-              มีข้อสงสัยอะไรไหม?
-            </h2>
-          </div>
+            <div className="mb-14">
+              <SectionLabel>คำถามที่พบบ่อย</SectionLabel>
+              <h2
+                className="font-black text-foreground leading-[1.2]"
+                style={{ fontSize: "clamp(26px, 3.5vw, 44px)" }}
+              >
+                มีข้อสงสัยอะไรไหม?
+              </h2>
+            </div>
           </Reveal>
 
           <div className="grid md:grid-cols-2 gap-4">
             {faqItems.map((item, i) => (
               <Reveal key={i} delay={i * 100}>
-              <div
-                className="bg-[#F5F9FF] border-[1.5px] border-[#C8D8EE] rounded-xl p-7 hover:border-[#1A6CC8] hover:shadow-[0_4px_20px_rgba(26,108,200,0.10)] transition-all duration-300"
-              >
-                <div className="flex items-start gap-2.5 mb-3">
-                  <div className="w-6 h-6 bg-[#1A6CC8] text-white rounded-md flex items-center justify-center text-[12px] font-black flex-shrink-0 mt-0.5">
-                    Q
+                <div
+                  className="bg-card border border-border rounded-xl p-7 hover:border-primary/20 hover:shadow-md transition-all duration-300"
+                >
+                  <div className="flex items-start gap-2.5 mb-3">
+                    <div className="w-6 h-6 bg-primary text-primary-foreground rounded-md flex items-center justify-center text-[12px] font-black flex-shrink-0 mt-0.5">
+                      Q
+                    </div>
+                    <p className="font-bold text-[17px] text-foreground leading-snug">{item.q}</p>
                   </div>
-                  <p className="font-bold text-[17px] text-[#0A2B5E] leading-snug">{item.q}</p>
+                  <p className="text-[16px] text-muted-foreground leading-[1.7] pl-[34px]">{item.a}</p>
                 </div>
-                <p className="text-[16px] text-[#3D5278] leading-[1.7] pl-[34px]">{item.a}</p>
-              </div>
               </Reveal>
             ))}
           </div>
@@ -759,45 +756,45 @@ export default function HomeV2({ featuredProducts, categories }: HomeV2Props) {
       </section>
 
       {/* ─────────────────── REVIEWS ─────────────────── */}
-      <section className="py-[88px] px-[5vw] bg-[#F5F9FF]">
+      <section className="py-[88px] px-[5vw] bg-muted/20 border-y border-border/30">
         <div className="max-w-[1200px] mx-auto">
           <Reveal>
-          <div className="mb-14">
-            <SectionLabel>รีวิวจากลูกค้า</SectionLabel>
-            <h2
-              className="font-black text-[#0A2B5E] leading-[1.2]"
-              style={{ fontSize: "clamp(26px, 3.5vw, 44px)" }}
-            >
-              ลูกค้าของเราพูดถึง
-              <br />
-              <span className="text-[#1A6CC8]">Highbury ว่าอย่างไร</span>
-            </h2>
-          </div>
+            <div className="mb-14">
+              <SectionLabel>รีวิวจากลูกค้า</SectionLabel>
+              <h2
+                className="font-black text-foreground leading-[1.2]"
+                style={{ fontSize: "clamp(26px, 3.5vw, 44px)" }}
+              >
+                ลูกค้าของเราพูดถึง
+                <br />
+                <span className="text-blue-600 dark:text-blue-400">Highbury ว่าอย่างไร</span>
+              </h2>
+            </div>
           </Reveal>
 
           <div className="grid md:grid-cols-3 gap-5">
             {reviews.map((r, i) => (
               <Reveal key={i} delay={i * 150} direction="scale">
-              <div
-                className="v2-glow-card bg-white border-[1.5px] border-[#C8D8EE] rounded-xl p-7 hover:border-[#1A6CC8] hover:shadow-[0_4px_20px_rgba(26,108,200,0.10)] hover:-translate-y-1 transition-all duration-300"
-              >
-                {/* Stars */}
-                <div className="flex gap-0.5 mb-4">
-                  {Array.from({ length: 5 }).map((_, j) => (
-                    <span key={j} className="text-[#E8A800] text-lg">★</span>
-                  ))}
-                </div>
-                <p className="text-[16px] text-[#3D5278] leading-[1.7] mb-5 italic">&ldquo;{r.text}&rdquo;</p>
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-[#E8F2FC] flex items-center justify-center text-[#0A2B5E] font-black text-[15px] flex-shrink-0">
-                    {r.name.slice(2, 3)}
+                <div
+                  className="v2-glow-card bg-card border border-border rounded-xl p-7 hover:border-primary/20 hover:shadow-md hover:-translate-y-1 transition-all duration-300"
+                >
+                  {/* Stars */}
+                  <div className="flex gap-0.5 mb-4">
+                    {Array.from({ length: 5 }).map((_, j) => (
+                      <span key={j} className="text-[#E8A800] text-lg">★</span>
+                    ))}
                   </div>
-                  <div>
-                    <div className="font-bold text-[16px] text-[#0A2B5E]">{r.name}</div>
-                    <div className="text-[14px] text-[#4A6080]">{r.role}</div>
+                  <p className="text-[16px] text-muted-foreground leading-[1.7] mb-5 italic">&ldquo;{r.text}&rdquo;</p>
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-full bg-blue-500/10 text-primary dark:text-blue-400 flex items-center justify-center font-black text-[15px] flex-shrink-0">
+                      {r.name.slice(2, 3)}
+                    </div>
+                    <div>
+                      <div className="font-bold text-[16px] text-foreground">{r.name}</div>
+                      <div className="text-[14px] text-muted-foreground">{r.role}</div>
+                    </div>
                   </div>
                 </div>
-              </div>
               </Reveal>
             ))}
           </div>
@@ -818,34 +815,34 @@ export default function HomeV2({ featuredProducts, categories }: HomeV2Props) {
           }}
         />
         <Reveal direction="up">
-        <div className="relative z-10 max-w-2xl mx-auto">
-          <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 text-white/90 px-4 py-1.5 rounded-full text-[13px] font-bold tracking-[0.1em] uppercase mb-6">
-            <span className="w-1.5 h-1.5 bg-[#E8A800] rounded-full animate-pulse" />
-            พร้อมให้บริการแล้ววันนี้
+          <div className="relative z-10 max-w-2xl mx-auto">
+            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 text-white/90 px-4 py-1.5 rounded-full text-[13px] font-bold tracking-[0.1em] uppercase mb-6">
+              <span className="w-1.5 h-1.5 bg-[#E8A800] rounded-full animate-pulse" />
+              พร้อมให้บริการแล้ววันนี้
+            </div>
+            <h2 className="font-black text-3xl md:text-5xl leading-tight mb-4 text-white">
+              เริ่มต้นดูดีได้เลย
+              <br />
+              <span className="text-[#E8A800]">กับ Highbury</span>
+            </h2>
+            <p className="text-white/75 text-[18px] leading-relaxed mb-8">
+              เลือกสินค้าจากคอลเลกชันหลากหลายของเรา
+            </p>
+            <div className="flex gap-3 justify-center flex-wrap">
+              <Link
+                href="/products"
+                className="inline-flex items-center gap-2 bg-white text-[#0A2B5E] px-8 py-3.5 rounded-md font-black text-[17px] hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(255,255,255,0.3)] transition-all duration-200"
+              >
+                ดูสินค้าทั้งหมด →
+              </Link>
+              <Link
+                href="/auth/register"
+                className="inline-flex items-center gap-2 border-2 border-white/50 text-white px-8 py-3.5 rounded-md font-bold text-[17px] hover:border-white hover:bg-white/10 transition-all duration-200"
+              >
+                สมัครสมาชิก
+              </Link>
+            </div>
           </div>
-          <h2 className="font-black text-3xl md:text-5xl leading-tight mb-4">
-            เริ่มต้นดูดีได้เลย
-            <br />
-            <span className="text-[#E8A800]">กับ Highbury</span>
-          </h2>
-          <p className="text-white/75 text-[18px] leading-relaxed mb-8">
-            เลือกสินค้าจากคอลเลกชันหลากหลายของเรา
-          </p>
-          <div className="flex gap-3 justify-center flex-wrap">
-            <Link
-              href="/products"
-              className="inline-flex items-center gap-2 bg-white text-[#0A2B5E] px-8 py-3.5 rounded-md font-black text-[17px] hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(255,255,255,0.3)] transition-all duration-200"
-            >
-              ดูสินค้าทั้งหมด →
-            </Link>
-            <Link
-              href="/auth/signin"
-              className="inline-flex items-center gap-2 border-2 border-white/50 text-white px-8 py-3.5 rounded-md font-bold text-[17px] hover:border-white hover:bg-white/10 transition-all duration-200"
-            >
-              สมัครสมาชิก
-            </Link>
-          </div>
-        </div>
         </Reveal>
       </section>
     </div>

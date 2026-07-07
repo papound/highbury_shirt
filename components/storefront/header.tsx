@@ -21,15 +21,17 @@ export default async function StorefrontHeader({
       <div className="container mx-auto px-4 h-16 md:h-20 flex items-center justify-between">
         {/* Left: Logo */}
         <div className="flex-1 flex justify-start items-center">
-          <Link href="/" className="flex items-center gap-2 shrink-0 transition-opacity hover:opacity-90">
-            <Image
-              src="/images/logo/highbury-logo.png"
-              alt="Highbury International"
-              width={160}
-              height={55}
-              className="object-contain h-10 md:h-12 w-auto dark:invert"
-              priority
-            />
+          <Link href="/" className="flex items-center gap-2 shrink-0 transition-all duration-300 hover:opacity-95 hover:scale-[1.02]">
+            <div className="relative flex items-center justify-center py-1.5 px-3.5 bg-slate-500/5 dark:bg-white/5 rounded-xl border border-slate-500/10 dark:border-white/10 shadow-sm transition-all duration-300 hover:border-primary/25 hover:bg-slate-500/10 dark:hover:bg-white/10">
+              <Image
+                src="/images/logo/highbury-logo.png"
+                alt="Highbury International"
+                width={140}
+                height={48}
+                className="object-contain h-8 md:h-9 w-auto dark:invert"
+                priority
+              />
+            </div>
           </Link>
         </div>
 
