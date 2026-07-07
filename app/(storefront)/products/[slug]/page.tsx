@@ -137,7 +137,7 @@ export default async function ProductDetailPage({ params }: Props) {
           <div className="flex items-center gap-2">
             <Badge variant="secondary">SKU by variant</Badge>
             {product.status === "ACTIVE" ? (
-              <Badge className="bg-green-100 text-green-700">มีสินค้า</Badge>
+              <Badge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 shadow-none">มีสินค้า</Badge>
             ) : (
               <Badge variant="destructive">หมด</Badge>
             )}

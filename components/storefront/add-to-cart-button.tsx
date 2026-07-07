@@ -163,7 +163,7 @@ export default function AddToCartButton({ product }: { product: ProductData }) {
         <p className="text-sm text-muted-foreground">
           🏷 SKU: <code className="text-xs">{selectedVariant.sku}</code>{" "}
           {remaining > 0 ? (
-            <Badge variant="outline" className="text-green-600 border-green-300">
+            <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 shadow-none">
               คงเหลือ {remaining} ตัว
             </Badge>
           ) : (

@@ -34,7 +34,7 @@ export function PaginationJump({ currentPage, totalPages, searchParams }: Props)
         max={totalPages}
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        className="w-14 h-9 rounded-xl border border-slate-200 bg-white text-center text-sm font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all"
+        className="w-14 h-9 rounded-xl border border-input bg-background text-foreground text-center text-sm font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all"
       />
       <button
         type="submit"

@@ -253,8 +253,8 @@ export default async function ProductsPage({ searchParams }: Props) {
                       title="หน้าแรก"
                       className={`w-9 h-9 flex items-center justify-center rounded-xl text-sm border transition-all ${
                         page === 1
-                          ? "pointer-events-none opacity-30 border-slate-200 bg-white"
-                          : "border-slate-200 bg-white hover:bg-blue-50 hover:border-blue-300 shadow-sm"
+                          ? "pointer-events-none opacity-30 border-input bg-background text-muted-foreground"
+                          : "border-input bg-background text-foreground hover:bg-muted/80 shadow-sm"
                       }`}
                     >
                       «
@@ -267,8 +267,8 @@ export default async function ProductsPage({ searchParams }: Props) {
                       title="หน้าก่อนหน้า"
                       className={`w-9 h-9 flex items-center justify-center rounded-xl text-sm border transition-all ${
                         page === 1
-                          ? "pointer-events-none opacity-30 border-slate-200 bg-white"
-                          : "border-slate-200 bg-white hover:bg-blue-50 hover:border-blue-300 shadow-sm"
+                          ? "pointer-events-none opacity-30 border-input bg-background text-muted-foreground"
+                          : "border-input bg-background text-foreground hover:bg-muted/80 shadow-sm"
                       }`}
                     >
                       ‹
@@ -289,7 +289,7 @@ export default async function ProductsPage({ searchParams }: Props) {
                       }
                       return pages.map((p, idx) =>
                         p === "..." ? (
-                          <span key={`ellipsis-${idx}`} className="w-9 h-9 flex items-center justify-center text-sm text-slate-400">
+                          <span key={`ellipsis-${idx}`} className="w-9 h-9 flex items-center justify-center text-sm text-muted-foreground">
                             …
                           </span>
                         ) : (
@@ -298,8 +298,8 @@ export default async function ProductsPage({ searchParams }: Props) {
                             href={`/products?${new URLSearchParams({ ...sp, page: String(p) })}`}
                             className={`w-9 h-9 flex items-center justify-center rounded-xl text-sm border font-medium transition-all ${
                               page === p
-                                ? "bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-500/25"
-                                : "border-slate-200 bg-white hover:bg-blue-50 hover:border-blue-300 shadow-sm"
+                                ? "bg-primary text-primary-foreground border-primary shadow-md"
+                                : "border-input bg-background text-foreground hover:bg-muted/80 shadow-sm"
                             }`}
                           >
                             {p}
@@ -315,8 +315,8 @@ export default async function ProductsPage({ searchParams }: Props) {
                       title="หน้าถัดไป"
                       className={`w-9 h-9 flex items-center justify-center rounded-xl text-sm border transition-all ${
                         page === totalPages
-                          ? "pointer-events-none opacity-30 border-slate-200 bg-white"
-                          : "border-slate-200 bg-white hover:bg-blue-50 hover:border-blue-300 shadow-sm"
+                          ? "pointer-events-none opacity-30 border-input bg-background text-muted-foreground"
+                          : "border-input bg-background text-foreground hover:bg-muted/80 shadow-sm"
                       }`}
                     >
                       ›
@@ -329,8 +329,8 @@ export default async function ProductsPage({ searchParams }: Props) {
                       title="หน้าสุดท้าย"
                       className={`w-9 h-9 flex items-center justify-center rounded-xl text-sm border transition-all ${
                         page === totalPages
-                          ? "pointer-events-none opacity-30 border-slate-200 bg-white"
-                          : "border-slate-200 bg-white hover:bg-blue-50 hover:border-blue-300 shadow-sm"
+                          ? "pointer-events-none opacity-30 border-input bg-background text-muted-foreground"
+                          : "border-input bg-background text-foreground hover:bg-muted/80 shadow-sm"
                       }`}
                     >
                       »
@@ -339,8 +339,8 @@ export default async function ProductsPage({ searchParams }: Props) {
 
                   {/* Page info + Jump */}
                   <div className="flex items-center gap-4">
-                    <span className="text-sm text-slate-400">
-                      หน้า <span className="font-semibold text-slate-700">{page}</span> จาก <span className="font-semibold text-slate-700">{totalPages}</span>
+                    <span className="text-sm text-muted-foreground">
+                      หน้า <span className="font-semibold text-foreground">{page}</span> จาก <span className="font-semibold text-foreground">{totalPages}</span>
                     </span>
                     <PaginationJump
                       currentPage={page}
