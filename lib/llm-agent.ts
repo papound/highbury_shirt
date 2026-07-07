@@ -631,6 +631,119 @@ function buildOrderFlexMessage(data: {
     "margin": "sm"
   });
 
+  const bodyContents: any[] = [
+    {
+      "type": "box",
+      "layout": "horizontal",
+      "contents": [
+        {
+          "type": "text",
+          "text": data.isPreview ? "สถานะการทำรายการ:" : "เลขที่ออเดอร์:",
+          "size": "xs",
+          "color": "#94A3B8"
+        },
+        {
+          "type": "text",
+          "text": data.isPreview ? "ร่างพรีวิว" : `#${data.orderNumber}`,
+          "size": "xs",
+          "color": "#475569",
+          "align": "end",
+          "weight": "bold"
+        }
+      ]
+    },
+    {
+      "type": "box",
+      "layout": "horizontal",
+      "contents": [
+        {
+          "type": "text",
+          "text": "วันที่สั่งซื้อ:",
+          "size": "xs",
+          "color": "#94A3B8"
+        },
+        {
+          "type": "text",
+          "text": formattedDate,
+          "size": "xs",
+          "color": "#475569",
+          "align": "end"
+        }
+      ],
+      "margin": "xs"
+    }
+  ];
+
+  if (data.hasVat) {
+    bodyContents.push({
+      "type": "box",
+      "layout": "vertical",
+      "contents": [
+        {
+          "type": "text",
+          "text": "ผู้ออกใบกำกับภาษี:",
+          "size": "xs",
+          "color": "#94A3B8",
+          "margin": "sm"
+        },
+        {
+          "type": "text",
+          "text": "บริษัท ธงธัญ99 จำกัด (สำนักงานใหญ่)",
+          "size": "xs",
+          "color": "#334155",
+          "weight": "bold",
+          "margin": "xs"
+        },
+        {
+          "type": "text",
+          "text": "เลขประจำตัวผู้เสียภาษี: 0105558016255",
+          "size": "xs",
+          "color": "#334155",
+          "margin": "xs"
+        },
+        {
+          "type": "text",
+          "text": "9 ซอยพระรามที่ 2 ซอย 51 แยก 3 แขวงท่าข้าม เขตบางขุนเทียน กรุงเทพฯ 10150",
+          "size": "xs",
+          "color": "#64748B",
+          "wrap": true,
+          "margin": "xs"
+        }
+      ],
+      "margin": "md"
+    });
+  }
+
+  bodyContents.push(
+    {
+      "type": "separator",
+      "margin": "lg"
+    },
+    {
+      "type": "text",
+      "text": "รายการสินค้า",
+      "weight": "bold",
+      "size": "sm",
+      "color": "#0A2B5E",
+      "margin": "lg"
+    },
+    {
+      "type": "box",
+      "layout": "vertical",
+      "contents": itemsContents
+    },
+    {
+      "type": "separator",
+      "margin": "lg"
+    },
+    {
+      "type": "box",
+      "layout": "vertical",
+      "contents": summaryContents,
+      "margin": "lg"
+    }
+  );
+
   const bubble: any = {
     "type": "bubble",
     "header": {
@@ -680,75 +793,7 @@ function buildOrderFlexMessage(data: {
     "body": {
       "type": "box",
       "layout": "vertical",
-      "contents": [
-        {
-          "type": "box",
-          "layout": "horizontal",
-          "contents": [
-            {
-              "type": "text",
-              "text": data.isPreview ? "สถานะการทำรายการ:" : "เลขที่ออเดอร์:",
-              "size": "xs",
-              "color": "#94A3B8"
-            },
-            {
-              "type": "text",
-              "text": data.isPreview ? "ร่างพรีวิว" : `#${data.orderNumber}`,
-              "size": "xs",
-              "color": "#475569",
-              "align": "end",
-              "weight": "bold"
-            }
-          ]
-        },
-        {
-          "type": "box",
-          "layout": "horizontal",
-          "contents": [
-            {
-              "type": "text",
-              "text": "วันที่สั่งซื้อ:",
-              "size": "xs",
-              "color": "#94A3B8"
-            },
-            {
-              "type": "text",
-              "text": formattedDate,
-              "size": "xs",
-              "color": "#475569",
-              "align": "end"
-            }
-          ],
-          "margin": "xs"
-        },
-        {
-          "type": "separator",
-          "margin": "lg"
-        },
-        {
-          "type": "text",
-          "text": "รายการสินค้า",
-          "weight": "bold",
-          "size": "sm",
-          "color": "#0A2B5E",
-          "margin": "lg"
-        },
-        {
-          "type": "box",
-          "layout": "vertical",
-          "contents": itemsContents
-        },
-        {
-          "type": "separator",
-          "margin": "lg"
-        },
-        {
-          "type": "box",
-          "layout": "vertical",
-          "contents": summaryContents,
-          "margin": "lg"
-        }
-      ]
+      "contents": bodyContents
     },
     "footer": {
       "type": "box",
@@ -803,52 +848,7 @@ function buildOrderFlexMessage(data: {
   }
 
   if (data.hasVat) {
-    // 1. ข้อมูลผู้รับสิทธิ์จัดทำใบกำกับภาษีของร้านค้า (Seller VAT Info)
-    bubble.body.contents.push(
-      {
-        "type": "separator",
-        "margin": "lg"
-      },
-      {
-        "type": "box",
-        "layout": "vertical",
-        "contents": [
-          {
-            "type": "text",
-            "text": "ผู้ออกใบกำกับภาษี",
-            "weight": "bold",
-            "size": "sm",
-            "color": "#0A2B5E"
-          },
-          {
-            "type": "text",
-            "text": "บริษัท ธงธัญ99 จำกัด (สำนักงานใหญ่)",
-            "size": "xs",
-            "color": "#334155",
-            "margin": "sm",
-            "weight": "bold"
-          },
-          {
-            "type": "text",
-            "text": "เลขประจำตัวผู้เสียภาษี: 0105558016255",
-            "size": "xs",
-            "color": "#334155",
-            "margin": "xs"
-          },
-          {
-            "type": "text",
-            "text": "9 ซอยพระรามที่ 2 ซอย 51 แยก 3 แขวงท่าข้าม เขตบางขุนเทียน กรุงเทพฯ 10150",
-            "size": "xs",
-            "color": "#64748B",
-            "wrap": true,
-            "margin": "xs"
-          }
-        ],
-        "margin": "lg"
-      }
-    );
-
-    // 2. ข้อมูลใบกำกับภาษีของลูกค้า (Customer VAT Info)
+    // ข้อมูลใบกำกับภาษีของลูกค้า (Customer VAT Info) - แยกจากข้อมูลจัดส่ง
     if (data.vatInfo) {
       bubble.body.contents.push(
         {
