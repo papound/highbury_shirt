@@ -42,9 +42,9 @@ export default function AdminSalesChart({ data }: Props) {
     <ResponsiveContainer width="100%" height={220}>
       <BarChart data={chartData} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
         <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-        <XAxis dataKey="date" tick={{ fontSize: 12 }} tickLine={false} axisLine={false} />
+        <XAxis dataKey="date" tick={{ fill: 'var(--muted-foreground)', fontSize: 12 }} tickLine={false} axisLine={false} />
         <YAxis
-          tick={{ fontSize: 12 }}
+          tick={{ fill: 'var(--muted-foreground)', fontSize: 12 }}
           tickLine={false}
           axisLine={false}
           tickFormatter={(v) => `฿${(v / 1000).toFixed(0)}k`}
@@ -52,6 +52,7 @@ export default function AdminSalesChart({ data }: Props) {
         <Tooltip
           formatter={(v) => [`฿${Number(v).toLocaleString()}`, "ยอดขาย"]}
           labelStyle={{ fontWeight: 500 }}
+          contentStyle={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)', color: 'var(--foreground)' }}
         />
         <Bar dataKey="revenue" fill="#3b82f6" radius={[4, 4, 0, 0]} />
       </BarChart>
