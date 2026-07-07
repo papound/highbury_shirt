@@ -869,7 +869,9 @@ function buildOrderFlexMessage(data: {
           },
           {
             "type": "text",
-            "text": `คุณ ${data.customerName}`,
+            "text": (data.customerName.startsWith("คุณ") || data.customerName.startsWith("บริษัท") || data.customerName.startsWith("บจก.") || data.customerName.startsWith("หจก."))
+              ? data.customerName
+              : `คุณ ${data.customerName}`,
             "size": "xs",
             "color": "#334155",
             "margin": "sm"
