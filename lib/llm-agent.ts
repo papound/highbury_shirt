@@ -1056,7 +1056,7 @@ function buildOrdersCarouselFlexMessage(orders: any[]) {
             },
             "style": "primary",
             "color": "#0A2B5E",
-            "size": "sm"
+            "height": "sm"
           }
         ]
       }
