@@ -3,6 +3,14 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { OrderStatus } from "@prisma/client";
 import { getStatusLabel, getStatusBadgeClass } from "@/lib/order-status";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 const STATUS_TABS = [
   { key: "", label: "ทั้งหมด" },
@@ -68,66 +76,64 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
         ))}
       </div>
 
-      <div className="border rounded-xl overflow-hidden bg-card">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b bg-muted/40">
-                <th className="text-left px-4 py-3 font-medium text-muted-foreground">หมายเลข</th>
-                <th className="text-left px-4 py-3 font-medium text-muted-foreground">ลูกค้า</th>
-                <th className="text-left px-4 py-3 font-medium text-muted-foreground">จัดส่งโดย</th>
-                <th className="text-left px-4 py-3 font-medium text-muted-foreground">วันที่</th>
-                <th className="text-right px-4 py-3 font-medium text-muted-foreground">ยอดรวม</th>
-                <th className="text-center px-4 py-3 font-medium text-muted-foreground">สถานะ</th>
-                <th className="px-4 py-3" />
-              </tr>
-            </thead>
-            <tbody>
-              {orders.map((order) => {
-                return (
-                  <tr key={order.id} className="border-b hover:bg-muted/20">
-                    <td className="px-4 py-3 font-mono text-xs">#{order.orderNumber}</td>
-                    <td className="px-4 py-3">
-                      <p className="font-medium">{order.shippingName}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {order.guestPhone ?? order.shippingPhone ?? ""}
-                      </p>
-                      {order.user && (
-                        <p className="text-xs text-blue-600">{order.user.name ?? order.user.email}</p>
-                      )}
-                    </td>
-                    <td className="px-4 py-3">
-                      {order.isPickup ? (
-                        <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200 font-medium">
-                          🏪 รับที่ร้าน
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-sky-50 text-sky-700 border border-sky-200 font-medium">
-                          📦 จัดส่งพัสดุ
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-muted-foreground text-xs">
-                      {new Date(order.createdAt).toLocaleDateString("th-TH")}
-                    </td>
-                    <td className="px-4 py-3 text-right font-medium">฿{order.total.toLocaleString()}</td>
-                    <td className="px-4 py-3 text-center">
-                      <span className={`inline-flex items-center text-xs px-2.5 py-0.5 rounded-full font-medium border ${getStatusBadgeClass(order.status)}`}>{getStatusLabel(order.status)}</span>
-                      {order.paymentProofs.length > 0 && order.status === "PAYMENT_UPLOADED" && (
-                        <span className="ml-1 text-xs text-orange-500">• สลิปรอตรวจ</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      <Button asChild size="sm" variant="ghost">
-                        <Link href={`/admin/orders/${order.id}`}>ดูรายละเอียด</Link>
-                      </Button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+      <div className="border rounded-xl bg-card overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>หมายเลข</TableHead>
+              <TableHead>ลูกค้า</TableHead>
+              <TableHead>จัดส่งโดย</TableHead>
+              <TableHead>วันที่</TableHead>
+              <TableHead className="text-right">ยอดรวม</TableHead>
+              <TableHead className="text-center">สถานะ</TableHead>
+              <TableHead className="w-[100px]" />
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {orders.map((order) => {
+              return (
+                <TableRow key={order.id}>
+                  <TableCell className="font-mono text-xs">#{order.orderNumber}</TableCell>
+                  <TableCell>
+                    <p className="font-medium text-foreground">{order.shippingName}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {order.guestPhone ?? order.shippingPhone ?? ""}
+                    </p>
+                    {order.user && (
+                      <p className="text-xs text-blue-600">{order.user.name ?? order.user.email}</p>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {order.isPickup ? (
+                      <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200 font-medium">
+                        🏪 รับที่ร้าน
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-sky-50 text-sky-700 border border-sky-200 font-medium">
+                        📦 จัดส่งพัสดุ
+                      </span>
+                    )}
+                  </TableCell>
+                  <TableCell className="text-muted-foreground text-xs">
+                    {new Date(order.createdAt).toLocaleDateString("th-TH")}
+                  </TableCell>
+                  <TableCell className="text-right font-medium text-foreground">฿{order.total.toLocaleString()}</TableCell>
+                  <TableCell className="text-center">
+                    <span className={`inline-flex items-center text-xs px-2.5 py-0.5 rounded-full font-medium border ${getStatusBadgeClass(order.status)}`}>{getStatusLabel(order.status)}</span>
+                    {order.paymentProofs.length > 0 && order.status === "PAYMENT_UPLOADED" && (
+                      <span className="ml-1 text-xs text-orange-500">• สลิปรอตรวจ</span>
+                    )}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Button asChild size="sm" variant="ghost">
+                      <Link href={`/admin/orders/${order.id}`}>ดูรายละเอียด</Link>
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
       </div>
 
       {/* Pagination */}
