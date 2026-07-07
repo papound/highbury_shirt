@@ -569,28 +569,31 @@ function buildOrderFlexMessage(data: {
       "color": "#0A2B5E"
     });
   } else {
-    if (data.hasVat) {
-      footerButtons.push({
-        "type": "button",
-        "action": {
-          "type": "postback",
-          "label": "โอนเงินธนาคาร (กสิกรไทย)",
-          "data": `action=kbank&orderNumber=${data.orderNumber || ""}&total=${data.total}`
-        },
-        "style": "primary",
-        "color": "#0A2B5E"
-      });
-    } else {
-      footerButtons.push({
-        "type": "button",
-        "action": {
-          "type": "postback",
-          "label": "สแกนชำระเงิน (PromptPay)",
-          "data": `action=pay&orderNumber=${data.orderNumber || ""}&total=${data.total}`
-        },
-        "style": "primary",
-        "color": "#0A2B5E"
-      });
+    const isPending = !data.status || data.status === "PENDING";
+    if (isPending) {
+      if (data.hasVat) {
+        footerButtons.push({
+          "type": "button",
+          "action": {
+            "type": "postback",
+            "label": "โอนเงินธนาคาร (กสิกรไทย)",
+            "data": `action=kbank&orderNumber=${data.orderNumber || ""}&total=${data.total}`
+          },
+          "style": "primary",
+          "color": "#0A2B5E"
+        });
+      } else {
+        footerButtons.push({
+          "type": "button",
+          "action": {
+            "type": "postback",
+            "label": "สแกนชำระเงิน (PromptPay)",
+            "data": `action=pay&orderNumber=${data.orderNumber || ""}&total=${data.total}`
+          },
+          "style": "primary",
+          "color": "#0A2B5E"
+        });
+      }
     }
   }
 
