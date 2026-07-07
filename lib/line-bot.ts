@@ -1,11 +1,10 @@
 import crypto from "crypto";
 import { prisma } from "./prisma";
 import { runChatbotTurn } from "./llm-agent";
-import { notifyAdminNewOrder } from "./line-notify"; // ใช้สำหรับการแจ้งเตือน admin
+import { notifyAdminNewOrder, notifyAdminUrgentHelp } from "./line-notify"; // ใช้สำหรับการแจ้งเตือน admin
 import { generatePromptPayPayload } from "./promptpay";
 
 const LINE_MESSAGING_API = "https://api.line.me/v2/bot/message/reply";
-const LINE_NOTIFY_API = "https://notify-api.line.me/api/notify";
 
 /**
  * ฟังก์ชันส่งข้อความตอบกลับไปยัง LINE OA API
@@ -41,24 +40,6 @@ async function replyToLine(replyToken: string, messages: any[]): Promise<void> {
   }
 }
 
-/**
- * ส่งแจ้งเตือนด่วนหาแอดมินตัวจริงผ่าน LINE Notify (กรณีลูกค้าอยากพบแอดมิน)
- */
-async function notifyAdminUrgentHelp(lineUserId: string, reason: string): Promise<void> {
-  const notifyToken = process.env.LINE_NOTIFY_TOKEN_ADMIN;
-  if (!notifyToken || notifyToken.includes("PLACEHOLDER")) return;
-
-  const msg = `\n🚨 ลูกค้าต้องการความช่วยเหลือด่วน!\nLINE ID: ${lineUserId}\nเหตุผล: ${reason}\n\nกรุณาเข้าจัดการในบอร์ดแอดมิน: ${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/admin/chats`;
-
-  await fetch(LINE_NOTIFY_API, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${notifyToken}`,
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: new URLSearchParams({ message: msg }).toString(),
-  });
-}
 
 /**
  * ฟังก์ชันหลักในการตรวจสอบความถูกต้องของลายเซ็น LINE Webhook
