@@ -3,6 +3,15 @@ import { getProductPlaceholderImage } from "@/lib/placeholders";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Plus, Pencil, Package, ImageIcon, Download, ChevronLeft, ChevronRight } from "lucide-react";
 import AdminProductImportDialog from "@/components/admin/product-import-dialog";
 import ProductClearButton from "@/components/admin/product-clear-button";
@@ -88,12 +97,12 @@ export default async function AdminProductsPage({ searchParams }: Props) {
           name="q"
           defaultValue={search}
           placeholder="ค้นหาชื่อ, SKU..."
-          className="h-9 rounded-md border border-input bg-white px-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-blue-500/30 w-56"
+          className="flex h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 w-56"
         />
         <select
           name="categoryId"
           defaultValue={catFilter ?? "all"}
-          className="h-9 rounded-md border border-input bg-white px-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-blue-500/30"
+          className="flex h-9 items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
         >
           <option value="all">ทุกหมวดหมู่</option>
           {categories.map((cat) => (
@@ -108,98 +117,96 @@ export default async function AdminProductsPage({ searchParams }: Props) {
         )}
       </form>
 
-      <Card className="border-none shadow-sm bg-white border border-slate-100 overflow-hidden">
+      <Card className="border shadow-sm bg-card overflow-hidden">
         <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b bg-slate-50/50 text-xs uppercase tracking-wider text-slate-500">
-                  <th className="text-left px-6 py-4 font-semibold">สินค้า</th>
-                  <th className="text-left px-6 py-4 font-semibold hidden md:table-cell">หมวดหมู่</th>
-                  <th className="text-right px-6 py-4 font-semibold">ราคา</th>
-                  <th className="text-center px-6 py-4 font-semibold">Variants</th>
-                  <th className="text-center px-6 py-4 font-semibold">สถานะ</th>
-                  <th className="w-20 px-6 py-4" />
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {products.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="px-6 py-12 text-center text-slate-500">
-                      <div className="flex flex-col items-center justify-center">
-                        <Package className="w-12 h-12 text-slate-300 mb-3" />
-                        <p className="text-sm font-medium">ไม่พบสินค้า</p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {search ? `ไม่มีสินค้าที่ตรงกับ "${search}"` : "เริ่มเพิ่มสินค้าชิ้นแรกของคุณเพื่อเปิดการขาย"}
-                        </p>
-                      </div>
-                    </td>
-                  </tr>
-                ) : (
-                  products.map((product) => {
-                    const totalStock = product.variants.reduce(
-                      (sum, v) => sum + v.inventory.reduce((s, inv) => s + inv.quantity, 0),
-                      0
-                    );
-                    return (
-                      <tr key={product.id} className="hover:bg-slate-50/80 transition-colors group">
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-4">
-                            <div className="shrink-0 w-12 h-12 rounded-lg bg-slate-100 flex items-center justify-center border border-slate-200 overflow-hidden">
-                              {product.images[0] ? (
-                                // eslint-disable-next-line @next/next/no-img-element
-                                <img src={product.images[0].url} alt="" className="w-full h-full object-cover" />
-                              ) : (
-                                // eslint-disable-next-line @next/next/no-img-element
-                                <img src={getProductPlaceholderImage(product.slug)} alt="" className="w-full h-full object-cover" />
-                              )}
-                            </div>
-                            <div className="flex flex-col">
-                              <span className="font-semibold text-slate-900">{product.nameTh}</span>
-                              <span className="text-xs text-slate-500 mt-0.5">{product.name}</span>
-                              <span className="text-xs text-slate-400 mt-1">
-                                คลัง: <span className={totalStock > 0 ? "text-emerald-600 font-medium" : "text-rose-500 font-medium"}>{totalStock}</span> ชิ้น
-                              </span>
-                            </div>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>สินค้า</TableHead>
+                <TableHead className="hidden md:table-cell">หมวดหมู่</TableHead>
+                <TableHead className="text-right">ราคา</TableHead>
+                <TableHead className="text-center">Variants</TableHead>
+                <TableHead className="text-center">สถานะ</TableHead>
+                <TableHead className="w-20" />
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {products.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="h-24 text-center">
+                    <div className="flex flex-col items-center justify-center py-6">
+                      <Package className="w-12 h-12 text-muted-foreground/40 mb-3" />
+                      <p className="text-sm font-medium text-foreground">ไม่พบสินค้า</p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {search ? `ไม่มีสินค้าที่ตรงกับ "${search}"` : "เริ่มเพิ่มสินค้าชิ้นแรกของคุณเพื่อเปิดการขาย"}
+                      </p>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                products.map((product) => {
+                  const totalStock = product.variants.reduce(
+                    (sum, v) => sum + v.inventory.reduce((s, inv) => s + inv.quantity, 0),
+                    0
+                  );
+                  return (
+                    <TableRow key={product.id} className="group">
+                      <TableCell>
+                        <div className="flex items-center gap-4">
+                          <div className="shrink-0 w-12 h-12 rounded-lg bg-muted flex items-center justify-center border border-border/50 overflow-hidden">
+                            {product.images[0] ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img src={product.images[0].url} alt="" className="w-full h-full object-cover" />
+                            ) : (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img src={getProductPlaceholderImage(product.slug)} alt="" className="w-full h-full object-cover" />
+                            )}
                           </div>
-                        </td>
-                        <td className="px-6 py-4 text-slate-600 font-medium hidden md:table-cell">
-                          {product.category?.nameTh ?? <span className="text-slate-400 italic">-</span>}
-                        </td>
-                        <td className="px-6 py-4 text-right font-semibold text-slate-900">
-                          ฿{product.basePrice.toLocaleString()}
-                        </td>
-                        <td className="px-6 py-4 text-center">
-                          <span className="inline-flex items-center justify-center bg-slate-100 text-slate-600 text-xs font-semibold px-2 py-1 rounded-md">
-                            {product.variants.length} รายการ
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 text-center">
-                          <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${
-                            product.status === "ACTIVE"
-                              ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                              : product.status === "INACTIVE"
-                                ? "bg-amber-50 text-amber-700 border-amber-200"
-                                : "bg-slate-100 text-slate-700 border-slate-200"
-                          }`}>
-                            {product.status === "ACTIVE" ? "เปิดขาย" : product.status === "INACTIVE" ? "ปิดขาย" : "ซ่อนแล้ว"}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 text-right">
-                          <Button asChild variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100 transition-opacity h-8 px-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50">
-                            <Link href={`/admin/products/${product.id}`}>
-                              <Pencil className="w-4 h-4 mr-1.5" />
-                              <span className="text-xs font-medium">แก้ไข</span>
-                            </Link>
-                          </Button>
-                        </td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
+                          <div className="flex flex-col">
+                            <span className="font-semibold text-foreground">{product.nameTh}</span>
+                            <span className="text-xs text-muted-foreground mt-0.5">{product.name}</span>
+                            <span className="text-xs text-muted-foreground mt-1">
+                              คลัง: <span className={totalStock > 0 ? "text-emerald-600 font-medium" : "text-rose-500 font-medium"}>{totalStock}</span> ชิ้น
+                            </span>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground font-medium hidden md:table-cell">
+                        {product.category?.nameTh ?? <span className="text-muted-foreground/50 italic">-</span>}
+                      </TableCell>
+                      <TableCell className="text-right font-semibold text-foreground">
+                        ฿{product.basePrice.toLocaleString()}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <Badge variant="secondary">
+                          {product.variants.length} รายการ
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${
+                          product.status === "ACTIVE"
+                            ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                            : product.status === "INACTIVE"
+                              ? "bg-amber-50 text-amber-700 border-amber-200"
+                              : "bg-slate-100 text-slate-700 border-slate-200"
+                        }`}>
+                          {product.status === "ACTIVE" ? "เปิดขาย" : product.status === "INACTIVE" ? "ปิดขาย" : "ซ่อนแล้ว"}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button asChild variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100 transition-opacity h-8 px-2 text-blue-600 hover:text-blue-700">
+                          <Link href={`/admin/products/${product.id}`}>
+                            <Pencil className="w-4 h-4 mr-1.5" />
+                            <span className="text-xs font-medium">แก้ไข</span>
+                          </Link>
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
+              )}
+            </TableBody>
+          </Table>
 
           {/* Pagination */}
           {totalPages > 1 && (
