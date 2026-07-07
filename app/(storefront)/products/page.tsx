@@ -156,11 +156,11 @@ export default async function ProductsPage({ searchParams }: Props) {
                   return (
                     <Card
                       key={product.id}
-                      className="group overflow-hidden hover:shadow-lg transition-shadow"
+                      className="group overflow-hidden border border-border/50 bg-card/50 backdrop-blur-sm hover:bg-card hover:border-primary/20 hover:shadow-md transition-all duration-300 rounded-xl hover:-translate-y-0.5 flex flex-col h-full"
                     >
-                      <CardContent className="p-0">
-                        <Link href={`/products/${product.slug}`}>
-                          <div className="relative h-48 sm:h-52 md:h-56 overflow-hidden bg-gray-100">
+                      <CardContent className="p-0 flex-1 flex flex-col">
+                        <Link href={`/products/${product.slug}`} className="flex-1 flex flex-col">
+                          <div className="relative h-48 sm:h-52 md:h-56 overflow-hidden bg-muted/20">
                             {primaryImage ? (
                               <Image
                                 src={primaryImage.url}
@@ -174,7 +174,7 @@ export default async function ProductsPage({ searchParams }: Props) {
                                 src={getProductPlaceholderImage(product.slug)}
                                 alt={product.nameTh}
                                 fill
-                                className="object-contain p-2 bg-[#FAF6EE] group-hover:scale-105 transition-transform duration-300"
+                                className="object-contain p-2 bg-[#FAF6EE] dark:bg-[#1f2125] group-hover:scale-105 transition-transform duration-300"
                                 sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                               />
                             )}
@@ -184,14 +184,16 @@ export default async function ProductsPage({ searchParams }: Props) {
                               </Badge>
                             )}
                           </div>
-                          <div className="p-3">
-                            <p className="text-xs text-muted-foreground mb-0.5">
-                              {product.category.nameTh}
-                            </p>
-                            <h3 className="font-medium text-sm leading-tight line-clamp-2">
-                              {product.nameTh}
-                            </h3>
-                            <div className="flex flex-wrap gap-1.5 mt-2">
+                          <div className="p-3 flex-1 flex flex-col justify-between">
+                            <div>
+                              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">
+                                {product.category.nameTh}
+                              </p>
+                              <h3 className="font-semibold text-sm leading-snug text-foreground line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                {product.nameTh}
+                              </h3>
+                            </div>
+                            <div className="flex flex-wrap gap-1.5 mt-3">
                               {colors.slice(0, 4).map((c) => {
                                 const isOthers = c.trim().toLowerCase() === "others";
                                 const bgHex = getColorHex(c);
@@ -223,7 +225,7 @@ export default async function ProductsPage({ searchParams }: Props) {
                         </Link>
                       </CardContent>
                       <CardFooter className="p-3 pt-0 flex items-center justify-between">
-                        <span className="font-semibold text-primary text-sm">
+                        <span className="font-bold text-blue-600 dark:text-blue-400 text-base">
                           {minPrice === maxPrice
                             ? `฿${minPrice.toLocaleString()}`
                             : `฿${minPrice.toLocaleString()}+`}
@@ -231,7 +233,7 @@ export default async function ProductsPage({ searchParams }: Props) {
                         <Button 
                           size="sm" 
                           asChild
-                          className="bg-gradient-to-r from-[#0A2B5E] to-[#1A6CC8] hover:from-[#1A6CC8] hover:to-[#0A2B5E] text-white font-semibold text-xs px-4.5 py-1.5 rounded-lg shadow-sm hover:shadow-[0_4px_12px_rgba(26,108,200,0.2)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 border-0 cursor-pointer"
+                          className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold text-xs px-4 py-2 rounded-lg shadow-sm hover:shadow-[0_4px_12px_rgba(59,130,246,0.25)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 border-0 cursor-pointer"
                         >
                           <Link href={`/products/${product.slug}`}>เลือกสินค้า</Link>
                         </Button>
