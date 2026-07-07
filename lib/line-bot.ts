@@ -158,6 +158,73 @@ export async function handleLineEvent(event: any): Promise<void> {
   }
 
   // 2. จัดการแชทตามประเภทเหตุการณ์ (Event Types)
+  if (event.type === "postback") {
+    const postbackData = event.postback?.data || "";
+    // ใช้ URL เสมือนในการแยกวิเคราะห์ query string
+    const urlParams = new URL(postbackData.includes("?") ? postbackData : `?${postbackData}`, "http://localhost");
+    const action = urlParams.searchParams.get("action");
+    
+    if (action === "pay") {
+      const orderNumber = urlParams.searchParams.get("orderNumber") || "";
+      const totalStr = urlParams.searchParams.get("total") || "0";
+      const amountVal = parseFloat(totalStr);
+      
+      console.log(`[LINE BOT] Received payment postback for order ${orderNumber}, amount: ${amountVal}`);
+      
+      // บันทึก Log การคลิกปุ่มชำระเงินลงฐานข้อมูลเป็น CUSTOMER action เพื่อให้แอดมินเห็นในระบบหลังบ้าน
+      await prisma.chatMessage.create({
+        data: {
+          sessionId: session.id,
+          sender: "CUSTOMER",
+          messageType: "text",
+          content: `[กดปุ่มสแกนชำระเงินสำหรับออเดอร์ #${orderNumber} ยอดรวม ฿${amountVal.toLocaleString()}]`,
+        },
+      });
+
+      // สร้าง QR Payload
+      const qrData = generatePromptPayPayload(amountVal);
+      let qrAmount = "";
+      const amountMatch = qrData.match(/54(\d{2})(\d+(\.\d{2})?)/);
+      if (amountMatch) {
+        const len = parseInt(amountMatch[1], 10);
+        const val = amountMatch[2];
+        if (val.length === len) {
+          qrAmount = val;
+        }
+      }
+      
+      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+      const cleanBaseUrl = baseUrl.replace(/\/$/, "");
+      const qrImageUrl = `${cleanBaseUrl}/api/promptpay-card?qr=${encodeURIComponent(qrData)}&amount=${qrAmount}&phone=${process.env.PROMPTPAY_ID || "0981466416"}&name=${encodeURIComponent(process.env.PROMPTPAY_NAME || "")}`;
+      
+      const replyMsg = `กรุณาสแกน QR Code ด้านล่างนี้เพื่อชำระเงินจำนวน ฿${amountVal.toLocaleString()} สำหรับออเดอร์หมายเลข #${orderNumber} ค่ะ`;
+
+      // บันทึก Log การส่งการ์ด QR บอทตอบกลับ
+      await prisma.chatMessage.create({
+        data: {
+          sessionId: session.id,
+          sender: "BOT",
+          messageType: "text",
+          content: `${replyMsg} (ส่ง QR Code การ์ดภาพ)`,
+        },
+      });
+
+      // ส่งตอบกลับ LINE (ข้อความ + การ์ด QR ภาพพร้อมเพย์)
+      await replyToLine(event.replyToken, [
+        {
+          type: "text",
+          text: replyMsg
+        },
+        {
+          type: "image",
+          originalContentUrl: qrImageUrl,
+          previewImageUrl: qrImageUrl,
+        }
+      ]);
+    }
+    return;
+  }
+
   if (event.type === "follow") {
     // ส่งข้อความต้อนรับ
     const welcomeMsg = "สวัสดีครับ ยินดีต้อนรับสู่แบรนด์เสื้อเชิ้ตสำเร็จรูป Highbury International ครับ 🎉\n\nผมคือ น้องไฮบิวรี่ ผู้ช่วยส่วนตัวของคุณ กำลังมองหาเสื้อเชิ้ตไซส์ไหน สีอะไร หรือต้องการดูโปรโมชั่นพิเศษอยู่ สามารถพิมพ์คุยกับผมได้เลยนะครับ!";

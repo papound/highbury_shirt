@@ -496,13 +496,12 @@ function buildOrderFlexMessage(data: {
       "color": "#0A2B5E"
     });
   } else {
-    const promptpayId = process.env.PROMPTPAY_ID || "0981466416";
     footerButtons.push({
       "type": "button",
       "action": {
-        "type": "uri",
+        "type": "postback",
         "label": "สแกนชำระเงิน (PromptPay)",
-        "uri": `https://promptpay.io/${promptpayId}/${data.total.toFixed(2)}.png`
+        "data": `action=pay&orderNumber=${data.orderNumber || ""}&total=${data.total}`
       },
       "style": "primary",
       "color": "#0A2B5E"
