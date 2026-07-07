@@ -399,14 +399,33 @@ export async function handleLineEvent(event: any): Promise<void> {
     }
 
     if (botResult.flexMessage) {
-      // หากมี Flex Message สรุปยอด/พรีวิวออเดอร์ ให้ส่ง Flex Message คู่กับ QR Card (ถ้ามี) โดยไม่ส่งข้อความ Text ซ้ำซ้อน
+      // หากมี Flex Message สรุปยอด/พรีวิวออเดอร์ ให้ส่ง Flex Message คู่กับภาพชำระเงิน (ถ้าสรุปออเดอร์แล้ว) โดยไม่ส่งข้อความ Text ซ้ำซ้อน
       messagesToSend.push(botResult.flexMessage);
-      if (qrImageUrl) {
-        messagesToSend.push({
-          type: "image",
-          originalContentUrl: qrImageUrl,
-          previewImageUrl: qrImageUrl,
-        });
+      
+      const hasPaymentButton = botResult.flexMessage.contents?.footer?.contents?.some(
+        (btn: any) => btn.action?.data?.includes("action=pay") || btn.action?.data?.includes("action=kbank")
+      );
+      
+      if (hasPaymentButton) {
+        if (botResult.hasVat) {
+          // หากเป็นบิล VAT ไม่ต้อง gen qr card ให้ส่งภาพบัญชีกสิกรไทยแทน
+          const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+          const cleanBaseUrl = baseUrl.replace(/\/$/, "");
+          const kbankImageUrl = `${cleanBaseUrl}/images/kbank-payment.jpg`;
+          
+          messagesToSend.push({
+            type: "image",
+            originalContentUrl: kbankImageUrl,
+            previewImageUrl: kbankImageUrl,
+          });
+        } else if (qrImageUrl) {
+          // ออเดอร์ปกติ: ส่งการ์ด QR code พร้อมเพย์
+          messagesToSend.push({
+            type: "image",
+            originalContentUrl: qrImageUrl,
+            previewImageUrl: qrImageUrl,
+          });
+        }
       }
     } else {
       if (cleanedText) {

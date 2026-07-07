@@ -791,10 +791,11 @@ export async function runChatbotTurn(
   userMessage: string,
   chatHistory: ChatMessageParam[],
   imagePart?: { inlineData: { data: string; mimeType: string } }
-): Promise<{ text: string; requiresAdmin: boolean; qrPayload?: string; flexMessage?: any }> {
+): Promise<{ text: string; requiresAdmin: boolean; qrPayload?: string; flexMessage?: any; hasVat?: boolean }> {
   let requiresAdmin = false;
   let qrPayload: string | undefined = undefined;
   let flexMessage: any = undefined;
+  let hasVat = false;
   let totalPromptTokens = 0;
   let totalCompletionTokens = 0;
   let apiCallsCount = 0;
@@ -909,6 +910,9 @@ export async function runChatbotTurn(
               });
               functionResult = orderResult;
               qrPayload = orderResult.qrPayload;
+              if (orderResult && (call.args as any).vatInfo) {
+                hasVat = true;
+              }
 
               // สร้าง Flex Message สำหรับออเดอร์ใหม่
               try {
@@ -953,6 +957,9 @@ export async function runChatbotTurn(
               functionResult = orderDetailsResult;
 
               if (orderDetailsResult.success) {
+                if ((orderDetailsResult as any).note?.includes("[ขอใบกำกับภาษีเต็มรูปแบบ]")) {
+                  hasVat = true;
+                }
                 try {
                   flexMessage = buildOrderFlexMessage({
                     isPreview: false,
@@ -979,6 +986,9 @@ export async function runChatbotTurn(
                 call.args as any
               );
               functionResult = previewResult;
+              if (previewResult.success && (call.args as any).vatInfo) {
+                hasVat = true;
+              }
 
               // สร้าง Flex Message สำหรับพรีวิว
               try {
@@ -1098,6 +1108,7 @@ export async function runChatbotTurn(
       requiresAdmin,
       qrPayload,
       flexMessage,
+      hasVat,
     };
   } catch (error) {
     console.error("[Gemini RunChatbotTurn Error]:", error);
