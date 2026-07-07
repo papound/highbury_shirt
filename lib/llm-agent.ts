@@ -324,6 +324,11 @@ function buildOrderFlexMessage(data: {
   customerAddress?: string;
   status?: string;
   hasVat?: boolean;
+  vatInfo?: {
+    name: string;
+    taxId: string;
+    address: string;
+  };
 }) {
   let statusText = "รอการชำระเงิน";
   let statusColor = "#D97706";
@@ -777,6 +782,99 @@ function buildOrderFlexMessage(data: {
         "margin": "lg"
       }
     );
+  }
+
+  if (data.hasVat) {
+    // 1. ข้อมูลผู้รับสิทธิ์จัดทำใบกำกับภาษีของร้านค้า (Seller VAT Info)
+    bubble.body.contents.push(
+      {
+        "type": "separator",
+        "margin": "lg"
+      },
+      {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "text",
+            "text": "ผู้ออกใบกำกับภาษี",
+            "weight": "bold",
+            "size": "sm",
+            "color": "#0A2B5E"
+          },
+          {
+            "type": "text",
+            "text": "บริษัท ธงธัญ99 จำกัด (สำนักงานใหญ่)",
+            "size": "xs",
+            "color": "#334155",
+            "margin": "sm",
+            "weight": "bold"
+          },
+          {
+            "type": "text",
+            "text": "เลขประจำตัวผู้เสียภาษี: 0105558016255",
+            "size": "xs",
+            "color": "#334155",
+            "margin": "xs"
+          },
+          {
+            "type": "text",
+            "text": "9 ซอยพระรามที่ 2 ซอย 51 แยก 3 แขวงท่าข้าม เขตบางขุนเทียน กรุงเทพฯ 10150",
+            "size": "xs",
+            "color": "#64748B",
+            "wrap": true,
+            "margin": "xs"
+          }
+        ],
+        "margin": "lg"
+      }
+    );
+
+    // 2. ข้อมูลใบกำกับภาษีของลูกค้า (Customer VAT Info)
+    if (data.vatInfo) {
+      bubble.body.contents.push(
+        {
+          "type": "separator",
+          "margin": "lg"
+        },
+        {
+          "type": "box",
+          "layout": "vertical",
+          "contents": [
+            {
+              "type": "text",
+              "text": "ข้อมูลใบกำกับภาษีลูกค้า",
+              "weight": "bold",
+              "size": "sm",
+              "color": "#0A2B5E"
+            },
+            {
+              "type": "text",
+              "text": `ชื่อ/บริษัท: ${data.vatInfo.name}`,
+              "size": "xs",
+              "color": "#334155",
+              "margin": "sm"
+            },
+            {
+              "type": "text",
+              "text": `เลขผู้เสียภาษี: ${data.vatInfo.taxId}`,
+              "size": "xs",
+              "color": "#334155",
+              "margin": "xs"
+            },
+            {
+              "type": "text",
+              "text": `ที่อยู่: ${data.vatInfo.address}`,
+              "size": "xs",
+              "color": "#64748B",
+              "wrap": true,
+              "margin": "xs"
+            }
+          ],
+          "margin": "lg"
+        }
+      );
+    }
   }
 
   return {
