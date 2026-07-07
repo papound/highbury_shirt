@@ -802,51 +802,6 @@ function buildOrderFlexMessage(data: {
     }
   };
 
-  if (data.customerName) {
-    bubble.body.contents.push(
-      {
-        "type": "separator",
-        "margin": "lg"
-      },
-      {
-        "type": "box",
-        "layout": "vertical",
-        "contents": [
-          {
-            "type": "text",
-            "text": "ข้อมูลจัดส่ง",
-            "weight": "bold",
-            "size": "sm",
-            "color": "#0A2B5E"
-          },
-          {
-            "type": "text",
-            "text": `คุณ ${data.customerName}`,
-            "size": "xs",
-            "color": "#334155",
-            "margin": "sm"
-          },
-          {
-            "type": "text",
-            "text": `โทร: ${data.customerPhone}`,
-            "size": "xs",
-            "color": "#334155",
-            "margin": "xs"
-          },
-          {
-            "type": "text",
-            "text": data.customerAddress || "",
-            "size": "xs",
-            "color": "#64748B",
-            "wrap": true,
-            "margin": "xs"
-          }
-        ],
-        "margin": "lg"
-      }
-    );
-  }
-
   if (data.hasVat) {
     // ข้อมูลใบกำกับภาษีของลูกค้า (Customer VAT Info) - แยกจากข้อมูลจัดส่ง
     if (data.vatInfo) {
@@ -893,6 +848,51 @@ function buildOrderFlexMessage(data: {
         }
       );
     }
+  }
+
+  if (data.customerName) {
+    bubble.body.contents.push(
+      {
+        "type": "separator",
+        "margin": "lg"
+      },
+      {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "text",
+            "text": "ข้อมูลจัดส่ง",
+            "weight": "bold",
+            "size": "sm",
+            "color": "#0A2B5E"
+          },
+          {
+            "type": "text",
+            "text": `คุณ ${data.customerName}`,
+            "size": "xs",
+            "color": "#334155",
+            "margin": "sm"
+          },
+          {
+            "type": "text",
+            "text": `โทร: ${data.customerPhone}`,
+            "size": "xs",
+            "color": "#334155",
+            "margin": "xs"
+          },
+          {
+            "type": "text",
+            "text": data.customerAddress || "",
+            "size": "xs",
+            "color": "#64748B",
+            "wrap": true,
+            "margin": "xs"
+          }
+        ],
+        "margin": "lg"
+      }
+    );
   }
 
   return {
