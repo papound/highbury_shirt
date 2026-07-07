@@ -13,14 +13,17 @@ export default function AdminReportsChart({ data }: Props) {
     <ResponsiveContainer width="100%" height={240}>
       <BarChart data={data} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
         <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-        <XAxis dataKey="month" tick={{ fontSize: 12 }} tickLine={false} axisLine={false} />
+        <XAxis dataKey="month" tick={{ fill: 'var(--muted-foreground)', fontSize: 12 }} tickLine={false} axisLine={false} />
         <YAxis
-          tick={{ fontSize: 12 }}
+          tick={{ fill: 'var(--muted-foreground)', fontSize: 12 }}
           tickLine={false}
           axisLine={false}
           tickFormatter={(v) => `฿${(v / 1000).toFixed(0)}k`}
         />
-        <Tooltip formatter={(v) => [`฿${Number(v).toLocaleString()}`, "ยอดขาย"]} />
+        <Tooltip
+          formatter={(v) => [`฿${Number(v).toLocaleString()}`, "ยอดขาย"]}
+          contentStyle={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)', color: 'var(--foreground)' }}
+        />
         <Bar dataKey="revenue" fill="#3b82f6" radius={[4, 4, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
