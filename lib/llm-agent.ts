@@ -983,10 +983,10 @@ function buildOrdersCarouselFlexMessage(orders: any[]) {
             ],
             "backgroundColor": statusBg,
             "cornerRadius": "sm",
-            "paddingStart": "sm",
-            "paddingEnd": "sm",
-            "paddingTop": "xxs",
-            "paddingBottom": "xxs",
+            "paddingStart": "8px",
+            "paddingEnd": "8px",
+            "paddingTop": "2px",
+            "paddingBottom": "2px",
             "margin": "xs",
             "alignItems": "center"
           }
