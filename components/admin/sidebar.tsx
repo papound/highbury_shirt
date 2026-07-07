@@ -42,7 +42,7 @@ export default function AdminSidebar({ role, name, email }: AdminSidebarProps) {
         {/* Logo */}
         <div className="px-6 py-5 border-b border-sidebar-border/50 flex items-center justify-between">
           <div>
-            <Link href="/admin/dashboard" className="font-bold text-xl tracking-tight text-white flex items-center gap-2">
+            <Link href="/admin/dashboard" className="font-bold text-xl tracking-tight text-sidebar-foreground flex items-center gap-2">
               <div className="bg-brand-blue w-8 h-8 rounded-md flex items-center justify-center bg-blue-600 text-white shadow-sm">
                 H
               </div>

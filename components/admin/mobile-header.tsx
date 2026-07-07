@@ -49,7 +49,7 @@ export default function MobileHeader({ role, name, email }: MobileHeaderProps) {
               <Link
                 href="/admin/dashboard"
                 onClick={() => setOpen(false)}
-                className="font-bold text-xl tracking-tight text-white flex items-center gap-2"
+                className="font-bold text-xl tracking-tight text-sidebar-foreground flex items-center gap-2"
               >
                 <div className="bg-brand-blue w-8 h-8 rounded-md flex items-center justify-center bg-blue-600 text-white shadow-sm">
                   H
@@ -170,7 +170,7 @@ export default function MobileHeader({ role, name, email }: MobileHeaderProps) {
         </SheetContent>
       </Sheet>
 
-      <Link href="/admin/dashboard" className="font-bold text-white tracking-tight flex items-center gap-2">
+      <Link href="/admin/dashboard" className="font-bold text-sidebar-foreground tracking-tight flex items-center gap-2">
         <div className="bg-brand-blue w-6 h-6 rounded-md flex items-center justify-center bg-blue-600 text-white shadow-sm text-xs">
           H
         </div>
