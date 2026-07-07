@@ -115,22 +115,32 @@ export default async function AdminInventoryPage({ searchParams }: Props) {
       {/* Filters */}
       <form method="GET" action="/admin/inventory" className="flex flex-wrap gap-2 items-end mb-2">
         <div>
-          <label className="block text-xs mb-1">ค้นหา</label>
+          <label className="block text-xs font-medium text-muted-foreground mb-1">ค้นหา</label>
           <input
             key={`q-${search}`}
             name="q"
             defaultValue={search}
             placeholder="ชื่อสินค้า, คลัง..."
-            className="h-9 rounded-md border border-input bg-white px-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-blue-500/30"
+            className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
           />
         </div>
         <div>
-          <label className="block text-xs mb-1">SKU</label>
-          <input key={`sku-${sku}`} name="sku" defaultValue={sku} className="h-9 rounded-md border border-input bg-white px-3 text-sm shadow-sm" />
+          <label className="block text-xs font-medium text-muted-foreground mb-1">SKU</label>
+          <input
+            key={`sku-${sku}`}
+            name="sku"
+            defaultValue={sku}
+            className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+          />
         </div>
         <div>
-          <label className="block text-xs mb-1">สี</label>
-          <select key={`color-${color}`} name="color" defaultValue={color || ""} className="h-9 rounded-md border border-input bg-white px-3 text-sm shadow-sm">
+          <label className="block text-xs font-medium text-muted-foreground mb-1">สี</label>
+          <select
+            key={`color-${color}`}
+            name="color"
+            defaultValue={color || ""}
+            className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+          >
             <option value="">ทั้งหมด</option>
             {allColors.map((c) => {
               const code = thaiToCode[c];
@@ -142,8 +152,13 @@ export default async function AdminInventoryPage({ searchParams }: Props) {
           </select>
         </div>
         <div>
-          <label className="block text-xs mb-1">ไซส์</label>
-          <select key={`size-${size}`} name="size" defaultValue={size || ""} className="h-9 rounded-md border border-input bg-white px-3 text-sm shadow-sm">
+          <label className="block text-xs font-medium text-muted-foreground mb-1">ไซส์</label>
+          <select
+            key={`size-${size}`}
+            name="size"
+            defaultValue={size || ""}
+            className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+          >
             <option value="">ทั้งหมด</option>
             {allSizes.map((s) => (
               <option key={s} value={s}>{s}</option>
@@ -151,8 +166,13 @@ export default async function AdminInventoryPage({ searchParams }: Props) {
           </select>
         </div>
         <div>
-          <label className="block text-xs mb-1">หมวดหมู่</label>
-          <select key={`cat-${categoryId}`} name="categoryId" defaultValue={categoryId || ""} className="h-9 rounded-md border border-input bg-white px-3 text-sm shadow-sm">
+          <label className="block text-xs font-medium text-muted-foreground mb-1">หมวดหมู่</label>
+          <select
+            key={`cat-${categoryId}`}
+            name="categoryId"
+            defaultValue={categoryId || ""}
+            className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+          >
             <option value="">ทั้งหมด</option>
             {categories.map((cat) => (
               <option key={cat.id} value={cat.id}>{cat.nameTh}</option>
@@ -160,8 +180,13 @@ export default async function AdminInventoryPage({ searchParams }: Props) {
           </select>
         </div>
         <div>
-          <label className="block text-xs mb-1">คลังสินค้า</label>
-          <select key={`wh-${warehouseId}`} name="warehouseId" defaultValue={warehouseId || ""} className="h-9 rounded-md border border-input bg-white px-3 text-sm shadow-sm">
+          <label className="block text-xs font-medium text-muted-foreground mb-1">คลังสินค้า</label>
+          <select
+            key={`wh-${warehouseId}`}
+            name="warehouseId"
+            defaultValue={warehouseId || ""}
+            className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+          >
             <option value="">ทั้งหมด</option>
             {warehouses.map((wh) => (
               <option key={wh.id} value={wh.id}>{wh.name}</option>
@@ -169,12 +194,24 @@ export default async function AdminInventoryPage({ searchParams }: Props) {
           </select>
         </div>
         <div>
-          <label className="block text-xs mb-1">จำนวน (ต่ำสุด)</label>
-          <input key={`minQty-${minQty}`} name="minQty" type="number" defaultValue={minQty} className="h-9 w-20 rounded-md border border-input bg-white px-3 text-sm shadow-sm" />
+          <label className="block text-xs font-medium text-muted-foreground mb-1">จำนวน (ต่ำสุด)</label>
+          <input
+            key={`minQty-${minQty}`}
+            name="minQty"
+            type="number"
+            defaultValue={minQty}
+            className="flex h-9 w-20 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+          />
         </div>
         <div>
-          <label className="block text-xs mb-1">จำนวน (สูงสุด)</label>
-          <input key={`maxQty-${maxQty}`} name="maxQty" type="number" defaultValue={maxQty} className="h-9 w-20 rounded-md border border-input bg-white px-3 text-sm shadow-sm" />
+          <label className="block text-xs font-medium text-muted-foreground mb-1">จำนวน (สูงสุด)</label>
+          <input
+            key={`maxQty-${maxQty}`}
+            name="maxQty"
+            type="number"
+            defaultValue={maxQty}
+            className="flex h-9 w-20 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+          />
         </div>
         <Button type="submit" size="sm" variant="outline" className="shadow-sm">ค้นหา</Button>
         <Button asChild size="sm" variant="ghost">

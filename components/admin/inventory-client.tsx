@@ -5,6 +5,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 type GroupBy = "none" | "name" | "size" | "warehouse";
 
@@ -67,27 +75,27 @@ export default function AdminInventoryClient({ inventory, warehouses }: { invent
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function renderRow(inv: any) {
     return (
-      <tr key={inv.id} className="border-b hover:bg-muted/20">
-        <td className="px-4 py-3">
-          <p className="font-medium">{inv.variant.product.nameTh}</p>
+      <TableRow key={inv.id}>
+        <TableCell>
+          <p className="font-medium text-foreground">{inv.variant.product.nameTh}</p>
           <p className="text-xs text-muted-foreground">{inv.variant.sku}</p>
-        </td>
-        <td className="px-4 py-3">
+        </TableCell>
+        <TableCell>
           <div className="flex items-center gap-2">
             <span
-              className="w-4 h-4 rounded-full border"
+              className="w-4 h-4 rounded-full border border-border/50"
               style={{ backgroundColor: inv.variant.colorHex }}
             />
             <span>{inv.variant.color} / {inv.variant.size}</span>
           </div>
-        </td>
-        <td className="px-4 py-3 text-muted-foreground">{inv.warehouse.name}</td>
-        <td className="px-4 py-3 text-center">
+        </TableCell>
+        <TableCell className="text-muted-foreground">{inv.warehouse.name}</TableCell>
+        <TableCell className="text-center">
           <Badge variant={inv.quantity <= 5 ? "destructive" : inv.quantity <= 20 ? "outline" : "secondary"}>
             {inv.quantity}
           </Badge>
-        </td>
-        <td className="px-4 py-3 text-right">
+        </TableCell>
+        <TableCell className="text-right">
           {adjustingId === inv.id ? (
             <div className="flex items-center gap-2 justify-end">
               <Input
@@ -115,8 +123,8 @@ export default function AdminInventoryClient({ inventory, warehouses }: { invent
               ปรับ Stock
             </Button>
           )}
-        </td>
-      </tr>
+        </TableCell>
+      </TableRow>
     );
   }
 
@@ -140,35 +148,37 @@ export default function AdminInventoryClient({ inventory, warehouses }: { invent
         </div>
       </div>
 
-      <div className="border rounded-xl overflow-hidden bg-card">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b bg-muted/40">
-                <th className="text-left px-4 py-3 font-medium text-muted-foreground">สินค้า</th>
-                <th className="text-left px-4 py-3 font-medium text-muted-foreground">สี / ขนาด</th>
-                <th className="text-left px-4 py-3 font-medium text-muted-foreground">คลัง</th>
-                <th className="text-center px-4 py-3 font-medium text-muted-foreground">Stock</th>
-                <th className="px-4 py-3" />
-              </tr>
-            </thead>
-            {groupBy === "none"
-              ? <tbody>{inventory.map(renderRow)}</tbody>
-              : groups.map(({ key, items }) => (
-                  <tbody key={`group-${key}`}>
-                    <tr className="bg-muted/50 border-b">
-                      <td colSpan={5} className="px-4 py-2 font-semibold text-sm text-foreground">
-                        {key}
-                        <span className="ml-2 text-xs font-normal text-muted-foreground">
-                          ({items.length} รายการ)
-                        </span>
-                      </td>
-                    </tr>
-                    {items.map(renderRow)}
-                  </tbody>
-                ))}
-          </table>
-        </div>
+      <div className="border rounded-xl bg-card overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>สินค้า</TableHead>
+              <TableHead>สี / ขนาด</TableHead>
+              <TableHead>คลัง</TableHead>
+              <TableHead className="text-center">Stock</TableHead>
+              <TableHead className="w-[100px]" />
+            </TableRow>
+          </TableHeader>
+          {groupBy === "none" ? (
+            <TableBody>
+              {inventory.map(renderRow)}
+            </TableBody>
+          ) : (
+            groups.map(({ key, items }) => (
+              <TableBody key={`group-${key}`}>
+                <TableRow className="bg-muted/30 hover:bg-muted/30">
+                  <TableCell colSpan={5} className="font-semibold text-sm text-foreground py-2">
+                    {key}
+                    <span className="ml-2 text-xs font-normal text-muted-foreground">
+                      ({items.length} รายการ)
+                    </span>
+                  </TableCell>
+                </TableRow>
+                {items.map(renderRow)}
+              </TableBody>
+            ))
+          )}
+        </Table>
       </div>
     </div>
   );
