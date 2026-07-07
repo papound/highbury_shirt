@@ -286,20 +286,20 @@ export async function handleLineEvent(event: any): Promise<void> {
         .trim();
     }
 
-    if (cleanedText) {
-      messagesToSend.push({ type: "text", text: cleanedText });
-    }
-
     if (botResult.flexMessage) {
+      // หากมี Flex Message สรุปยอด/พรีวิวออเดอร์ ให้ส่งเพียง Flex Message ใบเดียวเท่านั้น
       messagesToSend.push(botResult.flexMessage);
-    }
-
-    if (qrImageUrl) {
-      messagesToSend.push({
-        type: "image",
-        originalContentUrl: qrImageUrl,
-        previewImageUrl: qrImageUrl,
-      });
+    } else {
+      if (cleanedText) {
+        messagesToSend.push({ type: "text", text: cleanedText });
+      }
+      if (qrImageUrl) {
+        messagesToSend.push({
+          type: "image",
+          originalContentUrl: qrImageUrl,
+          previewImageUrl: qrImageUrl,
+        });
+      }
     }
 
     if (messagesToSend.length === 0) {
