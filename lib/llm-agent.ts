@@ -308,6 +308,24 @@ async function generateContentWithRetry(model: any, options: any, maxRetries = 3
 }
 
 /**
+ * ดึงข้อมูลใบกำกับภาษีของลูกค้าจากโน้ตที่เก็บในฐานข้อมูล
+ */
+function parseVatInfoFromNote(noteText?: string | null) {
+  if (!noteText || !noteText.includes("[ขอใบกำกับภาษีเต็มรูปแบบ]")) return undefined;
+  const nameMatch = noteText.match(/ชื่อ\/บริษัท:\s*([^\n]+)/);
+  const taxIdMatch = noteText.match(/เลขประจำตัวผู้เสียภาษี:\s*([^\n]+)/);
+  const addrMatch = noteText.match(/ที่อยู่:\s*([\s\S]+)/);
+  if (nameMatch && taxIdMatch && addrMatch) {
+    return {
+      name: nameMatch[1].trim(),
+      taxId: taxIdMatch[1].trim(),
+      address: addrMatch[1].trim(),
+    };
+  }
+  return undefined;
+}
+
+/**
  * ฟังก์ชันสร้าง Flex Message สำหรับแสดงใบสรุปรายการหรือพรีวิวออเดอร์ของลูกค้า
  */
 function buildOrderFlexMessage(data: {
@@ -1030,6 +1048,7 @@ export async function runChatbotTurn(
                   customerPhone: orderResult.customerPhone,
                   customerAddress: orderResult.customerAddress,
                   hasVat: !!(call.args as any).vatInfo,
+                  vatInfo: (call.args as any).vatInfo,
                 });
               } catch (flexErr) {
                 console.error("[Flex Message Error createPendingOrder]:", flexErr);
@@ -1076,6 +1095,7 @@ export async function runChatbotTurn(
                     customerAddress: orderDetailsResult.shippingAddress,
                     status: orderDetailsResult.status,
                     hasVat: (orderDetailsResult as any).note?.includes("[ขอใบกำกับภาษีเต็มรูปแบบ]") ?? false,
+                    vatInfo: parseVatInfoFromNote((orderDetailsResult as any).note),
                   });
                 } catch (flexErr) {
                   console.error("[Flex Message Error getOrderDetails]:", flexErr);
@@ -1101,6 +1121,7 @@ export async function runChatbotTurn(
                   shippingFee: previewResult.shippingFee,
                   total: previewResult.total,
                   hasVat: !!(call.args as any).vatInfo,
+                  vatInfo: (call.args as any).vatInfo,
                 });
               } catch (flexErr) {
                 console.error("[Flex Message Error previewOrder]:", flexErr);
@@ -1225,6 +1246,7 @@ export async function runChatbotTurn(
             customerAddress: orderDetailsResult.shippingAddress,
             status: orderDetailsResult.status,
             hasVat: (orderDetailsResult as any).note?.includes("[ขอใบกำกับภาษีเต็มรูปแบบ]") ?? false,
+            vatInfo: parseVatInfoFromNote((orderDetailsResult as any).note),
           });
           if ((orderDetailsResult as any).note?.includes("[ขอใบกำกับภาษีเต็มรูปแบบ]")) {
             hasVat = true;
