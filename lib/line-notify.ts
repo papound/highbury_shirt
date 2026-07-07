@@ -1,18 +1,22 @@
 const LINE_NOTIFY_API = "https://notify-api.line.me/api/notify";
 
 async function sendLineNotify(token: string, message: string): Promise<void> {
-  const body = new URLSearchParams({ message });
-  const res = await fetch(LINE_NOTIFY_API, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: body.toString(),
-  });
-  if (!res.ok) {
-    const text = await res.text();
-    console.error("[Line Notify] Error:", text);
+  try {
+    const body = new URLSearchParams({ message });
+    const res = await fetch(LINE_NOTIFY_API, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: body.toString(),
+    });
+    if (!res.ok) {
+      const text = await res.text();
+      console.error("[Line Notify] Error:", text);
+    }
+  } catch (err: any) {
+    console.error("[Line Notify] Network/DNS failure:", err.message || err);
   }
 }
 
