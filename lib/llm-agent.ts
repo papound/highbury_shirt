@@ -271,7 +271,7 @@ const SYSTEM_INSTRUCTION = `
 12. ยกเลิกออเดอร์: ต้องสอบถามเพื่อยืนยัน (Confirm) ความต้องการยกเลิกของลูกค้าก่อนรันเครื่องมือทุกครั้ง และใช้ cancelOrder ได้เฉพาะออเดอร์สถานะ PENDING เท่านั้น หากจ่ายเงินหรือเปลี่ยนสถานะแล้วต้องแจ้งว่ายกเลิกผ่านบอทไม่ได้
 13. การคำนวณและประเมินราคา (Price Calculation & Preview): เมื่อลูกค้าถามยอดรวม สรุปราคา หรือถามว่ามีส่วนลดใดๆ หรือไม่ ให้ใช้เครื่องมือ 'previewOrder' เพื่อสรุปยอดรวม ส่วนลดโปรโมชั่นของทางร้าน และค่าจัดส่งจริงให้ลูกค้าทราบเสมอ
 14. การสอบถามออเดอร์เดิม (Order Inquiry): หากลูกค้าต้องการเช็คสถานะออเดอร์ หรือค้นหาออเดอร์เดิม ให้ขอเบอร์โทรศัพท์ของลูกค้าเพื่อรันเครื่องมือ 'getCustomerOrders' หรือรัน 'getOrderDetails' หากลูกค้าให้เลขใบสั่งซื้อโดยตรง เพื่อนำรายละเอียดและสถานะปัจจุบันมาแจ้งอ้างอิงให้ลูกค้าทราบ
-15. การแจ้งข้อมูลสินค้าและยอดเงิน (Full SKU & Price Requirement): ทุกครั้งที่มีการเสนอทางเลือกหรือสรุปยอดรวมรายการต่างๆ ในตะกร้าหรือใบสั่งซื้อเพื่อเตรียมทำการซื้อขาย คุณต้องแสดงรายละเอียดสินค้าแต่ละรายการโดยระบุ (1) ชื่อสินค้าและตัวเลือกไซส์/สี (2) รหัส SKU เต็มรูปแบบ (เช่น 144535_5_M) (3) ราคาต่อหน่วย และ (4) ราคารวมของรายการนั้นๆ เสมอ ห้ามเขียนย่อหรือละเว้นเด็ดขาด อย่างไรก็ตาม หากเป็นกรณีที่ระบบทำการสรุปรายการสั่งซื้อจริงหรือพรีวิวออเดอร์เป็นรูปบัตรสวยงาม (Flex Message) สำเร็จแล้ว (หลังรัน previewOrder หรือ createPendingOrder สำเร็จ) ให้คุณเปลี่ยนมาพิมพ์ทักทายและแจ้งลูกค้าสั้นๆ สุภาพ เพื่อให้ตรวจสอบข้อมูลบนหน้าบัตรด้านล่างได้เลย โดยห้ามพิมพ์ทวนรายละเอียดสินค้า ยอดรวม หรือที่อยู่จัดส่งซ้ำในข้อความแชทเด็ดขาด เพื่อป้องกันความซ้ำซ้อนและช่วยให้หน้าแชทสะอาดตา
+15. การแจ้งข้อมูลสินค้าและยอดเงิน (Full SKU & Price Requirement): ทุกครั้งที่มีการเสนอทางเลือกหรือสรุปยอดรวมรายการต่างๆ ในตะกร้าหรือใบสั่งซื้อเพื่อเตรียมทำการซื้อขาย คุณต้องแสดงรายละเอียดสินค้าแต่ละรายการโดยระบุ (1) ชื่อสินค้าและตัวเลือกไซส์/สี (2) รหัส SKU เต็มรูปแบบ (เช่น 144535_5_M) (3) ราคาต่อหน่วย และ (4) ราคารวมของรายการนั้นๆ เสมอ ห้ามเขียนย่อหรือละเว้นเด็ดขาด อย่างไรก็ตาม หากเป็นกรณีที่ระบบทำการสรุปรายการสั่งซื้อจริง ทวนออเดอร์ หรือพรีวิวออเดอร์เป็นรูปบัตรสวยงาม (Flex Message) สำเร็จแล้ว (หลังรัน previewOrder, createPendingOrder หรือ getOrderDetails สำเร็จ) ให้คุณเปลี่ยนมาพิมพ์ทักทายและแจ้งลูกค้าสั้นๆ สุภาพ เพื่อให้ตรวจสอบข้อมูลบนหน้าบัตรด้านล่างได้เลย โดยห้ามพิมพ์ทวนรายละเอียดสินค้า ยอดรวม หรือที่อยู่จัดส่งซ้ำในข้อความแชทเด็ดขาด เพื่อป้องกันความซ้ำซ้อนและช่วยให้หน้าแชทสะอาดตา ทั้งนี้ หากลูกค้าต้องการทวนออเดอร์ สรุปบิล หรือถามสถานะคำสั่งซื้อที่มีอยู่แล้ว คุณต้องเรียกใช้เครื่องมือ getOrderDetails เสมอ ห้ามพิมพ์เนื้อหาสรุปรายการยอดโอนหรือรายละเอียดสินค้าแบบดิบขึ้นมาเองโดยไม่รันเครื่องมือเด็ดขาด
 16. รูปแบบแสดงผลเมื่อค้นหาสินค้า:
     - แสดงชื่อหัวข้อแต่ละสีเป็นตัวหนาโดยตัดรหัสตัวเลขนำหน้าชื่อสินค้าออก แล้วต่อท้ายด้วยเว้นวรรคและรหัส [รหัสสินค้า]_[รหัสสี] ตรงๆ (ห้ามมีคำว่า "Base SKU" หรืออื่น ๆ หน้าตัวเลขรหัส) เช่น:
       * **เสื้อเชิ้ตผู้หญิงแขนยาวผ้าลายริ้ว สีดำ 131065_5**
@@ -1101,6 +1101,37 @@ export async function runChatbotTurn(
       ]);
     } catch (err) {
       console.error("[Gemini stats update error]:", err);
+    }
+
+    const orderNumberMatch = finalReplyText.match(/HBI\d{12}/);
+    if (orderNumberMatch && !flexMessage) {
+      const orderNo = orderNumberMatch[0];
+      console.log(`[runChatbotTurn] Fallback: Found order number ${orderNo} in text response but no flexMessage was generated. Fetching...`);
+      try {
+        const orderDetailsResult = await skills.getOrderDetails(orderNo);
+        if (orderDetailsResult.success) {
+          flexMessage = buildOrderFlexMessage({
+            isPreview: false,
+            orderNumber: orderDetailsResult.orderNumber,
+            createdAt: orderDetailsResult.createdAt,
+            items: orderDetailsResult.items || [],
+            subtotal: (orderDetailsResult.subtotal ?? orderDetailsResult.total ?? 0) as number,
+            discountAmount: (orderDetailsResult.discountAmount ?? 0) as number,
+            shippingFee: (orderDetailsResult.shippingFee ?? 0) as number,
+            total: (orderDetailsResult.total ?? 0) as number,
+            customerName: orderDetailsResult.shippingName,
+            customerPhone: orderDetailsResult.shippingPhone,
+            customerAddress: orderDetailsResult.shippingAddress,
+            status: orderDetailsResult.status,
+            hasVat: (orderDetailsResult as any).note?.includes("[ขอใบกำกับภาษีเต็มรูปแบบ]") ?? false,
+          });
+          if ((orderDetailsResult as any).note?.includes("[ขอใบกำกับภาษีเต็มรูปแบบ]")) {
+            hasVat = true;
+          }
+        }
+      } catch (err) {
+        console.error("[runChatbotTurn fallback order details fetch error]:", err);
+      }
     }
 
     return {
