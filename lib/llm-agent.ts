@@ -905,6 +905,175 @@ function buildOrderFlexMessage(data: {
 }
 
 /**
+ * ฟังก์ชันสร้าง Flex Message แบบ Carousel สำหรับแสดงรายการออเดอร์ทั้งหมดของลูกค้า
+ */
+function buildOrdersCarouselFlexMessage(orders: any[]) {
+  const bubbles = orders.slice(0, 10).map((order) => {
+    let statusText = "รอการชำระเงิน";
+    let statusColor = "#D97706";
+    let statusBg = "#FEF3C7";
+
+    if (order.status === "PAYMENT_VERIFIED") {
+      statusText = "ชำระเงินแล้ว";
+      statusColor = "#15803D";
+      statusBg = "#DCFCE7";
+    } else if (order.status === "PROCESSING") {
+      statusText = "เตรียมสินค้า";
+      statusColor = "#1D4ED8";
+      statusBg = "#DBEAFE";
+    } else if (order.status === "SHIPPED") {
+      statusText = "จัดส่งแล้ว";
+      statusColor = "#6D28D9";
+      statusBg = "#F3E8FF";
+    } else if (order.status === "DELIVERED") {
+      statusText = "สำเร็จ";
+      statusColor = "#16A34A";
+      statusBg = "#D1FAE5";
+    } else if (order.status === "CANCELLED") {
+      statusText = "ยกเลิกแล้ว";
+      statusColor = "#DC2626";
+      statusBg = "#FEE2E2";
+    } else if (order.status === "REFUNDED") {
+      statusText = "คืนเงินแล้ว";
+      statusColor = "#4B5563";
+      statusBg = "#F3F4F6";
+    }
+
+    const date = new Date(order.createdAt);
+    const formattedDate = date.toLocaleDateString("th-TH", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+
+    const itemLines = order.items.slice(0, 2).map((item: any) => 
+      `• ${item.productName} (${item.color}/${item.size}) x${item.quantity}`
+    );
+    if (order.items.length > 2) {
+      itemLines.push(`• และอื่นๆ อีก ${order.items.length - 2} รายการ`);
+    }
+    const itemsText = itemLines.join("\n");
+
+    return {
+      "type": "bubble",
+      "size": "deca",
+      "header": {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "text",
+            "text": `#${order.orderNumber}`,
+            "weight": "bold",
+            "size": "sm",
+            "color": "#0A2B5E"
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "text",
+                "text": statusText,
+                "size": "xxs",
+                "color": statusColor,
+                "weight": "bold",
+                "flex": 0
+              }
+            ],
+            "backgroundColor": statusBg,
+            "cornerRadius": "sm",
+            "paddingStart": "sm",
+            "paddingEnd": "sm",
+            "paddingTop": "xxs",
+            "paddingBottom": "xxs",
+            "margin": "xs",
+            "alignItems": "center"
+          }
+        ]
+      },
+      "body": {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "text",
+            "text": `สั่งซื้อเมื่อ: ${formattedDate}`,
+            "size": "xs",
+            "color": "#94A3B8"
+          },
+          {
+            "type": "separator",
+            "margin": "md"
+          },
+          {
+            "type": "text",
+            "text": itemsText,
+            "size": "xs",
+            "color": "#475569",
+            "wrap": true,
+            "margin": "md",
+            "maxLines": 3
+          },
+          {
+            "type": "separator",
+            "margin": "md"
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "text",
+                "text": "ยอดรวม",
+                "size": "xs",
+                "color": "#64748B",
+                "weight": "bold"
+              },
+              {
+                "type": "text",
+                "text": `฿${order.total.toLocaleString()}`,
+                "size": "xs",
+                "color": "#0A2B5E",
+                "weight": "bold",
+                "align": "end"
+              }
+            ],
+            "margin": "md"
+          }
+        ]
+      },
+      "footer": {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "button",
+            "action": {
+              "type": "message",
+              "label": "ดูรายละเอียด",
+              "text": `เช็ครายละเอียดออเดอร์ ${order.orderNumber}`
+            },
+            "style": "primary",
+            "color": "#0A2B5E",
+            "size": "sm"
+          }
+        ]
+      }
+    };
+  });
+
+  return {
+    "type": "flex",
+    "altText": "รายการคำสั่งซื้อของคุณลูกค้า",
+    "contents": {
+      "type": "carousel",
+      "contents": bubbles
+    }
+  };
+}
+
+/**
  * ฟังก์ชันประมวลผลข้อความจากผู้ใช้ผ่าน LLM (Gemini) พร้อมรับผิดชอบการรัน Function Call
  */
 export async function runChatbotTurn(
@@ -1068,9 +1237,18 @@ export async function runChatbotTurn(
               );
               break;
             case "getCustomerOrders":
-              functionResult = await skills.getCustomerOrders(
+              const ordersResult = await skills.getCustomerOrders(
                 (call.args as any).customerPhone
               );
+              functionResult = ordersResult;
+
+              if (Array.isArray(ordersResult) && ordersResult.length > 0) {
+                try {
+                  flexMessage = buildOrdersCarouselFlexMessage(ordersResult);
+                } catch (flexErr) {
+                  console.error("[Flex Message Error getCustomerOrders]:", flexErr);
+                }
+              }
               break;
             case "getOrderDetails":
               const orderDetailsResult = await skills.getOrderDetails(

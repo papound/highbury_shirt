@@ -380,7 +380,10 @@ export async function handleLineEvent(event: any): Promise<void> {
     }
 
     if (botResult.flexMessage) {
-      // หากมี Flex Message สรุปยอด/พรีวิวออเดอร์ ให้ส่ง Flex Message คู่กับภาพชำระเงิน (ถ้าสรุปออเดอร์แล้ว) โดยไม่ส่งข้อความ Text ซ้ำซ้อน
+      // หากเป็นแบบ Carousel (แสดงรายการออเดอร์ทั้งหมด) ให้ส่งข้อความแนะนำ/ทักทายของบอทด้วย
+      if (botResult.flexMessage.contents?.type === "carousel" && cleanedText) {
+        messagesToSend.push({ type: "text", text: cleanedText });
+      }
       messagesToSend.push(botResult.flexMessage);
       
       const hasPaymentButton = botResult.flexMessage.contents?.footer?.contents?.some(
