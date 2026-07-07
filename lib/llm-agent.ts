@@ -198,6 +198,16 @@ const previewOrderDeclaration: FunctionDeclaration = {
       },
       promotionCode: { type: SchemaType.STRING, description: "รหัสคูปองส่วนลดเพิ่มเติม (ถ้ามี)" },
       isPickup: { type: SchemaType.BOOLEAN, description: "รับสินค้าด้วยตัวเองที่หน้าร้านหรือไม่" },
+      vatInfo: {
+        type: SchemaType.OBJECT,
+        description: "ข้อมูลออกใบกำกับภาษีเต็มรูปแบบ (VAT) ในกรณีที่ลูกค้าประสงค์ที่จะขอรับใบกำกับภาษี",
+        properties: {
+          name: { type: SchemaType.STRING, description: "ชื่อบริษัท หรือชื่อบุคคลผู้เสียภาษี" },
+          taxId: { type: SchemaType.STRING, description: "เลขประจำตัวผู้เสียภาษี 13 หลัก" },
+          address: { type: SchemaType.STRING, description: "ที่อยู่สำหรับออกใบกำกับภาษี" },
+        },
+        required: ["name", "taxId", "address"],
+      },
     },
     required: ["items"],
   },
@@ -239,7 +249,7 @@ const SYSTEM_INSTRUCTION = `
 1. ภาษา: คุยภาษาไทย สุภาพ มี "ครับ/ค่ะ" เสมอ เลี่ยงภาษาอังกฤษล้วน สั้นกระชับ เข้าใจง่าย ไม่เวิ่นเว้อ และใช้หน่วยลักษณนามของเสื้อว่า "ตัว" เสมอ (ห้ามใช้คำว่า "ชิ้น")
 2. ข้อมูลสินค้า: ห้ามเมคราคา/ไซส์/สต็อกเองเด็ดขาด ถ้าไม่แน่ใจให้ใช้เครื่องมือค้นหาหรือแจ้งว่าหมดชั่วคราว
 3. การชำระเงิน: รองรับ PromptPay QR ของร้านเท่านั้น (เบอร์: ${promptpayId} ชื่อบัญชี: ${promptpayName}) ห้ามเสนอเลขบัญชีธนาคารอื่น
-4. ขั้นตอนสั่งซื้อ: สอบถามความต้องการ -> แนะนำ -> เมื่อตกลงซื้อให้ขอข้อมูลจัดส่ง (ชื่อผู้รับ, เบอร์โทรศัพท์, ที่อยู่จัดส่ง) ให้ครบถ้วนก่อน -> เมื่อได้ข้อมูลจัดส่งครบถ้วนแล้ว จึงค่อยสอบถามว่า "ต้องการรับใบกำกับภาษีเต็มรูปแบบ (VAT) หรือไม่?" (ถ้าต้องการ ให้เก็บข้อมูล ชื่อ/บริษัท, เลขประจำตัวผู้เสียภาษี 13 หลัก, ที่อยู่ สำหรับออกใบกำกับภาษี แล้วส่งเป็น vatInfo ใน createPendingOrder)
+4. ขั้นตอนสั่งซื้อ: สอบถามความต้องการ -> แนะนำ -> เมื่อตกลงซื้อให้ขอข้อมูลจัดส่ง (ชื่อผู้รับ, เบอร์โทรศัพท์, ที่อยู่จัดส่ง) ให้ครบถ้วนก่อน -> เมื่อได้ข้อมูลจัดส่งครบถ้วนแล้ว จึงค่อยสอบถามว่า "ต้องการรับใบกำกับภาษีเต็มรูปแบบ (VAT) หรือไม่?" (ถ้าต้องการ ให้เก็บข้อมูล ชื่อ/บริษัท, เลขประจำตัวผู้เสียภาษี 13 หลัก, ที่อยู่ สำหรับออกใบกำกับภาษี แล้วส่งเป็น vatInfo ใน createPendingOrder หรือ previewOrder) และแจ้งลูกค้าว่ายอดสั่งซื้อสำหรับออเดอร์ VAT จะคิดบวกเพิ่มภาษี +7% หลังจากยอดรวมสุทธิรวมค่าส่งแล้ว และจะต้องโอนชำระเงินเข้าบัญชีธนาคารกสิกรไทย (KBank) บจก. ธงธัญ 99 แทนพร้อมเพย์ปกติ
 5. หลังสั่งซื้อสำเร็จ/ทวนยอดเดิม: สรุปยอดโอน และส่งลิงก์รูปภาพพร้อมเพย์ https://promptpay.io/${promptpayId}/\${total}.png (ให้แปลงคำว่า \${total} เป็นจำนวนเงินจริง เช่น 2500.00) เพื่อให้ลูกค้าสแกนได้สะดวก พร้อมแจ้งชื่อบัญชีและแนะนำให้อัปโหลดสลิป
 6. โปรโมชั่น: ค้นหาผ่านเครื่องมือเท่านั้น ห้ามเมคโค้ดส่วนลดขึ้นมาเอง
 7. เรียกแอดมิน: ใช้ requestAdminIntervention ทันทีเมื่อลูกค้าขอคุยกับมนุษย์ หรือเจอปัญหาที่ตอบไม่ได้
@@ -313,6 +323,7 @@ function buildOrderFlexMessage(data: {
   customerPhone?: string;
   customerAddress?: string;
   status?: string;
+  hasVat?: boolean;
 }) {
   let statusText = "รอการชำระเงิน";
   let statusColor = "#D97706";
@@ -467,14 +478,40 @@ function buildOrderFlexMessage(data: {
     });
   }
 
-  summaryContents.push(
-    {
+  summaryContents.push({
+    "type": "box",
+    "layout": "horizontal",
+    "contents": [
+      {
+        "type": "text",
+        "text": "ค่าจัดส่ง",
+        "size": "sm",
+        "color": "#64748B",
+        "flex": 4,
+        "wrap": true
+      },
+      {
+        "type": "text",
+        "text": data.shippingFee > 0 ? `฿${data.shippingFee.toLocaleString()}` : "ฟรีค่าจัดส่ง",
+        "size": "sm",
+        "color": data.shippingFee > 0 ? "#334155" : "#10B981",
+        "align": "end",
+        "flex": 2
+      }
+    ],
+    "margin": "sm"
+  });
+
+  if (data.hasVat) {
+    const baseAmount = data.subtotal - data.discountAmount + data.shippingFee;
+    const vatAmount = Math.round(baseAmount * 0.07 * 100) / 100;
+    summaryContents.push({
       "type": "box",
       "layout": "horizontal",
       "contents": [
         {
           "type": "text",
-          "text": "ค่าจัดส่ง",
+          "text": "ภาษีมูลค่าเพิ่ม (VAT 7%)",
           "size": "sm",
           "color": "#64748B",
           "flex": 4,
@@ -482,41 +519,42 @@ function buildOrderFlexMessage(data: {
         },
         {
           "type": "text",
-          "text": data.shippingFee > 0 ? `฿${data.shippingFee.toLocaleString()}` : "ฟรีค่าจัดส่ง",
+          "text": `฿${vatAmount.toLocaleString()}`,
           "size": "sm",
-          "color": data.shippingFee > 0 ? "#334155" : "#10B981",
+          "color": "#334155",
           "align": "end",
           "flex": 2
         }
       ],
       "margin": "sm"
-    },
-    {
-      "type": "box",
-      "layout": "horizontal",
-      "contents": [
-        {
-          "type": "text",
-          "text": "ยอดสุทธิ",
-          "size": "lg",
-          "color": "#0A2B5E",
-          "weight": "bold",
-          "flex": 4,
-          "wrap": true
-        },
-        {
-          "type": "text",
-          "text": `฿${data.total.toLocaleString()}`,
-          "size": "lg",
-          "color": "#0A2B5E",
-          "align": "end",
-          "weight": "bold",
-          "flex": 2
-        }
-      ],
-      "margin": "md"
-    }
-  );
+    });
+  }
+
+  summaryContents.push({
+    "type": "box",
+    "layout": "horizontal",
+    "contents": [
+      {
+        "type": "text",
+        "text": "ยอดสุทธิ",
+        "size": "lg",
+        "color": "#0A2B5E",
+        "weight": "bold",
+        "flex": 4,
+        "wrap": true
+      },
+      {
+        "type": "text",
+        "text": `฿${data.total.toLocaleString()}`,
+        "size": "lg",
+        "color": "#0A2B5E",
+        "align": "end",
+        "weight": "bold",
+        "flex": 2
+      }
+    ],
+    "margin": "md"
+  });
 
   const footerButtons: any[] = [];
   if (data.isPreview) {
@@ -531,16 +569,29 @@ function buildOrderFlexMessage(data: {
       "color": "#0A2B5E"
     });
   } else {
-    footerButtons.push({
-      "type": "button",
-      "action": {
-        "type": "postback",
-        "label": "สแกนชำระเงิน (PromptPay)",
-        "data": `action=pay&orderNumber=${data.orderNumber || ""}&total=${data.total}`
-      },
-      "style": "primary",
-      "color": "#0A2B5E"
-    });
+    if (data.hasVat) {
+      footerButtons.push({
+        "type": "button",
+        "action": {
+          "type": "postback",
+          "label": "โอนเงินธนาคาร (กสิกรไทย)",
+          "data": `action=kbank&orderNumber=${data.orderNumber || ""}&total=${data.total}`
+        },
+        "style": "primary",
+        "color": "#0A2B5E"
+      });
+    } else {
+      footerButtons.push({
+        "type": "button",
+        "action": {
+          "type": "postback",
+          "label": "สแกนชำระเงิน (PromptPay)",
+          "data": `action=pay&orderNumber=${data.orderNumber || ""}&total=${data.total}`
+        },
+        "style": "primary",
+        "color": "#0A2B5E"
+      });
+    }
   }
 
   footerButtons.push({
@@ -873,6 +924,7 @@ export async function runChatbotTurn(
                   customerName: orderResult.customerName,
                   customerPhone: orderResult.customerPhone,
                   customerAddress: orderResult.customerAddress,
+                  hasVat: !!(call.args as any).vatInfo,
                 });
               } catch (flexErr) {
                 console.error("[Flex Message Error createPendingOrder]:", flexErr);
@@ -915,6 +967,7 @@ export async function runChatbotTurn(
                     customerPhone: orderDetailsResult.shippingPhone,
                     customerAddress: orderDetailsResult.shippingAddress,
                     status: orderDetailsResult.status,
+                    hasVat: (orderDetailsResult as any).note?.includes("[ขอใบกำกับภาษีเต็มรูปแบบ]") ?? false,
                   });
                 } catch (flexErr) {
                   console.error("[Flex Message Error getOrderDetails]:", flexErr);
@@ -936,6 +989,7 @@ export async function runChatbotTurn(
                   discountAmount: previewResult.discountAmount,
                   shippingFee: previewResult.shippingFee,
                   total: previewResult.total,
+                  hasVat: !!(call.args as any).vatInfo,
                 });
               } catch (flexErr) {
                 console.error("[Flex Message Error previewOrder]:", flexErr);

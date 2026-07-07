@@ -221,6 +221,51 @@ export async function handleLineEvent(event: any): Promise<void> {
           previewImageUrl: qrImageUrl,
         }
       ]);
+    } else if (action === "kbank") {
+      const orderNumber = urlParams.searchParams.get("orderNumber") || "";
+      const totalStr = urlParams.searchParams.get("total") || "0";
+      const amountVal = parseFloat(totalStr);
+      
+      console.log(`[LINE BOT] Received bank transfer postback for order ${orderNumber}, amount: ${amountVal}`);
+      
+      // บันทึก Log การคลิกปุ่มโอนเงินลงฐานข้อมูลเป็น CUSTOMER action เพื่อให้แอดมินเห็นในระบบหลังบ้าน
+      await prisma.chatMessage.create({
+        data: {
+          sessionId: session.id,
+          sender: "CUSTOMER",
+          messageType: "text",
+          content: `[กดปุ่มโอนเงินธนาคารสำหรับออเดอร์ #${orderNumber} ยอดรวม ฿${amountVal.toLocaleString()}]`,
+        },
+      });
+
+      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+      const cleanBaseUrl = baseUrl.replace(/\/$/, "");
+      const kbankImageUrl = `${cleanBaseUrl}/images/kbank-payment.jpg`;
+      
+      const replyMsg = `กรุณาโอนเงินจำนวน ฿${amountVal.toLocaleString()} สำหรับออเดอร์หมายเลข #${orderNumber} มาที่บัญชีธนาคารด้านล่างนี้ และส่งรูปสลิปเพื่อยืนยันนะคะ\n\nธนาคาร: กสิกรไทย (KBank)\nเลขบัญชี: 050-1-91029-5\nชื่อบัญชี: บจก. ธงธัญ 99`;
+
+      // บันทึก Log การส่งช่องทางโอนเงิน บอทตอบกลับ
+      await prisma.chatMessage.create({
+        data: {
+          sessionId: session.id,
+          sender: "BOT",
+          messageType: "text",
+          content: `${replyMsg} (ส่งภาพช่องทางชำระเงินกสิกรไทย)`,
+        },
+      });
+
+      // ส่งตอบกลับ LINE (ข้อความ + ภาพเลขบัญชี KBank)
+      await replyToLine(event.replyToken, [
+        {
+          type: "text",
+          text: replyMsg
+        },
+        {
+          type: "image",
+          originalContentUrl: kbankImageUrl,
+          previewImageUrl: kbankImageUrl,
+        }
+      ]);
     }
     return;
   }

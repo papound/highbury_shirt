@@ -478,7 +478,8 @@ export async function createPendingOrder(params: CreateOrderParams) {
     hasFreeShippingPromo,
   });
 
-  const total = Math.max(0, subtotal - discountAmount) + shippingFee;
+  const baseTotal = Math.max(0, subtotal - discountAmount) + shippingFee;
+  const total = vatInfo ? Math.round(baseTotal * 1.07 * 100) / 100 : baseTotal;
 
   // 4. เตรียมข้อมูลการออกใบกำกับภาษี (หากมี) เซฟเก็บใน note
   let orderNote = "";
@@ -682,6 +683,7 @@ export async function getOrderDetails(orderNumber: string) {
     shippingPhone: order.shippingPhone,
     shippingAddress: `${order.shippingAddress} ${order.shippingCity} ${order.shippingProvince} ${order.shippingPostcode}`,
     createdAt: order.createdAt,
+    note: order.note,
     items: order.items.map((item) => ({
       productName: item.product.nameTh || item.product.name,
       color: item.variant.color,
@@ -700,8 +702,9 @@ export async function previewOrder(params: {
   items: { sku: string; quantity: number }[];
   promotionCode?: string;
   isPickup?: boolean;
+  vatInfo?: VatInfoInput;
 }) {
-  const { items, promotionCode, isPickup = false } = params;
+  const { items, promotionCode, isPickup = false, vatInfo } = params;
   const itemsMapped: CartItem[] = [];
 
   for (const item of items) {
@@ -780,7 +783,8 @@ export async function previewOrder(params: {
     hasFreeShippingPromo,
   });
 
-  const total = Math.max(0, subtotal - discountAmount) + shippingFee;
+  const baseTotal = Math.max(0, subtotal - discountAmount) + shippingFee;
+  const total = vatInfo ? Math.round(baseTotal * 1.07 * 100) / 100 : baseTotal;
 
   return {
     success: true,
