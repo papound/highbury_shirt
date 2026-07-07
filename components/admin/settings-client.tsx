@@ -14,6 +14,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -287,21 +295,21 @@ export default function AdminSettingsClient({ users: initialUsers, warehouses: i
       <section className="border rounded-xl p-5 bg-card space-y-4">
         <h2 className="font-semibold">ผู้ใช้งาน Admin</h2>
         <Separator />
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b">
-                <th className="text-left py-2 pr-4 font-medium text-muted-foreground">ชื่อ</th>
-                <th className="text-left py-2 pr-4 font-medium text-muted-foreground">อีเมล</th>
-                <th className="text-left py-2 font-medium text-muted-foreground">Role</th>
-              </tr>
-            </thead>
-            <tbody>
+        <div className="border rounded-lg bg-card overflow-hidden">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>ชื่อ</TableHead>
+                <TableHead>อีเมล</TableHead>
+                <TableHead className="w-36">Role</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {users.map((user) => (
-                <tr key={user.id} className="border-b">
-                  <td className="py-2 pr-4">{user.name}</td>
-                  <td className="py-2 pr-4 text-muted-foreground">{user.email}</td>
-                  <td className="py-2">
+                <TableRow key={user.id}>
+                  <TableCell className="font-medium text-foreground">{user.name}</TableCell>
+                  <TableCell className="text-muted-foreground">{user.email}</TableCell>
+                  <TableCell>
                     <Select defaultValue={user.role} onValueChange={(v) => updateUserRole(user.id, v)}>
                       <SelectTrigger className="w-36 h-7 text-xs">
                         <SelectValue />
@@ -312,11 +320,11 @@ export default function AdminSettingsClient({ users: initialUsers, warehouses: i
                         ))}
                       </SelectContent>
                     </Select>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
 
         {/* Add user */}

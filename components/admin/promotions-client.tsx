@@ -153,7 +153,7 @@ export default function AdminPromotionsClient({ promotions: initialPromotions }:
                 {promo.type === "BUY_X_GET_Y" && `ซื้อ ${promo.rules?.buyQuantity ?? "?"} แถม ${promo.rules?.getQuantity ?? "?"}`}
               </p>
               {!promo.startsAt && !promo.endsAt ? (
-                <span className="inline-block mt-1 text-xs font-medium px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700 border border-yellow-300">
+                <span className="inline-block mt-1 text-xs font-medium px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
                   ถาวร
                 </span>
               ) : (
