@@ -338,12 +338,26 @@ function buildOrderFlexMessage(data: {
       "layout": "horizontal",
       "contents": [
         {
-          "type": "text",
-          "text": nameStr,
-          "size": "sm",
-          "color": "#334155",
+          "type": "box",
+          "layout": "vertical",
           "flex": 4,
-          "wrap": true
+          "contents": [
+            {
+              "type": "text",
+              "text": nameStr,
+              "size": "sm",
+              "color": "#334155",
+              "wrap": true
+            },
+            {
+              "type": "text",
+              "text": `SKU: ${item.sku}`,
+              "size": "xs",
+              "color": "#64748B",
+              "margin": "xs",
+              "fontStyle": "italic"
+            }
+          ]
         },
         {
           "type": "text",
