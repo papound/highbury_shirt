@@ -3,11 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { LogOut, Menu, AlertTriangle } from "lucide-react";
+import { LogOut, Menu, AlertTriangle, Sun, Moon } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { NAV_ITEMS, type NavItem } from "./sidebar-nav";
+import { useTheme } from "next-themes";
 
 interface MobileHeaderProps {
   role: string;
@@ -19,6 +20,12 @@ export default function MobileHeader({ role, name, email }: MobileHeaderProps) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [confirmLogout, setConfirmLogout] = useState(false);
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const visibleItems: NavItem[] = (NAV_ITEMS as NavItem[]).filter(
     (item: NavItem) => !item.roles || item.roles.includes(role)
@@ -98,6 +105,27 @@ export default function MobileHeader({ role, name, email }: MobileHeaderProps) {
                   {role}
                 </div>
               </div>
+            </div>
+
+            {/* Theme Toggle */}
+            <div className="flex items-center justify-between mb-3 px-1 py-1.5 border-t border-b border-sidebar-border/20">
+              <span className="text-xs text-sidebar-foreground/60 font-medium">โหมดสี</span>
+              <button
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-sidebar-accent hover:bg-sidebar-accent/80 transition-colors text-xs text-sidebar-foreground"
+              >
+                {mounted && theme === "dark" ? (
+                  <>
+                    <Sun className="w-3.5 h-3.5 text-amber-400" />
+                    สว่าง
+                  </>
+                ) : (
+                  <>
+                    <Moon className="w-3.5 h-3.5 text-blue-400" />
+                    มืด
+                  </>
+                )}
+              </button>
             </div>
 
             {role === "SUPERADMIN" && process.env.NEXT_PUBLIC_GIT_REVISION && (

@@ -4,10 +4,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
-import { LogOut, AlertTriangle } from "lucide-react";
+import { LogOut, AlertTriangle, Sun, Moon } from "lucide-react";
 import dynamic from "next/dynamic";
 import { NAV_ITEMS } from "./sidebar-nav";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useTheme } from "next-themes";
 
 const MobileHeader = dynamic(() => import("./mobile-header"), { ssr: false });
 
@@ -20,6 +21,12 @@ interface AdminSidebarProps {
 export default function AdminSidebar({ role, name, email }: AdminSidebarProps) {
   const pathname = usePathname();
   const [confirmLogout, setConfirmLogout] = useState(false);
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const visibleItems = NAV_ITEMS.filter(
     (item) => !item.roles || item.roles.includes(role)
@@ -87,6 +94,27 @@ export default function AdminSidebar({ role, name, email }: AdminSidebarProps) {
                 {role}
               </div>
             </div>
+          </div>
+
+          {/* Theme Toggle */}
+          <div className="flex items-center justify-between mb-3 px-1 py-1.5 border-t border-b border-sidebar-border/20">
+            <span className="text-xs text-sidebar-foreground/60 font-medium">โหมดสี</span>
+            <button
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-sidebar-accent hover:bg-sidebar-accent/80 transition-colors text-xs text-sidebar-foreground"
+            >
+              {mounted && theme === "dark" ? (
+                <>
+                  <Sun className="w-3.5 h-3.5 text-amber-400" />
+                  สว่าง
+                </>
+              ) : (
+                <>
+                  <Moon className="w-3.5 h-3.5 text-blue-400" />
+                  มืด
+                </>
+              )}
+            </button>
           </div>
 
           {role === "SUPERADMIN" && process.env.NEXT_PUBLIC_GIT_REVISION && (

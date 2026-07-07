@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Raleway } from "next/font/google";
 import NextAuthSessionProvider from "@/components/shared/session-provider";
+import { ThemeProvider } from "@/components/shared/theme-provider";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
@@ -35,9 +36,17 @@ export default function RootLayout({
     <html
       lang="th"
       className={cn("h-full", "antialiased", geistMono.variable, "font-sans", raleway.variable)}
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col" suppressHydrationWarning>
-        <NextAuthSessionProvider>{children}</NextAuthSessionProvider>
+      <body className="min-h-full flex flex-col">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <NextAuthSessionProvider>{children}</NextAuthSessionProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
