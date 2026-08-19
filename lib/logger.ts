@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import http from "http";
 
 const LOG_DIR = path.join(process.cwd(), "logs");
 const LOG_FILE = path.join(LOG_DIR, "app.log");
@@ -128,6 +129,90 @@ if (typeof window === "undefined" && !(global as any).__logger_initialized) {
   console.warn = (...args) => {
     const msg = args.map((a) => (typeof a === "object" ? JSON.stringify(a) : String(a))).join(" ");
     process.stderr.write(msg + "\n");
+  };
+
+  // Intercept low-level Node.js http server responses to log response headers, status, and body
+  const originalWrite = http.ServerResponse.prototype.write;
+  const originalEnd = http.ServerResponse.prototype.end;
+  const originalWriteHead = http.ServerResponse.prototype.writeHead;
+
+  http.ServerResponse.prototype.writeHead = function (
+    statusCode: number,
+    ...args: any[]
+  ) {
+    (this as any).__statusCode = statusCode;
+    return originalWriteHead.apply(this, arguments as any);
+  };
+
+  http.ServerResponse.prototype.write = function (
+    chunk: any,
+    encoding?: any,
+    callback?: any
+  ) {
+    if (chunk) {
+      if (!(this as any).__chunks) (this as any).__chunks = [];
+      const buf = Buffer.isBuffer(chunk)
+        ? chunk
+        : Buffer.from(chunk, (typeof encoding === "string" ? encoding : "utf8") as BufferEncoding);
+      (this as any).__chunks.push(buf);
+    }
+    return originalWrite.apply(this, arguments as any);
+  };
+
+  http.ServerResponse.prototype.end = function (
+    chunk?: any,
+    encoding?: any,
+    callback?: any
+  ) {
+    if (chunk) {
+      if (!(this as any).__chunks) (this as any).__chunks = [];
+      const buf = Buffer.isBuffer(chunk)
+        ? chunk
+        : Buffer.from(chunk, (typeof encoding === "string" ? encoding : "utf8") as BufferEncoding);
+      (this as any).__chunks.push(buf);
+    }
+
+    try {
+      const res = this;
+      const req = res.req;
+      if (req) {
+        const url = req.url || "";
+        if (
+          !url.startsWith("/api/admin/logs") &&
+          !url.startsWith("/admin/logs") &&
+          !url.includes(".")
+        ) {
+          const method = req.method;
+          const statusCode = res.statusCode || (res as any).__statusCode || 200;
+          const headers = res.getHeaders();
+          const contentType = String(headers["content-type"] || "");
+
+          let body = "";
+          if (
+            contentType.includes("application/json") ||
+            contentType.includes("text/") ||
+            contentType.includes("javascript")
+          ) {
+            const buffer = Buffer.concat((res as any).__chunks || []);
+            body = buffer.toString("utf8");
+            if (body.length > 2000) {
+              body = body.slice(0, 2000) + "... [truncated]";
+            }
+          }
+
+          const resLog = `[HTTP RES] ${method} ${url} -> ${statusCode}
+  Headers: ${JSON.stringify(headers)}
+  Body: ${body || "None"}\n`;
+          originalStdoutWrite.call(process.stdout, resLog);
+        }
+      }
+    } catch (e) {
+      // Ignore
+    } finally {
+      delete (this as any).__chunks;
+    }
+
+    return originalEnd.apply(this, arguments as any);
   };
 }
 
