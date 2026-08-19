@@ -10,6 +10,7 @@ import {
   Warehouse,
   Users,
   MessageSquare,
+  Terminal,
 } from "lucide-react";
 
 export type NavItem = {
@@ -30,4 +31,5 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/admin/reports", label: "รายงาน", icon: BarChart3, roles: ["SUPERADMIN", "ADMIN", "ACCOUNTANT"] },
   { href: "/admin/blog", label: "บทความ", icon: BookOpen },
   { href: "/admin/settings", label: "ตั้งค่า", icon: Settings, roles: ["SUPERADMIN", "ADMIN"] },
+  { href: "/admin/logs", label: "บันทึกระบบ (Logs)", icon: Terminal, roles: ["SUPERADMIN"] },
 ];

@@ -1,3 +1,4 @@
+import "@/lib/logger";
 import type { Metadata } from "next";
 import { Geist_Mono } from "next/font/google";
 import NextAuthSessionProvider from "@/components/shared/session-provider";

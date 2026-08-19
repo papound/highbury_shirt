@@ -1,3 +1,4 @@
+import "@/lib/logger";
 import { PrismaClient } from "@prisma/client";
 import { PrismaLibSql } from "@prisma/adapter-libsql";
 import { PrismaPg } from "@prisma/adapter-pg";

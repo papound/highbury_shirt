@@ -49,3 +49,6 @@ next-env.d.ts
 
 # User uploaded files
 /public/uploads/
+
+# Dynamic application logs
+/logs/
