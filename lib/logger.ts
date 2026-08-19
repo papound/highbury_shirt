@@ -203,6 +203,7 @@ if (typeof window === "undefined" && !(global as any).__logger_initialized) {
           const resLog = `[HTTP RES] ${method} ${url} -> ${statusCode}
   Headers: ${JSON.stringify(headers)}
   Body: ${body || "None"}\n`;
+          writeRawLog(resLog);
           originalStdoutWrite.call(process.stdout, resLog);
         }
       }
