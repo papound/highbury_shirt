@@ -9,6 +9,16 @@ const { auth } = NextAuth(authConfig);
 export default auth((req) => {
   const { pathname } = req.nextUrl;
   const session = req.auth;
+  const method = req.method;
+
+  // Log request (excluding logs page, logs api, and static file patterns to avoid loops and clutter)
+  if (
+    !pathname.startsWith("/api/admin/logs") &&
+    !pathname.startsWith("/admin/logs") &&
+    !pathname.includes(".")
+  ) {
+    console.log(`${method} ${pathname}`);
+  }
 
   // Protect /admin routes (but not /admin/login itself)
   if (pathname.startsWith("/admin") && pathname !== "/admin/login") {
@@ -46,9 +56,13 @@ export default auth((req) => {
 
 export const config = {
   matcher: [
-    "/admin/:path*",
-    "/account/:path*",
-    "/checkout/:path*",
-    "/checkout",
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - images/ (public images)
+     */
+    "/((?!_next/static|_next/image|favicon.ico|images/).*)",
   ],
 };
