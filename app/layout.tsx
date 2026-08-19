@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Raleway } from "next/font/google";
+import { Geist_Mono } from "next/font/google";
 import NextAuthSessionProvider from "@/components/shared/session-provider";
 import { ThemeProvider } from "@/components/shared/theme-provider";
 import "./globals.css";
 import { cn } from "@/lib/utils";
-
-const raleway = Raleway({subsets:['latin'],variable:'--font-sans'});
 
 const geistMono = Geist_Mono({
   variable: "--font-mono",
@@ -35,7 +33,7 @@ export default function RootLayout({
   return (
     <html
       lang="th"
-      className={cn("h-full", "antialiased", geistMono.variable, "font-sans", raleway.variable)}
+      className={cn("h-full", "antialiased", geistMono.variable, "font-sans")}
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">

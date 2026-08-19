@@ -101,6 +101,60 @@ export default function AdminProductForm({ product, categories, warehouses }: { 
 
   const { fields, append, remove } = useFieldArray({ control: form.control, name: "variants" });
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [colorFilter, setColorFilter] = useState("all");
+  const [sizeFilter, setSizeFilter] = useState("all");
+
+  const variantsWatch = form.watch("variants") || [];
+
+  const uniqueColorsMap = new Map<string, { hex: string; code: string }>();
+  variantsWatch.forEach((v) => {
+    if (v?.color) {
+      const hex = v.colorHex || "#FFFFFF";
+      let code = "";
+      if (v.sku) {
+        const parts = v.sku.split("_");
+        if (parts.length >= 2) {
+          code = parts[1];
+        }
+      }
+      if (!uniqueColorsMap.has(v.color)) {
+        uniqueColorsMap.set(v.color, { hex, code });
+      } else if (code && !uniqueColorsMap.get(v.color)?.code) {
+        const current = uniqueColorsMap.get(v.color)!;
+        uniqueColorsMap.set(v.color, { ...current, code });
+      }
+    }
+  });
+
+  const uniqueColors = Array.from(uniqueColorsMap.entries()).map(([color, data]) => ({
+    name: color,
+    hex: data.hex,
+    code: data.code,
+  }));
+
+  const uniqueSizes = Array.from(new Set(variantsWatch.map((v) => v?.size).filter(Boolean))) as string[];
+
+  const filteredFields = fields
+    .map((field, index) => ({ field, index }))
+    .filter(({ index }) => {
+      const v = variantsWatch[index];
+      if (!v) return true;
+
+      if (colorFilter !== "all" && v.color !== colorFilter) return false;
+      if (sizeFilter !== "all" && v.size !== sizeFilter) return false;
+
+      if (searchQuery) {
+        const q = searchQuery.toLowerCase();
+        const skuMatch = v.sku?.toLowerCase().includes(q);
+        const colorMatch = v.color?.toLowerCase().includes(q);
+        const sizeMatch = v.size?.toLowerCase().includes(q);
+        if (!skuMatch && !colorMatch && !sizeMatch) return false;
+      }
+
+      return true;
+    });
+
   function addVariant(defaults: Parameters<typeof append>[0]) {
     append(defaults);
     setVariantImagesMap((prev) => [...prev, []]);
@@ -272,12 +326,100 @@ export default function AdminProductForm({ product, categories, warehouses }: { 
             </div>
           </div>
 
+          {fields.length > 0 && (
+            <div className="flex flex-col sm:flex-row gap-3 p-3 bg-muted/10 rounded-lg border">
+              <div className="flex-1">
+                <Input
+                  placeholder="ค้นหาด้วยสี หรือ SKU..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="h-9 bg-background"
+                />
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Select value={colorFilter} onValueChange={(val) => setColorFilter(val ?? "all")}>
+                  <SelectTrigger className="w-[180px] h-9 bg-background">
+                    <SelectValue placeholder="เลือกสี">
+                      {(val: string | null) => {
+                        if (val === "all") return "สีทั้งหมด";
+                        const data = uniqueColorsMap.get(val || "");
+                        return data?.code ? `${val} (${data.code})` : val;
+                      }}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all" label="สีทั้งหมด">สีทั้งหมด</SelectItem>
+                    {uniqueColors.map(({ name, hex, code }) => (
+                      <SelectItem key={name} value={name} label={code ? `${name} (${code})` : name}>
+                        <span className="flex items-center gap-2">
+                          <span
+                            className="inline-block w-3 h-3 rounded-full border border-muted-foreground/30 shrink-0"
+                            style={{ backgroundColor: hex }}
+                          />
+                          <span>{code ? `${name} (${code})` : name}</span>
+                        </span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <Select value={sizeFilter} onValueChange={(val) => setSizeFilter(val ?? "all")}>
+                  <SelectTrigger className="w-[120px] h-9 bg-background">
+                    <SelectValue placeholder="เลือกขนาด">
+                      {(val: string | null) => val === "all" ? "ขนาดทั้งหมด" : val}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all" label="ขนาดทั้งหมด">ขนาดทั้งหมด</SelectItem>
+                    {uniqueSizes.map((size) => (
+                      <SelectItem key={size} value={size} label={size}>{size}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                {(searchQuery || colorFilter !== "all" || sizeFilter !== "all") && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setSearchQuery("");
+                      setColorFilter("all");
+                      setSizeFilter("all");
+                    }}
+                    className="text-xs h-9 text-muted-foreground hover:text-foreground"
+                  >
+                    ล้างตัวกรอง
+                  </Button>
+                )}
+              </div>
+            </div>
+          )}
+
           {fields.length === 0 && (
             <p className="text-sm text-muted-foreground text-center py-4">ยังไม่มี Variant</p>
           )}
 
+          {fields.length > 0 && filteredFields.length === 0 && (
+            <div className="text-center py-8 border rounded-lg bg-muted/10 border-dashed">
+              <p className="text-sm text-muted-foreground mb-2">ไม่พบ Variant ที่ตรงตามเงื่อนไขการค้นหา</p>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setSearchQuery("");
+                  setColorFilter("all");
+                  setSizeFilter("all");
+                }}
+              >
+                ล้างการค้นหา
+              </Button>
+            </div>
+          )}
+
           <div className="space-y-3">
-            {fields.map((f, idx) => (
+            {filteredFields.map(({ field: f, index: idx }) => (
               <div key={f.id} className="border rounded-lg p-3 bg-muted/20 space-y-3">
                 <div className="grid grid-cols-6 gap-2 items-end">
                   <FormField control={form.control} name={`variants.${idx}.color`} render={({ field }) => (
