@@ -184,7 +184,18 @@ if (typeof window === "undefined" && !(global as any).__logger_initialized) {
         ) {
           const method = req.method;
           const statusCode = res.statusCode || (res as any).__statusCode || 200;
-          const headers = res.getHeaders();
+          const headers = { ...res.getHeaders() };
+          for (const key of Object.keys(headers)) {
+            const lowerKey = key.toLowerCase();
+            if (
+              lowerKey === "set-cookie" ||
+              lowerKey === "cookie" ||
+              lowerKey === "authorization" ||
+              lowerKey === "proxy-authorization"
+            ) {
+              headers[key] = "[REDACTED]";
+            }
+          }
           const contentType = String(headers["content-type"] || "");
 
           let body = "";
