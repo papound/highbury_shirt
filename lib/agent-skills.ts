@@ -163,7 +163,7 @@ export async function searchProducts(params: SearchParams) {
  * 2. ดึงรายละเอียดสินค้าเดี่ยวๆ พร้อมข้อมูลสี ไไซส์ และสต็อกของแต่ละ Variant
  */
 export async function getProductDetails(productSlug: string) {
-  const product = await prisma.product.findUnique({
+  let product = await prisma.product.findUnique({
     where: { slug: productSlug },
     include: {
       category: true,
@@ -181,6 +181,64 @@ export async function getProductDetails(productSlug: string) {
       },
     },
   });
+
+  // Robust fallback: if lookup fails, try to extract numeric product ID from descriptive slug (e.g., "144813" from "mens-...-144813")
+  if (!product) {
+    const codeMatch = productSlug.match(/(\d+)/);
+    if (codeMatch) {
+      const code = codeMatch[1];
+      product = await prisma.product.findFirst({
+        where: {
+          OR: [
+            { slug: code },
+            { slug: { contains: code } },
+          ],
+        },
+        include: {
+          category: true,
+          variants: {
+            include: {
+              inventory: {
+                select: {
+                  quantity: true,
+                },
+              },
+            },
+          },
+          images: {
+            orderBy: { sortOrder: "asc" },
+          },
+        },
+      });
+    }
+  }
+
+  // Second fallback: try to look for the slug inside the name or partial slug
+  if (!product) {
+    product = await prisma.product.findFirst({
+      where: {
+        OR: [
+          { slug: { contains: productSlug } },
+          { name: { contains: productSlug } },
+        ],
+      },
+      include: {
+        category: true,
+        variants: {
+          include: {
+            inventory: {
+              select: {
+                quantity: true,
+              },
+            },
+          },
+        },
+        images: {
+          orderBy: { sortOrder: "asc" },
+        },
+      },
+    });
+  }
 
   if (!product || product.status !== "ACTIVE") {
     throw new Error("ไม่พบข้อมูลสินค้าชิ้นนี้ หรือสินค้าเลิกจำหน่ายแล้ว");

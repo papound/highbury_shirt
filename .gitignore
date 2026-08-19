@@ -52,3 +52,6 @@ next-env.d.ts
 
 # Dynamic application logs
 /logs/
+
+# Scratch folder
+/scratch/
