@@ -38,6 +38,7 @@ ARG DATABASE_URL="postgresql://placeholder:placeholder@localhost:5432/placeholde
 ENV DATABASE_URL=${DATABASE_URL}
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
+ENV NODE_OPTIONS="--no-deprecation"
 
 ARG GIT_REVISION=unknown
 ENV GIT_REVISION=${GIT_REVISION}
@@ -54,6 +55,7 @@ RUN apk add --no-cache openssl
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_OPTIONS="--no-deprecation"
 
 # copy ไฟล์ที่จำเป็นสำหรับ runtime
 COPY --from=builder /app/public ./public
