@@ -9,7 +9,7 @@ const LINE_MESSAGING_API = "https://api.line.me/v2/bot/message/reply";
 /**
  * ฟังก์ชันส่งข้อความตอบกลับไปยัง LINE OA API
  */
-async function replyToLine(replyToken: string, messages: any[]): Promise<void> {
+async function replyToLine(replyToken: string, messages: any[], lineUserId?: string): Promise<void> {
   const token = process.env.LINE_CHANNEL_ACCESS_TOKEN;
   if (!token) {
     console.error("[LINE BOT] Missing LINE_CHANNEL_ACCESS_TOKEN");
@@ -18,25 +18,51 @@ async function replyToLine(replyToken: string, messages: any[]): Promise<void> {
 
   console.log("[LINE BOT] Sending reply to LINE. Payload:", JSON.stringify(messages, null, 2));
 
-  const res = await fetch(LINE_MESSAGING_API, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      replyToken,
-      messages,
-    }),
-  });
+  try {
+    const res = await fetch(LINE_MESSAGING_API, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        replyToken,
+        messages,
+      }),
+    });
 
-  console.log("[LINE BOT] LINE reply API response status:", res.status);
+    console.log("[LINE BOT] LINE reply API response status:", res.status);
 
-  if (!res.ok) {
-    const errText = await res.text();
-    console.error("[LINE BOT] Failed to reply:", errText);
-  } else {
-    console.log("[LINE BOT] Reply sent successfully.");
+    if (!res.ok) {
+      const errText = await res.text();
+      console.error("[LINE BOT] Failed to reply via replyToken:", errText);
+
+      // Fallback: หาก replyToken หมดอายุหรือมีปัญหา ให้ส่งผ่าน Push API แทนเพื่อรับประกันว่าลูกค้าได้รับข้อความ 100%
+      if (lineUserId) {
+        console.log(`[LINE BOT] Falling back to pushMessage for user: ${lineUserId}`);
+        const pushRes = await fetch("https://api.line.me/v2/bot/message/push", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            to: lineUserId,
+            messages,
+          }),
+        });
+        if (!pushRes.ok) {
+          const pushErr = await pushRes.text();
+          console.error("[LINE BOT] Fallback push message also failed:", pushErr);
+        } else {
+          console.log("[LINE BOT] Fallback push message delivered successfully.");
+        }
+      }
+    } else {
+      console.log("[LINE BOT] Reply sent successfully.");
+    }
+  } catch (err) {
+    console.error("[LINE BOT] Error in replyToLine:", err);
   }
 }
 
@@ -89,13 +115,36 @@ async function fetchLineProfile(lineUserId: string): Promise<{ displayName: stri
   }
 }
 
+// คิวประมวลผลข้อความแยกตามรายผู้ใช้ (Per-User Event Queue) เพื่อแก้ปัญหา Race Condition และการแย่งเขียนข้อมูลพร้อมกัน
+const userQueues = new Map<string, Promise<void>>();
+
 /**
- * จัดการ LINE Event เดี่ยวๆ เช่น ข้อความตัวอักษร, follow, หรือ postback
+ * จุดรับเข้า LINE Event โดยมีระบบคิวแยกตามรายผู้ใช้
  */
 export async function handleLineEvent(event: any): Promise<void> {
   const lineUserId = event.source?.userId;
   if (!lineUserId) return;
 
+  const currentQueue = userQueues.get(lineUserId) || Promise.resolve();
+  const nextQueue = currentQueue
+    .then(() => processLineEvent(event, lineUserId))
+    .catch((err) => {
+      console.error(`[LINE BOT] Error processing event for ${lineUserId}:`, err);
+    })
+    .finally(() => {
+      if (userQueues.get(lineUserId) === nextQueue) {
+        userQueues.delete(lineUserId);
+      }
+    });
+
+  userQueues.set(lineUserId, nextQueue);
+  await nextQueue;
+}
+
+/**
+ * จัดการ LINE Event เดี่ยวๆ เช่น ข้อความตัวอักษร, follow, หรือ postback
+ */
+async function processLineEvent(event: any, lineUserId: string): Promise<void> {
   // 1. ตรวจสอบหรือสร้าง ChatSession ในระบบ
   let session = await prisma.chatSession.findUnique({
     where: { lineUserId },
@@ -201,7 +250,7 @@ export async function handleLineEvent(event: any): Promise<void> {
           originalContentUrl: qrImageUrl,
           previewImageUrl: qrImageUrl,
         }
-      ]);
+      ], lineUserId);
     } else if (action === "kbank") {
       const orderNumber = urlParams.searchParams.get("orderNumber") || "";
       const totalStr = urlParams.searchParams.get("total") || "0";
@@ -246,7 +295,7 @@ export async function handleLineEvent(event: any): Promise<void> {
           originalContentUrl: kbankImageUrl,
           previewImageUrl: kbankImageUrl,
         }
-      ]);
+      ], lineUserId);
     }
     return;
   }
@@ -265,7 +314,7 @@ export async function handleLineEvent(event: any): Promise<void> {
       },
     });
 
-    await replyToLine(event.replyToken, [{ type: "text", text: welcomeMsg }]);
+    await replyToLine(event.replyToken, [{ type: "text", text: welcomeMsg }], lineUserId);
     return;
   }
 
@@ -425,7 +474,7 @@ export async function handleLineEvent(event: any): Promise<void> {
     }
 
     // ส่งตอบกลับ LINE
-    await replyToLine(event.replyToken, messagesToSend);
+    await replyToLine(event.replyToken, messagesToSend, lineUserId);
   }
 
   // รองรับ Image Upload ใน LINE (สำหรับลูกค้าอัปโหลดสลิป หรือส่งภาพอื่นๆ)
@@ -505,6 +554,6 @@ export async function handleLineEvent(event: any): Promise<void> {
     }
 
     // ตอบกลับผู้ใช้ใน LINE
-    await replyToLine(event.replyToken, [{ type: "text", text: replyText }]);
+    await replyToLine(event.replyToken, [{ type: "text", text: replyText }], lineUserId);
   }
 }

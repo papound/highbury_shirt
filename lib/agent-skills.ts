@@ -80,9 +80,27 @@ export async function searchProducts(params: SearchParams) {
     ];
   }
 
-  // ตัวกรองสำหรับไซส์หรือสี ค้นหาผ่านความสัมพันธ์ของ Variant
+  // ตรวจจับรหัสตัวเลขสินค้าในคำค้นหา (เช่น 144813 หรือ 144813_3) เพื่อค้นหาได้ตรงรุ่นทันที
+  const codeMatch = query?.match(/\b\d{5,6}(?:_\d+)?\b/);
+  if (codeMatch) {
+    const codeNum = codeMatch[0].split("_")[0];
+    whereClause.OR = [
+      { slug: codeMatch[0] },
+      { slug: codeNum },
+      { slug: { contains: codeNum } },
+      { name: { contains: codeNum } },
+    ];
+  }
+
+  // ตัวกรองสำหรับไซส์หรือสี ค้นหาผ่านความสัมพันธ์ของ Variant (เฉพาะที่มีสต็อกพร้อมส่ง)
   if (size || color) {
-    const variantFilter: any = {};
+    const variantFilter: any = {
+      inventory: {
+        some: {
+          quantity: { gt: 0 },
+        },
+      },
+    };
     if (size) variantFilter.size = { equals: size };
     if (color) variantFilter.color = { equals: color };
 
@@ -267,32 +285,276 @@ export async function getProductDetails(productSlug: string) {
   };
 }
 
+export interface AvailableOptionsParams {
+  gender?: string;
+  sleeve?: string;
+  pattern?: string;
+  size?: string;
+  color?: string;
+  productCode?: string;
+  query?: string;
+}
+
 /**
- * 3. ตรวจสอบจำนวนสต็อกคงเหลือของ Variant ผ่าน SKU
+ * 2.1 สำรวจตัวเลือกสินค้า สี และไซส์ ที่มีสต็อกพร้อมส่งจริงในระบบ (Stock > 0)
+ * เหมาะสำหรับตอบคำถามแนว "เสื้อผู้ชายแขนยาวมีสีอะไรบ้าง", "ไซส์ M มีสีอะไรบ้าง", "มีสีอะไรพร้อมส่งบ้าง"
+ */
+export async function getAvailableOptions(params: AvailableOptionsParams) {
+  const { gender, sleeve, pattern, size, color, productCode, query } = params;
+
+  // 1. ถอดรหัสโครงสร้างประเภทแขนเสื้อ
+  let targetSleeve: string | null = null;
+  if (sleeve === "long" || sleeve === "1" || (query && (query.includes("แขนยาว") || query.includes("ยาว")))) {
+    targetSleeve = "1";
+  } else if (sleeve === "short" || sleeve === "2" || (query && (query.includes("แขนสั้น") || query.includes("สั้น")))) {
+    targetSleeve = "2";
+  } else if (sleeve === "three-quarter" || sleeve === "3" || (query && query.includes("สามส่วน"))) {
+    targetSleeve = "3";
+  } else if (sleeve === "polo" || sleeve === "4" || (query && (query.includes("โปโล") || query.includes("polo")))) {
+    targetSleeve = "4";
+  }
+
+  // 2. ถอดรหัสโครงสร้างเพศ
+  let targetGender: string | null = null;
+  if (gender === "men" || gender === "4" || (query && (query.includes("ผู้ชาย") || query.includes("ชาย")))) {
+    targetGender = "4";
+  } else if (gender === "women" || gender === "3" || (query && (query.includes("ผู้หญิง") || query.includes("หญิง")))) {
+    targetGender = "3";
+  }
+
+  // 3. ถอดรหัสลวดลายเนื้อผ้า
+  let targetPattern: string | null = null;
+  if (pattern === "stripe" || pattern === "1" || (query && (query.includes("ลายริ้ว") || query.includes("ริ้ว")))) {
+    targetPattern = "1";
+  } else if (pattern === "check" || pattern === "2" || (query && (query.includes("ลายสก๊อต") || query.includes("สก๊อต") || query.includes("สก็อต")))) {
+    targetPattern = "2";
+  } else if (pattern === "dot" || pattern === "3" || (query && (query.includes("ลายจุด") || query.includes("จุด")))) {
+    targetPattern = "3";
+  } else if (pattern === "plain" || pattern === "4" || (query && (query.includes("ผ้าพื้น") || query.includes("สีพื้น") || query.includes("พื้น") || query.includes("เรียบ")))) {
+    targetPattern = "4";
+  } else if (pattern === "print" || pattern === "5" || (query && (query.includes("ลายพิมพ์") || query.includes("พิมพ์") || query.includes("ดอก")))) {
+    targetPattern = "5";
+  }
+
+  // สร้าง Where clause
+  const whereClause: any = {
+    status: "ACTIVE",
+  };
+
+  // ตรวจจับรหัสตัวเลขสินค้า (เช่น 144813 หรือ 144813_3)
+  const explicitCode = productCode?.trim() || query?.match(/\b\d{5,6}(?:_\d+)?\b/)?.[0];
+  if (explicitCode) {
+    const rawNumber = explicitCode.split("_")[0];
+    whereClause.OR = [
+      { slug: explicitCode },
+      { slug: rawNumber },
+      { slug: { contains: rawNumber } },
+      { name: { contains: rawNumber } },
+    ];
+  }
+
+  const dbProducts = await prisma.product.findMany({
+    where: whereClause,
+    include: {
+      category: true,
+      variants: {
+        where: {
+          ...(size ? { size: { equals: size } } : {}),
+          ...(color ? { color: { contains: color } } : {}),
+        },
+        include: {
+          inventory: {
+            select: { quantity: true },
+          },
+        },
+      },
+    },
+  });
+
+  // กรองด้วยรหัสโครงสร้างถ้ามี
+  let filteredProducts = dbProducts;
+  const hasStructuralMatch = !!(targetSleeve || targetGender || targetPattern);
+  if (hasStructuralMatch && !explicitCode) {
+    filteredProducts = dbProducts.filter((p) => {
+      const slug = p.slug;
+      if (!slug || slug.length < 3) return false;
+      if (targetSleeve && slug[0] !== targetSleeve) return false;
+      if (targetGender && slug[1] !== targetGender) return false;
+      if (targetPattern && slug[2] !== targetPattern) return false;
+      return true;
+    });
+  }
+
+  if (filteredProducts.length === 0 && dbProducts.length > 0) {
+    filteredProducts = dbProducts;
+  }
+
+  // รวบรวมเฉพาะ Variant ที่มีสต็อก > 0
+  const colorMapSet = new Set<string>();
+  const sizeMapSet = new Set<string>();
+  const colorGroups: Record<string, {
+    productName: string;
+    color: string;
+    baseSku: string;
+    price: number;
+    availableSizes: Set<string>;
+    totalStock: number;
+  }> = {};
+
+  let totalInStock = 0;
+
+  for (const prod of filteredProducts) {
+    for (const v of prod.variants) {
+      const stock = v.inventory.reduce((sum, inv) => sum + inv.quantity, 0);
+      if (stock <= 0) continue; // ข้ามรายการที่ของหมดสต็อกเด็ดขาด
+
+      totalInStock += stock;
+      colorMapSet.add(v.color);
+      sizeMapSet.add(v.size);
+
+      // หา baseSku เช่น 144813_3 จาก sku 144813_3_M
+      const skuParts = v.sku.split("_");
+      const baseSku = skuParts.length >= 2 ? `${skuParts[0]}_${skuParts[1]}` : prod.slug;
+      const groupKey = `${baseSku}_${v.color}`;
+
+      if (!colorGroups[groupKey]) {
+        colorGroups[groupKey] = {
+          productName: prod.nameTh || prod.name,
+          color: v.color,
+          baseSku,
+          price: v.price,
+          availableSizes: new Set<string>(),
+          totalStock: 0,
+        };
+      }
+
+      colorGroups[groupKey].availableSizes.add(v.size);
+      colorGroups[groupKey].totalStock += stock;
+    }
+  }
+
+  const availableColors = Array.from(colorMapSet);
+  const availableSizes = Array.from(sizeMapSet);
+
+  const summary = Object.values(colorGroups).map((g) => ({
+    productName: g.productName,
+    color: g.color,
+    baseSku: g.baseSku,
+    price: g.price,
+    availableSizes: Array.from(g.availableSizes),
+    totalStock: g.totalStock,
+  }));
+
+  if (summary.length === 0) {
+    return {
+      success: true,
+      totalInStock: 0,
+      availableColors: [],
+      availableSizes: [],
+      summary: [],
+      message: "ขณะนี้ไม่มีสินค้าพร้อมส่งในเงื่อนไขที่ระบุ กรุณาสอบถามสีหรือรุ่นอื่นเพิ่มเติม",
+    };
+  }
+
+  return {
+    success: true,
+    totalInStock,
+    availableColors,
+    availableSizes,
+    summary: summary.slice(0, 10), // นำเสนอตัวอย่างสูงสุด 10 สี/รุ่นที่พร้อมส่ง
+  };
+}
+
+/**
+ * 3. ตรวจสอบจำนวนสต็อกคงเหลือของ Variant ผ่าน SKU หรือ Base SKU
  */
 export async function checkStock(variantSku: string) {
+  const cleanSku = variantSku.trim();
+
+  // 1. ตรวจสอบแบบค้นหา SKU ตรงตัวเป๊ะๆ ก่อน
   const variant = await prisma.productVariant.findUnique({
-    where: { sku: variantSku },
+    where: { sku: cleanSku },
     include: {
       product: true,
       inventory: true,
     },
   });
 
-  if (!variant) {
-    throw new Error(`ไม่พบสินค้า SKU: ${variantSku}`);
+  if (variant) {
+    const totalStock = variant.inventory.reduce((sum, inv) => sum + inv.quantity, 0);
+    return {
+      sku: variant.sku,
+      productName: variant.product.nameTh || variant.product.name,
+      color: variant.color,
+      size: variant.size,
+      price: variant.price,
+      stock: totalStock,
+    };
   }
 
-  const totalStock = variant.inventory.reduce((sum, inv) => sum + inv.quantity, 0);
+  // 2. หากไม่พบตรงตัว ให้ค้นหาแบบ Prefix/Base SKU (เช่น 144813_3 หรือ 144813)
+  const variants = await prisma.productVariant.findMany({
+    where: {
+      OR: [
+        { sku: { startsWith: cleanSku } },
+        { sku: { contains: cleanSku } },
+      ],
+    },
+    include: {
+      product: true,
+      inventory: true,
+    },
+  });
 
-  return {
-    sku: variant.sku,
-    productName: variant.product.nameTh,
-    color: variant.color,
-    size: variant.size,
-    price: variant.price,
-    stock: totalStock,
-  };
+  if (variants.length > 0) {
+    const productName = variants[0].product.nameTh || variants[0].product.name;
+    const variantsResult = variants.map((v) => ({
+      sku: v.sku,
+      color: v.color,
+      size: v.size,
+      price: v.price,
+      stock: v.inventory.reduce((sum, inv) => sum + inv.quantity, 0),
+    }));
+
+    return {
+      productName,
+      code: cleanSku,
+      stock: variantsResult.reduce((sum, v) => sum + v.stock, 0),
+      variants: variantsResult,
+    };
+  }
+
+  // 3. ตรวจสอบผ่าน Product slug
+  const product = await prisma.product.findFirst({
+    where: {
+      OR: [
+        { slug: cleanSku },
+        { slug: { contains: cleanSku } },
+      ],
+    },
+    include: {
+      variants: {
+        include: { inventory: true },
+      },
+    },
+  });
+
+  if (product && product.variants.length > 0) {
+    return {
+      productName: product.nameTh || product.name,
+      code: cleanSku,
+      stock: product.variants.reduce((sum, v) => sum + v.inventory.reduce((s, inv) => s + inv.quantity, 0), 0),
+      variants: product.variants.map((v) => ({
+        sku: v.sku,
+        color: v.color,
+        size: v.size,
+        price: v.price,
+        stock: v.inventory.reduce((sum, inv) => sum + inv.quantity, 0),
+      })),
+    };
+  }
+
+  throw new Error(`ไม่พบสินค้าหรือรหัส SKU: ${variantSku}`);
 }
 
 /**

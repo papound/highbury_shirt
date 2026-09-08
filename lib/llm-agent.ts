@@ -42,13 +42,30 @@ const getProductDetailsDeclaration: FunctionDeclaration = {
   },
 };
 
-const checkStockDeclaration: FunctionDeclaration = {
-  name: "checkStock",
-  description: "ตรวจสอบสต็อกคงเหลือจริงของสินค้าตัวเลือกเฉพาะเจาะจง ผ่านรหัส SKU (เช่น HBI-OX-WHT-M)",
+const getAvailableOptionsDeclaration: FunctionDeclaration = {
+  name: "getAvailableOptions",
+  description: "ค้นหาและสรุปตัวเลือกสีหรือไซส์ที่มีสินค้าพร้อมส่งจริงในสต็อก (Stock > 0) เหมาะสำหรับตอบคำถามแนวสำรวจตัวเลือก เช่น 'เสื้อผู้ชายแขนยาวมีสีอะไรบ้าง', 'ไซส์ M มีสีอะไรบ้าง', 'มีสีอะไรพร้อมส่งบ้าง', 'รุ่นนี้มีสีอะไรบ้าง'",
   parameters: {
     type: SchemaType.OBJECT,
     properties: {
-      variantSku: { type: SchemaType.STRING, description: "รหัส SKU ของสินค้าตัวเลือกที่ต้องการตรวจสอบสต็อก" },
+      gender: { type: SchemaType.STRING, description: "เพศ เช่น men (ชาย) หรือ women (หญิง)" },
+      sleeve: { type: SchemaType.STRING, description: "ความยาวแขน เช่น long (แขนยาว), short (แขนสั้น), three-quarter (สามส่วน), polo (โปโล)" },
+      pattern: { type: SchemaType.STRING, description: "ลายผ้า เช่น plain (ผ้าพื้น), stripe (ลายริ้ว), check (ลายสก๊อต), print (ลายพิมพ์)" },
+      size: { type: SchemaType.STRING, description: "ไซส์ที่ต้องการสำรวจ เช่น S, M, L, XL, 2XL, 3XL" },
+      color: { type: SchemaType.STRING, description: "สีที่ต้องการสำรวจ เช่น ขาว, ฟ้า, กรม, ดำ, ชมพู" },
+      productCode: { type: SchemaType.STRING, description: "รหัสสินค้าหรือ Base SKU เช่น 144813 หรือ 144813_3" },
+      query: { type: SchemaType.STRING, description: "ข้อความหรือคำค้นหาเพิ่มเติม เช่น เสื้อเชิ้ตผู้ชายแขนยาวผ้าพื้น" },
+    },
+  },
+};
+
+const checkStockDeclaration: FunctionDeclaration = {
+  name: "checkStock",
+  description: "ตรวจสอบสต็อกคงเหลือจริงของสินค้า สามารถระบุได้ทั้งรหัส SKU เต็ม (เช่น 144813_3_M) หรือรหัสสินค้า/รหัสสี (เช่น 144813_3 หรือ 144813) เพื่อดูสต็อกทุกไซส์ของสินค้านั้นพร้อมกัน",
+  parameters: {
+    type: SchemaType.OBJECT,
+    properties: {
+      variantSku: { type: SchemaType.STRING, description: "รหัส SKU เต็ม หรือรหัสสินค้า/รหัสสี เช่น 144813_3_M, 144813_3 หรือ 144813" },
     },
     required: ["variantSku"],
   },
@@ -217,6 +234,7 @@ const previewOrderDeclaration: FunctionDeclaration = {
 const tools = [
   {
     functionDeclarations: [
+      getAvailableOptionsDeclaration,
       searchProductsDeclaration,
       getProductDetailsDeclaration,
       checkStockDeclaration,
@@ -260,7 +278,9 @@ const SYSTEM_INSTRUCTION = `
    - รหัสสีตรงกลาง: ${colorMapText}
    - เสนอทางเลือก: หาก variant ที่ลูกค้าขอนั้นหมดสต็อก (stock เป็น 0) ให้เช็คและเสนอสี/ไซส์อื่นของสินค้านั้นที่มีพร้อมส่งทันทีเพื่อช่วยปิดการขาย
 9. ความกระชับ (Conciseness): ตอบสั้น กระชับ ตรงประเด็น เลี่ยงประโยคเกริ่น/ลงท้ายยืดยาวเพื่อประหยัด Token และให้อ่านง่ายบนมือถือ
-10. รันเครื่องมือทันที: เมื่อบอกจะเช็ค/ค้นหา/สั่งซื้อ ต้องรันเครื่องมือที่เกี่ยวข้องในเทิร์นนั้นทันที ห้ามบอกให้รอเปล่าๆ โดยไม่รันเครื่องมือ
+10. รันเครื่องมือทันทีในเทิร์นเดียวกัน:
+    - เมื่อลูกค้าบอกให้เช็ค/ค้นหา/ตรวจสอบ หรือถามสต็อกสินค้า ต้องเรียกใช้เครื่องมือที่เกี่ยวข้อง (เช่น checkStock, searchProducts, getAvailableOptions) ในเทิร์นนั้นทันที
+    - **ข้อห้ามเด็ดขาด**: ห้ามพิมพ์ตอบข้อความลอยๆ เช่น "โปรดรอสักครู่", "รอสักครู่นะคะ", "กำลังตรวจสอบให้ค่ะ" โดยไม่มีการเรียกเครื่องมือและไม่มีผลลัพธ์ข้อมูลจริงในเทิร์นเดียวกันเด็ดขาด
 11. การรับรูปภาพ (Multimodal): เมื่อลูกค้าส่งภาพมาให้วิเคราะห์ด้วยตา:
     - รูปสลิป: รัน submitPaymentProof ทันทีโดยค้นหาหรือถามเลขออเดอร์ และใช้ imageUrl จากแชท
     - รูปเสื้อ/แฟชั่น:
@@ -278,6 +298,11 @@ const SYSTEM_INSTRUCTION = `
     - ห้ามแสดงบรรทัด "SKU ตัวอย่าง" หรือข้อมูล SKU รายไซส์ในผลลัพธ์การค้นหาเด็ดขาด
     - ถ้าหากสินค้านั้นทุกไซส์ไม่มีสินค้าเลยก็ไม่ต้องแจ้งลูกค้า
     - หรือหากมีสินค้าในบางไซส์ แต่หากไซส์ใดสต็อกเป็น 0 ตัว ให้เขียนระบุว่า "(ไม่มีสินค้า)" ห้ามพิมพ์คำว่า "0 ตัว" หรือ "สต็อก 0" เด็ดขาด
+17. การแนะนำตัวเลือกสีและไซส์ (Explore Available Options):
+    - เมื่อลูกค้าถามแนวสำรวจตัวเลือก เช่น "มีสีอะไรบ้าง", "ไซส์ M มีสีอะไรบ้าง", "เสื้อแขนยาวผู้ชายมีสีอะไรบ้าง", "รุ่นนี้มีสีอะไรบ้าง" หรือ "มีสีอะไรพร้อมส่งบ้าง"
+    - ให้เรียกใช้เครื่องมือ 'getAvailableOptions' ทันที
+    - นำเฉพาะสีและไซส์ที่มีสต็อกพร้อมส่ง (Stock > 0) จากผลลัพธ์ของเครื่องมือไปตอบลูกค้าอย่างกระชับ ชัดเจน
+    - สอบถามความต้องการต่ออย่างสุภาพ เช่น ถามไซส์ที่ลูกค้าใส่ หรือทรง/ลายที่ชอบ เพื่อช่วยแนะนำและปิดการขายได้อย่างเป็นธรรมชาติ
 `;
 
 export interface ChatMessageParam {
@@ -1177,6 +1202,9 @@ export async function runChatbotTurn(
         try {
           // คัดแยกชื่อเครื่องมือและดำเนินการดึงข้อมูลจาก DB
           switch (call.name) {
+            case "getAvailableOptions":
+              functionResult = await skills.getAvailableOptions(call.args as any);
+              break;
             case "searchProducts":
               functionResult = await skills.searchProducts(call.args as any);
               break;
@@ -1330,7 +1358,7 @@ export async function runChatbotTurn(
       // ส่งผลลัพธ์ของฟังก์ชันกลับไปยังโมเดลเพื่อให้สรุปหรือคุยต่อ
       contents.push(candidate!.content); // เพิ่มคำตอบก่อนหน้าที่มีการเรียกฟังก์ชัน
       contents.push({
-        role: "user",
+        role: "function",
         parts: toolResults, // ส่งผลลัพธ์ของฟังก์ชันกลับไป
       });
 
