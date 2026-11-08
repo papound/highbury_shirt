@@ -264,8 +264,19 @@ const colorMapText = Object.entries(colorMap)
 const promptpayId = process.env.PROMPTPAY_ID || "0981466416";
 const promptpayName = process.env.PROMPTPAY_NAME || "นายประชา นาควังศาสตร์";
 
-const SYSTEM_INSTRUCTION = `
+/**
+ * สร้าง System Instruction สำหรับโมเดล Gemini
+ * ผสมผสานระหว่าง "กฎความปลอดภัย/ความถูกต้องหลักของระบบ" (Hard Rules)
+ * และ "คำสั่งหรือสไตล์การคุยที่แอดมินกำหนดเอง" (Admin Custom Prompt)
+ */
+export function buildSystemInstruction(customPrompt?: string): string {
+  const adminAdditions = customPrompt?.trim()
+    ? `\n=== ข้อกำหนดและสไตล์การตอบเพิ่มเติมจากแอดมิน (Admin Custom Prompt) ===\n${customPrompt.trim()}\n`
+    : "";
+
+  return `
 คุณคือ "น้องไฮบิวรี่ (Highbury Assistant)" ผู้ช่วยขายเสื้อเชิ้ตพรีเมียมของ Highbury International บน LINE OA โต้ตอบสุภาพ เป็นมิตรเพื่อปิดการขาย
+${adminAdditions}
 กฎเหล็กที่ต้องปฏิบัติอย่างเคร่งครัด:
 1. ภาษา: คุยภาษาไทย สุภาพ มี "ครับ/ค่ะ" เสมอ เลี่ยงภาษาอังกฤษล้วน สั้นกระชับ เข้าใจง่าย ไม่เวิ่นเว้อ และใช้หน่วยลักษณนามของเสื้อว่า "ตัว" เสมอ (ห้ามใช้คำว่า "ชิ้น")
 2. ข้อมูลสินค้า: ห้ามเมคราคา/ไซส์/สต็อกเองเด็ดขาด ถ้าไม่แน่ใจให้ใช้เครื่องมือค้นหาหรือแจ้งว่าหมดชั่วคราว
@@ -306,7 +317,10 @@ const SYSTEM_INSTRUCTION = `
     - ให้เรียกใช้เครื่องมือ 'getAvailableOptions' ทันที
     - นำเฉพาะสีและไซส์ที่มีสต็อกพร้อมส่ง (Stock > 0) จากผลลัพธ์ของเครื่องมือไปตอบลูกค้าอย่างกระชับ ชัดเจน
     - สอบถามความต้องการต่ออย่างสุภาพ เช่น ถามไซส์ที่ลูกค้าใส่ หรือทรง/ลายที่ชอบ เพื่อช่วยแนะนำและปิดการขายได้อย่างเป็นธรรมชาติ
-`;
+`.trim();
+}
+
+export const SYSTEM_INSTRUCTION = buildSystemInstruction();
 
 export interface ChatMessageParam {
   role: "user" | "model";
@@ -1145,22 +1159,33 @@ export async function runChatbotTurn(
       console.error("[Gemini credit check error]:", err);
     }
 
-    // 2. ดึงโมเดลที่จะใช้จากฐานข้อมูล
+    // 2. ดึงการตั้งค่าโมเดลและ Prompt กำหนดเองจากแอดมิน (DB)
     let modelName = "gemini-2.5-flash";
+    let customPrompt: string | undefined;
     try {
-      const modelSetting = await prisma.siteSetting.findUnique({
-        where: { key: "gemini_model_name" },
+      const settings = await prisma.siteSetting.findMany({
+        where: {
+          key: {
+            in: ["gemini_model_name", "bot_custom_prompt"],
+          },
+        },
       });
-      if (modelSetting?.value) {
-        modelName = modelSetting.value;
+      for (const setting of settings) {
+        if (setting.key === "gemini_model_name" && setting.value) {
+          modelName = setting.value;
+        } else if (setting.key === "bot_custom_prompt" && setting.value?.trim()) {
+          customPrompt = setting.value.trim();
+        }
       }
     } catch (err) {
-      console.error("[Gemini model name fetch error]:", err);
+      console.error("[Bot Settings fetch error]:", err);
     }
+
+    const dynamicSystemInstruction = buildSystemInstruction(customPrompt);
 
     const model = genAI.getGenerativeModel({
       model: modelName,
-      systemInstruction: SYSTEM_INSTRUCTION,
+      systemInstruction: dynamicSystemInstruction,
       tools: tools,
     });
 

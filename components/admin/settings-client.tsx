@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
@@ -28,7 +29,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Pencil, Trash2, Check, X, Key } from "lucide-react";
+import { Pencil, Trash2, Check, X, Key, Bot, Sparkles, RotateCcw } from "lucide-react";
 
 const ROLE_LABELS: Record<string, string> = {
   SUPERADMIN: "Super Admin",
@@ -37,12 +38,20 @@ const ROLE_LABELS: Record<string, string> = {
   ACCOUNTANT: "บัญชี",
 };
 
+const DEFAULT_WELCOME_MESSAGE = "สวัสดีครับ ยินดีต้อนรับสู่แบรนด์เสื้อเชิ้ตสำเร็จรูป Highbury International ครับ 🎉\n\nผมคือ น้องไฮบิวรี่ ผู้ช่วยส่วนตัวของคุณ กำลังมองหาเสื้อเชิ้ตไซส์ไหน สีอะไร หรือต้องการดูโปรโมชั่นพิเศษอยู่ สามารถพิมพ์คุยกับผมได้เลยนะครับ!";
+const DEFAULT_PAUSED_MESSAGE = "เจ้าหน้าที่กำลังรับเรื่องและจะรีบตอบกลับนะคะ 🙏\n(หากต้องการสอบถามสต็อกหรือสั่งซื้อกับระบบอัตโนมัติทันที สามารถพิมพ์ 'คุยกับบอท' ได้เลยค่ะ)";
+const DEFAULT_FALLBACK_MESSAGE = "ขออภัยในความไม่สะดวกนะคะ ขณะนี้ระบบขัดข้องชั่วคราว ทางร้านกำลังประสานงานให้เจ้าหน้าที่เข้ามาดูแลคุณลูกค้าสักครู่นะคะ 🙏";
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function AdminSettingsClient({ users: initialUsers, warehouses: initialWarehouses, settingsMap }: { users: any[]; warehouses: any[]; settingsMap: Record<string, string> }) {
   const [users, setUsers] = useState(initialUsers);
   const [warehouses, setWarehouses] = useState(initialWarehouses);
   const [promptpayId, setPromptpayId] = useState(settingsMap["promptpay_id"] ?? "");
   const [promptpayName, setPromptpayName] = useState(settingsMap["promptpay_name"] ?? "");
+  const [botCustomPrompt, setBotCustomPrompt] = useState(settingsMap["bot_custom_prompt"] ?? "");
+  const [botWelcomeMessage, setBotWelcomeMessage] = useState(settingsMap["bot_welcome_message"] ?? "");
+  const [botPausedMessage, setBotPausedMessage] = useState(settingsMap["bot_paused_message"] ?? "");
+  const [botFallbackMessage, setBotFallbackMessage] = useState(settingsMap["bot_fallback_message"] ?? "");
   const [newWarehouse, setNewWarehouse] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -63,7 +72,14 @@ export default function AdminSettingsClient({ users: initialUsers, warehouses: i
       const res = await fetch("/api/admin/settings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ promptpayId, promptpayName }),
+        body: JSON.stringify({
+          promptpayId,
+          promptpayName,
+          botCustomPrompt,
+          botWelcomeMessage,
+          botPausedMessage,
+          botFallbackMessage,
+        }),
       });
       if (!res.ok) throw new Error("บันทึกล้มเหลว");
       toast.success("บันทึกการตั้งค่าสำเร็จ");
@@ -182,6 +198,139 @@ export default function AdminSettingsClient({ users: initialUsers, warehouses: i
           </div>
         </div>
         <Button onClick={saveSettings} disabled={loading}>บันทึก</Button>
+      </section>
+
+      {/* AI Chatbot Settings */}
+      <section className="border rounded-xl p-5 bg-card space-y-5">
+        <div className="flex items-center gap-2">
+          <Bot className="w-5 h-5 text-blue-600" />
+          <div>
+            <h2 className="font-semibold text-base">ตั้งค่าแชทบอท AI (LINE Bot & Gemini Assistant)</h2>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              ปรับแต่งบุคลิก น้ำเสียง และข้อความตอบกลับอัตโนมัติของบอทได้เองอย่างอิสระโดยไม่ต้องแก้ไขโค้ด
+            </p>
+          </div>
+        </div>
+        <Separator />
+
+        {/* 1. Custom Persona / System Instructions */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <label className="text-sm font-medium flex items-center gap-1.5">
+              <Sparkles className="w-4 h-4 text-amber-500" />
+              คำสั่งพิเศษและบุคลิกของบอท (Custom Persona & Instructions)
+            </label>
+            {botCustomPrompt && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-7 text-xs text-muted-foreground hover:text-foreground"
+                onClick={() => setBotCustomPrompt("")}
+              >
+                ล้างคำสั่งพิเศษ
+              </Button>
+            )}
+          </div>
+          <p className="text-xs text-muted-foreground">
+            ระบุสไตล์การตอบ โทนเสียง กฎเสริม หรือโปรโมชั่นพิเศษที่อยากให้บอทพูด (ระบบจะนำคำสั่งนี้ไปผสานกับกฎความปลอดภัยหลักของร้านอัตโนมัติ)
+          </p>
+          <Textarea
+            value={botCustomPrompt}
+            onChange={(e) => setBotCustomPrompt(e.target.value)}
+            rows={4}
+            placeholder="ตัวอย่างเช่น:
+- ตอบด้วยน้ำเสียงอบอุ่น น่ารัก เป็นกันเอง ใช้คำลงท้าย 'นะคะ/ค่ะ' เสมอ
+- ช่วงนี้มีโปรโมชั่นส่งฟรีทุกออเดอร์ถึงสิ้นเดือนนี้ ให้แนะนำลูกค้าเสมอ
+- แนะนำเสื้อเชิ้ตผู้ชายแขนยาวผ้าพื้นและลายสก๊อตเป็นพิเศษเพื่อปิดการขาย"
+            className="text-sm font-sans"
+          />
+        </div>
+
+        {/* 2. Welcome Message */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <label className="text-sm font-medium">
+              ข้อความต้อนรับเมื่อลูกค้าทักครั้งแรก (Welcome Message)
+            </label>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 text-xs flex items-center gap-1 text-muted-foreground hover:text-foreground"
+              onClick={() => setBotWelcomeMessage(DEFAULT_WELCOME_MESSAGE)}
+            >
+              <RotateCcw className="w-3 h-3" />
+              คืนค่าเริ่มต้น
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            ข้อความที่ส่งอัตโนมัติเมื่อลูกค้าเพิ่มเพื่อน (Follow) หรือเริ่มคุยกับแบรนด์ครั้งแรก
+          </p>
+          <Textarea
+            value={botWelcomeMessage}
+            onChange={(e) => setBotWelcomeMessage(e.target.value)}
+            rows={3}
+            placeholder={DEFAULT_WELCOME_MESSAGE}
+            className="text-sm font-sans"
+          />
+        </div>
+
+        {/* 3. Paused / Admin Handover Message */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <label className="text-sm font-medium">
+              ข้อความแจ้งเตือนระหว่างรอแอดมินคุยสด (Admin Handover Message)
+            </label>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 text-xs flex items-center gap-1 text-muted-foreground hover:text-foreground"
+              onClick={() => setBotPausedMessage(DEFAULT_PAUSED_MESSAGE)}
+            >
+              <RotateCcw className="w-3 h-3" />
+              คืนค่าเริ่มต้น
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            ข้อความที่จะตอบลูกค้าขณะแอดมินกำลังคุยสด หรือบอทส่งสัญญานเรียกเจ้าหน้าที่มนุษย์
+          </p>
+          <Textarea
+            value={botPausedMessage}
+            onChange={(e) => setBotPausedMessage(e.target.value)}
+            rows={2}
+            placeholder={DEFAULT_PAUSED_MESSAGE}
+            className="text-sm font-sans"
+          />
+        </div>
+
+        {/* 4. Fallback Error Message */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <label className="text-sm font-medium">
+              ข้อความเมื่อระบบขัดข้องชั่วคราว (Fallback Error Message)
+            </label>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 text-xs flex items-center gap-1 text-muted-foreground hover:text-foreground"
+              onClick={() => setBotFallbackMessage(DEFAULT_FALLBACK_MESSAGE)}
+            >
+              <RotateCcw className="w-3 h-3" />
+              คืนค่าเริ่มต้น
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            ข้อความสุภาพที่จะส่งให้ลูกค้าอัตโนมัติหากระบบเกิดปัญหาขัดข้องชั่วคราว เพื่อไม่ให้แชทเงียบ
+          </p>
+          <Textarea
+            value={botFallbackMessage}
+            onChange={(e) => setBotFallbackMessage(e.target.value)}
+            rows={2}
+            placeholder={DEFAULT_FALLBACK_MESSAGE}
+            className="text-sm font-sans"
+          />
+        </div>
+
+        <Button onClick={saveSettings} disabled={loading}>บันทึกการตั้งค่าบอท</Button>
       </section>
 
       {/* Warehouses */}

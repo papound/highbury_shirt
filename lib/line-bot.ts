@@ -6,6 +6,31 @@ import { generatePromptPayPayload } from "./promptpay";
 
 const LINE_MESSAGING_API = "https://api.line.me/v2/bot/message/reply";
 
+export const DEFAULT_WELCOME_MESSAGE =
+  "สวัสดีครับ ยินดีต้อนรับสู่แบรนด์เสื้อเชิ้ตสำเร็จรูป Highbury International ครับ 🎉\n\nผมคือ น้องไฮบิวรี่ ผู้ช่วยส่วนตัวของคุณ กำลังมองหาเสื้อเชิ้ตไซส์ไหน สีอะไร หรือต้องการดูโปรโมชั่นพิเศษอยู่ สามารถพิมพ์คุยกับผมได้เลยนะครับ!";
+
+export const DEFAULT_PAUSED_MESSAGE =
+  "เจ้าหน้าที่กำลังรับเรื่องและจะรีบตอบกลับนะคะ 🙏\n(หากต้องการสอบถามสต็อกหรือสั่งซื้อกับระบบอัตโนมัติทันที สามารถพิมพ์ 'คุยกับบอท' ได้เลยค่ะ)";
+
+export const DEFAULT_FALLBACK_MESSAGE =
+  "ขออภัยในความไม่สะดวกนะคะ ขณะนี้ระบบขัดข้องชั่วคราว ทางร้านกำลังประสานงานให้เจ้าหน้าที่เข้ามาดูแลคุณลูกค้าสักครู่นะคะ 🙏";
+
+/**
+ * ดึงข้อความตอบกลับของบอทที่กำหนดโดยแอดมินจากฐานข้อมูล (SiteSetting)
+ * หากยังไม่ได้ตั้งค่า จะคืนค่าเริ่มต้น (Default Message)
+ */
+export async function getBotSetting(key: string, defaultValue: string): Promise<string> {
+  try {
+    const setting = await prisma.siteSetting.findUnique({
+      where: { key },
+    });
+    return setting?.value?.trim() || defaultValue;
+  } catch (err) {
+    console.error(`[LINE BOT] Failed to fetch bot setting "${key}":`, err);
+    return defaultValue;
+  }
+}
+
 /**
  * ฟังก์ชันส่งข้อความตอบกลับไปยัง LINE OA API
  */
@@ -174,10 +199,11 @@ export async function handleLineEvent(event: any): Promise<void> {
       console.error(`[LINE BOT] Error processing event for ${lineUserId}:`, err);
       try {
         if (event.replyToken) {
+          const fallbackMsg = await getBotSetting("bot_fallback_message", DEFAULT_FALLBACK_MESSAGE);
           await replyToLine(event.replyToken, [
             {
               type: "text",
-              text: "ขออภัยในความไม่สะดวกนะคะ ขณะนี้ระบบขัดข้องชั่วคราว ทางร้านกำลังประสานงานให้เจ้าหน้าที่เข้ามาดูแลคุณลูกค้าสักครู่นะคะ 🙏",
+              text: fallbackMsg,
             },
           ], lineUserId);
         }
@@ -355,8 +381,8 @@ async function processLineEvent(event: any, lineUserId: string): Promise<void> {
   }
 
   if (event.type === "follow") {
-    // ส่งข้อความต้อนรับ
-    const welcomeMsg = "สวัสดีครับ ยินดีต้อนรับสู่แบรนด์เสื้อเชิ้ตสำเร็จรูป Highbury International ครับ 🎉\n\nผมคือ น้องไฮบิวรี่ ผู้ช่วยส่วนตัวของคุณ กำลังมองหาเสื้อเชิ้ตไซส์ไหน สีอะไร หรือต้องการดูโปรโมชั่นพิเศษอยู่ สามารถพิมพ์คุยกับผมได้เลยนะครับ!";
+    // ส่งข้อความต้อนรับ (ดึงจากการตั้งค่า หรือใช้ค่าเริ่มต้น)
+    const welcomeMsg = await getBotSetting("bot_welcome_message", DEFAULT_WELCOME_MESSAGE);
     
     // บันทึกลง DB
     await prisma.chatMessage.create({
@@ -415,11 +441,12 @@ async function processLineEvent(event: any, lineUserId: string): Promise<void> {
         // แจ้งเตือนแอดมินว่าลูกค้าทักมาขณะอยู่ในโหมดคุยสด เพื่อไม่ให้ลูกค้าถูกทิ้งไว้ในความเงียบ
         await notifyAdminUrgentHelp(lineUserId, `ลูกค้าส่งข้อความขณะอยู่ในโหมดคุยสด: "${userText}"`);
 
-        // ส่งข้อความแจ้งลูกค้าเบาๆ พร้อมปุ่ม/คำสั่งให้ปลดกลับมาคุยกับบอทได้ทันทีหากต้องการ
+        // ส่งข้อความแจ้งลูกค้าเบาๆ (ดึงจากการตั้งค่า หรือใช้ค่าเริ่มต้น) พร้อมคำสั่งให้ปลดกลับมาคุยกับบอทได้ทันทีหากต้องการ
+        const pausedMsg = await getBotSetting("bot_paused_message", DEFAULT_PAUSED_MESSAGE);
         await replyToLine(event.replyToken, [
           {
             type: "text",
-            text: "เจ้าหน้าที่กำลังรับเรื่องและจะรีบตอบกลับนะคะ 🙏\n(หากต้องการสอบถามสต็อกหรือสั่งซื้อกับระบบอัตโนมัติทันที สามารถพิมพ์ 'คุยกับบอท' ได้เลยค่ะ)",
+            text: pausedMsg,
           },
         ], lineUserId);
         return;

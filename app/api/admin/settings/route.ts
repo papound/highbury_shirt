@@ -13,20 +13,81 @@ async function authorize() {
 export async function POST(req: NextRequest) {
   if (!(await authorize())) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { promptpayId, promptpayName } = await req.json();
+  const body = await req.json();
+  const {
+    promptpayId,
+    promptpayName,
+    botCustomPrompt,
+    botWelcomeMessage,
+    botPausedMessage,
+    botFallbackMessage,
+  } = body;
 
-  await Promise.all([
-    prisma.siteSetting.upsert({
-      where: { key: "promptpay_id" },
-      update: { value: promptpayId },
-      create: { key: "promptpay_id", value: promptpayId },
-    }),
-    prisma.siteSetting.upsert({
-      where: { key: "promptpay_name" },
-      update: { value: promptpayName },
-      create: { key: "promptpay_name", value: promptpayName },
-    }),
-  ]);
+  const updates: Promise<any>[] = [];
+
+  if (promptpayId !== undefined) {
+    updates.push(
+      prisma.siteSetting.upsert({
+        where: { key: "promptpay_id" },
+        update: { value: String(promptpayId) },
+        create: { key: "promptpay_id", value: String(promptpayId) },
+      })
+    );
+  }
+
+  if (promptpayName !== undefined) {
+    updates.push(
+      prisma.siteSetting.upsert({
+        where: { key: "promptpay_name" },
+        update: { value: String(promptpayName) },
+        create: { key: "promptpay_name", value: String(promptpayName) },
+      })
+    );
+  }
+
+  if (botCustomPrompt !== undefined) {
+    updates.push(
+      prisma.siteSetting.upsert({
+        where: { key: "bot_custom_prompt" },
+        update: { value: String(botCustomPrompt) },
+        create: { key: "bot_custom_prompt", value: String(botCustomPrompt) },
+      })
+    );
+  }
+
+  if (botWelcomeMessage !== undefined) {
+    updates.push(
+      prisma.siteSetting.upsert({
+        where: { key: "bot_welcome_message" },
+        update: { value: String(botWelcomeMessage) },
+        create: { key: "bot_welcome_message", value: String(botWelcomeMessage) },
+      })
+    );
+  }
+
+  if (botPausedMessage !== undefined) {
+    updates.push(
+      prisma.siteSetting.upsert({
+        where: { key: "bot_paused_message" },
+        update: { value: String(botPausedMessage) },
+        create: { key: "bot_paused_message", value: String(botPausedMessage) },
+      })
+    );
+  }
+
+  if (botFallbackMessage !== undefined) {
+    updates.push(
+      prisma.siteSetting.upsert({
+        where: { key: "bot_fallback_message" },
+        update: { value: String(botFallbackMessage) },
+        create: { key: "bot_fallback_message", value: String(botFallbackMessage) },
+      })
+    );
+  }
+
+  if (updates.length > 0) {
+    await Promise.all(updates);
+  }
 
   return NextResponse.json({ success: true });
 }

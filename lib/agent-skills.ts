@@ -6,6 +6,11 @@ import { notifyAdminNewOrder } from "@/lib/line-notify";
 import type { CartItem } from "@/types";
 import colorMap from "./color-map.json";
 
+// ═══════════════════════════════════════════════════════════════════════════
+// ZONE 1: THAI NLP & ATTRIBUTE EXTRACTION
+// ฟังก์ชันช่วยตัดคำ สกัดคุณลักษณะสินค้า (ความยาวแขน, เพศ, ลายผ้า, สี, ไซส์, รหัส)
+// ═══════════════════════════════════════════════════════════════════════════
+
 // รายการสีภาษาไทย เรียงจากยาวไปสั้น เพื่อให้แมตช์คำเฉพาะเจาะจงก่อน (เช่น "ฟ้าอ่อน" ก่อน "ฟ้า")
 const THAI_COLORS = Object.values(colorMap)
   .map((c) => c.thai)
@@ -101,6 +106,11 @@ export function extractSearchAttributes(rawText?: string): ExtractedAttributes {
 
   return res;
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ZONE 2: CATALOG & STOCK QUERY SKILLS
+// สกิลค้นหาสินค้า ดึงรายละเอียด สำรวจตัวเลือกพร้อมส่ง และเช็คสต็อก
+// ═══════════════════════════════════════════════════════════════════════════
 
 export interface SearchParams {
   query?: string;
@@ -790,6 +800,11 @@ export async function checkStock(input: string | CheckStockParams) {
   };
 }
 
+// ═══════════════════════════════════════════════════════════════════════════
+// ZONE 3: PROMOTIONS & PRICING SKILLS
+// สกิลตรวจสอบโปรโมชั่น ตรวจสอบโค้ดส่วนลดที่ใช้งานได้
+// ═══════════════════════════════════════════════════════════════════════════
+
 /**
  * 4. ดึงโปรโมชั่นที่กำลังเปิดใช้งานอยู่ในปัจจุบัน
  */
@@ -895,6 +910,11 @@ export async function validatePromoCode(code: string) {
     discountValue: promo.discountValue,
   };
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ZONE 4: ORDER LIFECYCLE & POST-SALE SKILLS
+// สกิลสร้างออเดอร์, ส่งสลิป, ยกเลิกออเดอร์, ตรวจสอบออเดอร์เดิม และพรีวิวคำนวณราคา
+// ═══════════════════════════════════════════════════════════════════════════
 
 export interface OrderItemInput {
   sku: string;
@@ -1248,15 +1268,17 @@ export async function getOrderDetails(orderNumber: string) {
   };
 }
 
-/**
- * 11. คำนวณและประเมินราคารายการสินค้าก่อนสั่งซื้อจริง
- */
-export async function previewOrder(params: {
+export interface PreviewOrderParams {
   items: { sku: string; quantity: number }[];
   promotionCode?: string;
   isPickup?: boolean;
   vatInfo?: VatInfoInput;
-}) {
+}
+
+/**
+ * 11. คำนวณและประเมินราคารายการสินค้าก่อนสั่งซื้อจริง
+ */
+export async function previewOrder(params: PreviewOrderParams) {
   const { items, promotionCode, isPickup = false, vatInfo } = params;
   const itemsMapped: CartItem[] = [];
 
