@@ -16,7 +16,35 @@ async function replyToLine(replyToken: string, messages: any[], lineUserId?: str
     return;
   }
 
-  console.log("[LINE BOT] Sending reply to LINE. Payload:", JSON.stringify(messages, null, 2));
+  // ปรับแต่งและตรวจสอบข้อความก่อนส่งเสมอ ป้องกัน LINE API Reject (400 Bad Request)
+  const sanitizedMessages: any[] = [];
+  for (const msg of messages) {
+    if (msg.type === "text") {
+      let t = (msg.text || "").trim();
+      if (t.length > 4500) {
+        t = t.slice(0, 4500) + "...";
+      }
+      if (t) {
+        sanitizedMessages.push({ type: "text", text: t });
+      }
+    } else if (msg.type === "flex") {
+      if (msg.contents && msg.altText) {
+        sanitizedMessages.push(msg);
+      }
+    } else if (msg.type === "image") {
+      if (msg.originalContentUrl && msg.previewImageUrl) {
+        sanitizedMessages.push(msg);
+      }
+    } else {
+      sanitizedMessages.push(msg);
+    }
+  }
+
+  if (sanitizedMessages.length === 0) {
+    sanitizedMessages.push({ type: "text", text: "ยินดีให้บริการค่ะ มีข้อมูลใดให้ช่วยเพิ่มเติมสอบถามได้เลยนะคะ 😊" });
+  }
+
+  console.log("[LINE BOT] Sending reply to LINE. Payload:", JSON.stringify(sanitizedMessages, null, 2));
 
   try {
     const res = await fetch(LINE_MESSAGING_API, {
@@ -27,7 +55,7 @@ async function replyToLine(replyToken: string, messages: any[], lineUserId?: str
       },
       body: JSON.stringify({
         replyToken,
-        messages,
+        messages: sanitizedMessages.slice(0, 5),
       }),
     });
 
@@ -48,12 +76,26 @@ async function replyToLine(replyToken: string, messages: any[], lineUserId?: str
           },
           body: JSON.stringify({
             to: lineUserId,
-            messages,
+            messages: sanitizedMessages.slice(0, 5),
           }),
         });
         if (!pushRes.ok) {
           const pushErr = await pushRes.text();
           console.error("[LINE BOT] Fallback push message also failed:", pushErr);
+
+          // Second Fallback: ส่งแบบ Simple Text เพื่อความแน่นอน 100% ในกรณีที่ Flex หรือรูปภาพมีปัญหา
+          const fallbackText = sanitizedMessages.find((m: any) => m.type === "text")?.text || "ขออภัยด้วยค่ะ ระบบดำเนินการตอบกลับเรียบร้อยแล้วค่ะ";
+          await fetch("https://api.line.me/v2/bot/message/push", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              to: lineUserId,
+              messages: [{ type: "text", text: fallbackText }],
+            }),
+          }).catch((e) => console.error("[LINE BOT] Ultra fallback failed:", e));
         } else {
           console.log("[LINE BOT] Fallback push message delivered successfully.");
         }
@@ -128,8 +170,20 @@ export async function handleLineEvent(event: any): Promise<void> {
   const currentQueue = userQueues.get(lineUserId) || Promise.resolve();
   const nextQueue = currentQueue
     .then(() => processLineEvent(event, lineUserId))
-    .catch((err) => {
+    .catch(async (err) => {
       console.error(`[LINE BOT] Error processing event for ${lineUserId}:`, err);
+      try {
+        if (event.replyToken) {
+          await replyToLine(event.replyToken, [
+            {
+              type: "text",
+              text: "ขออภัยในความไม่สะดวกนะคะ ขณะนี้ระบบขัดข้องชั่วคราว ทางร้านกำลังประสานงานให้เจ้าหน้าที่เข้ามาดูแลคุณลูกค้าสักครู่นะคะ 🙏",
+            },
+          ], lineUserId);
+        }
+      } catch (replyErr) {
+        console.error("[LINE BOT] Failed to send error fallback reply:", replyErr);
+      }
     })
     .finally(() => {
       if (userQueues.get(lineUserId) === nextQueue) {
@@ -331,10 +385,45 @@ async function processLineEvent(event: any, lineUserId: string): Promise<void> {
       },
     });
 
-    // ตรวจสอบว่าแอดมินกด Pause บอทไว้หรือไม่ (แอดมินคุยสด)
-    if (session.status === "PAUSED") {
-      console.log(`[LINE BOT] Bot is paused for user ${lineUserId}. Ignoring.`);
-      return;
+    // 1.1 จัดการสถานะ COMPLETED: หากจบเคสไปแล้ว ลูกค้าทักมาใหม่ ให้กลับมาเปิดบอทอัตโนมัติ
+    if (session.status === "COMPLETED") {
+      session = await prisma.chatSession.update({
+        where: { id: session.id },
+        data: { status: "ACTIVE", requiresAdmin: false },
+        include: { messages: { orderBy: { createdAt: "asc" } } },
+      });
+    } else if (session.status === "PAUSED") {
+      // 1.2 จัดการสถานะ PAUSED:
+      // เช็คว่าผู้ใช้พิมพ์เพื่อขอปลดบอท หรือค้างไว้นานเกิน 2 ชั่วโมงหรือไม่
+      const lower = userText.toLowerCase();
+      const isReactivateIntent = [
+        "คุยกับบอท", "บอท", "เปิดบอท", "bot", "เริ่มใหม่", "สวัสดี", "สั่งซื้อ", "เช็คสต็อก", "มีสินค้าไหม"
+      ].some((k) => lower.includes(k));
+
+      const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
+      const isExpiredPause = session.updatedAt ? new Date(session.updatedAt) < twoHoursAgo : false;
+
+      if (isReactivateIntent || isExpiredPause) {
+        console.log(`[LINE BOT] Auto-reactivating paused session for ${lineUserId} (Intent: ${isReactivateIntent}, Expired: ${isExpiredPause})`);
+        session = await prisma.chatSession.update({
+          where: { id: session.id },
+          data: { status: "ACTIVE", requiresAdmin: false },
+          include: { messages: { orderBy: { createdAt: "asc" } } },
+        });
+      } else {
+        console.log(`[LINE BOT] Bot is actively paused for user ${lineUserId}. Notifying admin.`);
+        // แจ้งเตือนแอดมินว่าลูกค้าทักมาขณะอยู่ในโหมดคุยสด เพื่อไม่ให้ลูกค้าถูกทิ้งไว้ในความเงียบ
+        await notifyAdminUrgentHelp(lineUserId, `ลูกค้าส่งข้อความขณะอยู่ในโหมดคุยสด: "${userText}"`);
+
+        // ส่งข้อความแจ้งลูกค้าเบาๆ พร้อมปุ่ม/คำสั่งให้ปลดกลับมาคุยกับบอทได้ทันทีหากต้องการ
+        await replyToLine(event.replyToken, [
+          {
+            type: "text",
+            text: "เจ้าหน้าที่กำลังรับเรื่องและจะรีบตอบกลับนะคะ 🙏\n(หากต้องการสอบถามสต็อกหรือสั่งซื้อกับระบบอัตโนมัติทันที สามารถพิมพ์ 'คุยกับบอท' ได้เลยค่ะ)",
+          },
+        ], lineUserId);
+        return;
+      }
     }
 
     // อัปเดตกิจกรรมล่าสุด

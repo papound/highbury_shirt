@@ -8,7 +8,6 @@ import generatePayload from "promptpay-qr";
  * @param ref     Order number used as reference (first 20 chars)
  */
 export function generatePromptPayPayload(amount: number): string {
-  const id = process.env.PROMPTPAY_ID;
-  if (!id) throw new Error("PROMPTPAY_ID env var not set");
+  const id = process.env.PROMPTPAY_ID || "0981466416";
   return generatePayload(id, { amount: Math.round(amount * 100) / 100 });
 }

@@ -18,6 +18,10 @@ async function main() {
 
   // 2. ดึงรายละเอียดสินค้า
   const details = await getProductDetails(testProduct.slug);
+  if (!details.variants) {
+    console.log("❌ Could not fetch details for product:", (details as any).message || (details as any).error);
+    return;
+  }
   console.log(`[PASS] Fetched details for ${details.nameTh}. Variants count: ${details.variants.length}`);
 
   if (details.variants.length === 0) {
@@ -97,14 +101,14 @@ async function main() {
 
   // 3. ตรวจสอบสต็อก
   const stockResult = await checkStock(testVariant.sku);
-  console.log(`[PASS] Stock checked for ${testVariant.sku}: ${stockResult.stock} units available.`);
+  const currentStock = (stockResult as any).stock ?? (stockResult as any).totalStock ?? 0;
+  console.log(`[PASS] Stock checked for ${testVariant.sku}: ${currentStock} units available.`);
 
   // 4. ทดลองสร้างคำสั่งซื้อรอชำระเงิน
   console.log("Creating pending order test...");
 
-  
   // ตรวจสอบสต็อกอย่างน้อย 1 ตัว
-  if (stockResult.stock < 1) {
+  if (currentStock < 1) {
     console.log("⚠️ Stock is 0, skipping order creation test to prevent error.");
   } else {
     const orderResult = await createPendingOrder({

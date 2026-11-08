@@ -61,13 +61,16 @@ const getAvailableOptionsDeclaration: FunctionDeclaration = {
 
 const checkStockDeclaration: FunctionDeclaration = {
   name: "checkStock",
-  description: "ตรวจสอบสต็อกคงเหลือจริงของสินค้า สามารถระบุได้ทั้งรหัส SKU เต็ม (เช่น 144813_3_M) หรือรหัสสินค้า/รหัสสี (เช่น 144813_3 หรือ 144813) เพื่อดูสต็อกทุกไซส์ของสินค้านั้นพร้อมกัน",
+  description: "ตรวจสอบสต็อกคงเหลือจริงของสินค้า สามารถระบุได้ทั้งรหัส SKU เต็ม (เช่น 144813_3_M), รหัสสินค้า/รหัสสี (เช่น 144813 หรือ 144813_3) หรือระบุรหัสสินค้าพร้อมสีและไซส์ได้ทันที",
   parameters: {
     type: SchemaType.OBJECT,
     properties: {
       variantSku: { type: SchemaType.STRING, description: "รหัส SKU เต็ม หรือรหัสสินค้า/รหัสสี เช่น 144813_3_M, 144813_3 หรือ 144813" },
+      productCode: { type: SchemaType.STRING, description: "รหัสสินค้า เช่น 144813" },
+      color: { type: SchemaType.STRING, description: "สีของเสื้อ เช่น ขาว, ฟ้า, ดำ, กรม" },
+      size: { type: SchemaType.STRING, description: "ไซส์เสื้อ เช่น S, M, L, XL, 2XL" },
+      query: { type: SchemaType.STRING, description: "ข้อความค้นหาสต็อกเพิ่มเติม เช่น เช็คสต็อก 144813 สีฟ้า ไซส์ L" },
     },
-    required: ["variantSku"],
   },
 };
 
@@ -277,7 +280,7 @@ const SYSTEM_INSTRUCTION = `
    - หลักที่ 3 (ลาย): 1=ริ้ว, 2=สก๊อต, 3=จุด, 4=ผ้าพื้น, 5=พิมพ์ลาย
    - รหัสสีตรงกลาง: ${colorMapText}
    - เสนอทางเลือก: หาก variant ที่ลูกค้าขอนั้นหมดสต็อก (stock เป็น 0) ให้เช็คและเสนอสี/ไซส์อื่นของสินค้านั้นที่มีพร้อมส่งทันทีเพื่อช่วยปิดการขาย
-9. ความกระชับ (Conciseness): ตอบสั้น กระชับ ตรงประเด็น เลี่ยงประโยคเกริ่น/ลงท้ายยืดยาวเพื่อประหยัด Token และให้อ่านง่ายบนมือถือ
+9. ความกระชับและความฉับไว (Conciseness & Speed): ตอบสั้น กระชับ ตรงประเด็น อ่านง่ายบนหน้าจอมือถือ หลีกเลี่ยงการแจกแจงสต็อกแยกรายบรรทัดทุกไซส์เมื่อมีหลายไซส์ ให้ใช้วิธีระบุช่วงไซส์ เช่น 'มีไซส์ S ถึง 5XL พร้อมส่ง' หรือ 'มีไซส์ S, M, L, XL' เพื่อตอบได้รวดเร็วทันที ไม่เวิ่นเว้อ
 10. รันเครื่องมือทันทีในเทิร์นเดียวกัน:
     - เมื่อลูกค้าบอกให้เช็ค/ค้นหา/ตรวจสอบ หรือถามสต็อกสินค้า ต้องเรียกใช้เครื่องมือที่เกี่ยวข้อง (เช่น checkStock, searchProducts, getAvailableOptions) ในเทิร์นนั้นทันที
     - **ข้อห้ามเด็ดขาด**: ห้ามพิมพ์ตอบข้อความลอยๆ เช่น "โปรดรอสักครู่", "รอสักครู่นะคะ", "กำลังตรวจสอบให้ค่ะ" โดยไม่มีการเรียกเครื่องมือและไม่มีผลลัพธ์ข้อมูลจริงในเทิร์นเดียวกันเด็ดขาด
@@ -1188,8 +1191,11 @@ export async function runChatbotTurn(
     let candidate = response.response.candidates?.[0];
     let functionCalls = candidate?.content?.parts?.filter((part: any) => part.functionCall) || [];
 
-    // วนลูปดำเนินการตาม Function Call ที่โมเดลร้องขอ (ถ้ามี)
-    while (functionCalls.length > 0) {
+    // วนลูปดำเนินการตาม Function Call ที่โมเดลร้องขอ (ถ้ามี) จำกัดไม่เกิน 4 รอบเพื่อป้องกัน timeout
+    let toolRound = 0;
+    const MAX_TOOL_ROUNDS = 4;
+    while (functionCalls.length > 0 && toolRound < MAX_TOOL_ROUNDS) {
+      toolRound++;
       const toolResults: any[] = [];
 
       for (const part of functionCalls) {
@@ -1212,7 +1218,7 @@ export async function runChatbotTurn(
               functionResult = await skills.getProductDetails((call.args as any).productSlug);
               break;
             case "checkStock":
-              functionResult = await skills.checkStock((call.args as any).variantSku);
+              functionResult = await skills.checkStock(call.args as any);
               break;
             case "getActivePromotions":
               functionResult = await skills.getActivePromotions();

@@ -4,6 +4,103 @@ import { calcShippingFee } from "@/lib/shipping";
 import { generatePromptPayPayload } from "@/lib/promptpay";
 import { notifyAdminNewOrder } from "@/lib/line-notify";
 import type { CartItem } from "@/types";
+import colorMap from "./color-map.json";
+
+// รายการสีภาษาไทย เรียงจากยาวไปสั้น เพื่อให้แมตช์คำเฉพาะเจาะจงก่อน (เช่น "ฟ้าอ่อน" ก่อน "ฟ้า")
+const THAI_COLORS = Object.values(colorMap)
+  .map((c) => c.thai)
+  .sort((a, b) => b.length - a.length);
+
+export interface ExtractedAttributes {
+  productCode?: string;
+  sleeveCode?: string; // "1"=long, "2"=short, "3"=3/4, "4"=polo
+  genderCode?: string; // "4"=men, "3"=women
+  patternCode?: string; // "1"=stripe, "2"=check, "3"=dot, "4"=plain, "5"=print
+  color?: string;
+  size?: string;
+  cleanQuery?: string;
+}
+
+/**
+ * ฟังก์ชันช่วยสกัดคุณลักษณะสินค้า (ความยาวแขน, เพศ, ลายผ้า, สี, ไซส์, รหัสสินค้า) จากข้อความค้นหาภาษาไทย
+ */
+export function extractSearchAttributes(rawText?: string): ExtractedAttributes {
+  if (!rawText) return {};
+  const text = rawText.trim();
+  const res: ExtractedAttributes = {};
+
+  // 1. ตรวจหารหัสสินค้าตัวเลข เช่น 144813 หรือ 144813_3 หรือ 144813_3_L
+  const codeMatch = text.match(/\b\d{5,6}(?:_\d+)?(?:_[A-Za-z0-9]+)?\b/);
+  if (codeMatch) {
+    res.productCode = codeMatch[0];
+  }
+
+  // 2. ตรวจหาความยาวแขน
+  if (text.includes("แขนยาว") || text.includes("ยาว")) {
+    res.sleeveCode = "1";
+  } else if (text.includes("แขนสั้น") || text.includes("สั้น")) {
+    res.sleeveCode = "2";
+  } else if (text.includes("สามส่วน")) {
+    res.sleeveCode = "3";
+  } else if (text.includes("โปโล") || text.toLowerCase().includes("polo")) {
+    res.sleeveCode = "4";
+  }
+
+  // 3. ตรวจหาเพศ
+  if (text.includes("ผู้ชาย") || text.includes("ชาย")) {
+    res.genderCode = "4";
+  } else if (text.includes("ผู้หญิง") || text.includes("หญิง")) {
+    res.genderCode = "3";
+  }
+
+  // 4. ตรวจหาลวดลาย
+  if (text.includes("ลายริ้ว") || text.includes("ริ้ว")) {
+    res.patternCode = "1";
+  } else if (text.includes("สก๊อต") || text.includes("สก็อต") || text.includes("ลายสก๊อต") || text.includes("ลายสก็อต")) {
+    res.patternCode = "2";
+  } else if (text.includes("ลายจุด") || text.includes("จุด")) {
+    res.patternCode = "3";
+  } else if (text.includes("ผ้าพื้น") || text.includes("สีพื้น") || text.includes("เรียบ") || text.includes("พื้น")) {
+    res.patternCode = "4";
+  } else if (text.includes("ลายพิมพ์") || text.includes("พิมพ์") || text.includes("ดอก") || text.includes("ลายดอก")) {
+    res.patternCode = "5";
+  }
+
+  // 5. ตรวจหาสี (เทียบจาก color-map.json)
+  for (const c of THAI_COLORS) {
+    if (text.includes(c) || text.includes(`สี${c}`)) {
+      res.color = c;
+      break;
+    }
+  }
+
+  // 6. ตรวจหาไซส์ (เช่น S, M, L, XL, 2XL เป็นต้น)
+  const sizeMatch = text.match(/(?:ไซส์|ไซส|size)?\s*\b(6XL|5XL|4XL|3XL|2XL|XXXL|XXL|XL|SS|S|M|L)\b/i);
+  if (sizeMatch) {
+    let s = sizeMatch[1].toUpperCase();
+    if (s === "XXL") s = "2XL";
+    if (s === "XXXL") s = "3XL";
+    res.size = s;
+  }
+
+  // 7. สกัด Residual Text สำหรับการค้นหาข้อความทั่วไป (ลบคำฟิลเลอร์ออก)
+  let clean = text
+    .replace(/\b\d{5,6}(?:_\d+)?(?:_[A-Za-z0-9]+)?\b/g, "")
+    .replace(/(?:ไซส์|ไซส|size)?\s*\b(6XL|5XL|4XL|3XL|2XL|XXXL|XXL|XL|SS|S|M|L)\b/gi, "")
+    .replace(/เสื้อเชิ้ต|เสื้อ|เชิ้ต|แขนยาว|แขนสั้น|สามส่วน|โปโล|ผู้ชาย|ผู้หญิง|ชาย|หญิง/g, "")
+    .replace(/ลายริ้ว|ริ้ว|ลายสก๊อต|ลายสก็อต|สก๊อต|สก็อต|ลายจุด|จุด|ผ้าพื้น|สีพื้น|ลายพิมพ์|พิมพ์/g, "")
+    .replace(/มีไหม|มีมั้ย|ไหมครับ|ไหมค่ะ|มั้ยครับ|มั้ยค่ะ|ครับ|ค่ะ|หน่อย|ขอดู|สต็อก|สต้อค|ราคา|เท่าไหร่|เท่าไร/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  if (res.color) {
+    clean = clean.replace(new RegExp(`สี?${res.color}`, "g"), "").trim();
+  }
+
+  res.cleanQuery = clean.length >= 2 ? clean : undefined;
+
+  return res;
+}
 
 export interface SearchParams {
   query?: string;
@@ -14,95 +111,68 @@ export interface SearchParams {
 
 /**
  * 1. ค้นหารายการเสื้อเชิ้ตสำเร็จรูปที่เปิดขายอยู่ในระบบ
+ * ปรับปรุง: คืนข้อมูลสรุปกระชับ ฉับไว ประหยัด Token และไม่หน่วงระบบ
  */
 export async function searchProducts(params: SearchParams) {
-  const { query, categorySlug, size, color } = params;
+  const { query, categorySlug, size: inputSize, color: inputColor } = params;
 
   // Map category slugs from LLM to DB slugs
   let mappedCategorySlug = categorySlug;
   if (categorySlug === "men") mappedCategorySlug = "mens-shirts";
   if (categorySlug === "women") mappedCategorySlug = "womens-shirts";
-
   const isGeneralCategory = ["men", "women", "mens-shirts", "womens-shirts"].includes(categorySlug || "");
+
+  // สกัดคุณสมบัติจากคำค้นหาอัตโนมัติ
+  const extracted = extractSearchAttributes(query);
+  const targetColor = inputColor || extracted.color;
+  const targetSize = inputSize || extracted.size;
+  const targetProductCode = extracted.productCode;
+
+  let targetGender = extracted.genderCode;
+  if (mappedCategorySlug === "mens-shirts") targetGender = "4";
+  if (mappedCategorySlug === "womens-shirts") targetGender = "3";
+
+  const targetSleeve = extracted.sleeveCode;
+  const targetPattern = extracted.patternCode;
 
   // กรองสินค้าที่ Active เท่านั้น
   const whereClause: any = {
     status: "ACTIVE",
   };
 
-  // Only apply category filter to DB if it's a specific subcategory (not a general parent category)
   if (mappedCategorySlug && !isGeneralCategory) {
     whereClause.category = {
       slug: mappedCategorySlug,
     };
   }
 
-  // Parse characteristics from query for SKU digit matching
-  let targetSleeve: string | null = null;
-  if (query && (query.includes("แขนยาว") || query.includes("ยาว"))) {
-    targetSleeve = "1";
-  } else if (query && (query.includes("แขนสั้น") || query.includes("สั้น"))) {
-    targetSleeve = "2";
-  } else if (query && query.includes("สามส่วน")) {
-    targetSleeve = "3";
-  } else if (query && (query.includes("โปโล") || query.includes("polo"))) {
-    targetSleeve = "4";
-  }
-
-  let targetGender: string | null = null;
-  if (mappedCategorySlug === "mens-shirts" || (query && (query.includes("ผู้ชาย") || query.includes("ชาย")))) {
-    targetGender = "4";
-  } else if (mappedCategorySlug === "womens-shirts" || (query && (query.includes("ผู้หญิง") || query.includes("หญิง")))) {
-    targetGender = "3";
-  }
-
-  let targetPattern: string | null = null;
-  if (query && (query.includes("ลายริ้ว") || query.includes("ริ้ว"))) {
-    targetPattern = "1";
-  } else if (query && (query.includes("ลายสก๊อต") || query.includes("ลายสก็อต") || query.includes("สก๊อต") || query.includes("สก็อต"))) {
-    targetPattern = "2";
-  } else if (query && (query.includes("ลายจุด") || query.includes("จุด"))) {
-    targetPattern = "3";
-  } else if (query && (query.includes("ผ้าพื้น") || query.includes("สีพื้น") || query.includes("พื้น") || query.includes("เรียบ"))) {
-    targetPattern = "4";
-  } else if (query && (query.includes("ลายพิมพ์") || query.includes("พิมพ์") || query.includes("ดอก"))) {
-    targetPattern = "5";
-  }
-
-  // Only apply text query search to DB if we couldn't resolve any structural digits
-  const hasStructuralMatch = !!(targetSleeve || targetGender || targetPattern);
-  if (query && !hasStructuralMatch) {
+  // ตรวจจับรหัสสินค้าตัวเลขระบุตรง
+  if (targetProductCode) {
+    const rawNumber = targetProductCode.split("_")[0];
     whereClause.OR = [
-      { name: { contains: query } },
-      { nameTh: { contains: query } },
-      { description: { contains: query } },
-      { descTh: { contains: query } },
+      { slug: targetProductCode },
+      { slug: rawNumber },
+      { slug: { contains: rawNumber } },
+      { name: { contains: rawNumber } },
+    ];
+  } else if (extracted.cleanQuery) {
+    whereClause.OR = [
+      { name: { contains: extracted.cleanQuery } },
+      { nameTh: { contains: extracted.cleanQuery } },
+      { description: { contains: extracted.cleanQuery } },
+      { descTh: { contains: extracted.cleanQuery } },
     ];
   }
 
-  // ตรวจจับรหัสตัวเลขสินค้าในคำค้นหา (เช่น 144813 หรือ 144813_3) เพื่อค้นหาได้ตรงรุ่นทันที
-  const codeMatch = query?.match(/\b\d{5,6}(?:_\d+)?\b/);
-  if (codeMatch) {
-    const codeNum = codeMatch[0].split("_")[0];
-    whereClause.OR = [
-      { slug: codeMatch[0] },
-      { slug: codeNum },
-      { slug: { contains: codeNum } },
-      { name: { contains: codeNum } },
-    ];
-  }
-
-  // ตัวกรองสำหรับไซส์หรือสี ค้นหาผ่านความสัมพันธ์ของ Variant (เฉพาะที่มีสต็อกพร้อมส่ง)
-  if (size || color) {
+  // ตัวกรอง Variant สำหรับสีหรือไซส์ (เฉพาะที่มีสต็อกพร้อมส่ง)
+  if (targetSize || targetColor) {
     const variantFilter: any = {
       inventory: {
-        some: {
-          quantity: { gt: 0 },
-        },
+        some: { quantity: { gt: 0 } },
       },
     };
-    if (size) variantFilter.size = { equals: size };
-    if (color) variantFilter.color = { equals: color };
+    if (targetSize) variantFilter.size = { equals: targetSize };
+    if (targetColor) variantFilter.color = { contains: targetColor };
 
     whereClause.variants = {
       some: variantFilter,
@@ -114,15 +184,18 @@ export async function searchProducts(params: SearchParams) {
     include: {
       category: true,
       variants: {
+        where: {
+          inventory: {
+            some: { quantity: { gt: 0 } },
+          },
+        },
         select: {
           sku: true,
           size: true,
           color: true,
           price: true,
           inventory: {
-            select: {
-              quantity: true,
-            },
+            select: { quantity: true },
           },
         },
       },
@@ -131,54 +204,87 @@ export async function searchProducts(params: SearchParams) {
         take: 1,
       },
     },
+    take: 15,
   });
 
   let filteredProducts = dbProducts;
+  const hasStructuralMatch = !!(targetSleeve || targetGender || targetPattern);
 
-  if (hasStructuralMatch) {
+  if (hasStructuralMatch && !targetProductCode) {
     filteredProducts = dbProducts.filter((p) => {
       const slug = p.slug;
       if (!slug || slug.length < 3) return false;
-
-      // 1. ตรวจสอบประเภทแขนเสื้อ (หลักแรก)
       if (targetSleeve && slug[0] !== targetSleeve) return false;
-
-      // 2. ตรวจสอบเพศ (หลักที่สอง)
       if (targetGender && slug[1] !== targetGender) return false;
-
-      // 3. ตรวจสอบลวดลายเนื้อผ้า (หลักที่สาม)
       if (targetPattern && slug[2] !== targetPattern) return false;
-
       return true;
     });
   }
 
-  // Fallback to all products if structural match yielded nothing but text search might have hits
-  if (filteredProducts.length === 0 && dbProducts.length > 0 && targetPattern) {
+  if (filteredProducts.length === 0 && dbProducts.length > 0) {
     filteredProducts = dbProducts;
   }
 
-  return filteredProducts.slice(0, 10).map((p) => ({
-    id: p.id,
-    name: p.name,
-    nameTh: p.nameTh,
-    slug: p.slug,
-    description: p.descTh || p.description,
-    basePrice: p.basePrice,
-    categoryName: p.category.nameTh,
-    imageUrl: p.images[0]?.url || null,
-    variants: p.variants.map((v) => ({
-      sku: v.sku,
-      size: v.size,
-      color: v.color,
-      price: v.price,
-      stock: v.inventory.reduce((sum, item) => sum + item.quantity, 0),
-    })),
-  }));
+  // สรุปข้อมูลส่งคืน Gemini สูงสุด 5 รายการ เพื่อความรวดเร็วและประหยัด Token สูงสุด
+  return filteredProducts.slice(0, 5).map((p) => {
+    const inStockVariants = p.variants
+      .map((v) => ({
+        sku: v.sku,
+        size: v.size,
+        color: v.color,
+        price: v.price,
+        stock: v.inventory.reduce((sum, item) => sum + item.quantity, 0),
+      }))
+      .filter((v) => v.stock > 0);
+
+    const availableColors = Array.from(new Set(inStockVariants.map((v) => v.color)));
+    const availableSizes = Array.from(new Set(inStockVariants.map((v) => v.size)));
+    const prices = inStockVariants.map((v) => v.price);
+    const minPrice = prices.length > 0 ? Math.min(...prices) : p.basePrice;
+    const maxPrice = prices.length > 0 ? Math.max(...prices) : p.basePrice;
+
+    // รวบรวมข้อมูลสีและไซส์พร้อมส่งแบบกะทัดรัด
+    const colorGroups: Record<string, { baseSku: string; sizes: string[] }> = {};
+    for (const v of inStockVariants) {
+      const parts = v.sku.split("_");
+      const baseSku = parts.length >= 2 ? `${parts[0]}_${parts[1]}` : p.slug;
+      if (!colorGroups[v.color]) {
+        colorGroups[v.color] = { baseSku, sizes: [] };
+      }
+      if (!colorGroups[v.color].sizes.includes(v.size)) {
+        colorGroups[v.color].sizes.push(v.size);
+      }
+    }
+
+    const colorsSummary = Object.entries(colorGroups).map(([col, info]) => ({
+      color: col,
+      baseSku: info.baseSku,
+      sizes: info.sizes,
+    }));
+
+    return {
+      id: p.id,
+      name: p.name,
+      nameTh: p.nameTh,
+      slug: p.slug,
+      priceRange: minPrice === maxPrice ? `฿${minPrice}` : `฿${minPrice} - ฿${maxPrice}`,
+      categoryName: p.category.nameTh,
+      imageUrl: p.images[0]?.url || null,
+      totalInStock: inStockVariants.reduce((sum, v) => sum + v.stock, 0),
+      availableColors,
+      availableSizes,
+      colorsSummary: colorsSummary.slice(0, 8),
+      matchingVariants: (targetColor || targetSize)
+        ? inStockVariants.filter(
+            (v) => (!targetColor || v.color.includes(targetColor)) && (!targetSize || v.size === targetSize)
+          ).slice(0, 5)
+        : undefined,
+    };
+  });
 }
 
 /**
- * 2. ดึงรายละเอียดสินค้าเดี่ยวๆ พร้อมข้อมูลสี ไไซส์ และสต็อกของแต่ละ Variant
+ * 2. ดึงรายละเอียดสินค้าเดี่ยวๆ พร้อมข้อมูลสี ไซส์ และสต็อกของแต่ละ Variant
  */
 export async function getProductDetails(productSlug: string) {
   let product = await prisma.product.findUnique({
@@ -200,7 +306,7 @@ export async function getProductDetails(productSlug: string) {
     },
   });
 
-  // Robust fallback: if lookup fails, try to extract numeric product ID from descriptive slug (e.g., "144813" from "mens-...-144813")
+  // Robust fallback: if lookup fails, try to extract numeric product ID from descriptive slug
   if (!product) {
     const codeMatch = productSlug.match(/(\d+)/);
     if (codeMatch) {
@@ -259,10 +365,28 @@ export async function getProductDetails(productSlug: string) {
   }
 
   if (!product || product.status !== "ACTIVE") {
-    throw new Error("ไม่พบข้อมูลสินค้าชิ้นนี้ หรือสินค้าเลิกจำหน่ายแล้ว");
+    return {
+      success: false,
+      message: "ไม่พบข้อมูลสินค้าชิ้นนี้ หรือสินค้าเลิกจำหน่ายแล้ว",
+    };
   }
 
+  const inStockVariants = product.variants.map((v) => {
+    const totalStock = v.inventory.reduce((sum, inv) => sum + inv.quantity, 0);
+    return {
+      sku: v.sku,
+      size: v.size,
+      color: v.color,
+      price: v.price,
+      stock: totalStock,
+    };
+  });
+
+  const availableColors = Array.from(new Set(inStockVariants.filter((v) => v.stock > 0).map((v) => v.color)));
+  const availableSizes = Array.from(new Set(inStockVariants.filter((v) => v.stock > 0).map((v) => v.size)));
+
   return {
+    success: true,
     id: product.id,
     name: product.name,
     nameTh: product.nameTh,
@@ -271,17 +395,10 @@ export async function getProductDetails(productSlug: string) {
     basePrice: product.basePrice,
     categoryName: product.category.nameTh,
     images: product.images.map((img) => img.url),
-    variants: product.variants.map((v) => {
-      // รวมจำนวนสต็อกจากทุกคลังสินค้า
-      const totalStock = v.inventory.reduce((sum, inv) => sum + inv.quantity, 0);
-      return {
-        sku: v.sku,
-        size: v.size,
-        color: v.color,
-        price: v.price,
-        stock: totalStock,
-      };
-    }),
+    totalInStock: inStockVariants.reduce((sum, v) => sum + v.stock, 0),
+    availableColors,
+    availableSizes,
+    variants: inStockVariants.slice(0, 30),
   };
 }
 
@@ -300,41 +417,16 @@ export interface AvailableOptionsParams {
  * เหมาะสำหรับตอบคำถามแนว "เสื้อผู้ชายแขนยาวมีสีอะไรบ้าง", "ไซส์ M มีสีอะไรบ้าง", "มีสีอะไรพร้อมส่งบ้าง"
  */
 export async function getAvailableOptions(params: AvailableOptionsParams) {
-  const { gender, sleeve, pattern, size, color, productCode, query } = params;
+  const { gender, sleeve, pattern, size: inputSize, color: inputColor, productCode: inputProductCode, query } = params;
 
-  // 1. ถอดรหัสโครงสร้างประเภทแขนเสื้อ
-  let targetSleeve: string | null = null;
-  if (sleeve === "long" || sleeve === "1" || (query && (query.includes("แขนยาว") || query.includes("ยาว")))) {
-    targetSleeve = "1";
-  } else if (sleeve === "short" || sleeve === "2" || (query && (query.includes("แขนสั้น") || query.includes("สั้น")))) {
-    targetSleeve = "2";
-  } else if (sleeve === "three-quarter" || sleeve === "3" || (query && query.includes("สามส่วน"))) {
-    targetSleeve = "3";
-  } else if (sleeve === "polo" || sleeve === "4" || (query && (query.includes("โปโล") || query.includes("polo")))) {
-    targetSleeve = "4";
-  }
-
-  // 2. ถอดรหัสโครงสร้างเพศ
-  let targetGender: string | null = null;
-  if (gender === "men" || gender === "4" || (query && (query.includes("ผู้ชาย") || query.includes("ชาย")))) {
-    targetGender = "4";
-  } else if (gender === "women" || gender === "3" || (query && (query.includes("ผู้หญิง") || query.includes("หญิง")))) {
-    targetGender = "3";
-  }
-
-  // 3. ถอดรหัสลวดลายเนื้อผ้า
-  let targetPattern: string | null = null;
-  if (pattern === "stripe" || pattern === "1" || (query && (query.includes("ลายริ้ว") || query.includes("ริ้ว")))) {
-    targetPattern = "1";
-  } else if (pattern === "check" || pattern === "2" || (query && (query.includes("ลายสก๊อต") || query.includes("สก๊อต") || query.includes("สก็อต")))) {
-    targetPattern = "2";
-  } else if (pattern === "dot" || pattern === "3" || (query && (query.includes("ลายจุด") || query.includes("จุด")))) {
-    targetPattern = "3";
-  } else if (pattern === "plain" || pattern === "4" || (query && (query.includes("ผ้าพื้น") || query.includes("สีพื้น") || query.includes("พื้น") || query.includes("เรียบ")))) {
-    targetPattern = "4";
-  } else if (pattern === "print" || pattern === "5" || (query && (query.includes("ลายพิมพ์") || query.includes("พิมพ์") || query.includes("ดอก")))) {
-    targetPattern = "5";
-  }
+  // สกัดข้อมูลเสริมจาก query ด้วย
+  const extracted = extractSearchAttributes(query);
+  const targetSleeve = sleeve || extracted.sleeveCode;
+  const targetGender = gender === "men" ? "4" : gender === "women" ? "3" : (gender || extracted.genderCode);
+  const targetPattern = pattern === "stripe" ? "1" : pattern === "check" ? "2" : pattern === "dot" ? "3" : pattern === "plain" ? "4" : pattern === "print" ? "5" : (pattern || extracted.patternCode);
+  const size = inputSize || extracted.size;
+  const color = inputColor || extracted.color;
+  const productCode = inputProductCode || extracted.productCode;
 
   // สร้าง Where clause
   const whereClause: any = {
@@ -342,7 +434,7 @@ export async function getAvailableOptions(params: AvailableOptionsParams) {
   };
 
   // ตรวจจับรหัสตัวเลขสินค้า (เช่น 144813 หรือ 144813_3)
-  const explicitCode = productCode?.trim() || query?.match(/\b\d{5,6}(?:_\d+)?\b/)?.[0];
+  const explicitCode = productCode?.trim();
   if (explicitCode) {
     const rawNumber = explicitCode.split("_")[0];
     whereClause.OR = [
@@ -359,6 +451,9 @@ export async function getAvailableOptions(params: AvailableOptionsParams) {
       category: true,
       variants: {
         where: {
+          inventory: {
+            some: { quantity: { gt: 0 } },
+          },
           ...(size ? { size: { equals: size } } : {}),
           ...(color ? { color: { contains: color } } : {}),
         },
@@ -369,6 +464,7 @@ export async function getAvailableOptions(params: AvailableOptionsParams) {
         },
       },
     },
+    take: 20,
   });
 
   // กรองด้วยรหัสโครงสร้างถ้ามี
@@ -396,7 +492,7 @@ export async function getAvailableOptions(params: AvailableOptionsParams) {
     productName: string;
     color: string;
     baseSku: string;
-    price: number;
+    prices: number[];
     availableSizes: Set<string>;
     totalStock: number;
   }> = {};
@@ -406,7 +502,7 @@ export async function getAvailableOptions(params: AvailableOptionsParams) {
   for (const prod of filteredProducts) {
     for (const v of prod.variants) {
       const stock = v.inventory.reduce((sum, inv) => sum + inv.quantity, 0);
-      if (stock <= 0) continue; // ข้ามรายการที่ของหมดสต็อกเด็ดขาด
+      if (stock <= 0) continue;
 
       totalInStock += stock;
       colorMapSet.add(v.color);
@@ -422,12 +518,13 @@ export async function getAvailableOptions(params: AvailableOptionsParams) {
           productName: prod.nameTh || prod.name,
           color: v.color,
           baseSku,
-          price: v.price,
+          prices: [],
           availableSizes: new Set<string>(),
           totalStock: 0,
         };
       }
 
+      colorGroups[groupKey].prices.push(v.price);
       colorGroups[groupKey].availableSizes.add(v.size);
       colorGroups[groupKey].totalStock += stock;
     }
@@ -436,14 +533,18 @@ export async function getAvailableOptions(params: AvailableOptionsParams) {
   const availableColors = Array.from(colorMapSet);
   const availableSizes = Array.from(sizeMapSet);
 
-  const summary = Object.values(colorGroups).map((g) => ({
-    productName: g.productName,
-    color: g.color,
-    baseSku: g.baseSku,
-    price: g.price,
-    availableSizes: Array.from(g.availableSizes),
-    totalStock: g.totalStock,
-  }));
+  const summary = Object.values(colorGroups).map((g) => {
+    const minP = Math.min(...g.prices);
+    const maxP = Math.max(...g.prices);
+    return {
+      productName: g.productName,
+      color: g.color,
+      baseSku: g.baseSku,
+      priceRange: minP === maxP ? `฿${minP}` : `฿${minP} - ฿${maxP}`,
+      availableSizes: Array.from(g.availableSizes),
+      totalStock: g.totalStock,
+    };
+  });
 
   if (summary.length === 0) {
     return {
@@ -452,7 +553,7 @@ export async function getAvailableOptions(params: AvailableOptionsParams) {
       availableColors: [],
       availableSizes: [],
       summary: [],
-      message: "ขณะนี้ไม่มีสินค้าพร้อมส่งในเงื่อนไขที่ระบุ กรุณาสอบถามสีหรือรุ่นอื่นเพิ่มเติม",
+      message: "ขณะนี้ไม่มีสินค้าพร้อมส่งในเงื่อนไขที่ระบุ กรุณาสอบถามสีหรือรุ่นอื่นเพิ่มเติมนะคะ",
     };
   }
 
@@ -461,100 +562,188 @@ export async function getAvailableOptions(params: AvailableOptionsParams) {
     totalInStock,
     availableColors,
     availableSizes,
-    summary: summary.slice(0, 10), // นำเสนอตัวอย่างสูงสุด 10 สี/รุ่นที่พร้อมส่ง
+    summary: summary.slice(0, 8),
   };
 }
 
+export interface CheckStockParams {
+  variantSku?: string;
+  productCode?: string;
+  color?: string;
+  size?: string;
+  query?: string;
+}
+
 /**
- * 3. ตรวจสอบจำนวนสต็อกคงเหลือของ Variant ผ่าน SKU หรือ Base SKU
+ * 3. ตรวจสอบจำนวนสต็อกคงเหลือของสินค้า
+ * รองรับทั้ง:
+ * - รหัส SKU เต็มตัวเป๊ะๆ เช่น 144813_2_L
+ * - รหัสรุ่น / Base SKU เช่น 144813 หรือ 144813_2
+ * - หรือค้นหาด้วยสีและไซส์ เช่น checkStock({ productCode: "144813", color: "ฟ้า", size: "L" })
+ * คืนข้อมูลสรุปกลุ่มสีและไซส์แบบกระชับ รวดเร็ว ไม่พ่นข้อมูล 100 รายการจนระบบหน่วง
  */
-export async function checkStock(variantSku: string) {
-  const cleanSku = variantSku.trim();
+export async function checkStock(input: string | CheckStockParams) {
+  let sku = typeof input === "string" ? input.trim() : input.variantSku?.trim() || input.productCode?.trim();
+  let color = typeof input === "object" ? input.color?.trim() : undefined;
+  let size = typeof input === "object" ? input.size?.trim() : undefined;
+  const rawText = typeof input === "object" ? (input.query || input.variantSku || input.productCode || "") : input;
 
-  // 1. ตรวจสอบแบบค้นหา SKU ตรงตัวเป๊ะๆ ก่อน
-  const variant = await prisma.productVariant.findUnique({
-    where: { sku: cleanSku },
-    include: {
-      product: true,
-      inventory: true,
-    },
-  });
-
-  if (variant) {
-    const totalStock = variant.inventory.reduce((sum, inv) => sum + inv.quantity, 0);
-    return {
-      sku: variant.sku,
-      productName: variant.product.nameTh || variant.product.name,
-      color: variant.color,
-      size: variant.size,
-      price: variant.price,
-      stock: totalStock,
-    };
+  // สกัดข้อมูลเสริมจากข้อความ
+  if (rawText) {
+    const extracted = extractSearchAttributes(rawText);
+    if (!sku && extracted.productCode) sku = extracted.productCode;
+    if (!color && extracted.color) color = extracted.color;
+    if (!size && extracted.size) size = extracted.size;
   }
 
-  // 2. หากไม่พบตรงตัว ให้ค้นหาแบบ Prefix/Base SKU (เช่น 144813_3 หรือ 144813)
+  // 1. ตรวจสอบแบบค้นหา SKU ตรงตัว หรือตรงคู่ (productCode + color + size)
+  if (sku) {
+    const exactVariant = await prisma.productVariant.findFirst({
+      where: {
+        OR: [
+          { sku: sku },
+          ...(color && size ? [{
+            sku: { startsWith: sku.split("_")[0] },
+            color: { contains: color },
+            size: { equals: size },
+          }] : []),
+        ],
+      },
+      include: {
+        product: true,
+        inventory: true,
+      },
+    });
+
+    if (exactVariant) {
+      const stock = exactVariant.inventory.reduce((sum, inv) => sum + inv.quantity, 0);
+      return {
+        success: true,
+        found: true,
+        inStock: stock > 0,
+        sku: exactVariant.sku,
+        productName: exactVariant.product.nameTh || exactVariant.product.name,
+        color: exactVariant.color,
+        size: exactVariant.size,
+        price: exactVariant.price,
+        stock,
+        message: stock > 0
+          ? `สินค้า ${exactVariant.product.nameTh || exactVariant.product.name} สี${exactVariant.color} ไซส์ ${exactVariant.size} (รหัส SKU: ${exactVariant.sku}) มีพร้อมส่ง ${stock} ตัว ราคา ฿${exactVariant.price}`
+          : `ขออภัยค่ะ สี${exactVariant.color} ไซส์ ${exactVariant.size} ของหมดชั่วคราว`,
+      };
+    }
+  }
+
+  // 2. ค้นหาแบบกลุ่มสินค้าด้วย Base SKU / Product Code / Color / Size
+  const cleanCode = sku ? sku.split("_")[0] : undefined;
+
   const variants = await prisma.productVariant.findMany({
     where: {
-      OR: [
-        { sku: { startsWith: cleanSku } },
-        { sku: { contains: cleanSku } },
+      AND: [
+        cleanCode ? {
+          OR: [
+            { sku: { startsWith: cleanCode } },
+            { product: { slug: cleanCode } },
+            { product: { slug: { contains: cleanCode } } },
+          ],
+        } : {},
+        color ? { color: { contains: color } } : {},
+        size ? { size: { equals: size } } : {},
       ],
     },
     include: {
       product: true,
       inventory: true,
     },
+    orderBy: [
+      { color: "asc" },
+      { size: "asc" },
+    ],
   });
 
   if (variants.length > 0) {
     const productName = variants[0].product.nameTh || variants[0].product.name;
-    const variantsResult = variants.map((v) => ({
-      sku: v.sku,
-      color: v.color,
-      size: v.size,
-      price: v.price,
-      stock: v.inventory.reduce((sum, inv) => sum + inv.quantity, 0),
-    }));
+    const colorGroups: Record<string, {
+      color: string;
+      baseSku: string;
+      inStockSizes: string[];
+      outOfStockSizes: string[];
+      prices: number[];
+      totalStock: number;
+    }> = {};
+
+    let grandTotalStock = 0;
+
+    for (const v of variants) {
+      const stock = v.inventory.reduce((sum, inv) => sum + inv.quantity, 0);
+      grandTotalStock += stock;
+
+      const skuParts = v.sku.split("_");
+      const baseSku = skuParts.length >= 2 ? `${skuParts[0]}_${skuParts[1]}` : v.product.slug;
+
+      if (!colorGroups[v.color]) {
+        colorGroups[v.color] = {
+          color: v.color,
+          baseSku,
+          inStockSizes: [],
+          outOfStockSizes: [],
+          prices: [],
+          totalStock: 0,
+        };
+      }
+
+      colorGroups[v.color].prices.push(v.price);
+      colorGroups[v.color].totalStock += stock;
+
+      if (stock > 0) {
+        if (!colorGroups[v.color].inStockSizes.includes(v.size)) {
+          colorGroups[v.color].inStockSizes.push(v.size);
+        }
+      } else {
+        if (!colorGroups[v.color].outOfStockSizes.includes(v.size)) {
+          colorGroups[v.color].outOfStockSizes.push(v.size);
+        }
+      }
+    }
+
+    const colorsSummary = Object.values(colorGroups).map((g) => {
+      const minP = Math.min(...g.prices);
+      const maxP = Math.max(...g.prices);
+      return {
+        color: g.color,
+        baseSku: g.baseSku,
+        hasStock: g.totalStock > 0,
+        inStockSizes: g.inStockSizes,
+        priceRange: minP === maxP ? `฿${minP}` : `฿${minP} - ฿${maxP}`,
+        totalStock: g.totalStock,
+      };
+    });
 
     return {
+      success: true,
+      found: true,
+      inStock: grandTotalStock > 0,
       productName,
-      code: cleanSku,
-      stock: variantsResult.reduce((sum, v) => sum + v.stock, 0),
-      variants: variantsResult,
+      code: cleanCode || (typeof input === "string" ? input : ""),
+      totalStock: grandTotalStock,
+      filterApplied: { color, size },
+      colorsCount: colorsSummary.length,
+      colors: colorsSummary.slice(0, 10),
+      message: grandTotalStock > 0
+        ? `พบสต็อกพร้อมส่งรวม ${grandTotalStock} ตัว`
+        : `ขณะนี้สินค้าในเงื่อนไขที่ระบุหมดสต็อกชั่วคราว`,
     };
   }
 
-  // 3. ตรวจสอบผ่าน Product slug
-  const product = await prisma.product.findFirst({
-    where: {
-      OR: [
-        { slug: cleanSku },
-        { slug: { contains: cleanSku } },
-      ],
-    },
-    include: {
-      variants: {
-        include: { inventory: true },
-      },
-    },
-  });
-
-  if (product && product.variants.length > 0) {
-    return {
-      productName: product.nameTh || product.name,
-      code: cleanSku,
-      stock: product.variants.reduce((sum, v) => sum + v.inventory.reduce((s, inv) => s + inv.quantity, 0), 0),
-      variants: product.variants.map((v) => ({
-        sku: v.sku,
-        color: v.color,
-        size: v.size,
-        price: v.price,
-        stock: v.inventory.reduce((sum, inv) => sum + inv.quantity, 0),
-      })),
-    };
-  }
-
-  throw new Error(`ไม่พบสินค้าหรือรหัส SKU: ${variantSku}`);
+  // 3. Fallback: ไม่พบสินค้า ไม่โยน exception แต่ส่ง response แนะนำลูกค้าอย่างสุภาพ
+  return {
+    success: false,
+    found: false,
+    inStock: false,
+    stock: 0,
+    message: `ไม่พบข้อมูลสต็อกสำหรับรหัสหรือเงื่อนไขที่ระบุ (${sku || rawText || ""})`,
+    suggestion: "แนะนำให้ลูกค้าระบุรหัสสินค้า (เช่น 144813) หรือระบุประเภทที่ต้องการ เช่น เสื้อเชิ้ตผู้ชายแขนยาวผ้าพื้น เพื่อให้ค้นหาได้ตรงรุ่นนะคะ",
+  };
 }
 
 /**
