@@ -281,9 +281,9 @@ const SYSTEM_INSTRUCTION = `
    - รหัสสีตรงกลาง: ${colorMapText}
    - เสนอทางเลือก: หาก variant ที่ลูกค้าขอนั้นหมดสต็อก (stock เป็น 0) ให้เช็คและเสนอสี/ไซส์อื่นของสินค้านั้นที่มีพร้อมส่งทันทีเพื่อช่วยปิดการขาย
 9. ความกระชับและความฉับไว (Conciseness & Speed): ตอบสั้น กระชับ ตรงประเด็น อ่านง่ายบนหน้าจอมือถือ หลีกเลี่ยงการแจกแจงสต็อกแยกรายบรรทัดทุกไซส์เมื่อมีหลายไซส์ ให้ใช้วิธีระบุช่วงไซส์ เช่น 'มีไซส์ S ถึง 5XL พร้อมส่ง' หรือ 'มีไซส์ S, M, L, XL' เพื่อตอบได้รวดเร็วทันที ไม่เวิ่นเว้อ
-10. รันเครื่องมือทันทีในเทิร์นเดียวกัน:
-    - เมื่อลูกค้าบอกให้เช็ค/ค้นหา/ตรวจสอบ หรือถามสต็อกสินค้า ต้องเรียกใช้เครื่องมือที่เกี่ยวข้อง (เช่น checkStock, searchProducts, getAvailableOptions) ในเทิร์นนั้นทันที
-    - **ข้อห้ามเด็ดขาด**: ห้ามพิมพ์ตอบข้อความลอยๆ เช่น "โปรดรอสักครู่", "รอสักครู่นะคะ", "กำลังตรวจสอบให้ค่ะ" โดยไม่มีการเรียกเครื่องมือและไม่มีผลลัพธ์ข้อมูลจริงในเทิร์นเดียวกันเด็ดขาด
+10. รันเครื่องมือทันทีในเทิร์นเดียวกัน ห้ามตอบบอกให้ลูกค้ารอเด็ดขาด:
+    - เมื่อลูกค้าสอบถามสต็อก ขอค้นหาสินค้า ขอดูแบบ หรือถามหาไซส์/สี ต้องเรียกใช้เครื่องมือค้นหา (checkStock, searchProducts, getAvailableOptions) ในเทิร์นนี้ทันที
+    - **ข้อห้ามเด็ดขาด**: ห้ามพิมพ์ตอบข้อความลอยๆ ที่บอกว่าจะไปเช็ค เช่น "รอสักครู่นะคะ", "เดี๋ยวเช็คสต็อกให้นะคะ", "กำลังตรวจสอบให้ค่ะ", "จะค้นหาให้นะครับ" โดยไม่มีข้อมูลสินค้าหรือผลลัพธ์สต็อกจริงเด็ดขาด เพราะระบบเป็นบอทอัตโนมัติ ต้องดึงข้อมูลสต็อกจริงมาตอบในข้อความนี้ทันที ไม่ต้องให้ลูกค้ารอ
 11. การรับรูปภาพ (Multimodal): เมื่อลูกค้าส่งภาพมาให้วิเคราะห์ด้วยตา:
     - รูปสลิป: รัน submitPaymentProof ทันทีโดยค้นหาหรือถามเลขออเดอร์ และใช้ imageUrl จากแชท
     - รูปเสื้อ/แฟชั่น:
@@ -1191,14 +1191,11 @@ export async function runChatbotTurn(
     let candidate = response.response.candidates?.[0];
     let functionCalls = candidate?.content?.parts?.filter((part: any) => part.functionCall) || [];
 
-    // วนลูปดำเนินการตาม Function Call ที่โมเดลร้องขอ (ถ้ามี) จำกัดไม่เกิน 4 รอบเพื่อป้องกัน timeout
-    let toolRound = 0;
-    const MAX_TOOL_ROUNDS = 4;
-    while (functionCalls.length > 0 && toolRound < MAX_TOOL_ROUNDS) {
-      toolRound++;
+    // ฟังก์ชันดำเนินการรัน Tool Calls ทีละรอบ
+    const executeToolCalls = async (calls: any[]) => {
       const toolResults: any[] = [];
 
-      for (const part of functionCalls) {
+      for (const part of calls) {
         const call = part.functionCall;
         if (!call) continue;
 
@@ -1361,6 +1358,16 @@ export async function runChatbotTurn(
         });
       }
 
+      return toolResults;
+    };
+
+    // วนลูปดำเนินการตาม Function Call ที่โมเดลร้องขอ (ถ้ามี) จำกัดไม่เกิน 4 รอบเพื่อป้องกัน timeout
+    let toolRound = 0;
+    const MAX_TOOL_ROUNDS = 4;
+    while (functionCalls.length > 0 && toolRound < MAX_TOOL_ROUNDS) {
+      toolRound++;
+      const toolResults = await executeToolCalls(functionCalls);
+
       // ส่งผลลัพธ์ของฟังก์ชันกลับไปยังโมเดลเพื่อให้สรุปหรือคุยต่อ
       contents.push(candidate!.content); // เพิ่มคำตอบก่อนหน้าที่มีการเรียกฟังก์ชัน
       contents.push({
@@ -1382,6 +1389,70 @@ export async function runChatbotTurn(
     
     // ลบส่วนคิดวิเคราะห์ (Thought/Thinking) ที่โมเดลอาจจะพ่นติดออกมาเป็นภาษาอังกฤษก่อนถึงข้อความภาษาไทย
     finalReplyText = finalReplyText.replace(/^thought:[\s\S]*?(?=[ก-๙])/gi, "").trim();
+
+    // ดักจับกรณีโมเดลตอบกลับแบบผัดผ่อนว่าจะไปค้นหาสต็อก หรือขอให้ลูกค้ารอ โดยที่ยังไม่ได้ผลลัพธ์สต็อกจริง
+    const isPromisingSearch = /(?:เดี๋ยว|จะ|กำลัง|ขอ)(?:ทางร้าน)?(?:เช็ค|ค้นหา|ตรวจสอบ|ดู|หา)(?:ข้อมูล)?(?:สต็อก|สต้อค|สินค้า|ของ|ไซส์|สี)?|(?:รอสักครู่|สักครู่(?:นะ|ครับ|ค่ะ)|ขอเวลาสักครู่)/i.test(finalReplyText);
+    const hasActualStockData = /(?:พร้อมส่ง|ตัวละ|฿|\b\d+\s*ตัว\b|หมดชั่วคราว|ไม่มีสินค้า|ไม่พบสินค้า|มีไซส์|ไซส์\s*[A-Za-z0-9]+)/i.test(finalReplyText);
+
+    if (isPromisingSearch && !hasActualStockData && toolRound < MAX_TOOL_ROUNDS) {
+      console.log(`[Auto-Trigger Stock Search] Model replied with placeholder: "${finalReplyText}". Automatically triggering search in same turn...`);
+
+      const extracted = skills.extractSearchAttributes(userMessage);
+      contents.push(candidate?.content || { role: "model", parts: [{ text: finalReplyText }] });
+
+      if (extracted.productCode || (extracted.color && extracted.size)) {
+        const directStock = await skills.checkStock({
+          productCode: extracted.productCode,
+          color: extracted.color,
+          size: extracted.size,
+          query: userMessage,
+        });
+        contents.push({
+          role: "user",
+          parts: [{
+            text: `[คำสั่งระบบด่วน: ห้ามบอกให้ลูกค้ารอเด็ดขาด] ผลลัพธ์สต็อกจริงจากฐานข้อมูลคือ: ${JSON.stringify(directStock)} กรุณารายงานผลสต็อก ราคา และสี/ไซส์พร้อมส่งให้ลูกค้าทราบทันที`
+          }]
+        });
+      } else {
+        contents.push({
+          role: "user",
+          parts: [{
+            text: `[คำสั่งระบบด่วน: ห้ามบอกให้ลูกค้ารอเด็ดขาด] ให้เรียกใช้เครื่องมือ checkStock หรือ searchProducts หรือ getAvailableOptions เพื่อค้นหาและรายงานผลสต็อกจริงให้ลูกค้าในข้อความนี้ทันที`
+          }]
+        });
+      }
+
+      response = await generateContentWithRetry(model, { contents });
+      apiCallsCount++;
+      if (response?.response?.usageMetadata) {
+        totalPromptTokens += response.response.usageMetadata.promptTokenCount || 0;
+        totalCompletionTokens += response.response.usageMetadata.candidatesTokenCount || 0;
+      }
+      candidate = response.response.candidates?.[0];
+      functionCalls = candidate?.content?.parts?.filter((part: any) => part.functionCall) || [];
+
+      while (functionCalls.length > 0 && toolRound < MAX_TOOL_ROUNDS) {
+        toolRound++;
+        const toolResults = await executeToolCalls(functionCalls);
+        contents.push(candidate!.content);
+        contents.push({
+          role: "function",
+          parts: toolResults,
+        });
+
+        response = await generateContentWithRetry(model, { contents });
+        apiCallsCount++;
+        if (response?.response?.usageMetadata) {
+          totalPromptTokens += response.response.usageMetadata.promptTokenCount || 0;
+          totalCompletionTokens += response.response.usageMetadata.candidatesTokenCount || 0;
+        }
+        candidate = response.response.candidates?.[0];
+        functionCalls = candidate?.content?.parts?.filter((part: any) => part.functionCall) || [];
+      }
+
+      finalReplyText = response.response.text?.() || finalReplyText;
+      finalReplyText = finalReplyText.replace(/^thought:[\s\S]*?(?=[ก-๙])/gi, "").trim();
+    }
 
     // 3. บันทึกสถิติการใช้งาน
     try {

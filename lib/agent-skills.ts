@@ -146,7 +146,7 @@ export async function searchProducts(params: SearchParams) {
     };
   }
 
-  // ตรวจจับรหัสสินค้าตัวเลขระบุตรง
+  // ตรวจจับรหัสสินค้าตัวเลขระบุตรง หรือใช้โครงสร้างรหัสสินค้า Highbury กรองในฐานข้อมูลทันที
   if (targetProductCode) {
     const rawNumber = targetProductCode.split("_")[0];
     whereClause.OR = [
@@ -155,13 +155,40 @@ export async function searchProducts(params: SearchParams) {
       { slug: { contains: rawNumber } },
       { name: { contains: rawNumber } },
     ];
-  } else if (extracted.cleanQuery) {
-    whereClause.OR = [
-      { name: { contains: extracted.cleanQuery } },
-      { nameTh: { contains: extracted.cleanQuery } },
-      { description: { contains: extracted.cleanQuery } },
-      { descTh: { contains: extracted.cleanQuery } },
-    ];
+  } else {
+    // กำหนด Prefix ตามหลักที่ 1 (แขน) และหลักที่ 2 (เพศ) และหลักที่ 3 (ลาย)
+    if (targetSleeve && targetGender && targetPattern) {
+      whereClause.slug = { startsWith: `${targetSleeve}${targetGender}${targetPattern}` };
+    } else if (targetSleeve && targetGender) {
+      whereClause.slug = { startsWith: `${targetSleeve}${targetGender}` };
+    } else if (targetGender) {
+      whereClause.OR = [
+        { slug: { startsWith: `1${targetGender}` } },
+        { slug: { startsWith: `2${targetGender}` } },
+        { slug: { startsWith: `3${targetGender}` } },
+        { slug: { startsWith: `4${targetGender}` } },
+      ];
+    } else if (targetSleeve) {
+      whereClause.slug = { startsWith: targetSleeve };
+    } else {
+      // ค้นหาเสื้อเชิ้ตเป็นหลัก ไม่ดึงเครื่องประดับ/เข็มขัด (ซึ่งรหัสขึ้นต้นด้วย 0)
+      whereClause.NOT = { slug: { startsWith: "0" } };
+    }
+
+    if (extracted.cleanQuery) {
+      const textFilter = [
+        { name: { contains: extracted.cleanQuery } },
+        { nameTh: { contains: extracted.cleanQuery } },
+        { description: { contains: extracted.cleanQuery } },
+        { descTh: { contains: extracted.cleanQuery } },
+      ];
+      if (whereClause.OR) {
+        whereClause.AND = [{ OR: whereClause.OR }, { OR: textFilter }];
+        delete whereClause.OR;
+      } else {
+        whereClause.OR = textFilter;
+      }
+    }
   }
 
   // ตัวกรอง Variant สำหรับสีหรือไซส์ (เฉพาะที่มีสต็อกพร้อมส่ง)
@@ -443,6 +470,23 @@ export async function getAvailableOptions(params: AvailableOptionsParams) {
       { slug: { contains: rawNumber } },
       { name: { contains: rawNumber } },
     ];
+  } else {
+    if (targetSleeve && targetGender && targetPattern) {
+      whereClause.slug = { startsWith: `${targetSleeve}${targetGender}${targetPattern}` };
+    } else if (targetSleeve && targetGender) {
+      whereClause.slug = { startsWith: `${targetSleeve}${targetGender}` };
+    } else if (targetGender) {
+      whereClause.OR = [
+        { slug: { startsWith: `1${targetGender}` } },
+        { slug: { startsWith: `2${targetGender}` } },
+        { slug: { startsWith: `3${targetGender}` } },
+        { slug: { startsWith: `4${targetGender}` } },
+      ];
+    } else if (targetSleeve) {
+      whereClause.slug = { startsWith: targetSleeve };
+    } else {
+      whereClause.NOT = { slug: { startsWith: "0" } };
+    }
   }
 
   const dbProducts = await prisma.product.findMany({
