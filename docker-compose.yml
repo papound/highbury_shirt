@@ -44,6 +44,8 @@ services:
       LINE_NOTIFY_TOKEN: ${LINE_NOTIFY_TOKEN:-CHANGE_ME}
       AUTH_TRUST_HOST: "true"
       NODE_ENV: production
+    volumes:
+      - ${PRODUCT_IMAGES_PATH:-/opt/highbury_product_images}:/app/public/images/products:ro
     ports:
       - "3000:3000"
 
