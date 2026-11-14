@@ -7,6 +7,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { QuickViewProduct } from "./quick-view-modal";
 import { getProductPlaceholderImage, CATEGORY_REAL_IMAGES } from "@/lib/placeholders";
+import { useStorefrontV3Safe } from "../storefront-shell";
 
 interface CarouselShowcaseProps {
   products: QuickViewProduct[];
@@ -26,8 +27,12 @@ const CAT_EN_MAP: Record<string, string> = {
 export default function CarouselShowcase({
   products,
   onQuickView,
-  lang = "th",
+  lang: propLang,
 }: CarouselShowcaseProps) {
+  const v3 = useStorefrontV3Safe();
+  const theme = v3?.theme || "dark";
+  const lang = propLang || v3?.lang || "th";
+  const isLight = theme === "light";
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: "start",
     loop: false,
@@ -115,39 +120,58 @@ export default function CarouselShowcase({
   const displayProducts = products.length > 0 ? products : fallbackProducts;
 
   return (
-    <section id="models" className="relative w-full py-20 sm:py-28 bg-[#07080B] text-white border-b border-[#262830] scroll-mt-20">
+    <section id="models" className="relative w-full py-12 sm:py-16 lg:py-24 scroll-mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Top Header Row: Clean, No eyebrow clutter */}
+        {/* Top Header Row: Exact Quantum Header with Category Tracker */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12">
-          <div className="space-y-2 max-w-xl">
-            <h2 className="text-3xl sm:text-4xl font-medium tracking-tight text-white leading-tight">
+          <div className="space-y-3 max-w-xl">
+            <div
+              className={`text-[11px] sm:text-xs font-semibold tracking-[0.25em] uppercase ${
+                isLight ? "text-[#64748B]" : "text-[#9496A1]"
+              }`}
+            >
+              COLLECTION+
+            </div>
+            <h2
+              className={`text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight leading-[1.15] ${
+                isLight ? "text-[#0F172A]" : "text-white"
+              }`}
+            >
               {lang === "th" ? (
                 <>
                   คอลเลกชันสินค้า
                   <br />
-                  ตอบโจทย์ทุกสไตล์และสรีระ
+                  ตอบโจทย์ทุกสไตล์และสรีระ.
                 </>
               ) : (
                 <>
                   Curated Collection
                   <br />
-                  For Every Fit & Style
+                  For Every Fit & Style.
                 </>
               )}
             </h2>
-            <p className="text-sm text-[#9496A1]">
+            <p
+              className={`text-sm sm:text-base leading-relaxed ${
+                isLight ? "text-[#475569]" : "text-[#9496A1]"
+              }`}
+            >
               {lang === "th"
                 ? "เสื้อเชิ้ตสำเร็จรูปคัตติ้งเนี้ยบ ออกแบบสัดส่วนเฉพาะสำหรับคนไทย สวมใส่สบายในทุกโอกาส"
                 : "Tailored ready-to-wear shirts sculpted for Asian proportions with effortless elegance."}
             </p>
           </div>
 
-          {/* Carousel Arrow Controls (Consistent 8px radius) */}
-          <div className="flex items-center gap-2">
+          {/* Carousel Arrow Controls (Quantum Circular Pills) */}
+          <div className="flex items-center gap-2.5">
             <button
               type="button"
               onClick={scrollPrev}
-              className="v3-arrow-btn"
+              className={`p-3 rounded-full border transition-all duration-200 cursor-pointer flex items-center justify-center ${
+                isLight
+                  ? "border-[#E2E8F0] bg-white text-[#0F172A] hover:bg-[#F1F5F9] shadow-xs"
+                  : "border-white/20 bg-white/5 text-white hover:bg-white/10"
+              }`}
               aria-label="Previous shirt model"
             >
               <ChevronLeft className="w-5 h-5" />
@@ -155,7 +179,11 @@ export default function CarouselShowcase({
             <button
               type="button"
               onClick={scrollNext}
-              className="v3-arrow-btn"
+              className={`p-3 rounded-full border transition-all duration-200 cursor-pointer flex items-center justify-center ${
+                isLight
+                  ? "border-[#E2E8F0] bg-white text-[#0F172A] hover:bg-[#F1F5F9] shadow-xs"
+                  : "border-white/20 bg-white/5 text-white hover:bg-white/10"
+              }`}
               aria-label="Next shirt model"
             >
               <ChevronRight className="w-5 h-5" />
@@ -181,10 +209,16 @@ export default function CarouselShowcase({
 
               return (
                 <div key={p.id} className="embla__slide">
-                  {/* Card: 8px radius, solid background #13161D, 1px border #262830 (NO backdrop-blur) */}
-                  <div className="flex flex-col h-full rounded-lg bg-[#13161D] border border-[#262830] overflow-hidden">
+                  {/* Card: 16px radius, rounded-2xl, border, elegant shadow */}
+                  <div
+                    className={`flex flex-col h-full rounded-2xl border overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl ${
+                      isLight
+                        ? "bg-white border-[#E2E8F0] shadow-xs"
+                        : "bg-[#13161D] border-white/10 shadow-lg"
+                    }`}
+                  >
                     {/* Model Photo Container */}
-                    <div className="relative aspect-[16/11] bg-[#0E1015] overflow-hidden border-b border-[#262830]">
+                    <div className="relative aspect-[16/11] bg-[#0E1015] overflow-hidden border-b border-inherit">
                       <Image
                         src={primaryImg}
                         alt={p.nameTh || p.name}
@@ -192,9 +226,18 @@ export default function CarouselShowcase({
                         sizes="(max-width: 640px) 90vw, (max-width: 1024px) 50vw, 33vw"
                         className="object-cover object-top"
                       />
-                      {/* Solid Category Badge (NO backdrop-blur) */}
-                      <div className="absolute top-2.5 left-2.5 pointer-events-none">
-                        <span className="px-2 py-0.5 rounded text-[11px] font-semibold text-white bg-[#07080B] border border-[#262830]">
+                      {/* Frosted Category Badge */}
+                      <div className="absolute top-3 left-3 pointer-events-none">
+                        <span
+                          className="px-2.5 py-1 rounded-full text-[11px] font-semibold"
+                          style={{
+                            backgroundColor: "rgba(0, 0, 0, 0.6)",
+                            backdropFilter: "blur(12px)",
+                            WebkitBackdropFilter: "blur(12px)",
+                            border: "1px solid rgba(255, 255, 255, 0.2)",
+                            color: "#FFFFFF",
+                          }}
+                        >
                           {lang === "th" ? p.category.nameTh : catEn}
                         </span>
                       </div>
@@ -203,42 +246,82 @@ export default function CarouselShowcase({
                     {/* Model Details */}
                     <div className="p-5 flex flex-col justify-between flex-1 space-y-4">
                       <div>
-                        <div className="text-[11px] font-semibold text-[#9496A1] uppercase tracking-wider">
+                        <div
+                          className={`text-[11px] font-semibold uppercase tracking-wider ${
+                            isLight ? "text-[#64748B]" : "text-[#9496A1]"
+                          }`}
+                        >
                           {catEn}
                         </div>
-                        <h3 className="text-base font-semibold text-white tracking-tight line-clamp-1 mt-0.5">
+                        <h3
+                          className={`text-base font-semibold tracking-tight line-clamp-1 mt-0.5 ${
+                            isLight ? "text-[#0F172A]" : "text-white"
+                          }`}
+                        >
                           {p.nameTh || p.name}
                         </h3>
-                        <p className="text-xs text-[#9496A1] mt-1 line-clamp-1">
+                        <p
+                          className={`text-xs mt-1 line-clamp-1 ${
+                            isLight ? "text-[#64748B]" : "text-[#9496A1]"
+                          }`}
+                        >
                           {p.descTh || "แพทเทิร์นพอดีตัวสรีระคนไทย · ดูแลง่าย"}
                         </p>
                       </div>
 
                       {/* 3-Spec Bar with real sourced numbers */}
-                      <div className="grid grid-cols-3 gap-2 py-3 border-t border-b border-[#262830] text-center">
+                      <div
+                        className={`grid grid-cols-3 gap-2 py-3 border-t border-b text-center ${
+                          isLight ? "border-[#E2E8F0]" : "border-[#262830]"
+                        }`}
+                      >
                         <div>
-                          <div className="text-sm font-semibold text-white">
+                          <div
+                            className={`text-sm font-semibold ${
+                              isLight ? "text-[#0F172A]" : "text-white"
+                            }`}
+                          >
                             100%
                           </div>
-                          <div className="text-[10px] text-[#9496A1] uppercase">
+                          <div
+                            className={`text-[10px] uppercase ${
+                              isLight ? "text-[#64748B]" : "text-[#9496A1]"
+                            }`}
+                          >
                             COTTON
                           </div>
                         </div>
 
-                        <div className="border-l border-[#262830]">
-                          <div className="text-sm font-semibold text-white">
+                        <div className={`border-l ${isLight ? "border-[#E2E8F0]" : "border-[#262830]"}`}>
+                          <div
+                            className={`text-sm font-semibold ${
+                              isLight ? "text-[#0F172A]" : "text-white"
+                            }`}
+                          >
                             S – 5XL
                           </div>
-                          <div className="text-[10px] text-[#9496A1] uppercase">
+                          <div
+                            className={`text-[10px] uppercase ${
+                              isLight ? "text-[#64748B]" : "text-[#9496A1]"
+                            }`}
+                          >
                             SIZES
                           </div>
                         </div>
 
-                        <div className="border-l border-[#262830]">
-                          <div className="text-sm font-semibold text-[#FFB900]">
+                        <div className={`border-l ${isLight ? "border-[#E2E8F0]" : "border-[#262830]"}`}>
+                          <div
+                            className={`text-sm font-semibold ${
+                              isLight ? "text-[#B45309]" : "text-[#FFB900]"
+                            }`}
+                          >
                             {priceStr}
                           </div>
-                          <div className="text-[10px] text-[#9496A1] uppercase">
+                          <div
+                            className={`text-[10px] uppercase ${
+                              isLight ? "text-[#64748B]" : "text-[#9496A1]"
+                            }`}
+                          >
                             STARTING
                           </div>
                         </div>
@@ -248,7 +331,11 @@ export default function CarouselShowcase({
                       <div className="flex items-center justify-between pt-1">
                         <Link
                           href={`/products/${p.slug}`}
-                          className="inline-flex items-center gap-1.5 text-xs font-semibold text-white hover:text-white/80 transition-colors"
+                          className={`inline-flex items-center gap-1.5 text-xs font-semibold transition-colors ${
+                            isLight
+                              ? "text-[#0F172A] hover:text-[#2563EB]"
+                              : "text-white hover:text-white/80"
+                          }`}
                         >
                           <span>{lang === "th" ? "ดูรายละเอียดสินค้า" : "Explore Model"}</span>
                           <ArrowRight className="w-3.5 h-3.5" />
@@ -257,7 +344,11 @@ export default function CarouselShowcase({
                         <button
                           type="button"
                           onClick={() => onQuickView(p)}
-                          className="text-xs text-[#9496A1] hover:text-white transition-colors cursor-pointer"
+                          className={`text-xs transition-colors cursor-pointer ${
+                            isLight
+                              ? "text-[#64748B] hover:text-[#0F172A]"
+                              : "text-[#9496A1] hover:text-white"
+                          }`}
                         >
                           {lang === "th" ? "ดูข้อมูลด่วน" : "Quick View"}
                         </button>
