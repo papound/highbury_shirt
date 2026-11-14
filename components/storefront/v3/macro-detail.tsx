@@ -17,27 +17,30 @@ export default function MacroDetail({ lang: propLang }: MacroDetailProps) {
 
   return (
     <section id="details" className="relative w-full min-h-[640px] lg:min-h-[720px] flex items-center overflow-hidden scroll-mt-20">
-      {/* Background Image: Both Woman and Man clearly visible on right side */}
-      <Image
-        src="/images/macro-detail.jpg"
-        alt="Highbury Asian Fit Tailoring Details"
-        fill
-        sizes="100vw"
-        className="object-cover object-[92%_top] sm:object-[90%_top] lg:object-[88%_top]"
-      />
+      {/* Background Image: Shifted to right so both Woman and Man completely clear the left text */}
+      <div className="absolute inset-y-0 right-0 w-full sm:w-[90%] md:w-[85%] lg:w-[75%] xl:w-[70%] pointer-events-none z-0">
+        <Image
+          src="/images/macro-detail.jpg"
+          alt="Highbury Asian Fit Tailoring Details"
+          fill
+          sizes="100vw"
+          className="object-cover object-top"
+          priority
+        />
+      </div>
 
-      {/* Smooth Gradient Fade Layer (Tighter to left edge so Woman and Man are fully illuminated) */}
+      {/* Smooth Gradient Fade Layer (Tighter dissolve so Woman and Man are fully illuminated) */}
       <div
-        className={`absolute inset-0 pointer-events-none transition-colors duration-300 ${
+        className={`absolute inset-0 pointer-events-none transition-colors duration-300 z-1 ${
           isLight
-            ? "bg-gradient-to-r from-white via-white/90 via-35% to-transparent max-lg:bg-gradient-to-t max-lg:from-white/95 max-lg:via-white/80 max-lg:to-transparent"
-            : "bg-gradient-to-r from-[#07080B] via-[#07080B]/90 via-35% to-transparent max-lg:bg-gradient-to-t max-lg:from-[#07080B]/95 max-lg:via-[#07080B]/80 max-lg:to-transparent"
+            ? "bg-gradient-to-r from-white via-white/90 via-30% to-transparent max-lg:bg-gradient-to-t max-lg:from-white/95 max-lg:via-white/80 max-lg:to-transparent"
+            : "bg-gradient-to-r from-[#07080B] via-[#07080B]/90 via-30% to-transparent max-lg:bg-gradient-to-t max-lg:from-[#07080B]/95 max-lg:via-[#07080B]/80 max-lg:to-transparent"
         }`}
       />
 
-      {/* Content Container aligned with site grid (Constrained so right models are unobstructed) */}
+      {/* Content Container aligned with site grid (Compact width so right models are unobstructed) */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-28">
-        <div className="max-w-lg lg:max-w-[480px] space-y-6">
+        <div className="max-w-md lg:max-w-[420px] space-y-5">
           {/* Reference-style Category Tracker */}
           <div
             className={`text-[11px] sm:text-xs font-semibold tracking-[0.25em] uppercase ${
@@ -79,7 +82,7 @@ export default function MacroDetail({ lang: propLang }: MacroDetailProps) {
               : "Engineered collar construction that retains its sharp posture wash after wash, paired with reinforced 4-hole button fastening for everyday durability."}
           </p>
 
-          {/* 3 Sleek Integrated Frosted Spec Cards (Compact layout to keep both models visible) */}
+          {/* 3 Sleek Integrated Frosted Spec Cards (Monochrome Clean Icons, No Orange) */}
           <div className="grid grid-cols-3 gap-2.5 pt-2">
             <div
               className="p-3 sm:p-3.5 rounded-xl shadow-lg transition-all"
@@ -94,7 +97,7 @@ export default function MacroDetail({ lang: propLang }: MacroDetailProps) {
               }}
             >
               <div className="flex items-center gap-1.5 mb-1">
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#FFB900]" />
+                <CheckCircle2 className={`w-3.5 h-3.5 ${isLight ? "text-[#0F172A]" : "text-white"}`} />
                 <div className="text-base sm:text-lg font-bold tracking-tight text-white">
                   16–18
                 </div>
@@ -120,7 +123,7 @@ export default function MacroDetail({ lang: propLang }: MacroDetailProps) {
               }}
             >
               <div className="flex items-center gap-1.5 mb-1">
-                <ShieldCheck className="w-3.5 h-3.5 text-[#FFB900]" />
+                <ShieldCheck className={`w-3.5 h-3.5 ${isLight ? "text-[#0F172A]" : "text-white"}`} />
                 <div className="text-base sm:text-lg font-bold tracking-tight text-white">
                   2-Layer
                 </div>
@@ -146,7 +149,7 @@ export default function MacroDetail({ lang: propLang }: MacroDetailProps) {
               }}
             >
               <div className="flex items-center gap-1.5 mb-1">
-                <Sparkles className="w-3.5 h-3.5 text-[#FFB900]" />
+                <Sparkles className={`w-3.5 h-3.5 ${isLight ? "text-[#0F172A]" : "text-white"}`} />
                 <div className="text-base sm:text-lg font-bold tracking-tight text-white">
                   4-Hole
                 </div>
