@@ -232,23 +232,19 @@ export default function HeaderV3({
 
             {/* Right: Quantum Pill Actions */}
             <div className="flex items-center gap-3">
-              {/* Theme Switcher (Dark / Light Version) */}
+              {/* Theme Switcher (Dark / Light Version) - Crisp White Pill Button */}
               {onToggleTheme && (
                 <button
                   type="button"
                   onClick={onToggleTheme}
-                  className={`p-2 rounded-full text-xs font-semibold border transition-all cursor-pointer flex items-center justify-center ${
-                    theme === "light"
-                      ? "border-[#E5E7EB] bg-[#F1F5F9] text-[#0F172A] hover:bg-[#E2E8F0]"
-                      : "border-white/20 bg-white/5 text-[#E7E7E7] hover:text-white hover:border-white/40"
-                  }`}
+                  className="p-2 rounded-full text-xs font-semibold bg-white text-[#07080B] hover:bg-white/90 shadow-sm border border-white transition-all cursor-pointer flex items-center justify-center shrink-0"
                   aria-label={theme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"}
                   title={theme === "light" ? "สลับเป็นโหมดมืด (Dark Version)" : "สลับเป็นโหมดสว่าง (Light Version)"}
                 >
                   {theme === "light" ? (
                     <Moon className="w-3.5 h-3.5 text-[#0F172A]" />
                   ) : (
-                    <Sun className="w-3.5 h-3.5 text-[#FFB900]" />
+                    <Sun className="w-3.5 h-3.5 text-[#07080B]" />
                   )}
                 </button>
               )}
@@ -566,20 +562,16 @@ export default function HeaderV3({
                   onToggleTheme();
                   setMobileMenuOpen(false);
                 }}
-                className={`w-full py-2.5 px-4 rounded-full text-xs font-semibold border flex items-center justify-center gap-2 transition-colors ${
-                  theme === "light"
-                    ? "border-[#E5E7EB] bg-[#F1F5F9] text-[#0F172A] hover:bg-[#E2E8F0]"
-                    : "border-white/20 bg-white/5 text-white hover:bg-white/10"
-                }`}
+                className="w-full py-2.5 px-4 rounded-full text-xs font-semibold bg-white text-[#07080B] hover:bg-white/90 shadow-sm border border-white flex items-center justify-center gap-2 transition-colors cursor-pointer"
               >
                 {theme === "light" ? (
                   <>
-                    <Moon className="w-4 h-4 text-[#0F172A]" />
+                    <Moon className="w-4 h-4 text-[#07080B]" />
                     <span>เปลี่ยนเป็นโหมดมืด (Dark Version)</span>
                   </>
                 ) : (
                   <>
-                    <Sun className="w-4 h-4 text-[#FFB900]" />
+                    <Sun className="w-4 h-4 text-[#07080B]" />
                     <span>เปลี่ยนเป็นโหมดสว่าง (Light Version)</span>
                   </>
                 )}
