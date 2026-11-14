@@ -24,21 +24,21 @@ export default function MacroDetail({ lang = "th" }: MacroDetailProps) {
                 <>
                   ความประณีต
                   <br />
-                  ในทุกฝีเข็ม
+                  ในทุกรายละเอียด
                 </>
               ) : (
                 <>
-                  Intelligence
+                  Precision
                   <br />
-                  in Every Stitch
+                  in Every Detail
                 </>
               )}
             </h2>
 
             <p className="text-base text-[#475569] leading-relaxed max-w-lg">
               {lang === "th"
-                ? "ตั้งแต่โครงสร้างปกเสื้ออัดกาวเยอรมันที่ไม่ยุบตัว การเย็บตะเข็บละเอียด 21 ฝีเข็มต่อนิ้ว ไปจนถึงการเย็บย้ำกระดุมทนทาน Highbury ใส่ใจในทุกรายละเอียดเชิงวิศวกรรมการตัดเย็บเสื้อเชิ้ต"
-                : "From heat-bonded German collar interlinings that never buckle to 21 stitches-per-inch micro seams and reinforced mother-of-pearl buttons, Highbury integrates structural garment engineering into every single cut."}
+                ? "ตั้งแต่โครงสร้างปกเสื้ออัดกาวเยอรมันที่ไม่ยุบตัว การตัดเย็บทรงพอดีตัวสรีระ ไปจนถึงการเย็บย้ำกระดุมทนทาน Highbury ใส่ใจในทุกรายละเอียดเชิงวิศวกรรมการตัดเย็บเสื้อเชิ้ต"
+                : "From heat-bonded German collar interlinings that never buckle to ergonomic Asian-fit sculpting and reinforced buttons, Highbury integrates structural garment engineering into every single cut."}
             </p>
 
             <div className="pt-2">

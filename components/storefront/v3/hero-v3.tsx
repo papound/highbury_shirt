@@ -99,10 +99,10 @@ export default function HeroV3({ onOpenSizeGuide, lang = "th" }: HeroV3Props) {
           <div className="grid grid-cols-3 gap-6 sm:gap-14 md:gap-20">
             <div>
               <div className="font-mono text-2xl sm:text-3xl font-semibold text-white tracking-tight">
-                21 SPI
+                XS – 4XL
               </div>
               <div className="text-[10px] sm:text-xs font-semibold text-white/50 tracking-[0.15em] uppercase mt-1">
-                {lang === "th" ? "Stitch Density (ฝีเข็ม/นิ้ว)" : "Stitch Density"}
+                {lang === "th" ? "Asian Fit Range (ไซส์คนไทย)" : "Asian Fit Range"}
               </div>
             </div>
 
