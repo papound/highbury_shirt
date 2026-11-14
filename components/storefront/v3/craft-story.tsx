@@ -41,13 +41,13 @@ export default function CraftStory({ lang = "th" }: CraftStoryProps) {
             <div className="pt-2 grid grid-cols-1 sm:grid-cols-3 gap-4 border-t border-[#262830]">
               <div className="bg-[#13161D] p-4 rounded-lg border border-[#262830]">
                 <div className="text-xs font-semibold text-[#FFB900] uppercase tracking-wider">
-                  {lang === "th" ? "โครงสร้างปก" : "Collar Weave"}
+                  {lang === "th" ? "โครงสร้างปก" : "Collar Structure"}
                 </div>
                 <div className="text-sm font-medium text-white mt-1">
-                  {lang === "th" ? "ผ้าอัดกาวเยอรมัน" : "German Interlining"}
+                  {lang === "th" ? "เสริมทรงพิเศษ" : "Reinforced Posture"}
                 </div>
                 <div className="text-xs text-[#9496A1] mt-0.5">
-                  {lang === "th" ? "ปกตั้งอยู่ทรง ไม่แบะย้วย" : "Retains crisp posture"}
+                  {lang === "th" ? "ปกตั้งสวย ไม่แบะย้วย" : "Retains crisp shape"}
                 </div>
               </div>
 

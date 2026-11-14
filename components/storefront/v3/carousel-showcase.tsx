@@ -137,8 +137,8 @@ export default function CarouselShowcase({
             </h2>
             <p className="text-sm text-[#9496A1]">
               {lang === "th"
-                ? "เสื้อเชิ้ตสำเร็จรูปผลิตจริงในสต็อก พร้อมข้อมูลไซส์และราคาจริงจากฐานข้อมูล Highbury"
-                : "Real ready-to-wear shirts in stock, backed by exact sizing and verified factory pricing."}
+                ? "เสื้อเชิ้ตสำเร็จรูปคัตติ้งเนี้ยบ ออกแบบสัดส่วนเฉพาะสำหรับคนไทย สวมใส่สบายในทุกโอกาส"
+                : "Tailored ready-to-wear shirts sculpted for Asian proportions with effortless elegance."}
             </p>
           </div>
 

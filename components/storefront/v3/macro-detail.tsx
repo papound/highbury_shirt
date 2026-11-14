@@ -33,8 +33,8 @@ export default function MacroDetail({ lang = "th" }: MacroDetailProps) {
 
             <p className="text-sm sm:text-base text-[#E7E7E7] leading-relaxed max-w-lg">
               {lang === "th"
-                ? "โครงสร้างปกเสื้อเสริมผ้ากาวคุณภาพเยอรมันที่ผ่านการทดสอบการซัก สะบัดแขวนแล้วปกยังคงรูปสวย ไม่แบะย้วย กระดุมทุกเม็ดเย็บย้ำด้วยด้ายเหนียวพิเศษ ป้องกันปัญหากระดุมหลุดระหว่างวันทำงาน"
-                : "Reinforced collar structure with German interlining engineered to withstand repeated washing without collar collapse. Every button is cross-stitched with reinforced thread to eliminate unraveling."}
+                ? "โครงสร้างปกเสื้อออกแบบเป็นพิเศษเพื่อให้ตั้งอยู่ทรงสวยงาม ซักสะบัดแขวนแทบไม่ต้องรีด พร้อมการเย็บย้ำกระดุมแน่นหนาเพื่อความทนทานในการใช้งานทุกวัน"
+                : "Engineered collar construction that retains its sharp posture wash after wash, paired with reinforced button fastening for everyday durability."}
             </p>
 
             <div className="pt-2">
