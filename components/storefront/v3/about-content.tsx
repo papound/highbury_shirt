@@ -87,15 +87,23 @@ export default function AboutContent() {
               />
 
               {/* Floating Floating Quantum Glass Badge */}
-              <div className="absolute bottom-4 left-4 right-4 sm:right-auto sm:left-4 p-3.5 rounded-xl bg-[#07080B]/85 backdrop-blur-md border border-white/20 text-white shadow-lg flex items-center gap-3">
-                <div className="w-9 h-9 rounded-lg bg-[#FFB900]/20 border border-[#FFB900]/40 flex items-center justify-center shrink-0">
-                  <Factory className="w-5 h-5 text-[#FFB900]" />
+              <div className={`absolute bottom-4 left-4 right-4 sm:right-auto sm:left-4 p-3.5 rounded-xl backdrop-blur-md border shadow-lg flex items-center gap-3 ${
+                isLight ? "bg-white/90 border-[#E2E8F0] text-[#0F172A]" : "bg-[#07080B]/85 border-white/20 text-white"
+              }`}>
+                <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
+                  isLight ? "bg-[#FEF3C7] border border-[#FDE68A] text-[#B45309]" : "bg-[#FFB900]/20 border border-[#FFB900]/40 text-[#FFB900]"
+                }`}>
+                  <Factory className="w-5 h-5" />
                 </div>
                 <div>
-                  <div className="text-[11px] font-semibold text-[#FFB900] uppercase tracking-wider">
+                  <div className={`text-[11px] font-semibold uppercase tracking-wider ${
+                    isLight ? "text-[#B45309]" : "text-[#FFB900]"
+                  }`}>
                     {lang === "th" ? "กำลังการผลิตมาตรฐาน" : "Workshop Capacity"}
                   </div>
-                  <div className="text-xs sm:text-sm font-semibold text-white">
+                  <div className={`text-xs sm:text-sm font-semibold ${
+                    isLight ? "text-[#0F172A]" : "text-white"
+                  }`}>
                     {lang === "th" ? "3,500 ตัว / เดือน (OEM & Retail)" : "3,500 Pcs / Month (OEM & Retail)"}
                   </div>
                 </div>
@@ -353,12 +361,18 @@ export default function AboutContent() {
                 sizes="(max-width: 1024px) 100vw, 600px"
                 className="object-cover object-center"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-6">
-                <div className="text-white">
-                  <div className="text-xs font-semibold text-[#FFB900] uppercase tracking-wider">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent flex items-end p-6">
+                <div>
+                  <div 
+                    className="text-xs font-semibold uppercase tracking-wider"
+                    style={{ color: "#FFB900" }}
+                  >
                     {lang === "th" ? "รายละเอียดระดับมาโคร" : "Macro Precision"}
                   </div>
-                  <div className="text-sm font-medium mt-0.5">
+                  <div 
+                    className="text-sm font-medium mt-0.5"
+                    style={{ color: "#FFFFFF" }}
+                  >
                     {lang === "th" ? "เส้นใยและรอยเย็บที่ผ่านการควบคุมคุณภาพ 100%" : "Every weave & seam inspected before dispatch"}
                   </div>
                 </div>
@@ -370,34 +384,44 @@ export default function AboutContent() {
 
       {/* 5. Corporate & OEM Uniform Inquiry Card */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20 sm:mb-28">
-        <div className={`rounded-3xl p-8 sm:p-12 border relative overflow-hidden ${
+        <div className={`rounded-3xl p-8 sm:p-12 border relative overflow-hidden transition-colors ${
           isLight 
-            ? "bg-gradient-to-br from-[#0F172A] to-[#1E293B] text-white border-[#334155]" 
-            : "bg-gradient-to-br from-[#13161D] to-[#0A0C10] text-white border-[#262830]"
+            ? "bg-[#F8FAFC] border-[#E2E8F0] shadow-sm" 
+            : "bg-gradient-to-br from-[#13161D] to-[#0A0C10] border-[#262830] shadow-xl"
         }`}>
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
             <div className="lg:col-span-7 space-y-4">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-[#FFB900]/15 text-[#FFB900] border border-[#FFB900]/30">
+              <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium border ${
+                isLight 
+                  ? "bg-[#FEF3C7] text-[#B45309] border-[#FDE68A]" 
+                  : "bg-[#FFB900]/15 text-[#FFB900] border-[#FFB900]/30"
+              }`}>
                 <Building2 className="w-3.5 h-3.5" />
                 <span>{lang === "th" ? "บริการสั่งผลิตสำหรับองค์กร (Corporate Uniform OEM)" : "CORPORATE UNIFORM & OEM INQUIRIES"}</span>
               </div>
-              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+              <h2 className={`text-2xl sm:text-3xl font-bold tracking-tight ${
+                isLight ? "text-[#0F172A]" : "text-white"
+              }`}>
                 {lang === "th"
                   ? "ยกระดับภาพลักษณ์องค์กรด้วยเสื้อเชิ้ตสั่งตัดมาตรฐานสูง"
                   : "Elevate Your Corporate Identity with Tailored Workwear"}
               </h2>
-              <p className="text-sm sm:text-base text-[#E7E7E7] leading-relaxed max-w-xl">
+              <p className={`text-sm sm:text-base leading-relaxed max-w-xl ${
+                isLight ? "text-[#475569]" : "text-[#E7E7E7]"
+              }`}>
                 {lang === "th"
                   ? "เรารับผลิตเสื้อเชิ้ตยูนิฟอร์มพนักงาน สั่งทอสีเฉพาะตามแบรนด์ CI พร้อมบริการปักโลโก้ความละเอียดสูง ให้คำปรึกษาแพทเทิร์น และจัดทำตัวอย่างก่อนสั่งผลิตจริง"
                   : "From bespoke company color matching to precision logo embroidery, our workshop handles full-batch corporate orders with dedicated fit samples."}
               </p>
 
-              <div className="pt-2 flex flex-wrap gap-4 text-xs text-[#E7E7E7]">
+              <div className={`pt-2 flex flex-wrap gap-4 text-xs ${
+                isLight ? "text-[#475569]" : "text-[#E7E7E7]"
+              }`}>
                 <div className="flex items-center gap-1.5">
-                  <Phone className="w-3.5 h-3.5 text-[#FFB900]" />
-                  <a href="tel:0863116292" className="hover:text-white underline underline-offset-4">086-311-6292</a>
+                  <Phone className={`w-3.5 h-3.5 ${isLight ? "text-[#B45309]" : "text-[#FFB900]"}`} />
+                  <a href="tel:0863116292" className={`underline underline-offset-4 ${isLight ? "hover:text-[#0F172A]" : "hover:text-white"}`}>086-311-6292</a>
                   <span>หรือ</span>
-                  <a href="tel:028968066" className="hover:text-white underline underline-offset-4">02-896-8066 ต่อ 9</a>
+                  <a href="tel:028968066" className={`underline underline-offset-4 ${isLight ? "hover:text-[#0F172A]" : "hover:text-white"}`}>02-896-8066 ต่อ 9</a>
                 </div>
               </div>
             </div>
@@ -409,7 +433,7 @@ export default function AboutContent() {
                 rel="noopener noreferrer"
                 className="v3-btn-white w-full sm:w-auto text-center justify-center"
               >
-                <MessageSquare className="w-4 h-4 text-[#07080B]" />
+                <MessageSquare className="w-4 h-4" />
                 <span>{lang === "th" ? "ปรึกษาสั่งผลิตผ่าน LINE OA" : "Inquire via LINE OA"}</span>
               </Link>
               {v3?.openSizeGuide && (
@@ -418,7 +442,7 @@ export default function AboutContent() {
                   onClick={v3.openSizeGuide}
                   className="v3-btn-glass w-full sm:w-auto text-center justify-center text-xs"
                 >
-                  <Ruler className="w-4 h-4 text-[#FFB900]" />
+                  <Ruler className={`w-4 h-4 ${isLight ? "text-[#B45309]" : "text-[#FFB900]"}`} />
                   <span>{lang === "th" ? "คำนวณไซส์ Smart Size Finder" : "Smart Size Finder"}</span>
                 </button>
               )}
