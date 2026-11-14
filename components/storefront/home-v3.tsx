@@ -15,6 +15,7 @@ import PreFooterCta from "./v3/pre-footer-cta";
 import CorporateBanner from "./v3/corporate-banner";
 import QuickViewModal, { QuickViewProduct } from "./v3/quick-view-modal";
 import SmartSizeGuideModal from "./v3/smart-size-guide-modal";
+import "./v3/v3.css";
 
 // ---------- types ----------
 type FeaturedProduct = Prisma.ProductGetPayload<{
@@ -63,7 +64,7 @@ export default function HomeV3({ featuredProducts, categories }: HomeV3Props) {
   }));
 
   return (
-    <div className="flex flex-col w-full bg-[#071322] text-foreground antialiased selection:bg-blue-600/20">
+    <div className="v3-page-wrapper flex flex-col w-full bg-[#071322] text-foreground antialiased selection:bg-blue-600/20">
       {/* 1. Top Announcement Bar */}
       <AnnouncementBar />
 

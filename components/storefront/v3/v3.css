@@ -1,0 +1,175 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   HIGHBURY STOREFRONT V3 — DEDICATED STYLESHEET
+   Quantum Luxury Editorial DTC Design System
+   Scoped exclusively for Storefront v3
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* ─── 1. Design Tokens (Scoped to v3) ────────────────────────────────────── */
+.v3-page-wrapper {
+  --v3-bg-primary: #071322;
+  --v3-bg-secondary: #0A1828;
+  --v3-bg-surface: #0E2238;
+  --v3-bg-light: #FFFFFF;
+  --v3-bg-light-muted: #F8F9FA;
+  
+  --v3-text-white: #FFFFFF;
+  --v3-text-white-muted: rgba(255, 255, 255, 0.75);
+  --v3-text-white-subtle: rgba(255, 255, 255, 0.55);
+  --v3-text-dark: #071322;
+  --v3-text-dark-muted: #475569;
+  
+  --v3-accent-blue: #3B82F6;
+  --v3-accent-amber: #F59E0B;
+  --v3-accent-emerald: #10B981;
+  
+  --v3-border-light: rgba(255, 255, 255, 0.12);
+  --v3-border-dark: #E2E8F0;
+  
+  --v3-font-heading: 'Google Sans', 'Google Sans Flex', -apple-system, BlinkMacSystemFont, sans-serif;
+  --v3-font-body: 'Google Sans', 'Google Sans Flex', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Hallmark floor: clip horizontal overflow without scroll container side-effects */
+  overflow-x: clip;
+  width: 100%;
+}
+
+/* ─── 2. Native <dialog> Modal Styles (Modern Web Guidance) ────────────────── */
+.v3-page-wrapper dialog.v3-dialog:modal,
+dialog.v3-dialog:modal {
+  overscroll-behavior: contain;
+  margin: auto;
+  border: none;
+}
+
+.v3-page-wrapper dialog.v3-dialog::backdrop,
+dialog.v3-dialog::backdrop {
+  overflow: hidden;
+  overscroll-behavior: contain;
+  background-color: rgba(5, 14, 26, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* ─── 3. Embla Carousel Engine (Mobile-First Touch & Desktop) ─────────────── */
+.v3-page-wrapper .embla {
+  overflow: hidden;
+  width: 100%;
+}
+
+.v3-page-wrapper .embla__container {
+  display: flex;
+  touch-action: pan-y pinch-zoom;
+  margin-left: -1rem;
+}
+
+@media (min-width: 640px) {
+  .v3-page-wrapper .embla__container {
+    margin-left: -1.5rem;
+  }
+}
+
+.v3-page-wrapper .embla__slide {
+  flex: 0 0 85%;
+  min-width: 0;
+  padding-left: 1rem;
+}
+
+@media (min-width: 640px) {
+  .v3-page-wrapper .embla__slide {
+    flex: 0 0 50%;
+    padding-left: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .v3-page-wrapper .embla__slide {
+    flex: 0 0 33.333%;
+    padding-left: 1.5rem;
+  }
+}
+
+/* ─── 4. CSS Container Queries for Product Cards ─────────────────────────── */
+.v3-page-wrapper .v3-card-container {
+  container-type: inline-size;
+}
+
+/* ─── 5. Below-the-fold Performance Optimization ─────────────────────────── */
+.v3-page-wrapper .v3-section-deferred {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
+}
+
+/* ─── 6. Luxury Pill Buttons & Micro-Interactions ─────────────────────────── */
+.v3-page-wrapper .v3-pill-btn-white {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 2rem;
+  border-radius: 9999px;
+  background-color: #FFFFFF;
+  color: #071322;
+  font-weight: 700;
+  font-size: 0.875rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.v3-page-wrapper .v3-pill-btn-white:hover {
+  background-color: #F1F5F9;
+  transform: translateY(-1px);
+  box-shadow: 0 14px 28px -5px rgba(0, 0, 0, 0.35);
+}
+
+.v3-page-wrapper .v3-pill-btn-white:active {
+  transform: scale(0.98);
+}
+
+.v3-page-wrapper .v3-pill-btn-glass {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  padding: 0.875rem 2rem;
+  border-radius: 9999px;
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #FFFFFF;
+  font-weight: 600;
+  font-size: 0.875rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+  cursor: pointer;
+}
+
+.v3-page-wrapper .v3-pill-btn-glass:hover {
+  background-color: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-1px);
+}
+
+.v3-page-wrapper .v3-pill-btn-glass:active {
+  transform: scale(0.98);
+}
+
+/* ─── 7. Hallmark Focus Visible Standard ─────────────────────────────────── */
+.v3-page-wrapper a:focus-visible,
+.v3-page-wrapper button:focus-visible,
+.v3-page-wrapper input:focus-visible {
+  outline: 2px solid var(--v3-accent-blue);
+  outline-offset: 2px;
+}
+
+/* ─── 8. Accessibility: Reduced Motion Fallback ──────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .v3-page-wrapper *,
+  .v3-page-wrapper *::before,
+  .v3-page-wrapper *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
