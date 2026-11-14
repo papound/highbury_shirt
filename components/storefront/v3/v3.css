@@ -1,113 +1,155 @@
 /* ─────────────────────────────────────────────────────────────────────────────
-   HIGHBURY STOREFRONT V3 — ANTI-AI SLOP BESPOKE DESIGN SYSTEM
-   Designed to score 0/100 on Sitepeel AI Slop Checker
-   Theme: Light | Font: Google Sans | Brand: #163666
+   QUANTUM MOTORS 1-TO-1 VISUAL CLONE DESIGN SYSTEM FOR HIGHBURY V3
+   Faithful replication of: https://z9994-eo58it.ps15.zwhhosting.com/
+   Scoped to .v3-page-wrapper
    ───────────────────────────────────────────────────────────────────────────── */
 
-/* Global container styling */
-html:has(.v3-page-wrapper),
-body:has(.v3-page-wrapper) {
-  background-color: #FFFFFF !important;
-  color: #0F172B !important;
-  font-family: 'Google Sans', 'Google Sans Flex', 'Product Sans', -apple-system, sans-serif !important;
-  overflow-x: clip !important;
-}
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 .v3-page-wrapper {
-  /* ── Sitepeel Measured Palette ── */
-  --v3-brand: #163666;
-  --v3-secondary: #0A2B5E;
-  --v3-tertiary: #1447E6;
-  --v3-bg: #FFFFFF;
-  --v3-bg-subtle: #F9FAFB;
-  --v3-text: #79716B;
-  --v3-ink: #0F172B;
-  --v3-outline: #E7E5E4;
-  --v3-outline-subtle: #F0EFEA;
-  --v3-error: #FB2C36;
+  /* ── Typography Tokens ── */
+  --v3-font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --v3-font-mono: 'JetBrains Mono', monospace;
 
-  /* ── Typography Token: Pure Google Sans ── */
-  --v3-font: 'Google Sans', 'Google Sans Flex', 'Product Sans', -apple-system, sans-serif;
+  /* ── Palette: Quantum Pitch Dark & Architectural White ── */
+  --v3-bg-dark: #07080B;
+  --v3-bg-dark-surface: #0E1015;
+  --v3-bg-dark-card: rgba(255, 255, 255, 0.035);
+  --v3-border-dark: rgba(255, 255, 255, 0.1);
+  --v3-border-dark-hover: rgba(255, 255, 255, 0.3);
 
-  font-family: var(--v3-font);
-  background-color: var(--v3-bg);
-  color: var(--v3-ink);
+  --v3-bg-light: #FFFFFF;
+  --v3-bg-light-muted: #F8FAFC;
+  --v3-border-light: #E2E8F0;
+
+  --v3-text-main: #FFFFFF;
+  --v3-text-muted: #94A3B8;
+  --v3-text-dark: #0A0B0E;
+  --v3-text-dark-muted: #64748B;
+
+  font-family: var(--v3-font-sans);
+  background-color: var(--v3-bg-dark);
+  color: var(--v3-text-main);
   overflow-x: clip;
   width: 100%;
 }
 
-/* ── Typography & Headings ── */
-.v3-page-wrapper h1,
-.v3-page-wrapper h2,
-.v3-page-wrapper h3,
-.v3-page-wrapper h4 {
-  font-family: var(--v3-font);
-  color: var(--v3-ink);
-  letter-spacing: -0.015em;
-  font-weight: 700;
+/* ── Typography Utilities ── */
+.v3-page-wrapper .font-mono {
+  font-family: var(--v3-font-mono);
 }
 
-.v3-page-wrapper p,
-.v3-page-wrapper span,
-.v3-page-wrapper a,
-.v3-page-wrapper button,
-.v3-page-wrapper input {
-  font-family: var(--v3-font);
+.v3-page-wrapper .font-sans {
+  font-family: var(--v3-font-sans);
 }
 
-/* ── Solid Buttons (No gradients, no glassmorphism) ── */
-.v3-page-wrapper .v3-btn-brand {
+/* ── Quantum Pill Buttons ── */
+.v3-page-wrapper .v3-btn-white {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
   padding: 0.75rem 1.75rem;
-  border-radius: 0.5rem;
-  background-color: var(--v3-brand);
+  border-radius: 9999px;
+  background-color: #FFFFFF;
+  color: #0A0B0E;
+  font-weight: 600;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  letter-spacing: -0.01em;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.v3-page-wrapper .v3-btn-white:hover {
+  background-color: #E2E8F0;
+  transform: translateY(-1px);
+}
+
+.v3-page-wrapper .v3-btn-white:active {
+  transform: scale(0.98);
+}
+
+.v3-page-wrapper .v3-btn-glass {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  padding: 0.75rem 1.75rem;
+  border-radius: 9999px;
+  background-color: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #FFFFFF;
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.v3-page-wrapper .v3-btn-glass:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+.v3-page-wrapper .v3-btn-glass:active {
+  transform: scale(0.98);
+}
+
+.v3-page-wrapper .v3-btn-black {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.75rem;
+  border-radius: 9999px;
+  background-color: #0A0B0E;
   color: #FFFFFF;
   font-weight: 600;
-  font-size: 0.9375rem;
-  border: 1px solid var(--v3-brand);
-  transition: background-color 0.2s ease, border-color 0.2s ease;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  letter-spacing: -0.01em;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
 }
 
-.v3-page-wrapper .v3-btn-brand:hover {
-  background-color: var(--v3-secondary);
-  border-color: var(--v3-secondary);
+.v3-page-wrapper .v3-btn-black:hover {
+  background-color: #27272A;
+  transform: translateY(-1px);
 }
 
-.v3-page-wrapper .v3-btn-outline {
-  display: inline-flex;
+.v3-page-wrapper .v3-btn-black:active {
+  transform: scale(0.98);
+}
+
+/* ── Circular Arrow Controls (Quantum Carousel Arrows) ── */
+.v3-page-wrapper .v3-arrow-btn {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #FFFFFF;
+  display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.75rem;
-  border-radius: 0.5rem;
-  background-color: #FFFFFF;
-  color: var(--v3-ink);
-  font-weight: 600;
-  font-size: 0.9375rem;
-  border: 1px solid var(--v3-outline);
-  transition: background-color 0.2s ease, border-color 0.2s ease;
+  transition: all 0.2s ease;
   cursor: pointer;
 }
 
-.v3-page-wrapper .v3-btn-outline:hover {
-  background-color: var(--v3-bg-subtle);
-  border-color: #D1D5DB;
+.v3-page-wrapper .v3-arrow-btn:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: scale(1.05);
 }
 
-/* ── Clean 1px Border Cards (No stock shadows, no glassmorphism) ── */
-.v3-page-wrapper .v3-card {
-  background-color: #FFFFFF;
-  border: 1px solid var(--v3-outline);
-  border-radius: 0.75rem;
-  transition: border-color 0.2s ease;
-}
-
-.v3-page-wrapper .v3-card:hover {
-  border-color: #CBD5E1;
+.v3-page-wrapper .v3-arrow-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 /* ── Embla Carousel Rules ── */
@@ -119,13 +161,13 @@ body:has(.v3-page-wrapper) {
 .v3-page-wrapper .embla__container {
   display: flex;
   touch-action: pan-y pinch-zoom;
-  margin-left: -1.25rem;
+  margin-left: -1.5rem;
 }
 
 .v3-page-wrapper .embla__slide {
-  flex: 0 0 85%;
+  flex: 0 0 90%;
   min-width: 0;
-  padding-left: 1.25rem;
+  padding-left: 1.5rem;
 }
 
 @media (min-width: 640px) {
@@ -140,31 +182,25 @@ body:has(.v3-page-wrapper) {
   }
 }
 
-/* ── Clean Native <dialog> Modal (No blur backdrop) ── */
+/* ── Dialog Backdrop ── */
 dialog.v3-dialog:modal {
   overscroll-behavior: contain;
   margin: auto;
-  border: 1px solid var(--v3-outline);
-  border-radius: 0.75rem;
-  font-family: var(--v3-font);
-  background: #FFFFFF;
+  border: none;
 }
 
 dialog.v3-dialog::backdrop {
-  overflow: hidden;
-  overscroll-behavior: contain;
-  background-color: rgba(15, 23, 43, 0.4);
+  background-color: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
-/* ── Focus Visible ── */
-.v3-page-wrapper a:focus-visible,
-.v3-page-wrapper button:focus-visible,
-.v3-page-wrapper input:focus-visible {
-  outline: 2px solid var(--v3-brand);
-  outline-offset: 2px;
+/* ── Performance & Accessibility ── */
+.v3-page-wrapper .v3-section-deferred {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
 }
 
-/* ── Reduced Motion Accessibility ── */
 @media (prefers-reduced-motion: reduce) {
   .v3-page-wrapper *,
   .v3-page-wrapper *::before,
@@ -172,6 +208,5 @@ dialog.v3-dialog::backdrop {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
   }
 }

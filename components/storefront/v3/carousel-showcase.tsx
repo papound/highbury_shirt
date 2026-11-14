@@ -4,9 +4,9 @@ import { useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import useEmblaCarousel from "embla-carousel-react";
-import { ChevronLeft, ChevronRight, Eye, ArrowRight } from "lucide-react";
-import { getProductPlaceholderImage } from "@/lib/placeholders";
+import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { QuickViewProduct } from "./quick-view-modal";
+import { getProductPlaceholderImage } from "@/lib/placeholders";
 
 interface CarouselShowcaseProps {
   products: QuickViewProduct[];
@@ -18,9 +18,10 @@ export default function CarouselShowcase({
   onQuickView,
 }: CarouselShowcaseProps) {
   const [emblaRef, emblaApi] = useEmblaCarousel({
-    loop: true,
     align: "start",
-    skipSnaps: false,
+    loop: false,
+    containScroll: "trimSnaps",
+    slidesToScroll: 1,
   });
 
   const scrollPrev = useCallback(() => {
@@ -31,105 +32,178 @@ export default function CarouselShowcase({
     if (emblaApi) emblaApi.scrollNext();
   }, [emblaApi]);
 
-  if (!products || products.length === 0) return null;
+  // Fallback demo models if db products are few
+  const displayProducts = products.length > 0 ? products : [
+    {
+      id: "demo-1",
+      name: "Highbury Signature Classic",
+      nameTh: "Highbury Signature Classic",
+      slug: "signature-classic",
+      descTh: "Bold. Crisp. Easy-Care.",
+      basePrice: 790,
+      category: { nameTh: "Men's Shirts", slug: "mens-shirts" },
+      images: [{ url: "/images/placeholders/men-ls.jpg", altText: "Signature Classic" }],
+      variants: [],
+    },
+    {
+      id: "demo-2",
+      name: "Highbury Oxford Button-Down",
+      nameTh: "Highbury Oxford Button-Down",
+      slug: "oxford-button-down",
+      descTh: "Elegance Meets Everyday Versatility.",
+      basePrice: 890,
+      category: { nameTh: "Men's Shirts", slug: "mens-shirts" },
+      images: [{ url: "/images/placeholders/men-ss.jpg", altText: "Oxford Button-Down" }],
+      variants: [],
+    },
+    {
+      id: "demo-3",
+      name: "Highbury Modern Slim Fit",
+      nameTh: "Highbury Modern Slim Fit",
+      slug: "modern-slim-fit",
+      descTh: "Sculpted Silhouette for Every Day.",
+      basePrice: 990,
+      category: { nameTh: "Men's Shirts", slug: "mens-shirts" },
+      images: [{ url: "/images/placeholders/women-ls.jpg", altText: "Modern Slim Fit" }],
+      variants: [],
+    },
+  ];
 
   return (
-    <section id="collection" className="w-full py-16 sm:py-20 bg-[#F9FAFB] border-b border-[#E7E5E4]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10 pb-4 border-b border-[#E7E5E4]">
-          <div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-[#0F172B] tracking-tight">
-              สินค้าแนะนำ
+    <section id="models" className="relative w-full py-28 sm:py-36 bg-[#07080B] text-white overflow-hidden border-t border-b border-white/10">
+      {/* Subtle warm sunset atmospheric gradient matching Quantum sunset backdrop */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-20"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.15) 0%, transparent 60%), radial-gradient(circle at 80% 80%, rgba(46, 144, 250, 0.15) 0%, transparent 50%)",
+        }}
+      />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        {/* Top Header Row (Quantum Style) */}
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-16">
+          <div className="space-y-4 max-w-xl">
+            <div className="text-xs font-semibold tracking-[0.25em] text-white/60 uppercase">
+              MODELS
+            </div>
+            <h2 className="text-4xl sm:text-5xl font-medium tracking-[-0.03em] text-white leading-[1.1]">
+              Designed for a
+              <br />
+              Brighter Tomorrow
             </h2>
-            <p className="text-sm text-[#79716B] mt-1">
-              เสื้อเชิ้ตคุณภาพสูงหลากหลายรุ่นที่เป็นเอกลักษณ์ของ Highbury
-            </p>
           </div>
 
-          {/* Clean Carousel Controls (No frosted glass) */}
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={scrollPrev}
-              className="w-9 h-9 rounded-lg border border-[#E7E5E4] bg-white hover:bg-[#F9FAFB] text-[#0F172B] flex items-center justify-center transition-colors cursor-pointer"
-              aria-label="ย้อนกลับ"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            <button
-              type="button"
-              onClick={scrollNext}
-              className="w-9 h-9 rounded-lg border border-[#E7E5E4] bg-white hover:bg-[#F9FAFB] text-[#0F172B] flex items-center justify-center transition-colors cursor-pointer"
-              aria-label="ถัดไป"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-6 lg:max-w-md">
+            <p className="text-sm text-white/60 leading-relaxed">
+              Discover our range of tailored shirts, each crafted to deliver exceptional comfort,
+              Asian fit geometry, and durable easy-care elegance.
+            </p>
+            {/* Circular Carousel Arrow Controls */}
+            <div className="flex items-center gap-3 shrink-0">
+              <button
+                type="button"
+                onClick={scrollPrev}
+                className="v3-arrow-btn"
+                aria-label="Previous shirt model"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <button
+                type="button"
+                onClick={scrollNext}
+                className="v3-arrow-btn"
+                aria-label="Next shirt model"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Embla Carousel Viewport */}
+        {/* Embla Carousel Container */}
         <div className="embla" ref={emblaRef}>
           <div className="embla__container">
-            {products.map((product) => {
+            {displayProducts.map((p) => {
               const primaryImg =
-                product.images[0]?.url || getProductPlaceholderImage(product.slug);
-              const prices = product.variants.map((v) => v.price);
-              const minPrice = prices.length ? Math.min(...prices) : product.basePrice;
-              const maxPrice = prices.length ? Math.max(...prices) : product.basePrice;
+                p.images[0]?.url || getProductPlaceholderImage(p.slug);
+              const prices = p.variants?.map((v) => v.price) || [];
+              const priceStr = prices.length
+                ? `฿${Math.min(...prices).toLocaleString()}`
+                : `฿${p.basePrice.toLocaleString()}`;
 
               return (
-                <div key={product.id} className="embla__slide">
-                  <div className="group flex flex-col h-full rounded-xl border border-[#E7E5E4] bg-white overflow-hidden transition-all">
-                    {/* Image Area */}
-                    <div className="relative aspect-[4/5] bg-[#F1F5F9] overflow-hidden">
+                <div key={p.id} className="embla__slide">
+                  <div className="group flex flex-col h-full rounded-2xl bg-[#0E1015] border border-white/10 hover:border-white/25 transition-all duration-300 overflow-hidden">
+                    {/* Model Photo Container */}
+                    <div className="relative aspect-[16/11] bg-[#14171F] overflow-hidden">
                       <Image
                         src={primaryImg}
-                        alt={product.nameTh}
+                        alt={p.nameTh || p.name}
                         fill
-                        loading="lazy"
-                        sizes="(max-width: 640px) 85vw, (max-width: 1024px) 50vw, 33vw"
-                        className="object-cover object-top group-hover:scale-[1.02] transition-transform duration-300"
+                        sizes="(max-width: 640px) 90vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover object-top group-hover:scale-105 transition-transform duration-500"
                       />
-
-                      {/* Clean Quick View Button Overlay */}
-                      <div className="absolute inset-x-3 bottom-3 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button
-                          type="button"
-                          onClick={() => onQuickView(product)}
-                          className="w-full inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg bg-white border border-[#E7E5E4] text-[#0F172B] font-semibold text-xs shadow-xs hover:bg-[#F9FAFB] transition-colors cursor-pointer"
-                        >
-                          <Eye className="w-3.5 h-3.5 text-[#163666]" />
-                          <span>ดูรายละเอียดด่วน</span>
-                        </button>
-                      </div>
                     </div>
 
-                    {/* Card Content (Solid, clean typography, no middle dots) */}
-                    <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+                    {/* Model Details (Quantum Style: Title, Sub, 3-Spec Bar, Explore Link) */}
+                    <div className="p-6 sm:p-7 flex flex-col justify-between flex-1 space-y-6">
                       <div>
-                        <div className="text-xs text-[#79716B] mb-1 font-medium">
-                          {product.category.nameTh}
-                        </div>
-                        <h3 className="font-bold text-base text-[#0F172B] line-clamp-2 leading-snug group-hover:text-[#163666] transition-colors">
-                          {product.nameTh}
+                        <h3 className="text-xl sm:text-2xl font-medium text-white tracking-tight">
+                          {p.nameTh || p.name}
                         </h3>
+                        <p className="text-xs sm:text-sm text-white/50 mt-1">
+                          {p.descTh || "Bold. Dynamic. Asian Fit."}
+                        </p>
                       </div>
 
-                      <div className="pt-3 border-t border-[#E7E5E4] flex items-center justify-between">
-                        <div className="font-bold text-base text-[#163666]">
-                          {minPrice === maxPrice
-                            ? `฿${minPrice.toLocaleString()}`
-                            : `฿${minPrice.toLocaleString()} – ฿${maxPrice.toLocaleString()}`}
+                      {/* 3-Spec Bar (Quantum Style) */}
+                      <div className="grid grid-cols-3 gap-2 py-4 border-t border-b border-white/10">
+                        <div>
+                          <div className="font-mono text-sm sm:text-base font-semibold text-white">
+                            100%
+                          </div>
+                          <div className="text-[10px] text-white/40 tracking-[0.1em] uppercase mt-0.5">
+                            COTTON
+                          </div>
                         </div>
 
+                        <div className="border-l border-white/10 pl-3">
+                          <div className="font-mono text-sm sm:text-base font-semibold text-white">
+                            21 SPI
+                          </div>
+                          <div className="text-[10px] text-white/40 tracking-[0.1em] uppercase mt-0.5">
+                            STITCH
+                          </div>
+                        </div>
+
+                        <div className="border-l border-white/10 pl-3">
+                          <div className="font-mono text-sm sm:text-base font-semibold text-white">
+                            {priceStr}
+                          </div>
+                          <div className="text-[10px] text-white/40 tracking-[0.1em] uppercase mt-0.5">
+                            STARTING
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Link & Quick View */}
+                      <div className="flex items-center justify-between pt-1">
                         <Link
-                          href={`/products/${product.slug}`}
-                          className="inline-flex items-center gap-1 text-xs font-semibold text-[#163666] hover:text-[#0A2B5E] transition-colors"
+                          href={`/products/${p.slug}`}
+                          className="inline-flex items-center gap-2 text-sm font-semibold text-white hover:text-white/80 transition-colors"
                         >
-                          <span>สั่งซื้อ</span>
-                          <ArrowRight className="w-3.5 h-3.5" />
+                          <span>Explore Model</span>
+                          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                         </Link>
+
+                        <button
+                          type="button"
+                          onClick={() => onQuickView(p)}
+                          className="text-xs text-white/50 hover:text-white transition-colors cursor-pointer"
+                        >
+                          Quick View
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -137,17 +211,6 @@ export default function CarouselShowcase({
               );
             })}
           </div>
-        </div>
-
-        {/* View All Collection Link */}
-        <div className="mt-10 text-center">
-          <Link
-            href="/products"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-[#E7E5E4] bg-white hover:bg-[#F9FAFB] text-[#163666] font-semibold text-sm transition-colors"
-          >
-            <span>ดูสินค้าทั้งหมดในแคตตาล็อก ({products.length} รายการ)</span>
-            <ArrowRight className="w-4 h-4" />
-          </Link>
         </div>
       </div>
     </section>

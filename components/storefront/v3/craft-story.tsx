@@ -1,74 +1,73 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Wind, Scissors, ShieldCheck } from "lucide-react";
 
 export default function CraftStory() {
   return (
-    <section id="craftsmanship" className="w-full py-16 sm:py-20 bg-white border-b border-[#E7E5E4]">
+    <section id="about" className="w-full py-24 sm:py-32 bg-white text-[#0A0B0E]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-12 gap-10 lg:gap-14 items-center">
-          {/* Left Column: Real Craftsmanship Specifications */}
+        <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+          {/* Left Column (Quantum Style: Tag, Headline, Paragraph, Black Pill, 3 Features) */}
           <div className="lg:col-span-6 space-y-6">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#0F172B] tracking-tight leading-tight">
-              รายละเอียดการตัดเย็บที่ใส่ใจในทุกขั้นตอน
-            </h2>
-
-            <p className="text-sm sm:text-base text-[#79716B] leading-relaxed max-w-xl">
-              ช่างตัดเย็บมืออาชีพของ Highbury ควบคุมมาตรฐานการตัดเย็บทุกฝีเข็ม
-              เพื่อให้ได้เสื้อเชิ้ตที่คงทน ทรงสวย และสวมใส่สบายในทุกวันทำงาน
-            </p>
-
-            {/* Informative List (No repetitive icon-card grid, no emoji, no middle dots) */}
-            <div className="space-y-4 pt-2">
-              <div className="p-4 rounded-xl border border-[#E7E5E4] bg-[#F9FAFB]">
-                <h3 className="font-bold text-sm text-[#0F172B]">
-                  โครงสร้างปกเสื้ออยู่ทรง
-                </h3>
-                <p className="text-xs text-[#79716B] mt-1 leading-relaxed">
-                  เสริมผ้ากาวซับในเกรดพรีเมียม ปกเสื้อตั้งสวย ไม่ย้วยหรือแบะออกหลังผ่านการซัก
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl border border-[#E7E5E4] bg-[#F9FAFB]">
-                <h3 className="font-bold text-sm text-[#0F172B]">
-                  ความหนาแน่น 21 ฝีเข็มต่อนิ้ว
-                </h3>
-                <p className="text-xs text-[#79716B] mt-1 leading-relaxed">
-                  ฝีเข็มละเอียดถี่ ตะเข็บซ่อนเรียบเนียน ไม่ระคายเคืองผิวสัมผัสเมื่อสวมใส่
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl border border-[#E7E5E4] bg-[#F9FAFB]">
-                <h3 className="font-bold text-sm text-[#0F172B]">
-                  เนื้อผ้าระบายอากาศได้ดี
-                </h3>
-                <p className="text-xs text-[#79716B] mt-1 leading-relaxed">
-                  เส้นใย Cotton คุณภาพสูง ถ่ายเทความร้อนและความชื้นได้เหมาะสมกับสภาพอากาศเมืองไทย
-                </p>
-              </div>
+            <div className="text-xs font-semibold tracking-[0.25em] text-[#64748B] uppercase">
+              ABOUT
             </div>
 
-            {/* Plain Action Link */}
+            <h2 className="text-4xl sm:text-5xl font-medium tracking-[-0.03em] text-[#0A0B0E] leading-[1.1]">
+              A New Era
+              <br />
+              of Everyday Tailoring
+            </h2>
+
+            <p className="text-base text-[#475569] leading-relaxed max-w-lg">
+              Highbury combines bespoke craftsmanship with modern fabric engineering.
+              Handcrafted in our specialized workshop with over 3,500 shirts monthly capacity,
+              every piece is sculpted specifically to flatter Asian proportions with effortless elegance.
+            </p>
+
             <div className="pt-2">
-              <Link
-                href="/about"
-                className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#163666] hover:text-[#0A2B5E] transition-colors"
-              >
-                <span>อ่านเรื่องราวและประวัติของ Highbury</span>
+              <Link href="#models" className="v3-btn-black">
+                <span>Our Story</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
+
+            {/* 3 Minimal Feature Items Below (Quantum Style) */}
+            <div className="pt-10 border-t border-[#E2E8F0] grid grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Wind className="w-5 h-5 text-[#0A0B0E]" />
+                <div className="text-xs font-semibold text-[#0A0B0E]">
+                  Ultra Breathability
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Scissors className="w-5 h-5 text-[#0A0B0E]" />
+                <div className="text-xs font-semibold text-[#0A0B0E]">
+                  Asian Ergonomic Fit
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <ShieldCheck className="w-5 h-5 text-[#0A0B0E]" />
+                <div className="text-xs font-semibold text-[#0A0B0E]">
+                  Wrinkle Resistant
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* Right Column: Real Product Detail Photo */}
+          {/* Right Column: Architectural Photography (Quantum Style) */}
           <div className="lg:col-span-6">
-            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden border border-[#E7E5E4] bg-[#F8FAFC]">
+            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl bg-[#0A0B0E]">
               <Image
-                src="/images/placeholders/men-ss.jpg"
-                alt="เสื้อเชิ้ตแขนสั้น Highbury"
+                src="https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?q=80&w=1200&auto=format&fit=crop"
+                alt="Highbury Tailoring Studio"
                 fill
-                sizes="(max-width: 1024px) 100vw, 560px"
-                className="object-cover object-top"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-cover object-center hover:scale-105 transition-transform duration-700"
               />
             </div>
           </div>

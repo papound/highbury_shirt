@@ -1,18 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { Prisma } from "@prisma/client";
 
-import AnnouncementBar from "./v3/announcement-bar";
 import HeaderV3 from "./v3/header-v3";
 import HeroV3 from "./v3/hero-v3";
 import CraftStory from "./v3/craft-story";
 import CarouselShowcase from "./v3/carousel-showcase";
 import MacroDetail from "./v3/macro-detail";
-import TrustGuarantee from "./v3/trust-guarantee";
+import StandardsLandscape from "./v3/standards-landscape";
 import PreFooterCta from "./v3/pre-footer-cta";
-import CorporateBanner from "./v3/corporate-banner";
+import V3Footer from "./v3/v3-footer";
 import QuickViewModal, { QuickViewProduct } from "./v3/quick-view-modal";
 import SmartSizeGuideModal from "./v3/smart-size-guide-modal";
 import "./v3/v3.css";
@@ -33,7 +31,7 @@ interface HomeV3Props {
   categories: Category[];
 }
 
-export default function HomeV3({ featuredProducts, categories }: HomeV3Props) {
+export default function HomeV3({ featuredProducts }: HomeV3Props) {
   // Modal states
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
   const [quickViewProduct, setQuickViewProduct] = useState<QuickViewProduct | null>(null);
@@ -64,90 +62,41 @@ export default function HomeV3({ featuredProducts, categories }: HomeV3Props) {
   }));
 
   return (
-    <div className="v3-page-wrapper flex flex-col w-full bg-[#FFFFFF] text-[#0F172B] antialiased selection:bg-[#163666]/10 selection:text-[#163666]">
-      {/* 1. Top Announcement Bar */}
-      <AnnouncementBar />
-
-      {/* 2. Header */}
+    <div className="v3-page-wrapper flex flex-col w-full bg-[#07080B] text-white antialiased selection:bg-white selection:text-black">
+      {/* 1. Quantum Floating Glass Header */}
       <HeaderV3 onOpenSizeGuide={() => setIsSizeGuideOpen(true)} />
 
-      {/* 3. Hero Section: Real product photo & Asian fit tailoring */}
+      {/* 2. Hero Section: Revolutionary Asian Fit Tailoring with 3-Spec Bar */}
       <HeroV3 onOpenSizeGuide={() => setIsSizeGuideOpen(true)} />
 
-      {/* 4. Craftsmanship Story: Editorial Split with real factory specs */}
+      {/* 3. Section 2: A New Era of Everyday Tailoring (Split Architectural Light) */}
       <CraftStory />
 
-      {/* 5. Curated Collection Carousel: Clean cards with 1px border */}
+      {/* 4. Section 3: Models Carousel (Dark Horizon Embla Carousel) */}
       <CarouselShowcase
         products={products}
         onQuickView={(p) => setQuickViewProduct(p)}
       />
 
-      {/* 6. Macro Detail & Fabric Weave: Real fabric information */}
+      {/* 5. Section 4: Technology & Intelligence in Every Stitch (Split Light Macro) */}
       <div className="v3-section-deferred">
         <MacroDetail />
       </div>
 
-      {/* 7. Quick Category Browse Bar */}
-      {categories.length > 0 && (
-        <section className="w-full py-8 bg-[#F9FAFB] border-b border-[#E7E5E4]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="text-xs font-semibold text-[#79716B] uppercase tracking-wider">
-                หมวดหมู่สินค้า
-              </div>
-              <div className="flex flex-wrap items-center justify-center sm:justify-end gap-2.5">
-                <Link
-                  href="/products?category=mens-shirts"
-                  className="px-4 py-2 rounded-lg border border-[#E7E5E4] bg-white hover:border-[#163666] hover:text-[#163666] text-xs font-medium text-[#0F172B] transition-colors"
-                >
-                  เสื้อเชิ้ตผู้ชาย
-                </Link>
-                <Link
-                  href="/products?category=womens-shirts"
-                  className="px-4 py-2 rounded-lg border border-[#E7E5E4] bg-white hover:border-[#163666] hover:text-[#163666] text-xs font-medium text-[#0F172B] transition-colors"
-                >
-                  เสื้อเชิ้ตผู้หญิง
-                </Link>
-                {categories
-                  .filter(
-                    (c) =>
-                      c.slug !== "mens-shirts" &&
-                      c.slug !== "womens-shirts" &&
-                      !c.slug.toLowerCase().includes("other")
-                  )
-                  .slice(0, 4)
-                  .map((cat) => (
-                    <Link
-                      key={cat.id}
-                      href={`/products?category=${cat.slug}`}
-                      className="px-4 py-2 rounded-lg border border-[#E7E5E4] bg-white hover:border-[#163666] hover:text-[#163666] text-xs font-medium text-[#0F172B] transition-colors"
-                    >
-                      {cat.nameTh}
-                    </Link>
-                  ))}
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* 8. Trust & Guarantee Section */}
+      {/* 6. Section 5: Standards Landscape with 3 Stats (Quantum Highway Equivalent) */}
       <div className="v3-section-deferred">
-        <TrustGuarantee />
+        <StandardsLandscape />
       </div>
 
-      {/* 9. Corporate Uniform & OEM Service Banner */}
-      <div className="v3-section-deferred">
-        <CorporateBanner />
-      </div>
-
-      {/* 10. Pre-Footer Direct CTA */}
+      {/* 7. Section 6: Feel the Difference Pre-Footer (Sunset Golden Hour) */}
       <div className="v3-section-deferred">
         <PreFooterCta onOpenSizeGuide={() => setIsSizeGuideOpen(true)} />
       </div>
 
-      {/* Modals: Accessible dialogs */}
+      {/* 8. Section 7: Quantum Deep Dark Footer */}
+      <V3Footer />
+
+      {/* Modals: Accessible Native <dialog> */}
       <SmartSizeGuideModal
         isOpen={isSizeGuideOpen}
         onClose={() => setIsSizeGuideOpen(false)}
