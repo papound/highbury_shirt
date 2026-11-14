@@ -191,11 +191,11 @@ export default function HeaderV3({
             </Link>
 
             {/* Center: Desktop Navigation Links */}
-            <nav className="hidden lg:flex items-center gap-5 xl:gap-8 shrink-0">
+            <nav className="hidden lg:flex items-center gap-6 xl:gap-8 shrink-0">
               <a
                 href="#models"
                 onClick={(e) => scrollToSection(e, "models")}
-                className={`text-xs xl:text-sm font-medium whitespace-nowrap ${
+                className={`text-sm xl:text-[15px] font-medium whitespace-nowrap ${
                   theme === "light" ? "text-[#334155] hover:text-[#0F172A]" : "text-[#E7E7E7] hover:text-white"
                 } transition-colors cursor-pointer`}
               >
@@ -204,7 +204,7 @@ export default function HeaderV3({
               <a
                 href="#craftsmanship"
                 onClick={(e) => scrollToSection(e, "craftsmanship")}
-                className={`text-xs xl:text-sm font-medium whitespace-nowrap ${
+                className={`text-sm xl:text-[15px] font-medium whitespace-nowrap ${
                   theme === "light" ? "text-[#334155] hover:text-[#0F172A]" : "text-[#E7E7E7] hover:text-white"
                 } transition-colors cursor-pointer`}
               >
@@ -213,7 +213,7 @@ export default function HeaderV3({
               <a
                 href="#standards"
                 onClick={(e) => scrollToSection(e, "standards")}
-                className={`text-xs xl:text-sm font-medium whitespace-nowrap ${
+                className={`text-sm xl:text-[15px] font-medium whitespace-nowrap ${
                   theme === "light" ? "text-[#334155] hover:text-[#0F172A]" : "text-[#E7E7E7] hover:text-white"
                 } transition-colors cursor-pointer`}
               >
@@ -222,7 +222,7 @@ export default function HeaderV3({
               <a
                 href="#about"
                 onClick={(e) => scrollToSection(e, "about")}
-                className={`text-xs xl:text-sm font-medium whitespace-nowrap ${
+                className={`text-sm xl:text-[15px] font-medium whitespace-nowrap ${
                   theme === "light" ? "text-[#334155] hover:text-[#0F172A]" : "text-[#E7E7E7] hover:text-white"
                 } transition-colors cursor-pointer`}
               >
