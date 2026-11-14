@@ -20,6 +20,15 @@ export default function PreFooterCta({
 
   return (
     <section id="about" className="relative w-full py-16 sm:py-20 lg:py-28 overflow-hidden scroll-mt-20">
+      {/* Top Edge Blend (Seamless Transition from Standards Landscape) */}
+      <div
+        className={`absolute inset-x-0 top-0 h-28 sm:h-36 lg:h-40 pointer-events-none z-1 transition-colors duration-300 ${
+          isLight
+            ? "bg-gradient-to-b from-white via-white/70 to-transparent"
+            : "bg-gradient-to-b from-[#07080B] via-[#07080B]/70 to-transparent"
+        }`}
+      />
+
       {/* Ambient Glow / Subtle Gradient Dissolve Background (No Box Border Frame) */}
       <div
         aria-hidden="true"

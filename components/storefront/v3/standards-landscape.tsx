@@ -27,9 +27,27 @@ export default function StandardsLandscape({ lang: propLang }: StandardsLandscap
         priority
       />
 
+      {/* Top Edge Blend (Seamless Transition from Macro Detail) */}
+      <div
+        className={`absolute inset-x-0 top-0 h-28 sm:h-36 lg:h-40 pointer-events-none z-1 transition-colors duration-300 ${
+          isLight
+            ? "bg-gradient-to-b from-white via-white/70 to-transparent"
+            : "bg-gradient-to-b from-[#07080B] via-[#07080B]/70 to-transparent"
+        }`}
+      />
+
+      {/* Bottom Edge Blend (Seamless Transition into Pre-Footer) */}
+      <div
+        className={`absolute inset-x-0 bottom-0 h-28 sm:h-36 lg:h-40 pointer-events-none z-1 transition-colors duration-300 ${
+          isLight
+            ? "bg-gradient-to-t from-white via-white/70 to-transparent"
+            : "bg-gradient-to-t from-[#07080B] via-[#07080B]/70 to-transparent"
+        }`}
+      />
+
       {/* Smooth Gradient Fade Layer (Softer, Airier Dissolve so Road and Models are Fully Bright & Vibrant) */}
       <div
-        className="absolute inset-0 pointer-events-none transition-opacity duration-300 max-lg:hidden"
+        className="absolute inset-0 pointer-events-none transition-opacity duration-300 max-lg:hidden z-1"
         style={{
           background: isLight
             ? "linear-gradient(to right, #FFFFFF 0%, rgba(255, 255, 255, 0.96) 20%, rgba(255, 255, 255, 0.72) 30%, rgba(255, 255, 255, 0.15) 42%, transparent 52%)"
