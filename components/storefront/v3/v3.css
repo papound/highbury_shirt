@@ -5,6 +5,10 @@
    Buttons: Exact Quantum Pill Shapes (rounded-full)
    ───────────────────────────────────────────────────────────────────────────── */
 
+html {
+  scroll-behavior: smooth;
+}
+
 .v3-page-wrapper {
   /* ── Typography Tokens ── */
   --v3-font-sans: var(--font-prompt), 'Prompt', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;

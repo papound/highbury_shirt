@@ -27,6 +27,48 @@ export default function HeaderV3({ onOpenSizeGuide, lang, onToggleLang }: Header
     }
   };
 
+  const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
+    e.preventDefault();
+    if (typeof window === "undefined") return;
+
+    const isHomePage = window.location.pathname === "/" || window.location.pathname === "/v3";
+    if (!isHomePage) {
+      router.push(`/#${targetId}`);
+      return;
+    }
+
+    const element = document.getElementById(targetId);
+    if (!element) return;
+
+    // Gentle easeInOutCubic scroll over 900ms
+    const startPosition = window.pageYOffset;
+    const headerOffset = 70;
+    const targetPosition = element.getBoundingClientRect().top + window.pageYOffset - headerOffset;
+    const distance = targetPosition - startPosition;
+    const duration = 900;
+    let startTime: number | null = null;
+
+    const easeInOutCubic = (t: number) =>
+      t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+    const step = (currentTime: number) => {
+      if (startTime === null) startTime = currentTime;
+      const timeElapsed = currentTime - startTime;
+      const progress = Math.min(timeElapsed / duration, 1);
+      const ease = easeInOutCubic(progress);
+
+      window.scrollTo(0, startPosition + distance * ease);
+
+      if (timeElapsed < duration) {
+        requestAnimationFrame(step);
+      } else {
+        window.history.pushState(null, "", `#${targetId}`);
+      }
+    };
+
+    requestAnimationFrame(step);
+  };
+
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 40);
@@ -47,39 +89,47 @@ export default function HeaderV3({ onOpenSizeGuide, lang, onToggleLang }: Header
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             {/* Left: Brand Identity */}
-            <Link
-              href="/"
-              className="text-lg font-bold tracking-[0.2em] text-white hover:opacity-90 transition-opacity uppercase font-sans"
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
+              className="text-lg font-bold tracking-[0.2em] text-white hover:opacity-90 transition-opacity uppercase font-sans cursor-pointer"
             >
               HIGHBURY
-            </Link>
+            </a>
 
             {/* Center: Desktop Navigation Links */}
             <nav className="hidden md:flex items-center gap-8">
-              <Link
+              <a
                 href="#models"
-                className="text-sm font-medium text-[#E7E7E7] hover:text-white transition-colors"
+                onClick={(e) => scrollToSection(e, "models")}
+                className="text-sm font-medium text-[#E7E7E7] hover:text-white transition-colors cursor-pointer"
               >
                 {lang === "th" ? "คอลเลกชันสินค้า" : "Collection"}
-              </Link>
-              <Link
+              </a>
+              <a
                 href="#craftsmanship"
-                className="text-sm font-medium text-[#E7E7E7] hover:text-white transition-colors"
+                onClick={(e) => scrollToSection(e, "craftsmanship")}
+                className="text-sm font-medium text-[#E7E7E7] hover:text-white transition-colors cursor-pointer"
               >
                 {lang === "th" ? "งานตัดเย็บ" : "Craftsmanship"}
-              </Link>
-              <Link
+              </a>
+              <a
                 href="#standards"
-                className="text-sm font-medium text-[#E7E7E7] hover:text-white transition-colors"
+                onClick={(e) => scrollToSection(e, "standards")}
+                className="text-sm font-medium text-[#E7E7E7] hover:text-white transition-colors cursor-pointer"
               >
                 {lang === "th" ? "มาตรฐานโรงงาน" : "Standards"}
-              </Link>
-              <Link
+              </a>
+              <a
                 href="#about"
-                className="text-sm font-medium text-[#E7E7E7] hover:text-white transition-colors"
+                onClick={(e) => scrollToSection(e, "about")}
+                className="text-sm font-medium text-[#E7E7E7] hover:text-white transition-colors cursor-pointer"
               >
                 {lang === "th" ? "เกี่ยวกับเรา" : "About"}
-              </Link>
+              </a>
             </nav>
 
             {/* Right: Quantum Pill Actions */}
@@ -158,34 +208,46 @@ export default function HeaderV3({ onOpenSizeGuide, lang, onToggleLang }: Header
           </form>
 
           <nav className="flex flex-col gap-5 text-base font-medium text-white">
-            <Link
+            <a
               href="#models"
-              onClick={() => setMobileMenuOpen(false)}
-              className="text-[#E7E7E7] hover:text-white border-b border-[#262830] pb-3"
+              onClick={(e) => {
+                setMobileMenuOpen(false);
+                scrollToSection(e, "models");
+              }}
+              className="text-[#E7E7E7] hover:text-white border-b border-[#262830] pb-3 cursor-pointer"
             >
               {lang === "th" ? "คอลเลกชันสินค้า" : "Collection"}
-            </Link>
-            <Link
+            </a>
+            <a
               href="#craftsmanship"
-              onClick={() => setMobileMenuOpen(false)}
-              className="text-[#E7E7E7] hover:text-white border-b border-[#262830] pb-3"
+              onClick={(e) => {
+                setMobileMenuOpen(false);
+                scrollToSection(e, "craftsmanship");
+              }}
+              className="text-[#E7E7E7] hover:text-white border-b border-[#262830] pb-3 cursor-pointer"
             >
               {lang === "th" ? "งานตัดเย็บประณีต" : "Craftsmanship"}
-            </Link>
-            <Link
+            </a>
+            <a
               href="#standards"
-              onClick={() => setMobileMenuOpen(false)}
-              className="text-[#E7E7E7] hover:text-white border-b border-[#262830] pb-3"
+              onClick={(e) => {
+                setMobileMenuOpen(false);
+                scrollToSection(e, "standards");
+              }}
+              className="text-[#E7E7E7] hover:text-white border-b border-[#262830] pb-3 cursor-pointer"
             >
               {lang === "th" ? "มาตรฐานการผลิต & OEM" : "Standards & OEM"}
-            </Link>
-            <Link
+            </a>
+            <a
               href="#about"
-              onClick={() => setMobileMenuOpen(false)}
-              className="text-[#E7E7E7] hover:text-white border-b border-[#262830] pb-3"
+              onClick={(e) => {
+                setMobileMenuOpen(false);
+                scrollToSection(e, "about");
+              }}
+              className="text-[#E7E7E7] hover:text-white border-b border-[#262830] pb-3 cursor-pointer"
             >
               {lang === "th" ? "เกี่ยวกับ Highbury" : "About Highbury"}
-            </Link>
+            </a>
           </nav>
 
           <div className="mt-8 pt-6 border-t border-[#262830] flex flex-col gap-3">

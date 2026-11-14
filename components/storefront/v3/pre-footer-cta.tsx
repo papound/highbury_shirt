@@ -10,7 +10,7 @@ interface PreFooterCtaProps {
 
 export default function PreFooterCta({ onOpenSizeGuide, lang = "th" }: PreFooterCtaProps) {
   return (
-    <section className="w-full py-20 sm:py-28 bg-[#07080B] text-white border-b border-[#262830]">
+    <section id="about" className="w-full py-20 sm:py-28 bg-[#07080B] text-white border-b border-[#262830] scroll-mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-2xl space-y-5">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-medium tracking-tight text-white leading-tight">

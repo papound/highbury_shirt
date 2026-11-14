@@ -10,7 +10,7 @@ interface CraftStoryProps {
 
 export default function CraftStory({ lang = "th" }: CraftStoryProps) {
   return (
-    <section id="about" className="w-full py-20 sm:py-28 bg-[#0E1015] text-white border-b border-[#262830]">
+    <section id="craftsmanship" className="w-full py-20 sm:py-28 bg-[#0E1015] text-white border-b border-[#262830] scroll-mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-12 gap-10 lg:gap-14 items-center">
           {/* Left Column: Heading, Concrete facts, Real spec list (No repeated icon cards) */}

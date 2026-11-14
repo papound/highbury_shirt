@@ -115,7 +115,7 @@ export default function CarouselShowcase({
   const displayProducts = products.length > 0 ? products : fallbackProducts;
 
   return (
-    <section id="models" className="relative w-full py-20 sm:py-28 bg-[#07080B] text-white border-b border-[#262830]">
+    <section id="models" className="relative w-full py-20 sm:py-28 bg-[#07080B] text-white border-b border-[#262830] scroll-mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Top Header Row: Clean, No eyebrow clutter */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12">

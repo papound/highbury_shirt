@@ -9,7 +9,7 @@ interface StandardsLandscapeProps {
 
 export default function StandardsLandscape({ lang = "th" }: StandardsLandscapeProps) {
   return (
-    <section id="standards" className="w-full py-20 sm:py-28 bg-[#0E1015] text-white border-b border-[#262830]">
+    <section id="standards" className="w-full py-20 sm:py-28 bg-[#0E1015] text-white border-b border-[#262830] scroll-mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-12 gap-10 lg:gap-14 items-center">
           {/* Left Column: Heading, Sourced facts, Clean Button */}
