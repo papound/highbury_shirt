@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import prisma from "@/lib/prisma";
-import HomeV2 from "@/components/storefront/home-v2";
+import HomeV3 from "@/components/storefront/home-v3";
 
 export const metadata: Metadata = {
   title: "Highbury International – เสื้อเชิ้ตคุณภาพพรีเมียม",
@@ -33,5 +33,5 @@ export default async function HomePage() {
     getCategories(),
   ]);
 
-  return <HomeV2 featuredProducts={featuredProducts} categories={categories} />;
+  return <HomeV3 featuredProducts={featuredProducts} categories={categories} />;
 }
