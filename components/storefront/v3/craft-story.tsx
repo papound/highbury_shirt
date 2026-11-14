@@ -16,14 +16,14 @@ export default function CraftStory({ lang: propLang }: CraftStoryProps) {
   const isLight = theme === "light";
 
   return (
-    <section id="craftsmanship" className="relative w-full min-h-[580px] lg:min-h-[660px] flex items-center overflow-hidden scroll-mt-20">
-      {/* Background Image: Highbury Tailoring Workshop (Edge-to-Edge, No Outer Border) */}
+    <section id="craftsmanship" className="relative w-full min-h-[640px] lg:min-h-[720px] flex items-center overflow-hidden scroll-mt-20">
+      {/* Background Image: Highbury Tailoring Workshop (Top-aligned so heads and faces are visible) */}
       <Image
         src="/images/craft-story.jpg"
         alt="Highbury Asian Fit Tailoring Craftsmanship"
         fill
         sizes="100vw"
-        className="object-cover object-[25%_center] lg:object-center"
+        className="object-cover object-[25%_top] lg:object-[35%_top]"
       />
 
       {/* Smooth Gradient Fade Layer (Dissolves from Right for Text Readability on Right) */}

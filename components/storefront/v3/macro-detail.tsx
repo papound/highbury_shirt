@@ -16,14 +16,14 @@ export default function MacroDetail({ lang: propLang }: MacroDetailProps) {
   const isLight = theme === "light";
 
   return (
-    <section id="details" className="relative w-full min-h-[580px] lg:min-h-[660px] flex items-center overflow-hidden scroll-mt-20">
-      {/* Background Image: Two Models (Pushed to Right so Left Text Doesn't Obscure Them) */}
+    <section id="details" className="relative w-full min-h-[640px] lg:min-h-[720px] flex items-center overflow-hidden scroll-mt-20">
+      {/* Background Image: Two Models (Top-aligned so heads, faces and full silhouette are visible) */}
       <Image
         src="/images/macro-detail.jpg"
         alt="Highbury Asian Fit Tailoring Details"
         fill
         sizes="100vw"
-        className="object-cover object-[70%_center] sm:object-[75%_center] lg:object-[82%_center]"
+        className="object-cover object-[70%_top] sm:object-[75%_top] lg:object-[82%_top]"
       />
 
       {/* Smooth Gradient Fade Layer (Left Dissolve for Text Readability, Leaving Right Models Clear) */}

@@ -16,14 +16,14 @@ export default function StandardsLandscape({ lang: propLang }: StandardsLandscap
   const isLight = theme === "light";
 
   return (
-    <section id="standards" className="relative w-full min-h-[580px] lg:min-h-[660px] flex items-center overflow-hidden scroll-mt-20">
+    <section id="standards" className="relative w-full min-h-[640px] lg:min-h-[720px] flex items-center overflow-hidden scroll-mt-20">
       {/* Background Image: Highbury Coastal Road Photoshoot (Edge-to-Edge, No Outer Border) */}
       <Image
         src="/images/standards-landscape.jpg"
         alt="Highbury Standards Coastal Highway Tailoring"
         fill
         sizes="100vw"
-        className="object-cover object-[70%_center] lg:object-center"
+        className="object-cover object-[70%_35%] lg:object-[center_35%]"
         priority
       />
 
