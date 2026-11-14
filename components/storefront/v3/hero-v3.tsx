@@ -130,7 +130,7 @@ export default function HeroV3({
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-8">
             <div>
               <div
-                className={`font-mono text-xl sm:text-2xl font-semibold ${
+                className={`text-xl sm:text-2xl font-semibold ${
                   theme === "light" ? "text-[#0F172A]" : "text-white"
                 }`}
               >
@@ -153,7 +153,7 @@ export default function HeroV3({
               }`}
             >
               <div
-                className={`font-mono text-xl sm:text-2xl font-semibold ${
+                className={`text-xl sm:text-2xl font-semibold ${
                   theme === "light" ? "text-[#0F172A]" : "text-white"
                 }`}
               >
@@ -176,7 +176,7 @@ export default function HeroV3({
               }`}
             >
               <div
-                className={`font-mono text-xl sm:text-2xl font-semibold ${
+                className={`text-xl sm:text-2xl font-semibold ${
                   theme === "light" ? "text-[#0F172A]" : "text-white"
                 }`}
               >

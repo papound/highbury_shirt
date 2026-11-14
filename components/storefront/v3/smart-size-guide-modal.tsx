@@ -360,7 +360,7 @@ export default function SmartSizeGuideModal({
             <div className="space-y-2">
               <label htmlFor="chest-input" className="text-xs font-medium text-white flex justify-between">
                 <span>รอบอกจริงของคุณ (นิ้ว)</span>
-                <span className="font-mono text-xs font-bold text-[#FFB900]">
+                <span className="text-xs font-bold text-[#FFB900]">
                   {chestInput}&quot;
                 </span>
               </label>
@@ -375,7 +375,7 @@ export default function SmartSizeGuideModal({
                   onChange={(e) => setChestInput(parseFloat(e.target.value))}
                   className="flex-1 accent-[#FFB900] cursor-pointer"
                 />
-                <span className="font-mono text-base font-bold text-white min-w-[55px] text-right">
+                <span className="text-base font-bold text-white min-w-[55px] text-right">
                   {chestInput}&quot;
                 </span>
               </div>
@@ -388,7 +388,7 @@ export default function SmartSizeGuideModal({
               <div>
                 <div className="flex justify-between text-xs font-medium text-white mb-1">
                   <span>ส่วนสูง (cm)</span>
-                  <span className="font-mono font-bold text-white">{heightInput} cm</span>
+                  <span className="font-bold text-white">{heightInput} cm</span>
                 </div>
                 <input
                   type="range"
@@ -403,7 +403,7 @@ export default function SmartSizeGuideModal({
               <div>
                 <div className="flex justify-between text-xs font-medium text-white mb-1">
                   <span>น้ำหนัก (kg)</span>
-                  <span className="font-mono font-bold text-white">{weightInput} kg</span>
+                  <span className="font-bold text-white">{weightInput} kg</span>
                 </div>
                 <input
                   type="range"
@@ -519,7 +519,7 @@ export default function SmartSizeGuideModal({
                     >
                       <td className="py-2.5 px-3 font-bold">
                         <span className="inline-flex items-center gap-1.5">
-                          <span className="font-mono text-sm">{row.size}</span>
+                          <span className="text-sm font-semibold">{row.size}</span>
                           {isCurrent && (
                             <span className="text-[10px] px-2 py-0.5 bg-[#FFB900] text-[#07080B] font-bold rounded-full">
                               แนะนำ
@@ -527,12 +527,12 @@ export default function SmartSizeGuideModal({
                           )}
                         </span>
                       </td>
-                      <td className="py-2.5 px-3 font-mono text-white">{row.chestInch}&quot;</td>
-                      <td className="py-2.5 px-3 font-mono text-white">{row.lengthInch}&quot;</td>
-                      <td className="py-2.5 px-3 font-mono text-white">{row.sleeveInch}&quot;</td>
-                      <td className="py-2.5 px-3 font-mono text-white">{row.neckInch}&quot;</td>
-                      <td className="py-2.5 px-3 font-mono text-white">{row.shoulderInch}&quot;</td>
-                      <td className="py-2.5 px-3 font-mono text-[#FFB900]">
+                      <td className="py-2.5 px-3 text-white">{row.chestInch}&quot;</td>
+                      <td className="py-2.5 px-3 text-white">{row.lengthInch}&quot;</td>
+                      <td className="py-2.5 px-3 text-white">{row.sleeveInch}&quot;</td>
+                      <td className="py-2.5 px-3 text-white">{row.neckInch}&quot;</td>
+                      <td className="py-2.5 px-3 text-white">{row.shoulderInch}&quot;</td>
+                      <td className="py-2.5 px-3 text-[#FFB900]">
                         {row.recommendedChestInch}&quot;
                       </td>
                     </tr>

@@ -217,7 +217,7 @@ export default function CarouselShowcase({
                       {/* 3-Spec Bar with real sourced numbers */}
                       <div className="grid grid-cols-3 gap-2 py-3 border-t border-b border-[#262830] text-center">
                         <div>
-                          <div className="font-mono text-sm font-semibold text-white">
+                          <div className="text-sm font-semibold text-white">
                             100%
                           </div>
                           <div className="text-[10px] text-[#9496A1] uppercase">
@@ -226,8 +226,8 @@ export default function CarouselShowcase({
                         </div>
 
                         <div className="border-l border-[#262830]">
-                          <div className="font-mono text-sm font-semibold text-white">
-                            S – 4XL
+                          <div className="text-sm font-semibold text-white">
+                            S – 5XL
                           </div>
                           <div className="text-[10px] text-[#9496A1] uppercase">
                             SIZES
@@ -235,7 +235,7 @@ export default function CarouselShowcase({
                         </div>
 
                         <div className="border-l border-[#262830]">
-                          <div className="font-mono text-sm font-semibold text-[#FFB900]">
+                          <div className="text-sm font-semibold text-[#FFB900]">
                             {priceStr}
                           </div>
                           <div className="text-[10px] text-[#9496A1] uppercase">

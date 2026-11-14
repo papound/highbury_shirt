@@ -44,10 +44,10 @@ export default function StandardsLandscape({ lang = "th" }: StandardsLandscapePr
             </div>
           </div>
 
-          {/* Right Column: Sourced metric cards (Solid #13161D, 1px border #262830, NO icons on everything) */}
+          {/* Right Column: Sourced metric cards */}
           <div className="lg:col-span-5 space-y-4">
             <div className="p-4 rounded-lg bg-[#13161D] border border-[#262830]">
-              <div className="font-mono text-2xl font-semibold text-white">
+              <div className="text-xl sm:text-2xl font-semibold text-white">
                 0 ความเสี่ยงเรื่องไซส์
               </div>
               <div className="text-xs text-[#9496A1] mt-1">
@@ -58,7 +58,7 @@ export default function StandardsLandscape({ lang = "th" }: StandardsLandscapePr
             </div>
 
             <div className="p-4 rounded-lg bg-[#13161D] border border-[#262830]">
-              <div className="font-mono text-2xl font-semibold text-white">
+              <div className="text-xl sm:text-2xl font-semibold text-white">
                 3,500 ตัว / เดือน
               </div>
               <div className="text-xs text-[#9496A1] mt-1">
@@ -69,7 +69,7 @@ export default function StandardsLandscape({ lang = "th" }: StandardsLandscapePr
             </div>
 
             <div className="p-4 rounded-lg bg-[#13161D] border border-[#262830]">
-              <div className="font-mono text-2xl font-semibold text-white">
+              <div className="text-xl sm:text-2xl font-semibold text-white">
                 100% QC ก่อนจัดส่ง
               </div>
               <div className="text-xs text-[#9496A1] mt-1">

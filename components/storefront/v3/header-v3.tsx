@@ -334,7 +334,7 @@ export default function HeaderV3({
                                 {lang === "th" && item.category?.nameTh ? item.category.nameTh : item.category?.name}
                               </div>
                             </div>
-                            <div className="font-mono text-xs font-bold text-[#FFB900] shrink-0">
+                            <div className="text-xs font-bold text-[#FFB900] shrink-0">
                               ฿{item.basePrice.toLocaleString()}
                             </div>
                           </Link>
@@ -476,7 +476,7 @@ export default function HeaderV3({
                             {lang === "th" && item.category?.nameTh ? item.category.nameTh : item.category?.name}
                           </div>
                         </div>
-                        <div className="font-mono text-xs font-bold text-[#FFB900] shrink-0">
+                        <div className="text-xs font-bold text-[#FFB900] shrink-0">
                           ฿{item.basePrice.toLocaleString()}
                         </div>
                       </Link>

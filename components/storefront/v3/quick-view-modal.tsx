@@ -125,7 +125,7 @@ export default function QuickViewModal({
               {product.nameTh}
             </h2>
 
-            <div className="mt-2 font-mono text-xl sm:text-2xl font-bold text-[#FFB900]">
+            <div className="mt-2 text-xl sm:text-2xl font-bold text-[#FFB900]">
               {minPrice === maxPrice
                 ? `฿${minPrice.toLocaleString()}`
                 : `฿${minPrice.toLocaleString()} – ฿${maxPrice.toLocaleString()}`}
@@ -175,7 +175,7 @@ export default function QuickViewModal({
                   {sizes.map((s) => (
                     <span
                       key={s}
-                      className="w-9 h-9 rounded-lg border border-[#262830] bg-[#181B24] flex items-center justify-center font-mono text-xs font-semibold text-white"
+                      className="w-9 h-9 rounded-lg border border-[#262830] bg-[#181B24] flex items-center justify-center text-xs font-semibold text-white"
                     >
                       {s}
                     </span>
