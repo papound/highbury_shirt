@@ -1,10 +1,17 @@
 import "@/lib/logger";
 import type { Metadata } from "next";
-import { Geist_Mono } from "next/font/google";
+import { Prompt, Geist_Mono } from "next/font/google";
 import NextAuthSessionProvider from "@/components/shared/session-provider";
 import { ThemeProvider } from "@/components/shared/theme-provider";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+
+const prompt = Prompt({
+  variable: "--font-prompt",
+  weight: ["300", "400", "500", "600", "700"],
+  subsets: ["latin", "thai"],
+  display: "swap",
+});
 
 const geistMono = Geist_Mono({
   variable: "--font-mono",
@@ -34,7 +41,7 @@ export default function RootLayout({
   return (
     <html
       lang="th"
-      className={cn("h-full", "antialiased", geistMono.variable, "font-sans")}
+      className={cn("h-full", "antialiased", prompt.variable, geistMono.variable, "font-sans")}
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">

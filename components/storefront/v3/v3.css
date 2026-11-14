@@ -7,7 +7,7 @@
 
 .v3-page-wrapper {
   /* ── Typography Tokens ── */
-  --v3-font-sans: 'Google Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --v3-font-sans: var(--font-prompt), 'Prompt', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --v3-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
   /* ── Color Palette: Strict Architectural Contrast ── */
