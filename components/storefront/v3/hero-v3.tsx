@@ -180,7 +180,7 @@ export default function HeroV3({
                   theme === "light" ? "text-[#0F172A]" : "text-white"
                 }`}
               >
-                7 วัน
+                {lang === "th" ? "7 วัน" : "7 Days"}
               </div>
               <div
                 className={`text-xs mt-0.5 ${

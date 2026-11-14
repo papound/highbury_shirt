@@ -48,7 +48,7 @@ export default function StandardsLandscape({ lang = "th" }: StandardsLandscapePr
           <div className="lg:col-span-5 space-y-4">
             <div className="p-4 rounded-lg bg-[#13161D] border border-[#262830]">
               <div className="text-xl sm:text-2xl font-semibold text-white">
-                0 ความเสี่ยงเรื่องไซส์
+                {lang === "th" ? "0 ความเสี่ยงเรื่องไซส์" : "Zero Size Risk"}
               </div>
               <div className="text-xs text-[#9496A1] mt-1">
                 {lang === "th"
@@ -59,7 +59,7 @@ export default function StandardsLandscape({ lang = "th" }: StandardsLandscapePr
 
             <div className="p-4 rounded-lg bg-[#13161D] border border-[#262830]">
               <div className="text-xl sm:text-2xl font-semibold text-white">
-                3,500 ตัว / เดือน
+                {lang === "th" ? "3,500 ตัว / เดือน" : "3,500 Pcs / Month"}
               </div>
               <div className="text-xs text-[#9496A1] mt-1">
                 {lang === "th"
@@ -70,7 +70,7 @@ export default function StandardsLandscape({ lang = "th" }: StandardsLandscapePr
 
             <div className="p-4 rounded-lg bg-[#13161D] border border-[#262830]">
               <div className="text-xl sm:text-2xl font-semibold text-white">
-                100% QC ก่อนจัดส่ง
+                {lang === "th" ? "100% QC ก่อนจัดส่ง" : "100% Pre-dispatch QC"}
               </div>
               <div className="text-xs text-[#9496A1] mt-1">
                 {lang === "th"

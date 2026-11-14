@@ -239,7 +239,15 @@ export default function HeaderV3({
                   onClick={onToggleTheme}
                   className="p-2 rounded-full text-xs font-semibold bg-white text-[#07080B] hover:bg-white/90 shadow-sm border border-white transition-all cursor-pointer flex items-center justify-center shrink-0"
                   aria-label={theme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"}
-                  title={theme === "light" ? "สลับเป็นโหมดมืด (Dark Version)" : "สลับเป็นโหมดสว่าง (Light Version)"}
+                  title={
+                    lang === "th"
+                      ? theme === "light"
+                        ? "สลับเป็นโหมดมืด (Dark Version)"
+                        : "สลับเป็นโหมดสว่าง (Light Version)"
+                      : theme === "light"
+                      ? "Switch to Dark Mode"
+                      : "Switch to Light Mode"
+                  }
                 >
                   {theme === "light" ? (
                     <Moon className="w-3.5 h-3.5 text-[#0F172A]" />
@@ -303,7 +311,9 @@ export default function HeaderV3({
                     <div className="px-3 py-1.5 text-[11px] font-semibold text-[#9496A1] uppercase tracking-wider border-b border-[#262830] flex items-center justify-between">
                       <span>{lang === "th" ? "ผลการค้นหาทันที" : "Instant Results"}</span>
                       {isSearching && (
-                        <span className="text-[10px] text-[#FFB900]">กำลังค้นหา...</span>
+                        <span className="text-[10px] text-[#FFB900]">
+                          {lang === "th" ? "กำลังค้นหา..." : "Searching..."}
+                        </span>
                       )}
                     </div>
 
@@ -567,12 +577,12 @@ export default function HeaderV3({
                 {theme === "light" ? (
                   <>
                     <Moon className="w-4 h-4 text-[#07080B]" />
-                    <span>เปลี่ยนเป็นโหมดมืด (Dark Version)</span>
+                    <span>{lang === "th" ? "เปลี่ยนเป็นโหมดมืด (Dark Version)" : "Switch to Dark Mode"}</span>
                   </>
                 ) : (
                   <>
                     <Sun className="w-4 h-4 text-[#07080B]" />
-                    <span>เปลี่ยนเป็นโหมดสว่าง (Light Version)</span>
+                    <span>{lang === "th" ? "เปลี่ยนเป็นโหมดสว่าง (Light Version)" : "Switch to Light Mode"}</span>
                   </>
                 )}
               </button>

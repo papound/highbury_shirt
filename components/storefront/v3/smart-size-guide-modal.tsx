@@ -8,6 +8,7 @@ interface SmartSizeGuideModalProps {
   isOpen: boolean;
   onClose: () => void;
   theme?: "dark" | "light";
+  lang?: "th" | "en";
 }
 
 export type Gender = "men" | "women";
@@ -87,6 +88,7 @@ export default function SmartSizeGuideModal({
   isOpen,
   onClose,
   theme = "dark",
+  lang = "th",
 }: SmartSizeGuideModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
 
@@ -141,17 +143,32 @@ export default function SmartSizeGuideModal({
   const getActiveChart = (): { title: string; chart: HighburySizeRow[] } => {
     if (gender === "men") {
       if (sleeveType === "short") {
-        return { title: "เสื้อเชิ้ตผู้ชายแขนสั้น", chart: MEN_SHORT_SLEEVE };
+        return {
+          title: lang === "th" ? "เสื้อเชิ้ตผู้ชายแขนสั้น" : "Men's Short Sleeve Shirt",
+          chart: MEN_SHORT_SLEEVE,
+        };
       }
-      return { title: "เสื้อเชิ้ตผู้ชายแขนยาว", chart: MEN_LONG_SLEEVE };
+      return {
+        title: lang === "th" ? "เสื้อเชิ้ตผู้ชายแขนยาว" : "Men's Long Sleeve Shirt",
+        chart: MEN_LONG_SLEEVE,
+      };
     } else {
       if (sleeveType === "short") {
-        return { title: "เสื้อเชิ้ตผู้หญิงแขนสั้น", chart: WOMEN_SHORT_SLEEVE };
+        return {
+          title: lang === "th" ? "เสื้อเชิ้ตผู้หญิงแขนสั้น" : "Women's Short Sleeve Shirt",
+          chart: WOMEN_SHORT_SLEEVE,
+        };
       }
       if (sleeveType === "threeQuarter") {
-        return { title: "เสื้อเชิ้ตผู้หญิงแขนสามส่วน", chart: WOMEN_THREE_QUARTER_SLEEVE };
+        return {
+          title: lang === "th" ? "เสื้อเชิ้ตผู้หญิงแขนสามส่วน" : "Women's 3/4 Sleeve Shirt",
+          chart: WOMEN_THREE_QUARTER_SLEEVE,
+        };
       }
-      return { title: "เสื้อเชิ้ตผู้หญิงแขนยาว", chart: WOMEN_LONG_SLEEVE };
+      return {
+        title: lang === "th" ? "เสื้อเชิ้ตผู้หญิงแขนยาว" : "Women's Long Sleeve Shirt",
+        chart: WOMEN_LONG_SLEEVE,
+      };
     }
   };
 
@@ -198,11 +215,22 @@ export default function SmartSizeGuideModal({
       matched = row;
     }
 
-    const fitLabel = fitPreference === "slim" ? "ทรงพอดีตัว (Slim Fit)" : "ทรงใส่สบาย (Regular Fit)";
+    const fitLabel =
+      fitPreference === "slim"
+        ? lang === "th"
+          ? "ทรงพอดีตัว (Slim Fit)"
+          : "Slim Fit"
+        : lang === "th"
+        ? "ทรงใส่สบาย (Regular Fit)"
+        : "Regular Fit";
+
     return {
       size: matched.size,
       shirtChest: matched.chestInch,
-      reason: `เหมาะสำหรับ${fitLabel} รอบอกเสื้อ ${matched.chestInch} นิ้ว (สำหรับรอบอกจริงประมาณ ${matched.recommendedChestInch} นิ้ว)`,
+      reason:
+        lang === "th"
+          ? `เหมาะสำหรับ${fitLabel} รอบอกเสื้อ ${matched.chestInch} นิ้ว (สำหรับรอบอกจริงประมาณ ${matched.recommendedChestInch} นิ้ว)`
+          : `Recommended for ${fitLabel} with garment chest ${matched.chestInch}" (for actual body chest approx. ${matched.recommendedChestInch}")`,
     };
   };
 
@@ -225,10 +253,14 @@ export default function SmartSizeGuideModal({
           </div>
           <div>
             <h2 id="size-guide-title" className="text-base font-semibold text-white tracking-tight">
-              คำนวณและดูตารางไซส์เสื้อเชิ้ต Highbury
+              {lang === "th"
+                ? "คำนวณและดูตารางไซส์เสื้อเชิ้ต Highbury"
+                : "Highbury Size Chart & Smart Fit Calculator"}
             </h2>
             <p className="text-xs text-[#9496A1]">
-              อ้างอิงตารางขนาดมาตรฐานจริง 8 ไซส์ (S – 5XL) สำหรับสรีระคนไทยโดยเฉพาะ
+              {lang === "th"
+                ? "อ้างอิงตารางขนาดมาตรฐานจริง 8 ไซส์ (S – 5XL) สำหรับสรีระคนไทยโดยเฉพาะ"
+                : "Calibrated 8-size standard (S – 5XL) engineered for Asian proportions"}
             </p>
           </div>
         </div>
@@ -237,7 +269,7 @@ export default function SmartSizeGuideModal({
           type="button"
           onClick={onClose}
           className="w-8 h-8 rounded-full border border-[#262830] bg-white/5 hover:bg-white/10 text-[#9496A1] hover:text-white flex items-center justify-center transition-colors cursor-pointer"
-          aria-label="ปิดหน้าต่าง"
+          aria-label={lang === "th" ? "ปิดหน้าต่าง" : "Close modal"}
         >
           <X className="w-4 h-4" />
         </button>
@@ -252,7 +284,7 @@ export default function SmartSizeGuideModal({
             {/* Gender Toggle */}
             <div className="space-y-1.5">
               <span className="text-[11px] font-medium text-[#9496A1] uppercase tracking-wider flex items-center gap-1.5">
-                <User className="w-3 h-3 text-[#FFB900]" /> หมวดหมู่
+                <User className="w-3 h-3 text-[#FFB900]" /> {lang === "th" ? "หมวดหมู่" : "Category"}
               </span>
               <div className="inline-flex p-1 rounded-full bg-[#0E1015] border border-[#262830]">
                 <button
@@ -264,7 +296,7 @@ export default function SmartSizeGuideModal({
                       : "text-[#9496A1] hover:text-white"
                   }`}
                 >
-                  เสื้อเชิ้ตผู้ชาย
+                  {lang === "th" ? "เสื้อเชิ้ตผู้ชาย" : "Men's Shirts"}
                 </button>
                 <button
                   type="button"
@@ -275,7 +307,7 @@ export default function SmartSizeGuideModal({
                       : "text-[#9496A1] hover:text-white"
                   }`}
                 >
-                  เสื้อเชิ้ตผู้หญิง
+                  {lang === "th" ? "เสื้อเชิ้ตผู้หญิง" : "Women's Shirts"}
                 </button>
               </div>
             </div>
@@ -283,7 +315,7 @@ export default function SmartSizeGuideModal({
             {/* Sleeve Type Toggle */}
             <div className="space-y-1.5">
               <span className="text-[11px] font-medium text-[#9496A1] uppercase tracking-wider flex items-center gap-1.5">
-                <Shirt className="w-3 h-3 text-[#FFB900]" /> ความยาวแขน
+                <Shirt className="w-3 h-3 text-[#FFB900]" /> {lang === "th" ? "ความยาวแขน" : "Sleeve"}
               </span>
               <div className="inline-flex p-1 rounded-full bg-[#0E1015] border border-[#262830] flex-wrap gap-1">
                 <button
@@ -295,7 +327,7 @@ export default function SmartSizeGuideModal({
                       : "text-[#9496A1] hover:text-white"
                   }`}
                 >
-                  แขนยาว
+                  {lang === "th" ? "แขนยาว" : "Long Sleeve"}
                 </button>
                 <button
                   type="button"
@@ -306,7 +338,7 @@ export default function SmartSizeGuideModal({
                       : "text-[#9496A1] hover:text-white"
                   }`}
                 >
-                  แขนสั้น
+                  {lang === "th" ? "แขนสั้น" : "Short Sleeve"}
                 </button>
                 {gender === "women" && (
                   <button
@@ -318,7 +350,7 @@ export default function SmartSizeGuideModal({
                         : "text-[#9496A1] hover:text-white"
                     }`}
                   >
-                    แขนสามส่วน
+                    {lang === "th" ? "แขนสามส่วน" : "3/4 Sleeve"}
                   </button>
                 )}
               </div>
@@ -338,7 +370,7 @@ export default function SmartSizeGuideModal({
             }`}
           >
             <Calculator className="w-3.5 h-3.5" />
-            <span>คำนวณจากรอบอกจริง</span>
+            <span>{lang === "th" ? "คำนวณจากรอบอกจริง" : "By Actual Chest"}</span>
           </button>
           <button
             type="button"
@@ -350,7 +382,7 @@ export default function SmartSizeGuideModal({
             }`}
           >
             <Ruler className="w-3.5 h-3.5" />
-            <span>คำนวณจากส่วนสูงและน้ำหนัก</span>
+            <span>{lang === "th" ? "คำนวณจากส่วนสูงและน้ำหนัก" : "By Height & Weight"}</span>
           </button>
         </div>
 
@@ -359,7 +391,7 @@ export default function SmartSizeGuideModal({
           {calcMode === "chest" ? (
             <div className="space-y-2">
               <label htmlFor="chest-input" className="text-xs font-medium text-white flex justify-between">
-                <span>รอบอกจริงของคุณ (นิ้ว)</span>
+                <span>{lang === "th" ? "รอบอกจริงของคุณ (นิ้ว)" : "Your Actual Body Chest (Inches)"}</span>
                 <span className="text-xs font-bold text-[#FFB900]">
                   {chestInput}&quot;
                 </span>
@@ -380,14 +412,16 @@ export default function SmartSizeGuideModal({
                 </span>
               </div>
               <p className="text-[11px] text-[#9496A1]">
-                วัดแนบอกช่วงที่กว้างที่สุดโดยไม่รัดแน่นจนเกินไป
+                {lang === "th"
+                  ? "วัดแนบอกช่วงที่กว้างที่สุดโดยไม่รัดแน่นจนเกินไป"
+                  : "Measure around the fullest part of your chest without pulling tape too tight"}
               </p>
             </div>
           ) : (
             <div className="space-y-3 sm:col-span-1">
               <div>
                 <div className="flex justify-between text-xs font-medium text-white mb-1">
-                  <span>ส่วนสูง (cm)</span>
+                  <span>{lang === "th" ? "ส่วนสูง (cm)" : "Height (cm)"}</span>
                   <span className="font-bold text-white">{heightInput} cm</span>
                 </div>
                 <input
@@ -402,7 +436,7 @@ export default function SmartSizeGuideModal({
 
               <div>
                 <div className="flex justify-between text-xs font-medium text-white mb-1">
-                  <span>น้ำหนัก (kg)</span>
+                  <span>{lang === "th" ? "น้ำหนัก (kg)" : "Weight (kg)"}</span>
                   <span className="font-bold text-white">{weightInput} kg</span>
                 </div>
                 <input
@@ -419,7 +453,9 @@ export default function SmartSizeGuideModal({
 
           {/* Fit Preference */}
           <div className="space-y-2 flex flex-col justify-center">
-            <span className="text-xs font-medium text-white">ความกระชับที่ชอบ:</span>
+            <span className="text-xs font-medium text-white">
+              {lang === "th" ? "ความกระชับที่ชอบ:" : "Fit Preference:"}
+            </span>
             <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
@@ -430,7 +466,7 @@ export default function SmartSizeGuideModal({
                     : "border-[#262830] bg-[#181B24] text-[#9496A1] hover:text-white"
                 }`}
               >
-                ใส่สบาย (Regular Fit)
+                {lang === "th" ? "ใส่สบาย (Regular Fit)" : "Regular Fit"}
               </button>
               <button
                 type="button"
@@ -441,13 +477,17 @@ export default function SmartSizeGuideModal({
                     : "border-[#262830] bg-[#181B24] text-[#9496A1] hover:text-white"
                 }`}
               >
-                พอดีตัว (Slim Fit)
+                {lang === "th" ? "พอดีตัว (Slim Fit)" : "Slim Fit"}
               </button>
             </div>
             <p className="text-[11px] text-[#9496A1]">
               {fitPreference === "regular"
-                ? "ทรงยอดนิยม สวมใส่สบาย คล่องตัวในทุกการเคลื่อนไหว"
-                : "ทรงเข้ารูป กระชับ พอดีสัดส่วน เสริมบุคลิกให้ดูสมาร์ท"}
+                ? lang === "th"
+                  ? "ทรงยอดนิยม สวมใส่สบาย คล่องตัวในทุกการเคลื่อนไหว"
+                  : "Most popular fit. Effortless comfort and mobility"
+                : lang === "th"
+                ? "ทรงเข้ารูป กระชับ พอดีสัดส่วน เสริมบุคลิกให้ดูสมาร์ท"
+                : "Tailored silhouette. Clean, sleek, and sharp"}
             </p>
           </div>
         </div>
@@ -461,7 +501,7 @@ export default function SmartSizeGuideModal({
             <div>
               <div className="flex items-center gap-1.5">
                 <span className="text-xs font-bold text-[#FFB900]">
-                  ไซส์แนะนำสำหรับคุณ
+                  {lang === "th" ? "ไซส์แนะนำสำหรับคุณ" : "Recommended Size For You"}
                 </span>
                 <CheckCircle className="w-3.5 h-3.5 text-[#FFB900]" />
               </div>
@@ -476,7 +516,7 @@ export default function SmartSizeGuideModal({
             onClick={onClose}
             className="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-white text-[#07080B] text-xs font-semibold hover:bg-white/90 transition-colors shrink-0 shadow-sm"
           >
-            เลือกดูสินค้า
+            {lang === "th" ? "เลือกดูสินค้า" : "Shop This Size"}
           </Link>
         </div>
 
@@ -485,10 +525,16 @@ export default function SmartSizeGuideModal({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs">
             <div className="flex items-center gap-2 font-semibold text-white">
               <TableIcon className="w-3.5 h-3.5 text-[#FFB900]" />
-              <span>ตารางเทียบขนาดไซส์: {chartTitle} (หน่วย: นิ้ว)</span>
+              <span>
+                {lang === "th"
+                  ? `ตารางเทียบขนาดไซส์: ${chartTitle} (หน่วย: นิ้ว)`
+                  : `Size Chart: ${chartTitle} (Inches)`}
+              </span>
             </div>
             <span className="text-[11px] text-[#9496A1]">
-              ข้อมูลมาตรฐานทางการจาก Highbury
+              {lang === "th"
+                ? "ข้อมูลมาตรฐานทางการจาก Highbury"
+                : "Official factory standard from Highbury"}
             </span>
           </div>
 
@@ -497,12 +543,14 @@ export default function SmartSizeGuideModal({
               <thead className="bg-[#181B24] text-[#E7E7E7] font-semibold border-b border-[#262830]">
                 <tr>
                   <th className="py-2.5 px-3">SIZE</th>
-                  <th className="py-2.5 px-3">รอบอก</th>
-                  <th className="py-2.5 px-3">ความยาวเสื้อ</th>
-                  <th className="py-2.5 px-3">ความยาวแขน</th>
-                  <th className="py-2.5 px-3">รอบคอ</th>
-                  <th className="py-2.5 px-3">รอบไหล่</th>
-                  <th className="py-2.5 px-3">รอบอกจริงที่แนะนำ</th>
+                  <th className="py-2.5 px-3">{lang === "th" ? "รอบอก" : "Chest"}</th>
+                  <th className="py-2.5 px-3">{lang === "th" ? "ความยาวเสื้อ" : "Length"}</th>
+                  <th className="py-2.5 px-3">{lang === "th" ? "ความยาวแขน" : "Sleeve"}</th>
+                  <th className="py-2.5 px-3">{lang === "th" ? "รอบคอ" : "Neck"}</th>
+                  <th className="py-2.5 px-3">{lang === "th" ? "รอบไหล่" : "Shoulder"}</th>
+                  <th className="py-2.5 px-3">
+                    {lang === "th" ? "รอบอกจริงที่แนะนำ" : "Recommended Chest"}
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#262830]">
@@ -522,7 +570,7 @@ export default function SmartSizeGuideModal({
                           <span className="text-sm font-semibold">{row.size}</span>
                           {isCurrent && (
                             <span className="text-[10px] px-2 py-0.5 bg-[#FFB900] text-[#07080B] font-bold rounded-full">
-                              แนะนำ
+                              {lang === "th" ? "แนะนำ" : "Recommended"}
                             </span>
                           )}
                         </span>
@@ -547,23 +595,40 @@ export default function SmartSizeGuideModal({
       {/* Footer */}
       <div className="flex items-center justify-between px-6 py-4 border-t border-[#262830] bg-[#13161D] text-xs text-[#9496A1]">
         <span>
-          หากไม่แน่ใจเรื่องขนาด สามารถปรึกษาทีมงานผ่าน{" "}
-          <Link
-            href="https://lin.ee/T8tlget"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[#FFB900] font-medium underline hover:text-white transition-colors"
-          >
-            LINE Official
-          </Link>{" "}
-          ได้ตลอดเวลา
+          {lang === "th" ? (
+            <>
+              หากไม่แน่ใจเรื่องขนาด สามารถปรึกษาทีมงานผ่าน{" "}
+              <Link
+                href="https://lin.ee/T8tlget"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#FFB900] font-medium underline hover:text-white transition-colors"
+              >
+                LINE Official
+              </Link>{" "}
+              ได้ตลอดเวลา
+            </>
+          ) : (
+            <>
+              Unsure about your fit? Consult our team on{" "}
+              <Link
+                href="https://lin.ee/T8tlget"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#FFB900] font-medium underline hover:text-white transition-colors"
+              >
+                LINE Official
+              </Link>{" "}
+              anytime
+            </>
+          )}
         </span>
         <button
           type="button"
           onClick={onClose}
           className="px-5 py-2 rounded-full border border-[#262830] bg-white/5 hover:bg-white/10 text-white font-medium transition-colors cursor-pointer"
         >
-          ปิด
+          {lang === "th" ? "ปิด" : "Close"}
         </button>
       </div>
     </dialog>

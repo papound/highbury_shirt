@@ -195,7 +195,7 @@ export default function CarouselShowcase({
                       {/* Solid Category Badge (NO backdrop-blur) */}
                       <div className="absolute top-2.5 left-2.5 pointer-events-none">
                         <span className="px-2 py-0.5 rounded text-[11px] font-semibold text-white bg-[#07080B] border border-[#262830]">
-                          {p.category.nameTh}
+                          {lang === "th" ? p.category.nameTh : catEn}
                         </span>
                       </div>
                     </div>

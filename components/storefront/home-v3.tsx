@@ -132,6 +132,7 @@ export default function HomeV3({ featuredProducts }: HomeV3Props) {
         onClose={() => setQuickViewProduct(null)}
         onOpenSizeGuide={openSizeGuide}
         theme={theme}
+        lang={lang}
       />
     </>
   );
@@ -166,6 +167,7 @@ export default function HomeV3({ featuredProducts }: HomeV3Props) {
         isOpen={localIsSizeGuideOpen}
         onClose={closeSizeGuide}
         theme={theme}
+        lang={lang}
       />
     </div>
   );

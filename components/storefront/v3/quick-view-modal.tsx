@@ -32,13 +32,24 @@ interface QuickViewModalProps {
   onClose: () => void;
   onOpenSizeGuide: () => void;
   theme?: "dark" | "light";
+  lang?: "th" | "en";
 }
+
+const CAT_EN_MAP: Record<string, string> = {
+  "เสื้อเชิ้ตผู้ชายแขนยาว": "Men's Long Sleeve",
+  "เสื้อเชิ้ตผู้หญิงแขนยาว": "Women's Long Sleeve",
+  "เสื้อเชิ้ตผู้ชายแขนสั้น": "Men's Short Sleeve",
+  "เสื้อเชิ้ตผู้หญิงแขนสั้น": "Women's Short Sleeve",
+  "เสื้อเชิ้ตผู้หญิงแขนสามส่วน": "Women's 3/4 Sleeve",
+  "เสื้อโปโล": "Polo Shirt",
+};
 
 export default function QuickViewModal({
   product,
   onClose,
   onOpenSizeGuide,
   theme = "dark",
+  lang = "th",
 }: QuickViewModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
 
@@ -90,13 +101,15 @@ export default function QuickViewModal({
       {/* Header */}
       <div className="flex items-center justify-between px-6 py-4.5 border-b border-[#262830] bg-[#13161D]">
         <span className="text-xs font-semibold text-[#FFB900] uppercase tracking-wider">
-          {product.category.nameTh}
+          {lang === "th"
+            ? product.category.nameTh
+            : CAT_EN_MAP[product.category.nameTh] || product.category.nameTh}
         </span>
         <button
           type="button"
           onClick={onClose}
           className="w-8 h-8 rounded-full border border-[#262830] bg-white/5 hover:bg-white/10 text-[#9496A1] hover:text-white flex items-center justify-center transition-colors cursor-pointer"
-          aria-label="ปิดหน้าต่าง"
+          aria-label={lang === "th" ? "ปิดหน้าต่าง" : "Close modal"}
         >
           <X className="w-4 h-4" />
         </button>
@@ -140,7 +153,9 @@ export default function QuickViewModal({
             {/* Colors */}
             {colors.length > 0 && (
               <div className="mt-4 space-y-1.5">
-                <span className="text-xs font-medium text-white">สี:</span>
+                <span className="text-xs font-medium text-white">
+                  {lang === "th" ? "สี:" : "Color:"}
+                </span>
                 <div className="flex flex-wrap gap-1.5">
                   {colors.map((c) => (
                     <span
@@ -158,7 +173,9 @@ export default function QuickViewModal({
             {sizes.length > 0 && (
               <div className="mt-4 space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-white">ไซส์:</span>
+                  <span className="text-xs font-medium text-white">
+                    {lang === "th" ? "ไซส์:" : "Size:"}
+                  </span>
                   <button
                     type="button"
                     onClick={() => {
@@ -168,7 +185,7 @@ export default function QuickViewModal({
                     className="inline-flex items-center gap-1 text-xs text-[#FFB900] hover:underline cursor-pointer"
                   >
                     <Ruler className="w-3.5 h-3.5" />
-                    <span>ดูตารางไซส์</span>
+                    <span>{lang === "th" ? "ดูตารางไซส์" : "Size Guide"}</span>
                   </button>
                 </div>
                 <div className="flex flex-wrap gap-1.5">
@@ -187,7 +204,11 @@ export default function QuickViewModal({
             {/* Guarantee note */}
             <div className="mt-4 p-3 rounded-xl bg-[#13161D] border border-[#262830] flex items-center gap-2.5 text-xs text-[#E7E7E7]">
               <ShieldCheck className="w-4 h-4 shrink-0 text-[#FFB900]" />
-              <span>รับประกันเปลี่ยนไซส์ฟรีภายใน 7 วัน</span>
+              <span>
+                {lang === "th"
+                  ? "รับประกันเปลี่ยนไซส์ฟรีภายใน 7 วัน"
+                  : "Free 7-day size exchange guarantee"}
+              </span>
             </div>
           </div>
 
@@ -198,7 +219,11 @@ export default function QuickViewModal({
               onClick={onClose}
               className="v3-btn-white w-full justify-center py-3 text-sm font-semibold"
             >
-              <span>ดูรายละเอียดสินค้าและสั่งซื้อ</span>
+              <span>
+                {lang === "th"
+                  ? "ดูรายละเอียดสินค้าและสั่งซื้อ"
+                  : "View Product & Order"}
+              </span>
               <ArrowRight className="w-4 h-4 ml-1" />
             </Link>
           </div>

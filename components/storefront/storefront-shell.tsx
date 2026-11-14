@@ -147,6 +147,7 @@ export default function StorefrontShell({ children }: StorefrontShellProps) {
           isOpen={isSizeGuideOpen}
           onClose={closeSizeGuide}
           theme={theme}
+          lang={lang}
         />
 
         <Toaster richColors position="top-right" closeButton />
