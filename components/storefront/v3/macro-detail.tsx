@@ -29,12 +29,21 @@ export default function MacroDetail({ lang: propLang }: MacroDetailProps) {
         />
       </div>
 
-      {/* Smooth Gradient Fade Layer (Tighter dissolve so Woman and Man are fully illuminated) */}
+      {/* Smooth Gradient Fade Layer (Softer, Airier Dissolve so Wall and Models are Fully Bright) */}
       <div
-        className={`absolute inset-0 pointer-events-none transition-colors duration-300 z-1 ${
+        className="absolute inset-0 pointer-events-none transition-opacity duration-300 max-lg:hidden z-1"
+        style={{
+          background: isLight
+            ? "linear-gradient(to right, #FFFFFF 0%, rgba(255, 255, 255, 0.95) 18%, rgba(255, 255, 255, 0.65) 26%, rgba(255, 255, 255, 0.1) 36%, transparent 45%)"
+            : "linear-gradient(to right, #07080B 0%, rgba(7, 8, 11, 0.94) 18%, rgba(7, 8, 11, 0.6) 26%, rgba(7, 8, 11, 0.1) 36%, transparent 45%)",
+        }}
+      />
+      {/* Mobile Fade Layer */}
+      <div
+        className={`lg:hidden absolute inset-0 pointer-events-none transition-colors duration-300 z-1 ${
           isLight
-            ? "bg-gradient-to-r from-white via-white/90 via-30% to-transparent max-lg:bg-gradient-to-t max-lg:from-white/95 max-lg:via-white/80 max-lg:to-transparent"
-            : "bg-gradient-to-r from-[#07080B] via-[#07080B]/90 via-30% to-transparent max-lg:bg-gradient-to-t max-lg:from-[#07080B]/95 max-lg:via-[#07080B]/80 max-lg:to-transparent"
+            ? "bg-gradient-to-t from-white/95 via-white/80 via-40% to-transparent"
+            : "bg-gradient-to-t from-[#07080B]/95 via-[#07080B]/80 via-40% to-transparent"
         }`}
       />
 
