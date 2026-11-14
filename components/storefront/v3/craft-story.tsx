@@ -26,12 +26,21 @@ export default function CraftStory({ lang: propLang }: CraftStoryProps) {
         className="object-cover object-[25%_top] lg:object-[35%_top]"
       />
 
-      {/* Smooth Gradient Fade Layer (Dissolves from Right for Text Readability on Right) */}
+      {/* Smooth Gradient Fade Layer (Softer, Airier Dissolve from Right for Text Readability) */}
       <div
-        className={`absolute inset-0 pointer-events-none transition-colors duration-300 ${
+        className="absolute inset-0 pointer-events-none transition-opacity duration-300 max-lg:hidden"
+        style={{
+          background: isLight
+            ? "linear-gradient(to left, #FFFFFF 0%, rgba(255, 255, 255, 0.96) 20%, rgba(255, 255, 255, 0.72) 30%, rgba(255, 255, 255, 0.15) 42%, transparent 52%)"
+            : "linear-gradient(to left, #07080B 0%, rgba(7, 8, 11, 0.94) 20%, rgba(7, 8, 11, 0.65) 30%, rgba(7, 8, 11, 0.12) 42%, transparent 52%)",
+        }}
+      />
+      {/* Mobile Fade Layer */}
+      <div
+        className={`lg:hidden absolute inset-0 pointer-events-none transition-colors duration-300 ${
           isLight
-            ? "bg-gradient-to-l from-white via-white/95 via-45% to-transparent max-lg:bg-gradient-to-t max-lg:from-white/95 max-lg:via-white/80 max-lg:to-transparent"
-            : "bg-gradient-to-l from-[#07080B] via-[#07080B]/95 via-45% to-transparent max-lg:bg-gradient-to-t max-lg:from-[#07080B]/95 max-lg:via-[#07080B]/80 max-lg:to-transparent"
+            ? "bg-gradient-to-t from-white/95 via-white/80 via-40% to-transparent"
+            : "bg-gradient-to-t from-[#07080B]/95 via-[#07080B]/80 via-40% to-transparent"
         }`}
       />
 
