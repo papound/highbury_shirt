@@ -341,7 +341,16 @@ export default function SmartSizeGuideModal({ isOpen, onClose }: SmartSizeGuideM
       {/* Footer */}
       <div className="flex items-center justify-between px-6 py-3 border-t border-[#E7E5E4] bg-[#F9FAFB] text-xs">
         <span className="text-[#79716B]">
-          หากไม่แน่ใจเรื่องขนาด สามารถปรึกษาทีมงานผ่าน LINE Official ได้ตลอดเวลา
+          หากไม่แน่ใจเรื่องขนาด สามารถปรึกษาทีมงานผ่าน{" "}
+          <Link
+            href="https://line.ee/T8tlget"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[#163666] font-semibold underline hover:text-[#0A2B5E]"
+          >
+            LINE Official
+          </Link>{" "}
+          ได้ตลอดเวลา
         </span>
         <button
           type="button"

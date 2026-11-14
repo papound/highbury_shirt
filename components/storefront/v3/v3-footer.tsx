@@ -36,7 +36,7 @@ export default function V3Footer() {
             <Link href="#about" className="hover:text-white transition-colors">
               About
             </Link>
-            <Link href="https://lin.ee/highbury" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+            <Link href="https://line.ee/T8tlget" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
               Support
             </Link>
           </nav>
@@ -44,7 +44,7 @@ export default function V3Footer() {
           {/* Social Icons */}
           <div className="flex items-center gap-3 text-white/70">
             <Link
-              href="https://lin.ee/highbury"
+              href="https://line.ee/T8tlget"
               target="_blank"
               rel="noopener noreferrer"
               className="p-2 rounded-full hover:bg-white/10 hover:text-white transition-colors"
