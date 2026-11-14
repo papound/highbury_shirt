@@ -31,19 +31,19 @@ export default function MacroDetail({ lang: propLang }: MacroDetailProps) {
 
       {/* Top Edge Blend (Seamless Transition from Previous Section) */}
       <div
-        className={`absolute inset-x-0 top-0 h-28 sm:h-36 lg:h-40 pointer-events-none z-1 transition-colors duration-300 ${
+        className={`absolute inset-x-0 top-0 h-14 sm:h-16 lg:h-20 pointer-events-none z-1 transition-colors duration-300 ${
           isLight
-            ? "bg-gradient-to-b from-white via-white/70 to-transparent"
-            : "bg-gradient-to-b from-[#07080B] via-[#07080B]/70 to-transparent"
+            ? "bg-gradient-to-b from-white/25 via-white/8 to-transparent"
+            : "bg-gradient-to-b from-[#07080B]/25 via-[#07080B]/8 to-transparent"
         }`}
       />
 
       {/* Bottom Edge Blend (Seamless Transition into Next Section) */}
       <div
-        className={`absolute inset-x-0 bottom-0 h-28 sm:h-36 lg:h-40 pointer-events-none z-1 transition-colors duration-300 ${
+        className={`absolute inset-x-0 bottom-0 h-14 sm:h-16 lg:h-20 pointer-events-none z-1 transition-colors duration-300 ${
           isLight
-            ? "bg-gradient-to-t from-white via-white/70 to-transparent"
-            : "bg-gradient-to-t from-[#07080B] via-[#07080B]/70 to-transparent"
+            ? "bg-gradient-to-t from-white/25 via-white/8 to-transparent"
+            : "bg-gradient-to-t from-[#07080B]/25 via-[#07080B]/8 to-transparent"
         }`}
       />
 
