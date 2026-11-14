@@ -81,82 +81,67 @@ export default function CraftStory({ lang: propLang }: CraftStoryProps) {
                   : "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
               }}
             >
-              {/* Stat 1: Collar */}
+              {/* Feature 1: Collar */}
               <div className="flex items-start gap-4">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5 border ${
+                <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 mt-0.5 border ${
                   isLight ? "bg-[#0F172A]/5 border-[#0F172A]/10 text-[#0F172A]" : "bg-white/10 border-white/20 text-white"
                 }`}>
                   <Scissors className="w-4 h-4" />
                 </div>
                 <div>
-                  <div className={`text-2xl sm:text-3xl font-bold tracking-tight ${
+                  <div className={`text-sm sm:text-base font-semibold tracking-tight ${
                     isLight ? "text-[#0F172A]" : "text-white"
-                  }`}>
-                    01
-                  </div>
-                  <div className={`text-xs sm:text-sm font-medium mt-0.5 ${
-                    isLight ? "text-[#334155]" : "text-white/80"
                   }`}>
                     {lang === "th" ? "โครงสร้างปก (Dual-Fused Collar)" : "Dual-Fused Collar Stance"}
                   </div>
-                  <div className={`text-[11px] sm:text-xs mt-0.5 ${
-                    isLight ? "text-[#64748B]" : "text-white/60"
+                  <div className={`text-xs sm:text-sm mt-1 leading-relaxed ${
+                    isLight ? "text-[#64748B]" : "text-white/70"
                   }`}>
                     {lang === "th" ? "ปกอัดกาวสองชั้น ตั้งทรงสวย ไม่ย้วย แม้ไม่ผูกเนกไท" : "Two-layer fusing maintains crisp stance all day"}
                   </div>
                 </div>
               </div>
 
-              {/* Stat 2: Asian Fit Armhole */}
+              {/* Feature 2: Asian Fit Armhole */}
               <div className={`flex items-start gap-4 border-t pt-5 ${
                 isLight ? "border-[#E2E8F0]" : "border-white/15"
               }`}>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5 border ${
+                <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 mt-0.5 border ${
                   isLight ? "bg-[#0F172A]/5 border-[#0F172A]/10 text-[#0F172A]" : "bg-white/10 border-white/20 text-white"
                 }`}>
                   <Shirt className="w-4 h-4" />
                 </div>
                 <div>
-                  <div className={`text-2xl sm:text-3xl font-bold tracking-tight ${
+                  <div className={`text-sm sm:text-base font-semibold tracking-tight ${
                     isLight ? "text-[#0F172A]" : "text-white"
-                  }`}>
-                    02
-                  </div>
-                  <div className={`text-xs sm:text-sm font-medium mt-0.5 ${
-                    isLight ? "text-[#334155]" : "text-white/80"
                   }`}>
                     {lang === "th" ? "วงแขน Asian Fit (Sculpted Armhole)" : "Sculpted Asian Fit Armhole"}
                   </div>
-                  <div className={`text-[11px] sm:text-xs mt-0.5 ${
-                    isLight ? "text-[#64748B]" : "text-white/60"
+                  <div className={`text-xs sm:text-sm mt-1 leading-relaxed ${
+                    isLight ? "text-[#64748B]" : "text-white/70"
                   }`}>
                     {lang === "th" ? "ลดการรั้งช่วงไหล่ ขยับตัวคล่องตัวตลอดวันทำงาน" : "Engineered curves eliminate torso & shoulder pull"}
                   </div>
                 </div>
               </div>
 
-              {/* Stat 3: Easy Care */}
+              {/* Feature 3: Easy Care */}
               <div className={`flex items-start gap-4 border-t pt-5 ${
                 isLight ? "border-[#E2E8F0]" : "border-white/15"
               }`}>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5 border ${
+                <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 mt-0.5 border ${
                   isLight ? "bg-[#0F172A]/5 border-[#0F172A]/10 text-[#0F172A]" : "bg-white/10 border-white/20 text-white"
                 }`}>
                   <Sparkles className="w-4 h-4" />
                 </div>
                 <div>
-                  <div className={`text-2xl sm:text-3xl font-bold tracking-tight ${
+                  <div className={`text-sm sm:text-base font-semibold tracking-tight ${
                     isLight ? "text-[#0F172A]" : "text-white"
-                  }`}>
-                    03
-                  </div>
-                  <div className={`text-xs sm:text-sm font-medium mt-0.5 ${
-                    isLight ? "text-[#334155]" : "text-white/80"
                   }`}>
                     {lang === "th" ? "การรีด Easy Care (Wrinkle Recovery)" : "Easy-Care Wrinkle Recovery"}
                   </div>
-                  <div className={`text-[11px] sm:text-xs mt-0.5 ${
-                    isLight ? "text-[#64748B]" : "text-white/60"
+                  <div className={`text-xs sm:text-sm mt-1 leading-relaxed ${
+                    isLight ? "text-[#64748B]" : "text-white/70"
                   }`}>
                     {lang === "th" ? "คืนทรงหลังซัก สะบัดแขวน ประหยัดเวลารีด 50%" : "Fabric rebounds post-wash, 50% less ironing"}
                   </div>
