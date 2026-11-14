@@ -104,20 +104,20 @@ export default function SmartSizeGuideModal({ isOpen, onClose }: SmartSizeGuideM
       ref={dialogRef}
       onCancel={handleCancel}
       onClick={handleBackdropClick}
-      className="v3-dialog w-[92vw] max-w-3xl rounded-xl border border-[#E7E5E4] bg-white p-0 text-[#0F172B] overflow-hidden"
+      className="v3-dialog w-[92vw] max-w-3xl rounded-2xl border border-[#262830] bg-[#0E1015] p-0 text-white overflow-hidden shadow-2xl backdrop:bg-black/80"
       aria-labelledby="size-guide-title"
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-[#E7E5E4] bg-[#F9FAFB]">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-[#E7E5E4] text-[#163666] flex items-center justify-center">
-            <Ruler className="w-4 h-4" />
+      <div className="flex items-center justify-between px-6 py-4.5 border-b border-[#262830] bg-[#13161D]">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-full bg-white/10 text-white flex items-center justify-center border border-white/10">
+            <Ruler className="w-4 h-4 text-[#FFB900]" />
           </div>
           <div>
-            <h2 id="size-guide-title" className="text-base font-bold text-[#0F172B]">
+            <h2 id="size-guide-title" className="text-base font-semibold text-white tracking-tight">
               คำนวณและดูตารางไซส์เสื้อเชิ้ต Highbury
             </h2>
-            <p className="text-xs text-[#79716B]">
+            <p className="text-xs text-[#9496A1]">
               คำนวณขนาดที่เหมาะกับสรีระคุณได้อย่างแม่นยำ
             </p>
           </div>
@@ -126,7 +126,7 @@ export default function SmartSizeGuideModal({ isOpen, onClose }: SmartSizeGuideM
         <button
           type="button"
           onClick={onClose}
-          className="w-8 h-8 rounded-lg border border-[#E7E5E4] hover:bg-white text-[#79716B] hover:text-[#0F172B] flex items-center justify-center transition-colors cursor-pointer"
+          className="w-8 h-8 rounded-full border border-[#262830] bg-white/5 hover:bg-white/10 text-[#9496A1] hover:text-white flex items-center justify-center transition-colors cursor-pointer"
           aria-label="ปิดหน้าต่าง"
         >
           <X className="w-4 h-4" />
@@ -134,16 +134,16 @@ export default function SmartSizeGuideModal({ isOpen, onClose }: SmartSizeGuideM
       </div>
 
       {/* Body Content */}
-      <div className="p-6 space-y-6 max-h-[75vh] overflow-y-auto">
+      <div className="p-6 space-y-6 max-h-[75vh] overflow-y-auto bg-[#0E1015] text-white">
         {/* Mode Selector */}
-        <div className="flex border-b border-[#E7E5E4] pb-3 gap-3">
+        <div className="flex border-b border-[#262830] pb-4 gap-2">
           <button
             type="button"
             onClick={() => setCalcMode("chest")}
-            className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
+            className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold transition-colors cursor-pointer ${
               calcMode === "chest"
-                ? "bg-[#163666] text-white"
-                : "bg-[#F9FAFB] text-[#79716B] hover:text-[#0F172B]"
+                ? "bg-white text-[#07080B] shadow-sm"
+                : "bg-[#13161D] text-[#9496A1] hover:text-white border border-[#262830]"
             }`}
           >
             <Calculator className="w-3.5 h-3.5" />
@@ -152,10 +152,10 @@ export default function SmartSizeGuideModal({ isOpen, onClose }: SmartSizeGuideM
           <button
             type="button"
             onClick={() => setCalcMode("height_weight")}
-            className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
+            className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold transition-colors cursor-pointer ${
               calcMode === "height_weight"
-                ? "bg-[#163666] text-white"
-                : "bg-[#F9FAFB] text-[#79716B] hover:text-[#0F172B]"
+                ? "bg-white text-[#07080B] shadow-sm"
+                : "bg-[#13161D] text-[#9496A1] hover:text-white border border-[#262830]"
             }`}
           >
             <Ruler className="w-3.5 h-3.5" />
@@ -164,10 +164,10 @@ export default function SmartSizeGuideModal({ isOpen, onClose }: SmartSizeGuideM
         </div>
 
         {/* Calculator Form */}
-        <div className="grid sm:grid-cols-2 gap-4 p-4 rounded-xl bg-[#F9FAFB] border border-[#E7E5E4]">
+        <div className="grid sm:grid-cols-2 gap-4 p-5 rounded-xl bg-[#13161D] border border-[#262830]">
           {calcMode === "chest" ? (
-            <div className="space-y-1.5">
-              <label htmlFor="chest-input" className="text-xs font-semibold text-[#0F172B]">
+            <div className="space-y-2">
+              <label htmlFor="chest-input" className="text-xs font-medium text-white">
                 รอบอกจริงของคุณ (นิ้ว)
               </label>
               <div className="flex items-center gap-3">
@@ -179,22 +179,22 @@ export default function SmartSizeGuideModal({ isOpen, onClose }: SmartSizeGuideM
                   step="0.5"
                   value={chestInput}
                   onChange={(e) => setChestInput(parseFloat(e.target.value))}
-                  className="flex-1 accent-[#163666] cursor-pointer"
+                  className="flex-1 accent-[#FFB900] cursor-pointer"
                 />
-                <span className="text-sm font-bold text-[#0F172B] min-w-[50px] text-right">
+                <span className="font-mono text-base font-bold text-white min-w-[55px] text-right">
                   {chestInput}&quot;
                 </span>
               </div>
-              <p className="text-[11px] text-[#79716B]">
+              <p className="text-[11px] text-[#9496A1]">
                 วัดแนบอกช่วงที่กว้างที่สุดโดยไม่รัดแน่นจนเกินไป
               </p>
             </div>
           ) : (
             <div className="space-y-3 sm:col-span-1">
               <div>
-                <div className="flex justify-between text-xs font-semibold text-[#0F172B] mb-1">
+                <div className="flex justify-between text-xs font-medium text-white mb-1">
                   <span>ส่วนสูง (cm)</span>
-                  <span>{heightInput} cm</span>
+                  <span className="font-mono font-bold text-white">{heightInput} cm</span>
                 </div>
                 <input
                   type="range"
@@ -202,14 +202,14 @@ export default function SmartSizeGuideModal({ isOpen, onClose }: SmartSizeGuideM
                   max="195"
                   value={heightInput}
                   onChange={(e) => setHeightInput(parseInt(e.target.value))}
-                  className="w-full accent-[#163666] cursor-pointer"
+                  className="w-full accent-[#FFB900] cursor-pointer"
                 />
               </div>
 
               <div>
-                <div className="flex justify-between text-xs font-semibold text-[#0F172B] mb-1">
+                <div className="flex justify-between text-xs font-medium text-white mb-1">
                   <span>น้ำหนัก (kg)</span>
-                  <span>{weightInput} kg</span>
+                  <span className="font-mono font-bold text-white">{weightInput} kg</span>
                 </div>
                 <input
                   type="range"
@@ -217,7 +217,7 @@ export default function SmartSizeGuideModal({ isOpen, onClose }: SmartSizeGuideM
                   max="115"
                   value={weightInput}
                   onChange={(e) => setWeightInput(parseInt(e.target.value))}
-                  className="w-full accent-[#163666] cursor-pointer"
+                  className="w-full accent-[#FFB900] cursor-pointer"
                 />
               </div>
             </div>
@@ -225,15 +225,15 @@ export default function SmartSizeGuideModal({ isOpen, onClose }: SmartSizeGuideM
 
           {/* Fit Preference */}
           <div className="space-y-2 flex flex-col justify-center">
-            <span className="text-xs font-semibold text-[#0F172B]">ความกระชับที่ชอบ:</span>
+            <span className="text-xs font-medium text-white">ความกระชับที่ชอบ:</span>
             <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
                 onClick={() => setFitPreference("regular")}
                 className={`py-2 px-3 rounded-lg border text-xs font-medium transition-colors cursor-pointer text-center ${
                   fitPreference === "regular"
-                    ? "border-[#163666] bg-white text-[#163666] font-semibold"
-                    : "border-[#E7E5E4] hover:bg-white text-[#79716B]"
+                    ? "border-white bg-white text-[#07080B] font-semibold"
+                    : "border-[#262830] bg-[#181B24] text-[#9496A1] hover:text-white"
                 }`}
               >
                 ใส่สบาย (Regular Fit)
@@ -243,8 +243,8 @@ export default function SmartSizeGuideModal({ isOpen, onClose }: SmartSizeGuideM
                 onClick={() => setFitPreference("slim")}
                 className={`py-2 px-3 rounded-lg border text-xs font-medium transition-colors cursor-pointer text-center ${
                   fitPreference === "slim"
-                    ? "border-[#163666] bg-white text-[#163666] font-semibold"
-                    : "border-[#E7E5E4] hover:bg-white text-[#79716B]"
+                    ? "border-white bg-white text-[#07080B] font-semibold"
+                    : "border-[#262830] bg-[#181B24] text-[#9496A1] hover:text-white"
                 }`}
               >
                 พอดีตัว (Slim Fit)
@@ -253,20 +253,20 @@ export default function SmartSizeGuideModal({ isOpen, onClose }: SmartSizeGuideM
           </div>
         </div>
 
-        {/* Recommendation Box */}
-        <div className="p-4 rounded-xl bg-white border border-[#E7E5E4] flex items-center justify-between gap-4">
-          <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-lg bg-[#163666] text-white font-bold text-lg flex items-center justify-center shrink-0">
+        {/* Dynamic Recommendation Box */}
+        <div className="p-4 sm:p-5 rounded-xl bg-[#13161D] border border-[#262830] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-white text-[#07080B] font-bold text-xl flex items-center justify-center shrink-0 shadow-md">
               {recommendation.size}
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="text-xs font-bold text-[#163666]">
+                <span className="text-xs font-bold text-[#FFB900]">
                   ไซส์แนะนำสำหรับคุณ
                 </span>
-                <CheckCircle className="w-3.5 h-3.5 text-[#163666]" />
+                <CheckCircle className="w-3.5 h-3.5 text-[#FFB900]" />
               </div>
-              <p className="text-xs text-[#79716B] mt-0.5">
+              <p className="text-xs text-[#E7E7E7] mt-0.5">
                 {recommendation.reason}
               </p>
             </div>
@@ -275,7 +275,7 @@ export default function SmartSizeGuideModal({ isOpen, onClose }: SmartSizeGuideM
           <Link
             href="/products"
             onClick={onClose}
-            className="hidden sm:inline-flex items-center justify-center px-4 py-2 rounded-lg bg-[#163666] text-white text-xs font-semibold hover:bg-[#0A2B5E] transition-colors shrink-0"
+            className="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-white text-[#07080B] text-xs font-semibold hover:bg-white/90 transition-colors shrink-0 shadow-sm"
           >
             เลือกดูสินค้า
           </Link>
@@ -283,14 +283,14 @@ export default function SmartSizeGuideModal({ isOpen, onClose }: SmartSizeGuideM
 
         {/* Full Size Chart Table */}
         <div className="space-y-2">
-          <div className="flex items-center gap-2 text-xs font-bold text-[#0F172B]">
-            <TableIcon className="w-3.5 h-3.5 text-[#79716B]" />
+          <div className="flex items-center gap-2 text-xs font-semibold text-white">
+            <TableIcon className="w-3.5 h-3.5 text-[#FFB900]" />
             <span>ตารางขนาดมาตรฐาน Highbury (นิ้ว)</span>
           </div>
 
-          <div className="overflow-x-auto rounded-lg border border-[#E7E5E4]">
+          <div className="overflow-x-auto rounded-xl border border-[#262830] bg-[#13161D]">
             <table className="w-full text-xs text-left">
-              <thead className="bg-[#F9FAFB] text-[#0F172B] font-semibold border-b border-[#E7E5E4]">
+              <thead className="bg-[#181B24] text-[#E7E7E7] font-semibold border-b border-[#262830]">
                 <tr>
                   <th className="py-2.5 px-3">ไซส์</th>
                   <th className="py-2.5 px-3">รอบอกเสื้อ</th>
@@ -300,7 +300,7 @@ export default function SmartSizeGuideModal({ isOpen, onClose }: SmartSizeGuideM
                   <th className="py-2.5 px-3">รอบอกจริงที่แนะนำ</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#E7E5E4]">
+              <tbody className="divide-y divide-[#262830]">
                 {SIZE_CHART.map((row) => {
                   const isCurrent = row.size === recommendation.size;
                   return (
@@ -308,25 +308,25 @@ export default function SmartSizeGuideModal({ isOpen, onClose }: SmartSizeGuideM
                       key={row.size}
                       className={
                         isCurrent
-                          ? "bg-[#F9FAFB] font-semibold text-[#163666]"
-                          : "hover:bg-[#F9FAFB]/50"
+                          ? "bg-white/10 font-semibold text-white"
+                          : "text-[#E7E7E7] hover:bg-white/5 transition-colors"
                       }
                     >
-                      <td className="py-2 px-3 font-bold">
+                      <td className="py-2.5 px-3 font-bold">
                         <span className="inline-flex items-center gap-1.5">
-                          {row.size}
+                          <span className="font-mono text-sm">{row.size}</span>
                           {isCurrent && (
-                            <span className="text-[10px] px-1.5 py-0.2 bg-[#163666] text-white rounded">
+                            <span className="text-[10px] px-2 py-0.5 bg-[#FFB900] text-[#07080B] font-bold rounded-full">
                               แนะนำ
                             </span>
                           )}
                         </span>
                       </td>
-                      <td className="py-2 px-3">{row.chestInch}&quot;</td>
-                      <td className="py-2 px-3">{row.shoulderInch}&quot;</td>
-                      <td className="py-2 px-3">{row.lengthInch}&quot;</td>
-                      <td className="py-2 px-3">{row.sleeveInch}&quot;</td>
-                      <td className="py-2 px-3 text-[#79716B]">
+                      <td className="py-2.5 px-3 font-mono text-white">{row.chestInch}&quot;</td>
+                      <td className="py-2.5 px-3 font-mono text-white">{row.shoulderInch}&quot;</td>
+                      <td className="py-2.5 px-3 font-mono text-white">{row.lengthInch}&quot;</td>
+                      <td className="py-2.5 px-3 font-mono text-white">{row.sleeveInch}&quot;</td>
+                      <td className="py-2.5 px-3 font-mono text-[#9496A1]">
                         {row.recommendedChestInch}&quot;
                       </td>
                     </tr>
@@ -339,14 +339,14 @@ export default function SmartSizeGuideModal({ isOpen, onClose }: SmartSizeGuideM
       </div>
 
       {/* Footer */}
-      <div className="flex items-center justify-between px-6 py-3 border-t border-[#E7E5E4] bg-[#F9FAFB] text-xs">
-        <span className="text-[#79716B]">
+      <div className="flex items-center justify-between px-6 py-4 border-t border-[#262830] bg-[#13161D] text-xs text-[#9496A1]">
+        <span>
           หากไม่แน่ใจเรื่องขนาด สามารถปรึกษาทีมงานผ่าน{" "}
           <Link
             href="https://lin.ee/T8tlget"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[#163666] font-semibold underline hover:text-[#0A2B5E]"
+            className="text-[#FFB900] font-medium underline hover:text-white transition-colors"
           >
             LINE Official
           </Link>{" "}
@@ -355,7 +355,7 @@ export default function SmartSizeGuideModal({ isOpen, onClose }: SmartSizeGuideM
         <button
           type="button"
           onClick={onClose}
-          className="px-4 py-1.5 rounded-lg border border-[#E7E5E4] bg-white hover:bg-[#F9FAFB] font-semibold text-[#0F172B] transition-colors cursor-pointer"
+          className="px-5 py-2 rounded-full border border-[#262830] bg-white/5 hover:bg-white/10 text-white font-medium transition-colors cursor-pointer"
         >
           ปิด
         </button>
