@@ -81,18 +81,18 @@ export default function QuickViewModal({
       ref={dialogRef}
       onCancel={handleCancel}
       onClick={handleBackdropClick}
-      className="v3-dialog w-[92vw] max-w-2xl rounded-xl border border-[#E7E5E4] bg-white p-0 text-[#0F172B] overflow-hidden"
+      className="v3-dialog w-[92vw] max-w-2xl rounded-2xl border border-[#262830] bg-[#0E1015] p-0 text-white overflow-hidden shadow-2xl backdrop:bg-black/80"
       aria-labelledby="quick-view-title"
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-[#E7E5E4] bg-[#F9FAFB]">
-        <span className="text-xs font-semibold text-[#79716B]">
+      <div className="flex items-center justify-between px-6 py-4.5 border-b border-[#262830] bg-[#13161D]">
+        <span className="text-xs font-semibold text-[#FFB900] uppercase tracking-wider">
           {product.category.nameTh}
         </span>
         <button
           type="button"
           onClick={onClose}
-          className="w-8 h-8 rounded-lg border border-[#E7E5E4] hover:bg-white text-[#79716B] hover:text-[#0F172B] flex items-center justify-center transition-colors cursor-pointer"
+          className="w-8 h-8 rounded-full border border-[#262830] bg-white/5 hover:bg-white/10 text-[#9496A1] hover:text-white flex items-center justify-center transition-colors cursor-pointer"
           aria-label="ปิดหน้าต่าง"
         >
           <X className="w-4 h-4" />
@@ -100,9 +100,9 @@ export default function QuickViewModal({
       </div>
 
       {/* Content Grid */}
-      <div className="p-6 grid sm:grid-cols-2 gap-6 max-h-[75vh] overflow-y-auto">
+      <div className="p-6 grid sm:grid-cols-2 gap-6 max-h-[75vh] overflow-y-auto bg-[#0E1015]">
         {/* Left: Product Image */}
-        <div className="relative aspect-[4/5] rounded-lg overflow-hidden border border-[#E7E5E4] bg-[#F1F5F9]">
+        <div className="relative aspect-[4/5] rounded-xl overflow-hidden border border-[#262830] bg-[#13161D]">
           <Image
             src={primaryImage}
             alt={product.nameTh}
@@ -117,19 +117,19 @@ export default function QuickViewModal({
           <div>
             <h2
               id="quick-view-title"
-              className="text-lg font-bold text-[#0F172B] leading-snug"
+              className="text-lg sm:text-xl font-bold text-white tracking-tight leading-snug"
             >
               {product.nameTh}
             </h2>
 
-            <div className="mt-2 text-xl font-bold text-[#163666]">
+            <div className="mt-2 font-mono text-xl sm:text-2xl font-bold text-[#FFB900]">
               {minPrice === maxPrice
                 ? `฿${minPrice.toLocaleString()}`
                 : `฿${minPrice.toLocaleString()} – ฿${maxPrice.toLocaleString()}`}
             </div>
 
             {product.descTh && (
-              <p className="mt-3 text-xs text-[#79716B] line-clamp-3 leading-relaxed">
+              <p className="mt-3 text-xs sm:text-sm text-[#E7E7E7] line-clamp-3 leading-relaxed">
                 {product.descTh}
               </p>
             )}
@@ -137,12 +137,12 @@ export default function QuickViewModal({
             {/* Colors */}
             {colors.length > 0 && (
               <div className="mt-4 space-y-1.5">
-                <span className="text-xs font-semibold text-[#0F172B]">สี:</span>
+                <span className="text-xs font-medium text-white">สี:</span>
                 <div className="flex flex-wrap gap-1.5">
                   {colors.map((c) => (
                     <span
                       key={c}
-                      className="px-2.5 py-1 rounded bg-[#F9FAFB] text-[11px] font-medium text-[#0F172B] border border-[#E7E5E4]"
+                      className="px-3 py-1 rounded-full bg-[#181B24] text-xs font-medium text-white border border-[#262830]"
                     >
                       {c}
                     </span>
@@ -155,16 +155,16 @@ export default function QuickViewModal({
             {sizes.length > 0 && (
               <div className="mt-4 space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-[#0F172B]">ไซส์:</span>
+                  <span className="text-xs font-medium text-white">ไซส์:</span>
                   <button
                     type="button"
                     onClick={() => {
                       onClose();
                       onOpenSizeGuide();
                     }}
-                    className="inline-flex items-center gap-1 text-[11px] text-[#163666] hover:underline cursor-pointer"
+                    className="inline-flex items-center gap-1 text-xs text-[#FFB900] hover:underline cursor-pointer"
                   >
-                    <Ruler className="w-3 h-3" />
+                    <Ruler className="w-3.5 h-3.5" />
                     <span>ดูตารางไซส์</span>
                   </button>
                 </div>
@@ -172,7 +172,7 @@ export default function QuickViewModal({
                   {sizes.map((s) => (
                     <span
                       key={s}
-                      className="w-8 h-8 rounded border border-[#E7E5E4] bg-white flex items-center justify-center text-xs font-semibold text-[#0F172B]"
+                      className="w-9 h-9 rounded-lg border border-[#262830] bg-[#181B24] flex items-center justify-center font-mono text-xs font-semibold text-white"
                     >
                       {s}
                     </span>
@@ -182,21 +182,21 @@ export default function QuickViewModal({
             )}
 
             {/* Guarantee note */}
-            <div className="mt-4 p-2.5 rounded-lg bg-[#F9FAFB] border border-[#E7E5E4] flex items-center gap-2 text-xs text-[#163666]">
-              <ShieldCheck className="w-4 h-4 shrink-0 text-[#163666]" />
+            <div className="mt-4 p-3 rounded-xl bg-[#13161D] border border-[#262830] flex items-center gap-2.5 text-xs text-[#E7E7E7]">
+              <ShieldCheck className="w-4 h-4 shrink-0 text-[#FFB900]" />
               <span>รับประกันเปลี่ยนไซส์ฟรีภายใน 7 วัน</span>
             </div>
           </div>
 
           {/* Action Button */}
-          <div className="pt-4 border-t border-[#E7E5E4]">
+          <div className="pt-4 border-t border-[#262830]">
             <Link
               href={`/products/${product.slug}`}
               onClick={onClose}
-              className="v3-btn-brand w-full"
+              className="v3-btn-white w-full justify-center py-3 text-sm font-semibold"
             >
               <span>ดูรายละเอียดสินค้าและสั่งซื้อ</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <ArrowRight className="w-4 h-4 ml-1" />
             </Link>
           </div>
         </div>
