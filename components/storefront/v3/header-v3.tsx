@@ -107,6 +107,14 @@ export default function HeaderV3({
 
     const isHomePage = window.location.pathname === "/" || window.location.pathname === "/v3";
     if (!isHomePage) {
+      if (targetId === "models") {
+        router.push("/products");
+        return;
+      }
+      if (targetId === "about") {
+        router.push("/about");
+        return;
+      }
       router.push(`/#${targetId}`);
       return;
     }
@@ -167,18 +175,20 @@ export default function HeaderV3({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             {/* Left: Brand Identity */}
-            <a
-              href="#"
+            <Link
+              href="/"
               onClick={(e) => {
-                e.preventDefault();
-                window.scrollTo({ top: 0, behavior: "smooth" });
+                if (typeof window !== "undefined" && (window.location.pathname === "/" || window.location.pathname === "/v3")) {
+                  e.preventDefault();
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }
               }}
               className={`text-lg font-bold tracking-[0.2em] ${
                 theme === "light" ? "text-[#0F172A]" : "text-white"
               } hover:opacity-90 transition-opacity uppercase font-sans cursor-pointer`}
             >
               HIGHBURY
-            </a>
+            </Link>
 
             {/* Center: Desktop Navigation Links */}
             <nav className="hidden md:flex items-center gap-8">

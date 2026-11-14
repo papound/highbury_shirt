@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
-import StorefrontHeader from "@/components/storefront/header";
-import StorefrontFooter from "@/components/storefront/footer";
 import StorefrontShell from "@/components/storefront/storefront-shell";
 
 export const metadata: Metadata = {
@@ -15,12 +13,5 @@ export default function StorefrontLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <StorefrontShell
-      header={<StorefrontHeader />}
-      footer={<StorefrontFooter />}
-    >
-      {children}
-    </StorefrontShell>
-  );
+  return <StorefrontShell>{children}</StorefrontShell>;
 }

@@ -13,6 +13,7 @@ import PreFooterCta from "./v3/pre-footer-cta";
 import V3Footer from "./v3/v3-footer";
 import QuickViewModal, { QuickViewProduct } from "./v3/quick-view-modal";
 import SmartSizeGuideModal from "./v3/smart-size-guide-modal";
+import { useStorefrontV3Safe } from "./storefront-shell";
 import "./v3/v3.css";
 
 // ---------- types ----------
@@ -32,60 +33,36 @@ interface HomeV3Props {
 }
 
 export default function HomeV3({ featuredProducts }: HomeV3Props) {
-  // Theme State: 'dark' (Quantum standard) or 'light' (Clean architectural tailoring)
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
+  // Try getting shared V3 Shell context
+  const shellCtx = useStorefrontV3Safe();
 
-  // Language State: Defaults to 'th' with smooth 'en' toggle
-  const [lang, setLang] = useState<"th" | "en">("th");
+  // Local state fallback if rendered without StorefrontShell
+  const [localTheme, setLocalTheme] = useState<"dark" | "light">("dark");
+  const [localLang, setLocalLang] = useState<"th" | "en">("th");
+  const [localIsSizeGuideOpen, setLocalIsSizeGuideOpen] = useState(false);
 
-  // Modal states
-  const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
-  const [quickViewProduct, setQuickViewProduct] = useState<QuickViewProduct | null>(null);
-
-  // Initialize theme from URL query param (?theme=light) or localStorage
+  // Local theme sync if standalone
   useEffect(() => {
+    if (shellCtx) return;
     try {
-      const params = new URLSearchParams(window.location.search);
-      const urlTheme = params.get("theme");
-      if (urlTheme === "light" || urlTheme === "dark") {
-        setTheme(urlTheme);
-        localStorage.setItem("highbury-theme", urlTheme);
-        return;
-      }
-
       const stored = localStorage.getItem("highbury-theme");
       if (stored === "light" || stored === "dark") {
-        setTheme(stored);
+        setLocalTheme(stored);
       }
     } catch {}
-  }, []);
+  }, [shellCtx]);
 
-  // Sync color-scheme meta tag with theme for browser native UI adaptation
-  useEffect(() => {
-    try {
-      let meta = document.querySelector('meta[name="color-scheme"]');
-      if (!meta) {
-        meta = document.createElement("meta");
-        meta.setAttribute("name", "color-scheme");
-        document.head.appendChild(meta);
-      }
-      meta.setAttribute("content", theme === "light" ? "light" : "dark");
-    } catch {}
-  }, [theme]);
+  const theme = shellCtx ? shellCtx.theme : localTheme;
+  const lang = shellCtx ? shellCtx.lang : localLang;
+  const openSizeGuide = shellCtx
+    ? shellCtx.openSizeGuide
+    : () => setLocalIsSizeGuideOpen(true);
+  const closeSizeGuide = shellCtx
+    ? shellCtx.closeSizeGuide
+    : () => setLocalIsSizeGuideOpen(false);
 
-  const toggleTheme = () => {
-    setTheme((prev) => {
-      const next = prev === "dark" ? "light" : "dark";
-      try {
-        localStorage.setItem("highbury-theme", next);
-      } catch {}
-      return next;
-    });
-  };
-
-  const toggleLang = () => {
-    setLang((prev) => (prev === "th" ? "en" : "th"));
-  };
+  // Modal states
+  const [quickViewProduct, setQuickViewProduct] = useState<QuickViewProduct | null>(null);
 
   // Map real products from each category
   const products: QuickViewProduct[] = featuredProducts.map((p) => ({
@@ -112,6 +89,59 @@ export default function HomeV3({ featuredProducts }: HomeV3Props) {
     })),
   }));
 
+  const content = (
+    <>
+      {/* 1. Hero Section: Revolutionary Asian Fit Tailoring with 3-Spec Bar */}
+      <HeroV3
+        onOpenSizeGuide={openSizeGuide}
+        lang={lang}
+        theme={theme}
+      />
+
+      {/* 2. Section 2: A New Era of Everyday Tailoring (Split Architectural Light) */}
+      <CraftStory lang={lang} />
+
+      {/* 3. Section 3: Models Carousel with Real Products from Each Category & Photos */}
+      <CarouselShowcase
+        products={products}
+        onQuickView={(p) => setQuickViewProduct(p)}
+        lang={lang}
+      />
+
+      {/* 4. Section 4: Technology & Intelligence in Every Stitch (Split Light Macro) */}
+      <div className="v3-section-deferred">
+        <MacroDetail lang={lang} />
+      </div>
+
+      {/* 5. Section 5: Standards Landscape with 3 Stats (Quantum Highway Equivalent) */}
+      <div className="v3-section-deferred">
+        <StandardsLandscape lang={lang} />
+      </div>
+
+      {/* 6. Section 6: Feel the Difference Pre-Footer (Sunset Golden Hour) */}
+      <div className="v3-section-deferred">
+        <PreFooterCta
+          onOpenSizeGuide={openSizeGuide}
+          lang={lang}
+        />
+      </div>
+
+      {/* Quick View Modal */}
+      <QuickViewModal
+        product={quickViewProduct}
+        onClose={() => setQuickViewProduct(null)}
+        onOpenSizeGuide={openSizeGuide}
+        theme={theme}
+      />
+    </>
+  );
+
+  // If inside StorefrontShell, return content directly (Shell provides Header, Footer, and Size Modal)
+  if (shellCtx) {
+    return content;
+  }
+
+  // Standalone fallback
   return (
     <div
       data-theme={theme}
@@ -121,64 +151,20 @@ export default function HomeV3({ featuredProducts }: HomeV3Props) {
           : "bg-[#07080B] text-white selection:bg-white selection:text-black"
       }`}
     >
-      {/* 1. Quantum Floating Glass Header (With Language Switcher & Dark/Light Switcher) */}
       <HeaderV3
-        onOpenSizeGuide={() => setIsSizeGuideOpen(true)}
+        onOpenSizeGuide={openSizeGuide}
         lang={lang}
-        onToggleLang={toggleLang}
+        onToggleLang={() => setLocalLang((prev) => (prev === "th" ? "en" : "th"))}
         theme={theme}
-        onToggleTheme={toggleTheme}
+        onToggleTheme={() =>
+          setLocalTheme((prev) => (prev === "dark" ? "light" : "dark"))
+        }
       />
-
-      {/* 2. Hero Section: Revolutionary Asian Fit Tailoring with 3-Spec Bar */}
-      <HeroV3
-        onOpenSizeGuide={() => setIsSizeGuideOpen(true)}
-        lang={lang}
-        theme={theme}
-      />
-
-      {/* 3. Section 2: A New Era of Everyday Tailoring (Split Architectural Light) */}
-      <CraftStory lang={lang} />
-
-      {/* 4. Section 3: Models Carousel with Real Products from Each Category & Photos */}
-      <CarouselShowcase
-        products={products}
-        onQuickView={(p) => setQuickViewProduct(p)}
-        lang={lang}
-      />
-
-      {/* 5. Section 4: Technology & Intelligence in Every Stitch (Split Light Macro) */}
-      <div className="v3-section-deferred">
-        <MacroDetail lang={lang} />
-      </div>
-
-      {/* 6. Section 5: Standards Landscape with 3 Stats (Quantum Highway Equivalent) */}
-      <div className="v3-section-deferred">
-        <StandardsLandscape lang={lang} />
-      </div>
-
-      {/* 7. Section 6: Feel the Difference Pre-Footer (Sunset Golden Hour) */}
-      <div className="v3-section-deferred">
-        <PreFooterCta
-          onOpenSizeGuide={() => setIsSizeGuideOpen(true)}
-          lang={lang}
-        />
-      </div>
-
-      {/* 8. Section 7: Quantum Deep Dark / Light Tailoring Footer */}
+      <main className="flex-1 w-full">{content}</main>
       <V3Footer />
-
-      {/* Modals: Accessible Native <dialog> */}
       <SmartSizeGuideModal
-        isOpen={isSizeGuideOpen}
-        onClose={() => setIsSizeGuideOpen(false)}
-        theme={theme}
-      />
-
-      <QuickViewModal
-        product={quickViewProduct}
-        onClose={() => setQuickViewProduct(null)}
-        onOpenSizeGuide={() => setIsSizeGuideOpen(true)}
+        isOpen={localIsSizeGuideOpen}
+        onClose={closeSizeGuide}
         theme={theme}
       />
     </div>

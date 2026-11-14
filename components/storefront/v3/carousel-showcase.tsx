@@ -125,13 +125,13 @@ export default function CarouselShowcase({
                 <>
                   คอลเลกชันสินค้า
                   <br />
-                  คัดสรรตามหมวดหมู่จริง
+                  ตอบโจทย์ทุกสไตล์และสรีระ
                 </>
               ) : (
                 <>
-                  Real Garment Collection
+                  Curated Collection
                   <br />
-                  Across Every Category
+                  For Every Fit & Style
                 </>
               )}
             </h2>
