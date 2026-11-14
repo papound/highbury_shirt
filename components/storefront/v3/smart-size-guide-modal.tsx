@@ -343,7 +343,7 @@ export default function SmartSizeGuideModal({ isOpen, onClose }: SmartSizeGuideM
         <span className="text-[#79716B]">
           หากไม่แน่ใจเรื่องขนาด สามารถปรึกษาทีมงานผ่าน{" "}
           <Link
-            href="https://line.ee/T8tlget"
+            href="https://lin.ee/T8tlget"
             target="_blank"
             rel="noopener noreferrer"
             className="text-[#163666] font-semibold underline hover:text-[#0A2B5E]"

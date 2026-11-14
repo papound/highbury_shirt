@@ -50,7 +50,7 @@ export default function StandardsLandscape({ lang = "th" }: StandardsLandscapePr
             </p>
 
             <div className="pt-2">
-              <Link href="https://line.ee/T8tlget" target="_blank" rel="noopener noreferrer" className="v3-btn-white">
+              <Link href="https://lin.ee/T8tlget" target="_blank" rel="noopener noreferrer" className="v3-btn-white">
                 <span>{lang === "th" ? "ปรึกษาสั่งตัดยูนิฟอร์ม OEM" : "Our Impact & Corporate OEM"}</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
