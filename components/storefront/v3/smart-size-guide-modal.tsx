@@ -242,17 +242,17 @@ export default function SmartSizeGuideModal({
       onCancel={handleCancel}
       onClick={handleBackdropClick}
       data-theme={theme}
-      className="v3-dialog w-[94vw] max-w-4xl rounded-2xl border border-[#262830] bg-[#0E1015] p-0 text-white overflow-hidden shadow-2xl backdrop:bg-black/80"
+      className="v3-dialog w-[94vw] max-w-4xl max-h-[min(90dvh,90vh)] open:flex open:flex-col rounded-2xl border border-[#262830] bg-[#0E1015] p-0 text-white overflow-hidden shadow-2xl backdrop:bg-black/80"
       aria-labelledby="size-guide-title"
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4.5 border-b border-[#262830] bg-[#13161D]">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-white/10 text-white flex items-center justify-center border border-white/10">
+      <div className="flex items-center justify-between gap-3 px-4 py-3.5 sm:px-6 sm:py-4.5 border-b border-[#262830] bg-[#13161D] shrink-0">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-9 h-9 shrink-0 rounded-full bg-white/10 text-white flex items-center justify-center border border-white/10">
             <Ruler className="w-4 h-4 text-[#FFB900]" />
           </div>
-          <div>
-            <h2 id="size-guide-title" className="text-base font-semibold text-white tracking-tight">
+          <div className="min-w-0">
+            <h2 id="size-guide-title" className="text-sm sm:text-base font-semibold text-white tracking-tight">
               {lang === "th"
                 ? "คำนวณและดูตารางไซส์เสื้อเชิ้ต Highbury"
                 : "Highbury Size Chart & Smart Fit Calculator"}
@@ -268,7 +268,7 @@ export default function SmartSizeGuideModal({
         <button
           type="button"
           onClick={onClose}
-          className="w-8 h-8 rounded-full border border-[#262830] bg-white/5 hover:bg-white/10 text-[#9496A1] hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+          className="w-8 h-8 shrink-0 rounded-full border border-[#262830] bg-white/5 hover:bg-white/10 text-[#9496A1] hover:text-white flex items-center justify-center transition-colors cursor-pointer"
           aria-label={lang === "th" ? "ปิดหน้าต่าง" : "Close modal"}
         >
           <X className="w-4 h-4" />
@@ -276,17 +276,17 @@ export default function SmartSizeGuideModal({
       </div>
 
       {/* Body Content */}
-      <div className="p-6 space-y-6 max-h-[78vh] overflow-y-auto bg-[#0E1015] text-white">
+      <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-4 sm:p-6 space-y-4 sm:space-y-6 bg-[#0E1015] text-white">
         
         {/* Gender & Sleeve Category Selectors */}
-        <div className="p-4 rounded-xl bg-[#13161D] border border-[#262830] space-y-3">
+        <div className="p-3.5 sm:p-4 rounded-xl bg-[#13161D] border border-[#262830] space-y-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             {/* Gender Toggle */}
             <div className="space-y-1.5">
               <span className="text-[11px] font-medium text-[#9496A1] uppercase tracking-wider flex items-center gap-1.5">
                 <User className="w-3 h-3 text-[#FFB900]" /> {lang === "th" ? "หมวดหมู่" : "Category"}
               </span>
-              <div className="inline-flex p-1 rounded-full bg-[#0E1015] border border-[#262830]">
+              <div className="inline-flex p-1 rounded-full bg-[#0E1015] border border-[#262830] flex-wrap gap-1">
                 <button
                   type="button"
                   onClick={() => handleGenderChange("men")}
@@ -359,7 +359,7 @@ export default function SmartSizeGuideModal({
         </div>
 
         {/* Mode Selector */}
-        <div className="flex border-b border-[#262830] pb-3 gap-2">
+        <div className="flex flex-wrap border-b border-[#262830] pb-3 gap-2">
           <button
             type="button"
             onClick={() => setCalcMode("chest")}
@@ -387,7 +387,7 @@ export default function SmartSizeGuideModal({
         </div>
 
         {/* Calculator Form */}
-        <div className="grid sm:grid-cols-2 gap-4 p-5 rounded-xl bg-[#13161D] border border-[#262830]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 sm:p-5 rounded-xl bg-[#13161D] border border-[#262830]">
           {calcMode === "chest" ? (
             <div className="space-y-2">
               <label htmlFor="chest-input" className="text-xs font-medium text-white flex justify-between">
@@ -593,7 +593,7 @@ export default function SmartSizeGuideModal({
       </div>
 
       {/* Footer */}
-      <div className="flex items-center justify-between px-6 py-4 border-t border-[#262830] bg-[#13161D] text-xs text-[#9496A1]">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 px-4 py-3.5 sm:px-6 sm:py-4 border-t border-[#262830] bg-[#13161D] text-xs text-[#9496A1] shrink-0">
         <span>
           {lang === "th" ? (
             <>
@@ -626,7 +626,7 @@ export default function SmartSizeGuideModal({
         <button
           type="button"
           onClick={onClose}
-          className="px-5 py-2 rounded-full border border-[#262830] bg-white/5 hover:bg-white/10 text-white font-medium transition-colors cursor-pointer"
+          className="px-5 py-2 shrink-0 rounded-full border border-[#262830] bg-white/5 hover:bg-white/10 text-white font-medium transition-colors cursor-pointer"
         >
           {lang === "th" ? "ปิด" : "Close"}
         </button>

@@ -207,6 +207,9 @@ dialog.v3-dialog .font-sans {
 
 /* ── Dialog Default ── */
 dialog.v3-dialog:modal {
+  display: flex;
+  flex-direction: column;
+  max-height: min(90dvh, 90vh);
   overscroll-behavior: contain;
   margin: auto;
   border: 1px solid #262830;
@@ -215,6 +218,8 @@ dialog.v3-dialog:modal {
 }
 
 dialog.v3-dialog::backdrop {
+  overflow: hidden;
+  overscroll-behavior: contain;
   background-color: rgba(7, 8, 11, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);

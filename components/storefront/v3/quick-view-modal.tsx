@@ -95,12 +95,12 @@ export default function QuickViewModal({
       onCancel={handleCancel}
       onClick={handleBackdropClick}
       data-theme={theme}
-      className="v3-dialog w-[92vw] max-w-2xl rounded-2xl border border-[#262830] bg-[#0E1015] p-0 text-white overflow-hidden shadow-2xl backdrop:bg-black/80"
+      className="v3-dialog w-[92vw] max-w-2xl max-h-[min(90dvh,90vh)] open:flex open:flex-col rounded-2xl border border-[#262830] bg-[#0E1015] p-0 text-white overflow-hidden shadow-2xl backdrop:bg-black/80"
       aria-labelledby="quick-view-title"
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4.5 border-b border-[#262830] bg-[#13161D]">
-        <span className="text-xs font-semibold text-[#FFB900] uppercase tracking-wider">
+      <div className="flex items-center justify-between gap-3 px-4 py-3.5 sm:px-6 sm:py-4 border-b border-[#262830] bg-[#13161D] shrink-0">
+        <span className="text-xs font-semibold text-[#FFB900] uppercase tracking-wider truncate">
           {lang === "th"
             ? product.category.nameTh
             : CAT_EN_MAP[product.category.nameTh] || product.category.nameTh}
@@ -108,126 +108,128 @@ export default function QuickViewModal({
         <button
           type="button"
           onClick={onClose}
-          className="w-8 h-8 rounded-full border border-[#262830] bg-white/5 hover:bg-white/10 text-[#9496A1] hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+          className="w-8 h-8 shrink-0 rounded-full border border-[#262830] bg-white/5 hover:bg-white/10 text-[#9496A1] hover:text-white flex items-center justify-center transition-colors cursor-pointer"
           aria-label={lang === "th" ? "ปิดหน้าต่าง" : "Close modal"}
         >
           <X className="w-4 h-4" />
         </button>
       </div>
 
-      {/* Content Grid */}
-      <div className="p-6 grid sm:grid-cols-2 gap-6 max-h-[75vh] overflow-y-auto bg-[#0E1015]">
-        {/* Left: Product Image */}
-        <div className="relative aspect-[4/5] rounded-xl overflow-hidden border border-[#262830] bg-[#13161D]">
-          <Image
-            src={primaryImage}
-            alt={product.nameTh}
-            fill
-            sizes="(max-width: 640px) 90vw, 320px"
-            className="object-cover object-top"
-          />
-        </div>
+      {/* Scrollable Content */}
+      <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-4 sm:p-6 bg-[#0E1015]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 items-start">
+          {/* Left: Product Image */}
+          <div className="relative w-full aspect-[4/5] rounded-xl overflow-hidden border border-[#262830] bg-[#13161D] shrink-0">
+            <Image
+              src={primaryImage}
+              alt={product.nameTh}
+              fill
+              sizes="(max-width: 640px) 90vw, 320px"
+              className="object-cover object-top"
+            />
+          </div>
 
-        {/* Right: Details & Options */}
-        <div className="flex flex-col justify-between space-y-4">
-          <div>
-            <h2
-              id="quick-view-title"
-              className="text-lg sm:text-xl font-bold text-white tracking-tight leading-snug"
-            >
-              {product.nameTh}
-            </h2>
+          {/* Right: Details & Options */}
+          <div className="flex flex-col justify-between space-y-4 min-w-0">
+            <div>
+              <h2
+                id="quick-view-title"
+                className="text-lg sm:text-xl font-bold text-white tracking-tight leading-snug"
+              >
+                {product.nameTh}
+              </h2>
 
-            <div className="mt-2 text-xl sm:text-2xl font-bold text-[#FFB900]">
-              {minPrice === maxPrice
-                ? `฿${minPrice.toLocaleString()}`
-                : `฿${minPrice.toLocaleString()} – ฿${maxPrice.toLocaleString()}`}
-            </div>
-
-            {product.descTh && (
-              <p className="mt-3 text-xs sm:text-sm text-[#E7E7E7] line-clamp-3 leading-relaxed">
-                {product.descTh}
-              </p>
-            )}
-
-            {/* Colors */}
-            {colors.length > 0 && (
-              <div className="mt-4 space-y-1.5">
-                <span className="text-xs font-medium text-white">
-                  {lang === "th" ? "สี:" : "Color:"}
-                </span>
-                <div className="flex flex-wrap gap-1.5">
-                  {colors.map((c) => (
-                    <span
-                      key={c}
-                      className="px-3 py-1 rounded-full bg-[#181B24] text-xs font-medium text-white border border-[#262830]"
-                    >
-                      {c}
-                    </span>
-                  ))}
-                </div>
+              <div className="mt-2 text-xl sm:text-2xl font-bold text-[#FFB900]">
+                {minPrice === maxPrice
+                  ? `฿${minPrice.toLocaleString()}`
+                  : `฿${minPrice.toLocaleString()} – ฿${maxPrice.toLocaleString()}`}
               </div>
-            )}
 
-            {/* Sizes */}
-            {sizes.length > 0 && (
-              <div className="mt-4 space-y-1.5">
-                <div className="flex items-center justify-between">
+              {product.descTh && (
+                <p className="mt-3 text-xs sm:text-sm text-[#E7E7E7] line-clamp-3 leading-relaxed">
+                  {product.descTh}
+                </p>
+              )}
+
+              {/* Colors */}
+              {colors.length > 0 && (
+                <div className="mt-4 space-y-1.5">
                   <span className="text-xs font-medium text-white">
-                    {lang === "th" ? "ไซส์:" : "Size:"}
+                    {lang === "th" ? "สี:" : "Color:"}
                   </span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onClose();
-                      onOpenSizeGuide();
-                    }}
-                    className="inline-flex items-center gap-1 text-xs text-[#FFB900] hover:underline cursor-pointer"
-                  >
-                    <Ruler className="w-3.5 h-3.5" />
-                    <span>{lang === "th" ? "ดูตารางไซส์" : "Size Guide"}</span>
-                  </button>
+                  <div className="flex flex-wrap gap-1.5">
+                    {colors.map((c) => (
+                      <span
+                        key={c}
+                        className="px-3 py-1 rounded-full bg-[#181B24] text-xs font-medium text-white border border-[#262830]"
+                      >
+                        {c}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-                <div className="flex flex-wrap gap-1.5">
-                  {sizes.map((s) => (
-                    <span
-                      key={s}
-                      className="w-9 h-9 rounded-lg border border-[#262830] bg-[#181B24] flex items-center justify-center text-xs font-semibold text-white"
-                    >
-                      {s}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
+              )}
 
-            {/* Guarantee note */}
-            <div className="mt-4 p-3 rounded-xl bg-[#13161D] border border-[#262830] flex items-center gap-2.5 text-xs text-[#E7E7E7]">
-              <ShieldCheck className="w-4 h-4 shrink-0 text-[#FFB900]" />
-              <span>
-                {lang === "th"
-                  ? "รับประกันเปลี่ยนไซส์ฟรีภายใน 7 วัน"
-                  : "Free 7-day size exchange guarantee"}
-              </span>
+              {/* Sizes */}
+              {sizes.length > 0 && (
+                <div className="mt-4 space-y-1.5">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs font-medium text-white">
+                      {lang === "th" ? "ไซส์:" : "Size:"}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onClose();
+                        onOpenSizeGuide();
+                      }}
+                      className="inline-flex items-center gap-1 text-xs text-[#FFB900] hover:underline cursor-pointer"
+                    >
+                      <Ruler className="w-3.5 h-3.5" />
+                      <span>{lang === "th" ? "ดูตารางไซส์" : "Size Guide"}</span>
+                    </button>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {sizes.map((s) => (
+                      <span
+                        key={s}
+                        className="w-9 h-9 rounded-lg border border-[#262830] bg-[#181B24] flex items-center justify-center text-xs font-semibold text-white"
+                      >
+                        {s}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Guarantee note */}
+              <div className="mt-4 p-3 rounded-xl bg-[#13161D] border border-[#262830] flex items-center gap-2.5 text-xs text-[#E7E7E7]">
+                <ShieldCheck className="w-4 h-4 shrink-0 text-[#FFB900]" />
+                <span>
+                  {lang === "th"
+                    ? "รับประกันเปลี่ยนไซส์ฟรีภายใน 7 วัน"
+                    : "Free 7-day size exchange guarantee"}
+                </span>
+              </div>
             </div>
           </div>
-
-          {/* Action Button */}
-          <div className="pt-4 border-t border-[#262830]">
-            <Link
-              href={`/products/${product.slug}`}
-              onClick={onClose}
-              className="v3-btn-white w-full justify-center py-3 text-sm font-semibold"
-            >
-              <span>
-                {lang === "th"
-                  ? "ดูรายละเอียดสินค้าและสั่งซื้อ"
-                  : "View Product & Order"}
-              </span>
-              <ArrowRight className="w-4 h-4 ml-1" />
-            </Link>
-          </div>
         </div>
+      </div>
+
+      {/* Footer Action Button */}
+      <div className="px-4 py-3.5 sm:px-6 sm:py-4 border-t border-[#262830] bg-[#13161D] shrink-0">
+        <Link
+          href={`/products/${product.slug}`}
+          onClick={onClose}
+          className="v3-btn-white w-full justify-center py-3 text-sm font-semibold"
+        >
+          <span>
+            {lang === "th"
+              ? "ดูรายละเอียดสินค้าและสั่งซื้อ"
+              : "View Product & Order"}
+          </span>
+          <ArrowRight className="w-4 h-4 ml-1" />
+        </Link>
       </div>
     </dialog>
   );
