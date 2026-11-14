@@ -299,6 +299,24 @@ dialog.v3-dialog::backdrop {
   color: #0F172A !important;
 }
 
+/* Explicitly preserve crisp white text & icons on dark buttons and surfaces in light mode */
+.v3-page-wrapper[data-theme="light"] .bg-\[\#0F172A\],
+.v3-page-wrapper[data-theme="light"] .bg-\[\#0F172A\] *,
+.v3-page-wrapper[data-theme="light"] .bg-black,
+.v3-page-wrapper[data-theme="light"] .bg-black *,
+.v3-page-wrapper[data-theme="light"] a[class*="bg-[#0F172A]"],
+.v3-page-wrapper[data-theme="light"] a[class*="bg-[#0F172A]"] *,
+.v3-page-wrapper[data-theme="light"] button[class*="bg-[#0F172A]"],
+.v3-page-wrapper[data-theme="light"] button[class*="bg-[#0F172A]"] *,
+.v3-page-wrapper[data-theme="light"] a[class*="bg-black"],
+.v3-page-wrapper[data-theme="light"] a[class*="bg-black"] *,
+.v3-page-wrapper[data-theme="light"] button[class*="bg-black"],
+.v3-page-wrapper[data-theme="light"] button[class*="bg-black"] *,
+.v3-page-wrapper[data-theme="light"] .v3-btn-dark-pill,
+.v3-page-wrapper[data-theme="light"] .v3-btn-dark-pill * {
+  color: #FFFFFF !important;
+}
+
 .v3-page-wrapper[data-theme="light"] .text-\[\#E7E7E7\] {
   color: #334155 !important;
 }

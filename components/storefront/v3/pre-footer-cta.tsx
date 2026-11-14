@@ -52,64 +52,94 @@ export default function PreFooterCta({
             <div
               className="w-full max-w-md p-6 sm:p-8 rounded-2xl sm:rounded-3xl shadow-2xl space-y-6 transition-all duration-300"
               style={{
-                backgroundColor: "rgba(0, 0, 0, 0.55)",
+                backgroundColor: isLight ? "rgba(255, 255, 255, 0.88)" : "rgba(0, 0, 0, 0.55)",
                 backdropFilter: "blur(20px)",
                 WebkitBackdropFilter: "blur(20px)",
-                borderColor: "rgba(255, 255, 255, 0.18)",
+                borderColor: isLight ? "rgba(226, 232, 240, 0.9)" : "rgba(255, 255, 255, 0.18)",
                 borderWidth: "1px",
                 borderStyle: "solid",
-                color: "#FFFFFF",
+                boxShadow: isLight
+                  ? "0 20px 40px -15px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(255, 255, 255, 0.6) inset"
+                  : "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
               }}
             >
               {/* Stat 1: 7 Days Return */}
               <div className="flex items-start gap-4">
-                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0 mt-0.5 border border-white/20">
-                  <ShieldCheck className="w-4 h-4 text-white" />
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5 border ${
+                  isLight ? "bg-[#0F172A]/5 border-[#0F172A]/10 text-[#0F172A]" : "bg-white/10 border-white/20 text-white"
+                }`}>
+                  <ShieldCheck className="w-4 h-4" />
                 </div>
                 <div>
-                  <div className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+                  <div className={`text-2xl sm:text-3xl font-bold tracking-tight ${
+                    isLight ? "text-[#0F172A]" : "text-white"
+                  }`}>
                     7 Days
                   </div>
-                  <div className="text-xs sm:text-sm text-white/80 font-medium mt-0.5">
+                  <div className={`text-xs sm:text-sm font-medium mt-0.5 ${
+                    isLight ? "text-[#334155]" : "text-white/80"
+                  }`}>
                     {lang === "th" ? "รับประกันเปลี่ยนไซส์ฟรี" : "Free Size Exchange"}
                   </div>
-                  <div className="text-[11px] sm:text-xs text-white/60 mt-0.5">
+                  <div className={`text-[11px] sm:text-xs mt-0.5 ${
+                    isLight ? "text-[#64748B]" : "text-white/60"
+                  }`}>
                     {lang === "th" ? "ลองใส่แล้วไม่พอดี เปลี่ยนใหม่ได้ทันที ไม่มีค่าใช้จ่าย" : "Swap sizes hassle-free if it doesn't fit perfectly"}
                   </div>
                 </div>
               </div>
 
               {/* Stat 2: Asian Fit */}
-              <div className="flex items-start gap-4 border-t border-white/15 pt-5">
-                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0 mt-0.5 border border-white/20">
-                  <Sparkles className="w-4 h-4 text-white" />
+              <div className={`flex items-start gap-4 border-t pt-5 ${
+                isLight ? "border-[#E2E8F0]" : "border-white/15"
+              }`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5 border ${
+                  isLight ? "bg-[#0F172A]/5 border-[#0F172A]/10 text-[#0F172A]" : "bg-white/10 border-white/20 text-white"
+                }`}>
+                  <Sparkles className="w-4 h-4" />
                 </div>
                 <div>
-                  <div className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+                  <div className={`text-2xl sm:text-3xl font-bold tracking-tight ${
+                    isLight ? "text-[#0F172A]" : "text-white"
+                  }`}>
                     Asian Fit
                   </div>
-                  <div className="text-xs sm:text-sm text-white/80 font-medium mt-0.5">
+                  <div className={`text-xs sm:text-sm font-medium mt-0.5 ${
+                    isLight ? "text-[#334155]" : "text-white/80"
+                  }`}>
                     {lang === "th" ? "แพทเทิร์นสรีระคนไทยโดยเฉพาะ" : "Asian Proportion Silhouette"}
                   </div>
-                  <div className="text-[11px] sm:text-xs text-white/60 mt-0.5">
+                  <div className={`text-[11px] sm:text-xs mt-0.5 ${
+                    isLight ? "text-[#64748B]" : "text-white/60"
+                  }`}>
                     {lang === "th" ? "สัดส่วนไหล่และวงแขนพอดี คล่องตัว ไม่ตึงรั้ง" : "Sculpted proportions deliver effortless mobility"}
                   </div>
                 </div>
               </div>
 
               {/* Stat 3: Corporate OEM */}
-              <div className="flex items-start gap-4 border-t border-white/15 pt-5">
-                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0 mt-0.5 border border-white/20">
-                  <Building2 className="w-4 h-4 text-white" />
+              <div className={`flex items-start gap-4 border-t pt-5 ${
+                isLight ? "border-[#E2E8F0]" : "border-white/15"
+              }`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5 border ${
+                  isLight ? "bg-[#0F172A]/5 border-[#0F172A]/10 text-[#0F172A]" : "bg-white/10 border-white/20 text-white"
+                }`}>
+                  <Building2 className="w-4 h-4" />
                 </div>
                 <div>
-                  <div className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+                  <div className={`text-2xl sm:text-3xl font-bold tracking-tight ${
+                    isLight ? "text-[#0F172A]" : "text-white"
+                  }`}>
                     3,500 Pcs
                   </div>
-                  <div className="text-xs sm:text-sm text-white/80 font-medium mt-0.5">
+                  <div className={`text-xs sm:text-sm font-medium mt-0.5 ${
+                    isLight ? "text-[#334155]" : "text-white/80"
+                  }`}>
                     {lang === "th" ? "บริการสั่งผลิตยูนิฟอร์มองค์กร (OEM)" : "Corporate Uniform OEM Capacity"}
                   </div>
-                  <div className="text-[11px] sm:text-xs text-white/60 mt-0.5">
+                  <div className={`text-[11px] sm:text-xs mt-0.5 ${
+                    isLight ? "text-[#64748B]" : "text-white/60"
+                  }`}>
                     {lang === "th" ? "กำลังผลิตต่อเดือน พร้อมบริการปักโลโก้และเลือกผ้าตาม CI" : "Monthly capacity with custom embroidery & fabric CI"}
                   </div>
                 </div>
@@ -165,12 +195,12 @@ export default function PreFooterCta({
                 href="#models"
                 className={`inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 shadow-md group cursor-pointer ${
                   isLight
-                    ? "bg-[#0F172A] text-white hover:bg-[#1E293B]"
+                    ? "bg-[#0F172A] !text-white hover:bg-[#1E293B]"
                     : "bg-white text-[#07080B] hover:bg-white/90"
                 }`}
               >
-                <span>{lang === "th" ? "เลือกซื้อสินค้า" : "Shop Collection"}</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                <span className={isLight ? "!text-white" : ""}>{lang === "th" ? "เลือกซื้อสินค้า" : "Shop Collection"}</span>
+                <ArrowRight className={`w-4 h-4 group-hover:translate-x-0.5 transition-transform ${isLight ? "!text-white" : ""}`} />
               </Link>
 
               <button

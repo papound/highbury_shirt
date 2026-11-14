@@ -114,25 +114,25 @@ export default function MacroDetail({ lang: propLang }: MacroDetailProps) {
             <div
               className="p-3 sm:p-3.5 rounded-xl shadow-lg transition-all"
               style={{
-                backgroundColor: "rgba(0, 0, 0, 0.6)",
+                backgroundColor: isLight ? "rgba(255, 255, 255, 0.88)" : "rgba(0, 0, 0, 0.6)",
                 backdropFilter: "blur(20px)",
                 WebkitBackdropFilter: "blur(20px)",
-                borderColor: "rgba(255, 255, 255, 0.18)",
+                borderColor: isLight ? "rgba(226, 232, 240, 0.9)" : "rgba(255, 255, 255, 0.18)",
                 borderWidth: "1px",
                 borderStyle: "solid",
-                color: "#FFFFFF",
+                boxShadow: isLight ? "0 4px 20px -2px rgba(0, 0, 0, 0.06)" : undefined,
               }}
             >
               <div className="flex items-center gap-1.5 mb-1">
                 <CheckCircle2 className={`w-3.5 h-3.5 ${isLight ? "text-[#0F172A]" : "text-white"}`} />
-                <div className="text-base sm:text-lg font-bold tracking-tight text-white">
+                <div className={`text-base sm:text-lg font-bold tracking-tight ${isLight ? "text-[#0F172A]" : "text-white"}`}>
                   16–18
                 </div>
               </div>
-              <div className="text-[11px] font-semibold text-white/90">
+              <div className={`text-[11px] font-semibold ${isLight ? "text-[#334155]" : "text-white/90"}`}>
                 {lang === "th" ? "ฝีเข็มละเอียด" : "SPI Count"}
               </div>
-              <div className="text-[10px] text-white/60 mt-0.5 leading-snug line-clamp-1">
+              <div className={`text-[10px] mt-0.5 leading-snug line-clamp-1 ${isLight ? "text-[#64748B]" : "text-white/60"}`}>
                 {lang === "th" ? "ตะเข็บแน่น เรียบเนียน" : "Clean drape"}
               </div>
             </div>
@@ -140,25 +140,25 @@ export default function MacroDetail({ lang: propLang }: MacroDetailProps) {
             <div
               className="p-3 sm:p-3.5 rounded-xl shadow-lg transition-all"
               style={{
-                backgroundColor: "rgba(0, 0, 0, 0.6)",
+                backgroundColor: isLight ? "rgba(255, 255, 255, 0.88)" : "rgba(0, 0, 0, 0.6)",
                 backdropFilter: "blur(20px)",
                 WebkitBackdropFilter: "blur(20px)",
-                borderColor: "rgba(255, 255, 255, 0.18)",
+                borderColor: isLight ? "rgba(226, 232, 240, 0.9)" : "rgba(255, 255, 255, 0.18)",
                 borderWidth: "1px",
                 borderStyle: "solid",
-                color: "#FFFFFF",
+                boxShadow: isLight ? "0 4px 20px -2px rgba(0, 0, 0, 0.06)" : undefined,
               }}
             >
               <div className="flex items-center gap-1.5 mb-1">
                 <ShieldCheck className={`w-3.5 h-3.5 ${isLight ? "text-[#0F172A]" : "text-white"}`} />
-                <div className="text-base sm:text-lg font-bold tracking-tight text-white">
+                <div className={`text-base sm:text-lg font-bold tracking-tight ${isLight ? "text-[#0F172A]" : "text-white"}`}>
                   2-Layer
                 </div>
               </div>
-              <div className="text-[11px] font-semibold text-white/90">
+              <div className={`text-[11px] font-semibold ${isLight ? "text-[#334155]" : "text-white/90"}`}>
                 {lang === "th" ? "ปกอัดกาวคู่" : "Dual Fused"}
               </div>
-              <div className="text-[10px] text-white/60 mt-0.5 leading-snug line-clamp-1">
+              <div className={`text-[10px] mt-0.5 leading-snug line-clamp-1 ${isLight ? "text-[#64748B]" : "text-white/60"}`}>
                 {lang === "th" ? "ปกตั้งสวย ไม่ย้วย" : "Crisp stance"}
               </div>
             </div>
@@ -166,25 +166,25 @@ export default function MacroDetail({ lang: propLang }: MacroDetailProps) {
             <div
               className="p-3 sm:p-3.5 rounded-xl shadow-lg transition-all"
               style={{
-                backgroundColor: "rgba(0, 0, 0, 0.6)",
+                backgroundColor: isLight ? "rgba(255, 255, 255, 0.88)" : "rgba(0, 0, 0, 0.6)",
                 backdropFilter: "blur(20px)",
                 WebkitBackdropFilter: "blur(20px)",
-                borderColor: "rgba(255, 255, 255, 0.18)",
+                borderColor: isLight ? "rgba(226, 232, 240, 0.9)" : "rgba(255, 255, 255, 0.18)",
                 borderWidth: "1px",
                 borderStyle: "solid",
-                color: "#FFFFFF",
+                boxShadow: isLight ? "0 4px 20px -2px rgba(0, 0, 0, 0.06)" : undefined,
               }}
             >
               <div className="flex items-center gap-1.5 mb-1">
                 <Sparkles className={`w-3.5 h-3.5 ${isLight ? "text-[#0F172A]" : "text-white"}`} />
-                <div className="text-base sm:text-lg font-bold tracking-tight text-white">
+                <div className={`text-base sm:text-lg font-bold tracking-tight ${isLight ? "text-[#0F172A]" : "text-white"}`}>
                   4-Hole
                 </div>
               </div>
-              <div className="text-[11px] font-semibold text-white/90">
+              <div className={`text-[11px] font-semibold ${isLight ? "text-[#334155]" : "text-white/90"}`}>
                 {lang === "th" ? "กระดุม 4 รู" : "Reinforced"}
               </div>
-              <div className="text-[10px] text-white/60 mt-0.5 leading-snug line-clamp-1">
+              <div className={`text-[10px] mt-0.5 leading-snug line-clamp-1 ${isLight ? "text-[#64748B]" : "text-white/60"}`}>
                 {lang === "th" ? "เย็บย้ำแน่นหนา" : "High strength"}
               </div>
             </div>
@@ -196,12 +196,12 @@ export default function MacroDetail({ lang: propLang }: MacroDetailProps) {
               href="#models"
               className={`inline-flex items-center gap-2.5 px-6 py-3 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 shadow-md group cursor-pointer ${
                 isLight
-                  ? "bg-[#0F172A] text-white hover:bg-[#1E293B]"
+                  ? "bg-[#0F172A] !text-white hover:bg-[#1E293B]"
                   : "bg-black text-white border border-white/20 hover:bg-white/10"
               }`}
             >
-              <span>{lang === "th" ? "ดูแบบเสื้อทั้งหมด" : "View All Shirts"}</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              <span className={isLight ? "!text-white" : ""}>{lang === "th" ? "ดูแบบเสื้อทั้งหมด" : "View All Shirts"}</span>
+              <ArrowRight className={`w-4 h-4 group-hover:translate-x-0.5 transition-transform ${isLight ? "!text-white" : ""}`} />
             </Link>
           </div>
         </div>
