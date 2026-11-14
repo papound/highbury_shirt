@@ -6,6 +6,7 @@ import { Prisma } from "@prisma/client";
 import { Sparkles } from "lucide-react";
 
 import AnnouncementBar from "./v3/announcement-bar";
+import HeaderV3 from "./v3/header-v3";
 import HeroV3 from "./v3/hero-v3";
 import CraftStory from "./v3/craft-story";
 import CarouselShowcase from "./v3/carousel-showcase";
@@ -64,46 +65,49 @@ export default function HomeV3({ featuredProducts, categories }: HomeV3Props) {
   }));
 
   return (
-    <div className="v3-page-wrapper flex flex-col w-full bg-[#071322] text-foreground antialiased selection:bg-blue-600/20">
+    <div className="v3-page-wrapper flex flex-col w-full bg-[#0A0B0E] text-[#F8FAFC] antialiased selection:bg-blue-600/30 selection:text-white">
       {/* 1. Top Announcement Bar */}
       <AnnouncementBar />
 
-      {/* 2. Hero Section: Cinematic Full-Bleed with 3-Spec Bar */}
+      {/* 2. Floating Quantum Glass Header */}
+      <HeaderV3 onOpenSizeGuide={() => setIsSizeGuideOpen(true)} />
+
+      {/* 3. Hero Section: Cinematic Full-Bleed with 3-Spec Bar */}
       <HeroV3 onOpenSizeGuide={() => setIsSizeGuideOpen(true)} />
 
-      {/* 3. Craftsmanship Story: Editorial Split (White Background) */}
+      {/* 4. Craftsmanship Story: Editorial Split (White Background) */}
       <CraftStory />
 
-      {/* 4. Curated Collection Carousel: Dark Dusk Embla Carousel */}
+      {/* 5. Curated Collection Carousel: Dark Dusk Embla Carousel */}
       <CarouselShowcase
         products={products}
         onQuickView={(p) => setQuickViewProduct(p)}
       />
 
-      {/* 5. Macro Detail & Fabric Weave: Split Section (White Background) */}
+      {/* 6. Macro Detail & Fabric Weave: Split Section (White Background) */}
       <div className="v3-section-deferred">
         <MacroDetail />
       </div>
 
-      {/* 6. Quick Category Browse Bar */}
+      {/* 7. Quick Category Browse Bar */}
       {categories.length > 0 && (
-        <section className="w-full py-10 bg-slate-100 dark:bg-slate-900 border-b border-border/60">
+        <section className="w-full py-12 bg-white text-[#0A0B0E] border-b border-[#E2E8F0]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-2 text-xs font-semibold text-slate-600 dark:text-slate-300">
+              <div className="flex items-center gap-2 text-xs font-semibold text-[#64748B] tracking-wider uppercase">
                 <Sparkles className="w-4 h-4 text-amber-500" />
-                <span>ค้นหาตามหมวดหมู่:</span>
+                <span>หมวดหมู่แนะนำ:</span>
               </div>
-              <div className="flex flex-wrap items-center justify-center sm:justify-end gap-2">
+              <div className="flex flex-wrap items-center justify-center sm:justify-end gap-2.5">
                 <Link
                   href="/products?category=mens-shirts"
-                  className="px-4 py-2 rounded-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 text-xs font-semibold text-slate-900 dark:text-white transition-colors"
+                  className="px-5 py-2.5 rounded-full border border-[#E2E8F0] bg-[#F8FAFC] hover:bg-[#F1F5F9] text-xs font-bold text-[#0A0B0E] transition-colors"
                 >
                   เสื้อเชิ้ตผู้ชาย
                 </Link>
                 <Link
                   href="/products?category=womens-shirts"
-                  className="px-4 py-2 rounded-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 text-xs font-semibold text-slate-900 dark:text-white transition-colors"
+                  className="px-5 py-2.5 rounded-full border border-[#E2E8F0] bg-[#F8FAFC] hover:bg-[#F1F5F9] text-xs font-bold text-[#0A0B0E] transition-colors"
                 >
                   เสื้อเชิ้ตผู้หญิง
                 </Link>
@@ -119,7 +123,7 @@ export default function HomeV3({ featuredProducts, categories }: HomeV3Props) {
                     <Link
                       key={cat.id}
                       href={`/products?category=${cat.slug}`}
-                      className="px-4 py-2 rounded-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 text-xs font-semibold text-slate-900 dark:text-white transition-colors"
+                      className="px-5 py-2.5 rounded-full border border-[#E2E8F0] bg-[#F8FAFC] hover:bg-[#F1F5F9] text-xs font-bold text-[#0A0B0E] transition-colors"
                     >
                       {cat.nameTh}
                     </Link>
@@ -130,17 +134,17 @@ export default function HomeV3({ featuredProducts, categories }: HomeV3Props) {
         </section>
       )}
 
-      {/* 7. Quality & Promise Landscape Banner (Dark Cinematic) */}
+      {/* 8. Quality & Promise Landscape Banner (Dark Cinematic) */}
       <div className="v3-section-deferred">
         <PromiseLandscape />
       </div>
 
-      {/* 8. Pre-Footer Dramatic CTA ('Feel the Difference') */}
+      {/* 9. Pre-Footer Dramatic CTA ('Feel the Difference') */}
       <div className="v3-section-deferred">
         <PreFooterCta onOpenSizeGuide={() => setIsSizeGuideOpen(true)} />
       </div>
 
-      {/* 9. Corporate Uniform & OEM Service Banner */}
+      {/* 10. Corporate Uniform & OEM Service Banner */}
       <div className="v3-section-deferred">
         <CorporateBanner />
       </div>

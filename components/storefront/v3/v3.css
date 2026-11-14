@@ -1,56 +1,161 @@
 /* ─────────────────────────────────────────────────────────────────────────────
-   HIGHBURY STOREFRONT V3 — DEDICATED STYLESHEET
-   Quantum Luxury Editorial DTC Design System
-   Scoped exclusively for Storefront v3
+   QUANTUM LUXURY EDITORIAL DTC DESIGN SYSTEM FOR HIGHBURY V3
+   Inspired by: Quantum Motors (https://z9994-eo58it.ps15.zwhhosting.com/)
+   Scoped exclusively for Storefront v3 (.v3-page-wrapper)
    ───────────────────────────────────────────────────────────────────────────── */
 
-/* ─── 1. Design Tokens (Scoped to v3) ────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
 .v3-page-wrapper {
-  --v3-bg-primary: #071322;
-  --v3-bg-secondary: #0A1828;
-  --v3-bg-surface: #0E2238;
+  /* ── Typography Tokens ── */
+  --v3-font-display: 'Cormorant Garamond', Georgia, serif;
+  --v3-font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --v3-font-mono: 'JetBrains Mono', monospace;
+
+  /* ── Color Palette: Quantum Pitch Dark & Pure White ── */
+  --v3-bg-dark: #0A0B0E;
+  --v3-bg-dark-surface: #101217;
+  --v3-bg-dark-card: rgba(255, 255, 255, 0.035);
+  --v3-border-dark: rgba(255, 255, 255, 0.08);
+  --v3-border-dark-hover: rgba(255, 255, 255, 0.2);
+
   --v3-bg-light: #FFFFFF;
-  --v3-bg-light-muted: #F8F9FA;
-  
-  --v3-text-white: #FFFFFF;
-  --v3-text-white-muted: rgba(255, 255, 255, 0.75);
-  --v3-text-white-subtle: rgba(255, 255, 255, 0.55);
-  --v3-text-dark: #071322;
+  --v3-bg-light-muted: #F8FAFC;
+  --v3-border-light: #E2E8F0;
+
+  --v3-text-main: #F8FAFC;
+  --v3-text-muted: #94A3B8;
+  --v3-text-subtle: #64748B;
+  --v3-text-dark: #0A0B0E;
   --v3-text-dark-muted: #475569;
-  
-  --v3-accent-blue: #3B82F6;
+
+  --v3-accent-blue: #2E90FA;
   --v3-accent-amber: #F59E0B;
   --v3-accent-emerald: #10B981;
-  
-  --v3-border-light: rgba(255, 255, 255, 0.12);
-  --v3-border-dark: #E2E8F0;
-  
-  --v3-font-heading: 'Google Sans', 'Google Sans Flex', -apple-system, BlinkMacSystemFont, sans-serif;
-  --v3-font-body: 'Google Sans', 'Google Sans Flex', -apple-system, BlinkMacSystemFont, sans-serif;
 
-  /* Hallmark floor: clip horizontal overflow without scroll container side-effects */
+  /* ── Base Setup ── */
+  font-family: var(--v3-font-sans);
+  background-color: var(--v3-bg-dark);
+  color: var(--v3-text-main);
   overflow-x: clip;
   width: 100%;
 }
 
-/* ─── 2. Native <dialog> Modal Styles (Modern Web Guidance) ────────────────── */
-.v3-page-wrapper dialog.v3-dialog:modal,
-dialog.v3-dialog:modal {
-  overscroll-behavior: contain;
-  margin: auto;
-  border: none;
+/* ── Typography Utility Classes ── */
+.v3-page-wrapper .font-display {
+  font-family: var(--v3-font-display);
 }
 
-.v3-page-wrapper dialog.v3-dialog::backdrop,
-dialog.v3-dialog::backdrop {
-  overflow: hidden;
-  overscroll-behavior: contain;
-  background-color: rgba(5, 14, 26, 0.72);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+.v3-page-wrapper .font-mono {
+  font-family: var(--v3-font-mono);
 }
 
-/* ─── 3. Embla Carousel Engine (Mobile-First Touch & Desktop) ─────────────── */
+.v3-page-wrapper .font-sans {
+  font-family: var(--v3-font-sans);
+}
+
+/* ── Quantum Pill Buttons ── */
+.v3-page-wrapper .v3-btn-white {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 2rem;
+  border-radius: 9999px;
+  background-color: #FFFFFF;
+  color: #0A0B0E;
+  font-weight: 700;
+  font-size: 0.875rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.v3-page-wrapper .v3-btn-white:hover {
+  background-color: #F1F5F9;
+  transform: translateY(-1px);
+  box-shadow: 0 14px 28px -5px rgba(0, 0, 0, 0.45);
+}
+
+.v3-page-wrapper .v3-btn-white:active {
+  transform: scale(0.98);
+}
+
+.v3-page-wrapper .v3-btn-glass {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  padding: 0.875rem 2rem;
+  border-radius: 9999px;
+  background-color: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: #FFFFFF;
+  font-weight: 600;
+  font-size: 0.875rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+  cursor: pointer;
+}
+
+.v3-page-wrapper .v3-btn-glass:hover {
+  background-color: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-1px);
+}
+
+.v3-page-wrapper .v3-btn-glass:active {
+  transform: scale(0.98);
+}
+
+.v3-page-wrapper .v3-btn-black {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 2rem;
+  border-radius: 9999px;
+  background-color: #0A0B0E;
+  color: #FFFFFF;
+  font-weight: 700;
+  font-size: 0.875rem;
+  box-shadow: 0 10px 20px -5px rgba(10, 11, 14, 0.3);
+  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.v3-page-wrapper .v3-btn-black:hover {
+  background-color: #1A1D24;
+  transform: translateY(-1px);
+}
+
+.v3-page-wrapper .v3-btn-black:active {
+  transform: scale(0.98);
+}
+
+/* ── Circular Arrow Controls ── */
+.v3-page-wrapper .v3-arrow-btn {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background-color: rgba(255, 255, 255, 0.04);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  cursor: pointer;
+}
+
+.v3-page-wrapper .v3-arrow-btn:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: scale(1.05);
+}
+
+/* ── Embla Carousel Rules ── */
 .v3-page-wrapper .embla {
   overflow: hidden;
   width: 100%;
@@ -59,102 +164,49 @@ dialog.v3-dialog::backdrop {
 .v3-page-wrapper .embla__container {
   display: flex;
   touch-action: pan-y pinch-zoom;
-  margin-left: -1rem;
-}
-
-@media (min-width: 640px) {
-  .v3-page-wrapper .embla__container {
-    margin-left: -1.5rem;
-  }
+  margin-left: -1.25rem;
 }
 
 .v3-page-wrapper .embla__slide {
   flex: 0 0 85%;
   min-width: 0;
-  padding-left: 1rem;
+  padding-left: 1.25rem;
 }
 
 @media (min-width: 640px) {
   .v3-page-wrapper .embla__slide {
     flex: 0 0 50%;
-    padding-left: 1.5rem;
   }
 }
 
 @media (min-width: 1024px) {
   .v3-page-wrapper .embla__slide {
     flex: 0 0 33.333%;
-    padding-left: 1.5rem;
   }
 }
 
-/* ─── 4. CSS Container Queries for Product Cards ─────────────────────────── */
-.v3-page-wrapper .v3-card-container {
-  container-type: inline-size;
+/* ── Native <dialog> Modal Styles ── */
+dialog.v3-dialog:modal {
+  overscroll-behavior: contain;
+  margin: auto;
+  border: none;
+  font-family: var(--v3-font-sans);
 }
 
-/* ─── 5. Below-the-fold Performance Optimization ─────────────────────────── */
+dialog.v3-dialog::backdrop {
+  overflow: hidden;
+  overscroll-behavior: contain;
+  background-color: rgba(7, 8, 11, 0.78);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* ── Performance & Accessibility ── */
 .v3-page-wrapper .v3-section-deferred {
   content-visibility: auto;
   contain-intrinsic-size: auto 600px;
 }
 
-/* ─── 6. Luxury Pill Buttons & Micro-Interactions ─────────────────────────── */
-.v3-page-wrapper .v3-pill-btn-white {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.875rem 2rem;
-  border-radius: 9999px;
-  background-color: #FFFFFF;
-  color: #071322;
-  font-weight: 700;
-  font-size: 0.875rem;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.25);
-  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
-  cursor: pointer;
-}
-
-.v3-page-wrapper .v3-pill-btn-white:hover {
-  background-color: #F1F5F9;
-  transform: translateY(-1px);
-  box-shadow: 0 14px 28px -5px rgba(0, 0, 0, 0.35);
-}
-
-.v3-page-wrapper .v3-pill-btn-white:active {
-  transform: scale(0.98);
-}
-
-.v3-page-wrapper .v3-pill-btn-glass {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.625rem;
-  padding: 0.875rem 2rem;
-  border-radius: 9999px;
-  background-color: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  color: #FFFFFF;
-  font-weight: 600;
-  font-size: 0.875rem;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
-  cursor: pointer;
-}
-
-.v3-page-wrapper .v3-pill-btn-glass:hover {
-  background-color: rgba(255, 255, 255, 0.16);
-  border-color: rgba(255, 255, 255, 0.35);
-  transform: translateY(-1px);
-}
-
-.v3-page-wrapper .v3-pill-btn-glass:active {
-  transform: scale(0.98);
-}
-
-/* ─── 7. Hallmark Focus Visible Standard ─────────────────────────────────── */
 .v3-page-wrapper a:focus-visible,
 .v3-page-wrapper button:focus-visible,
 .v3-page-wrapper input:focus-visible {
@@ -162,7 +214,6 @@ dialog.v3-dialog::backdrop {
   outline-offset: 2px;
 }
 
-/* ─── 8. Accessibility: Reduced Motion Fallback ──────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   .v3-page-wrapper *,
   .v3-page-wrapper *::before,
