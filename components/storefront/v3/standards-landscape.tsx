@@ -3,7 +3,11 @@
 import Link from "next/link";
 import { ArrowRight, ShieldCheck, Factory, CheckCircle2 } from "lucide-react";
 
-export default function StandardsLandscape() {
+interface StandardsLandscapeProps {
+  lang?: "th" | "en";
+}
+
+export default function StandardsLandscape({ lang = "th" }: StandardsLandscapeProps) {
   return (
     <section id="standards" className="relative w-full py-28 sm:py-36 bg-[#0E1015] text-white overflow-hidden border-b border-white/10">
       {/* Background cinematic landscape atmosphere matching Quantum coastal highway scene */}
@@ -20,24 +24,34 @@ export default function StandardsLandscape() {
           {/* Left Column (Quantum Style: Tag, Headline, Paragraph, Button) */}
           <div className="lg:col-span-7 space-y-6">
             <div className="text-xs font-semibold tracking-[0.25em] text-emerald-400 uppercase">
-              STANDARDS & PRECISION
+              STANDARDS & OEM · มาตรฐานการผลิต
             </div>
 
             <h2 className="text-4xl sm:text-5xl font-medium tracking-[-0.03em] text-white leading-[1.1]">
-              Driven by
-              <br />
-              a Higher Standard
+              {lang === "th" ? (
+                <>
+                  ขับเคลื่อนด้วย
+                  <br />
+                  มาตรฐานคุณภาพไร้ที่ติ
+                </>
+              ) : (
+                <>
+                  Driven by
+                  <br />
+                  a Higher Standard
+                </>
+              )}
             </h2>
 
             <p className="text-base sm:text-lg text-white/70 leading-relaxed max-w-xl">
-              We are committed to eliminating ill-fitting workwear and elevating professional confidence.
-              With pre-shrunk easy-care textiles, dedicated craftsmanship in our 3,500 pcs/month workshop,
-              and our 7-day hassle-free size exchange guarantee, Highbury is redefining modern tailoring.
+              {lang === "th"
+                ? "เรามุ่งมั่นขจัดปัญหาเสื้อไม่พอดีตัว เสื้อเชิ้ตทุกตัวผ่านการตรวจเช็กก่อนบรรจุ พร้อมการรับประกันเปลี่ยนไซส์ฟรีภายใน 7 วัน และเวิร์กช็อปของเราพร้อมรองรับการสั่งตัดยูนิฟอร์มองค์กรด้วยมาตรฐานขั้นสูง"
+                : "We are committed to eliminating ill-fitting workwear and elevating professional confidence. Backed by our 7-day hassle-free size exchange guarantee and dedicated 3,500 pcs/month OEM tailoring capacity."}
             </p>
 
             <div className="pt-2">
               <Link href="https://lin.ee/highbury" target="_blank" rel="noopener noreferrer" className="v3-btn-white">
-                <span>Our Impact & OEM</span>
+                <span>{lang === "th" ? "ปรึกษาสั่งตัดยูนิฟอร์ม OEM" : "Our Impact & Corporate OEM"}</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
@@ -54,7 +68,7 @@ export default function StandardsLandscape() {
                   0
                 </div>
                 <div className="text-xs font-medium text-white/50 tracking-wider uppercase mt-1">
-                  Size Mismatch Risk (เปลี่ยนไซส์ฟรี 7 วัน)
+                  {lang === "th" ? "Size Mismatch Risk (เปลี่ยนไซส์ฟรีใน 7 วัน)" : "Size Mismatch Risk (7-Day Free Exchange)"}
                 </div>
               </div>
             </div>
@@ -68,7 +82,7 @@ export default function StandardsLandscape() {
                   3,500+
                 </div>
                 <div className="text-xs font-medium text-white/50 tracking-wider uppercase mt-1">
-                  Monthly Tailoring Output (กำลังผลิต/เดือน)
+                  {lang === "th" ? "Monthly Output (กำลังผลิตมาตรฐาน/เดือน)" : "Monthly Tailoring Output (Pcs/Month)"}
                 </div>
               </div>
             </div>
@@ -82,7 +96,7 @@ export default function StandardsLandscape() {
                   100%
                 </div>
                 <div className="text-xs font-medium text-white/50 tracking-wider uppercase mt-1">
-                  Hand-Inspected Quality Control
+                  {lang === "th" ? "Hand-Inspected (ตรวจคุณภาพก่อนจัดส่ง)" : "Hand-Inspected Quality Control"}
                 </div>
               </div>
             </div>

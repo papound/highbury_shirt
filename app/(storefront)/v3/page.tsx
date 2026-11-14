@@ -3,21 +3,50 @@ import prisma from "@/lib/prisma";
 import HomeV3 from "@/components/storefront/home-v3";
 
 export const metadata: Metadata = {
-  title: "Home V3 (Design Preview) – Highbury International",
-  description: "Highbury International – เสื้อเชิ้ตคุณภาพพรีเมียม สไตล์ Modern DTC Apparel",
+  title: "Highbury International – Revolutionary Asian Fit Tailoring",
+  description: "Highbury International – เสื้อเชิ้ตสำเร็จรูปคุณภาพพรีเมียม คัตติ้งพอดีตัวสำหรับสรีระคนไทย",
 };
 
 async function getFeaturedProducts() {
-  return prisma.product.findMany({
-    where: { isFeatured: true, status: "ACTIVE" },
+  // Query representative products across all active shirt categories
+  const categories = await prisma.category.findMany({
+    where: { isActive: true, slug: { not: "" } },
+    orderBy: { sortOrder: "asc" },
     include: {
-      images: { where: { variantId: null }, orderBy: { sortOrder: "asc" }, take: 1 },
-      variants: true,
-      category: true,
+      products: {
+        where: { status: "ACTIVE" },
+        take: 1,
+        include: {
+          images: { orderBy: { sortOrder: "asc" } },
+          variants: true,
+          category: true,
+        },
+      },
     },
-    orderBy: { createdAt: "desc" },
-    take: 6,
   });
+
+  const categoryProducts = categories.flatMap((c) => c.products);
+
+  // If fewer than 6, backfill with active products
+  if (categoryProducts.length < 6) {
+    const existingIds = categoryProducts.map((p) => p.id);
+    const extra = await prisma.product.findMany({
+      where: {
+        status: "ACTIVE",
+        id: { notIn: existingIds },
+        category: { slug: { not: "" } },
+      },
+      include: {
+        images: { orderBy: { sortOrder: "asc" } },
+        variants: true,
+        category: true,
+      },
+      take: 6 - categoryProducts.length,
+    });
+    return [...categoryProducts, ...extra];
+  }
+
+  return categoryProducts;
 }
 
 async function getCategories() {

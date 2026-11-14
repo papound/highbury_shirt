@@ -4,7 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
-export default function MacroDetail() {
+interface MacroDetailProps {
+  lang?: "th" | "en";
+}
+
+export default function MacroDetail({ lang = "th" }: MacroDetailProps) {
   return (
     <section id="craftsmanship" className="w-full py-24 sm:py-32 bg-white text-[#0A0B0E] border-b border-[#E2E8F0]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -12,24 +16,34 @@ export default function MacroDetail() {
           {/* Left Column (Quantum Style: Tag, Headline, Paragraph, Black Pill) */}
           <div className="lg:col-span-5 space-y-6">
             <div className="text-xs font-semibold tracking-[0.25em] text-[#64748B] uppercase">
-              TECHNOLOGY
+              TECHNOLOGY · เทคโนโลยีงานตัดเย็บ
             </div>
 
             <h2 className="text-4xl sm:text-5xl font-medium tracking-[-0.03em] text-[#0A0B0E] leading-[1.1]">
-              Intelligence
-              <br />
-              in Every Stitch
+              {lang === "th" ? (
+                <>
+                  ความประณีต
+                  <br />
+                  ในทุกฝีเข็ม
+                </>
+              ) : (
+                <>
+                  Intelligence
+                  <br />
+                  in Every Stitch
+                </>
+              )}
             </h2>
 
             <p className="text-base text-[#475569] leading-relaxed max-w-lg">
-              From heat-bonded German collar interlinings that never buckle to 21
-              stitches-per-inch micro seams and reinforced mother-of-pearl buttons,
-              Highbury integrates structural garment engineering into every single cut.
+              {lang === "th"
+                ? "ตั้งแต่โครงสร้างปกเสื้ออัดกาวเยอรมันที่ไม่ยุบตัว การเย็บตะเข็บละเอียด 21 ฝีเข็มต่อนิ้ว ไปจนถึงการเย็บย้ำกระดุมทนทาน Highbury ใส่ใจในทุกรายละเอียดเชิงวิศวกรรมการตัดเย็บเสื้อเชิ้ต"
+                : "From heat-bonded German collar interlinings that never buckle to 21 stitches-per-inch micro seams and reinforced mother-of-pearl buttons, Highbury integrates structural garment engineering into every single cut."}
             </p>
 
             <div className="pt-2">
               <Link href="#models" className="v3-btn-black">
-                <span>Explore Technology</span>
+                <span>{lang === "th" ? "เจาะลึกงานตัดเย็บ" : "Explore Technology"}</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>

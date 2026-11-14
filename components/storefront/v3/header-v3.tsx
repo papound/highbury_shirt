@@ -2,14 +2,16 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ShoppingBag, Menu, X } from "lucide-react";
+import { ShoppingBag, Menu, X, Globe } from "lucide-react";
 import { useCartStore } from "@/hooks/use-cart";
 
 interface HeaderV3Props {
   onOpenSizeGuide: () => void;
+  lang: "th" | "en";
+  onToggleLang: () => void;
 }
 
-export default function HeaderV3({ onOpenSizeGuide }: HeaderV3Props) {
+export default function HeaderV3({ onOpenSizeGuide, lang, onToggleLang }: HeaderV3Props) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const items = useCartStore((state) => state.items);
@@ -42,42 +44,65 @@ export default function HeaderV3({ onOpenSizeGuide }: HeaderV3Props) {
               HIGHBURY
             </Link>
 
-            {/* Center: Desktop Navigation Links */}
-            <nav className="hidden md:flex items-center gap-8 lg:gap-10">
+            {/* Center: Desktop Navigation Links (Bilingual) */}
+            <nav className="hidden md:flex items-center gap-7 lg:gap-9">
               <Link
                 href="#models"
-                className="text-sm font-medium text-white/80 hover:text-white transition-colors"
+                className="text-sm font-medium text-white/80 hover:text-white transition-colors flex items-center gap-1.5"
               >
-                Collection
+                <span>{lang === "th" ? "คอลเลกชัน" : "Collection"}</span>
+                <span className="text-[10px] text-white/40 uppercase">
+                  {lang === "th" ? "Models" : "เสื้อเชิ้ต"}
+                </span>
               </Link>
               <Link
                 href="#craftsmanship"
-                className="text-sm font-medium text-white/80 hover:text-white transition-colors"
+                className="text-sm font-medium text-white/80 hover:text-white transition-colors flex items-center gap-1.5"
               >
-                Craftsmanship
+                <span>{lang === "th" ? "งานตัดเย็บ" : "Craftsmanship"}</span>
+                <span className="text-[10px] text-white/40 uppercase">
+                  {lang === "th" ? "Craft" : "ประณีต"}
+                </span>
               </Link>
               <Link
                 href="#standards"
-                className="text-sm font-medium text-white/80 hover:text-white transition-colors"
+                className="text-sm font-medium text-white/80 hover:text-white transition-colors flex items-center gap-1.5"
               >
-                Standards
+                <span>{lang === "th" ? "มาตรฐาน" : "Standards"}</span>
+                <span className="text-[10px] text-white/40 uppercase">
+                  {lang === "th" ? "OEM" : "คุณภาพ"}
+                </span>
               </Link>
               <Link
                 href="#about"
-                className="text-sm font-medium text-white/80 hover:text-white transition-colors"
+                className="text-sm font-medium text-white/80 hover:text-white transition-colors flex items-center gap-1.5"
               >
-                About
+                <span>{lang === "th" ? "เกี่ยวกับเรา" : "About"}</span>
+                <span className="text-[10px] text-white/40 uppercase">
+                  {lang === "th" ? "Story" : "ประวัติ"}
+                </span>
               </Link>
             </nav>
 
-            {/* Right: Quantum White Pill CTA & Actions */}
-            <div className="flex items-center gap-3 sm:gap-4">
+            {/* Right: Language Switcher, White Pill CTA & Actions */}
+            <div className="flex items-center gap-2.5 sm:gap-3.5">
+              {/* Language Switcher TH / EN */}
+              <button
+                type="button"
+                onClick={onToggleLang}
+                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-semibold border border-white/20 text-white/90 hover:text-white hover:border-white/40 hover:bg-white/10 transition-colors cursor-pointer"
+                aria-label="Toggle Language"
+              >
+                <Globe className="w-3.5 h-3.5 text-white/70" />
+                <span>{lang === "th" ? "TH / EN" : "EN / TH"}</span>
+              </button>
+
               <button
                 type="button"
                 onClick={onOpenSizeGuide}
                 className="hidden sm:inline-flex v3-btn-white text-xs sm:text-sm py-2 px-5"
               >
-                Smart Size Finder
+                {lang === "th" ? "คำนวณไซส์ Smart Size" : "Smart Size Finder"}
               </button>
 
               <Link
@@ -110,34 +135,38 @@ export default function HeaderV3({ onOpenSizeGuide }: HeaderV3Props) {
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-40 bg-[#07080B]/98 backdrop-blur-xl flex flex-col pt-24 px-6 md:hidden">
-          <nav className="flex flex-col gap-6 text-lg font-medium text-white">
+          <nav className="flex flex-col gap-5 text-lg font-medium text-white">
             <Link
               href="#models"
               onClick={() => setMobileMenuOpen(false)}
-              className="text-white/80 hover:text-white border-b border-white/10 pb-4"
+              className="text-white/80 hover:text-white border-b border-white/10 pb-3 flex justify-between items-center"
             >
-              Collection (เสื้อเชิ้ต)
+              <span>{lang === "th" ? "คอลเลกชันสินค้า" : "Collection"}</span>
+              <span className="text-xs text-white/40 uppercase">Models</span>
             </Link>
             <Link
               href="#craftsmanship"
               onClick={() => setMobileMenuOpen(false)}
-              className="text-white/80 hover:text-white border-b border-white/10 pb-4"
+              className="text-white/80 hover:text-white border-b border-white/10 pb-3 flex justify-between items-center"
             >
-              Craftsmanship (งานตัดเย็บ)
+              <span>{lang === "th" ? "งานตัดเย็บประณีต" : "Craftsmanship"}</span>
+              <span className="text-xs text-white/40 uppercase">Craft</span>
             </Link>
             <Link
               href="#standards"
               onClick={() => setMobileMenuOpen(false)}
-              className="text-white/80 hover:text-white border-b border-white/10 pb-4"
+              className="text-white/80 hover:text-white border-b border-white/10 pb-3 flex justify-between items-center"
             >
-              Standards (มาตรฐานการผลิต)
+              <span>{lang === "th" ? "มาตรฐานการผลิต & OEM" : "Standards & OEM"}</span>
+              <span className="text-xs text-white/40 uppercase">Standards</span>
             </Link>
             <Link
               href="#about"
               onClick={() => setMobileMenuOpen(false)}
-              className="text-white/80 hover:text-white border-b border-white/10 pb-4"
+              className="text-white/80 hover:text-white border-b border-white/10 pb-3 flex justify-between items-center"
             >
-              About Highbury
+              <span>{lang === "th" ? "เกี่ยวกับ Highbury" : "About Highbury"}</span>
+              <span className="text-xs text-white/40 uppercase">About</span>
             </Link>
           </nav>
 
@@ -150,7 +179,17 @@ export default function HeaderV3({ onOpenSizeGuide }: HeaderV3Props) {
               }}
               className="v3-btn-white w-full justify-center"
             >
-              Smart Size Finder (คำนวณไซส์)
+              {lang === "th" ? "คำนวณไซส์ Smart Size Finder" : "Smart Size Finder"}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                onToggleLang();
+              }}
+              className="v3-btn-glass w-full justify-center text-xs"
+            >
+              <Globe className="w-4 h-4" />
+              <span>{lang === "th" ? "เปลี่ยนภาษา (Switch to English)" : "Switch to Thai (เปลี่ยนเป็นภาษาไทย)"}</span>
             </button>
           </div>
         </div>

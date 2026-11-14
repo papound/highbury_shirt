@@ -32,11 +32,18 @@ interface HomeV3Props {
 }
 
 export default function HomeV3({ featuredProducts }: HomeV3Props) {
+  // Language State: Defaults to 'th' with smooth 'en' toggle
+  const [lang, setLang] = useState<"th" | "en">("th");
+
   // Modal states
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
   const [quickViewProduct, setQuickViewProduct] = useState<QuickViewProduct | null>(null);
 
-  // Map featured products to QuickViewProduct format
+  const toggleLang = () => {
+    setLang((prev) => (prev === "th" ? "en" : "th"));
+  };
+
+  // Map real products from each category
   const products: QuickViewProduct[] = featuredProducts.map((p) => ({
     id: p.id,
     name: p.name,
@@ -63,34 +70,45 @@ export default function HomeV3({ featuredProducts }: HomeV3Props) {
 
   return (
     <div className="v3-page-wrapper flex flex-col w-full bg-[#07080B] text-white antialiased selection:bg-white selection:text-black">
-      {/* 1. Quantum Floating Glass Header */}
-      <HeaderV3 onOpenSizeGuide={() => setIsSizeGuideOpen(true)} />
+      {/* 1. Quantum Floating Glass Header (With Language Switcher) */}
+      <HeaderV3
+        onOpenSizeGuide={() => setIsSizeGuideOpen(true)}
+        lang={lang}
+        onToggleLang={toggleLang}
+      />
 
       {/* 2. Hero Section: Revolutionary Asian Fit Tailoring with 3-Spec Bar */}
-      <HeroV3 onOpenSizeGuide={() => setIsSizeGuideOpen(true)} />
+      <HeroV3
+        onOpenSizeGuide={() => setIsSizeGuideOpen(true)}
+        lang={lang}
+      />
 
       {/* 3. Section 2: A New Era of Everyday Tailoring (Split Architectural Light) */}
-      <CraftStory />
+      <CraftStory lang={lang} />
 
-      {/* 4. Section 3: Models Carousel (Dark Horizon Embla Carousel) */}
+      {/* 4. Section 3: Models Carousel with Real Products from Each Category & Photos */}
       <CarouselShowcase
         products={products}
         onQuickView={(p) => setQuickViewProduct(p)}
+        lang={lang}
       />
 
       {/* 5. Section 4: Technology & Intelligence in Every Stitch (Split Light Macro) */}
       <div className="v3-section-deferred">
-        <MacroDetail />
+        <MacroDetail lang={lang} />
       </div>
 
       {/* 6. Section 5: Standards Landscape with 3 Stats (Quantum Highway Equivalent) */}
       <div className="v3-section-deferred">
-        <StandardsLandscape />
+        <StandardsLandscape lang={lang} />
       </div>
 
       {/* 7. Section 6: Feel the Difference Pre-Footer (Sunset Golden Hour) */}
       <div className="v3-section-deferred">
-        <PreFooterCta onOpenSizeGuide={() => setIsSizeGuideOpen(true)} />
+        <PreFooterCta
+          onOpenSizeGuide={() => setIsSizeGuideOpen(true)}
+          lang={lang}
+        />
       </div>
 
       {/* 8. Section 7: Quantum Deep Dark Footer */}
