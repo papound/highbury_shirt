@@ -2,10 +2,12 @@
 
 import { useState, useMemo } from "react";
 import Image from "next/image";
+import { Ruler } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useCartStore } from "@/hooks/use-cart";
+import { useStorefrontV3Safe } from "./storefront-shell";
 import { toast } from "sonner";
 import colorMap from "@/lib/color-map.json";
 
@@ -59,6 +61,11 @@ interface GalleryImage {
 export default function ProductView({ product, placeholderImage }: ProductViewProps) {
   const addItem = useCartStore((s) => s.addItem);
   const cartItems = useCartStore((s) => s.items);
+  const v3 = useStorefrontV3Safe();
+
+  const openSizeGuide = () => {
+    v3?.openSizeGuide?.();
+  };
 
   // Build unique gallery images combining product-level & variant-level images
   const gallery = useMemo(() => {
@@ -394,9 +401,19 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
         </div>
 
         {/* Size Selection */}
-        {selectedColor && (
+        {selectedColor ? (
           <div>
-            <p className="text-sm font-medium mb-2">ไซส์:</p>
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-sm font-medium">ไซส์:</p>
+              <button
+                type="button"
+                onClick={openSizeGuide}
+                className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80 transition-colors cursor-pointer group"
+              >
+                <Ruler className="w-3.5 h-3.5 text-primary group-hover:rotate-12 transition-transform" />
+                <span className="underline underline-offset-4">ดูตารางไซส์</span>
+              </button>
+            </div>
             <div className="flex flex-wrap gap-2">
               {displaySizes.map((size) => {
                 const variant = product.variants.find(
@@ -423,6 +440,18 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
                 );
               })}
             </div>
+          </div>
+        ) : (
+          <div className="flex items-center justify-between pt-1">
+            <span className="text-xs text-muted-foreground">เลือกสีก่อนเพื่อตรวจสอบไซส์ที่พร้อมส่ง</span>
+            <button
+              type="button"
+              onClick={openSizeGuide}
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80 transition-colors cursor-pointer"
+            >
+              <Ruler className="w-3.5 h-3.5" />
+              <span className="underline underline-offset-4">ดูตารางเทียบไซส์</span>
+            </button>
           </div>
         )}
 
@@ -471,6 +500,33 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
           >
             {remaining === 0 && selectedVariant ? "สินค้าหมด" : "🛒 เพิ่มลงตะกร้า"}
           </Button>
+        </div>
+
+        {/* Size Guide Helper */}
+        <div
+          onClick={openSizeGuide}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              openSizeGuide();
+            }
+          }}
+          className="flex items-center justify-between gap-3 p-3 rounded-xl border border-border/80 bg-muted/40 hover:bg-muted/70 cursor-pointer transition-colors group"
+        >
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <Ruler className="w-4 h-4" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs font-semibold text-foreground">ไม่มั่นใจไซส์เสื้อ? เปิดตารางเทียบไซส์ Highbury</p>
+              <p className="text-[11px] text-muted-foreground truncate">ตารางรอบอก ความยาวเสื้อ แขนเสื้อ ชาย/หญิง พร้อมระบบช่วยคำนวณไซส์</p>
+            </div>
+          </div>
+          <span className="text-xs font-medium text-primary shrink-0 group-hover:underline">
+            ดูตารางไซส์ &rarr;
+          </span>
         </div>
 
         {/* Info Cards */}
