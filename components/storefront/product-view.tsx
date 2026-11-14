@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useCartStore } from "@/hooks/use-cart";
 import { toast } from "sonner";
+import colorMap from "@/lib/color-map.json";
 
 export interface ProductImageItem {
   id: string;
@@ -75,12 +76,35 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
           if (v) color = v.color;
         }
 
-        // Fallback: match altText with known colors
+        // Fallback 1: match altText with known colors
         if (!color && img.altText) {
           const matched = product.variants.find(
             (v) => v.color.trim().toLowerCase() === img.altText?.trim().toLowerCase()
           );
           if (matched) color = matched.color;
+        }
+
+        // Fallback 2: match from filename pattern with variant SKU and color-map
+        if (!color && img.url) {
+          const m = img.url.match(/[-_]([0-9]+)(?:[-_][0-9]+)?\.[a-zA-Z0-9]+$/);
+          if (m) {
+            const code = m[1];
+            const matchedBySku = product.variants.find((v) => {
+              const parts = v.sku.split("_");
+              return parts.length >= 2 && parts[1] === code;
+            });
+            if (matchedBySku) {
+              color = matchedBySku.color;
+            } else {
+              const thaiColor = (colorMap as Record<string, { thai: string }>)[code]?.thai;
+              if (thaiColor) {
+                const matchedByThai = product.variants.find(
+                  (v) => v.color.trim() === thaiColor.trim()
+                );
+                if (matchedByThai) color = matchedByThai.color;
+              }
+            }
+          }
         }
 
         list.push({
@@ -181,6 +205,20 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
       (img) => img.altText && img.altText.toLowerCase().includes(color.toLowerCase())
     );
     if (altMatch) return altMatch.url;
+
+    // 4. Match URL pattern with variant SKU color code
+    const variantForColor = product.variants.find((v) => v.color === color);
+    if (variantForColor?.sku) {
+      const parts = variantForColor.sku.split("_");
+      if (parts.length >= 2) {
+        const code = parts[1];
+        const matchByCode = gallery.find((img) => {
+          const m = img.url.match(/[-_]([0-9]+)(?:[-_][0-9]+)?\.[a-zA-Z0-9]+$/);
+          return m && m[1] === code;
+        });
+        if (matchByCode) return matchByCode.url;
+      }
+    }
 
     return null;
   }
