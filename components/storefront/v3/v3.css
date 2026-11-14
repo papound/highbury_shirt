@@ -9,6 +9,18 @@ html {
   scroll-behavior: smooth;
 }
 
+.v3-page-wrapper input,
+.v3-page-wrapper textarea {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.v3-page-wrapper input::selection,
+.v3-page-wrapper textarea::selection {
+  background-color: #2563EB !important;
+  color: #FFFFFF !important;
+}
+
 .v3-page-wrapper {
   /* ── Typography Tokens ── */
   --v3-font-sans: var(--font-prompt), 'Prompt', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;

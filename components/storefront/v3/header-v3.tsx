@@ -225,7 +225,7 @@ export default function HeaderV3({ onOpenSizeGuide, lang, onToggleLang }: Header
                       if (searchResults.length > 0) setShowDropdown(true);
                     }}
                     placeholder={lang === "th" ? "ค้นหา เสื้อเชิ้ต, ทรง, ไซส์..." : "Search shirts, fit, size..."}
-                    className="w-40 md:w-52 lg:w-64 pl-9.5 pr-8 py-1.5 rounded-full text-xs sm:text-sm bg-[#F2F4F8] hover:bg-white focus:bg-white text-[#07080B] placeholder:text-[#64748B] border border-white/20 focus:border-white focus:outline-none focus:ring-2 focus:ring-white/40 shadow-sm transition-all"
+                    className="w-40 md:w-52 lg:w-64 pl-9.5 pr-8 py-1.5 rounded-full text-xs sm:text-sm bg-[#F2F4F8] hover:bg-white focus:bg-white text-[#07080B] placeholder:text-[#64748B] border border-white/20 focus:border-white focus:outline-none focus:ring-2 focus:ring-white/40 shadow-sm transition-all select-text selection:bg-[#2563EB] selection:text-white"
                   />
                   {isSearching ? (
                     <Loader2 className="w-3.5 h-3.5 text-[#64748B] animate-spin absolute right-3 pointer-events-none" />
@@ -362,7 +362,7 @@ export default function HeaderV3({ onOpenSizeGuide, lang, onToggleLang }: Header
                   if (searchResults.length > 0) setShowDropdown(true);
                 }}
                 placeholder={lang === "th" ? "ค้นหา เสื้อเชิ้ต, ทรง, ไซส์..." : "Search shirts, fit, size..."}
-                className="w-full pl-9.5 pr-8 py-2.5 rounded-full text-sm bg-[#F2F4F8] text-[#07080B] placeholder:text-[#64748B] focus:outline-none focus:bg-white"
+                className="w-full pl-9.5 pr-8 py-2.5 rounded-full text-sm bg-[#F2F4F8] text-[#07080B] placeholder:text-[#64748B] focus:outline-none focus:bg-white select-text selection:bg-[#2563EB] selection:text-white"
               />
               {isSearching ? (
                 <Loader2 className="w-3.5 h-3.5 text-[#64748B] animate-spin absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
