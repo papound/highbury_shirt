@@ -17,27 +17,27 @@ export default function MacroDetail({ lang: propLang }: MacroDetailProps) {
 
   return (
     <section id="details" className="relative w-full min-h-[640px] lg:min-h-[720px] flex items-center overflow-hidden scroll-mt-20">
-      {/* Background Image: Two Models (Top-aligned so heads, faces and full silhouette are visible) */}
+      {/* Background Image: Both Woman and Man clearly visible on right side */}
       <Image
         src="/images/macro-detail.jpg"
         alt="Highbury Asian Fit Tailoring Details"
         fill
         sizes="100vw"
-        className="object-cover object-[70%_top] sm:object-[75%_top] lg:object-[82%_top]"
+        className="object-cover object-[92%_top] sm:object-[90%_top] lg:object-[88%_top]"
       />
 
-      {/* Smooth Gradient Fade Layer (Left Dissolve for Text Readability, Leaving Right Models Clear) */}
+      {/* Smooth Gradient Fade Layer (Tighter to left edge so Woman and Man are fully illuminated) */}
       <div
         className={`absolute inset-0 pointer-events-none transition-colors duration-300 ${
           isLight
-            ? "bg-gradient-to-r from-white via-white/95 via-50% to-transparent max-lg:bg-gradient-to-t max-lg:from-white/95 max-lg:via-white/80 max-lg:to-transparent"
-            : "bg-gradient-to-r from-[#07080B] via-[#07080B]/95 via-50% to-transparent max-lg:bg-gradient-to-t max-lg:from-[#07080B]/95 max-lg:via-[#07080B]/80 max-lg:to-transparent"
+            ? "bg-gradient-to-r from-white via-white/90 via-35% to-transparent max-lg:bg-gradient-to-t max-lg:from-white/95 max-lg:via-white/80 max-lg:to-transparent"
+            : "bg-gradient-to-r from-[#07080B] via-[#07080B]/90 via-35% to-transparent max-lg:bg-gradient-to-t max-lg:from-[#07080B]/95 max-lg:via-[#07080B]/80 max-lg:to-transparent"
         }`}
       />
 
-      {/* Content Container aligned with site grid */}
+      {/* Content Container aligned with site grid (Constrained so right models are unobstructed) */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-28">
-        <div className="max-w-2xl space-y-6">
+        <div className="max-w-lg lg:max-w-[480px] space-y-6">
           {/* Reference-style Category Tracker */}
           <div
             className={`text-[11px] sm:text-xs font-semibold tracking-[0.25em] uppercase ${
@@ -70,7 +70,7 @@ export default function MacroDetail({ lang: propLang }: MacroDetailProps) {
 
           {/* Refined Explanatory Paragraph */}
           <p
-            className={`text-sm sm:text-base leading-relaxed max-w-lg ${
+            className={`text-sm sm:text-base leading-relaxed ${
               isLight ? "text-[#475569]" : "text-[#E7E7E7]"
             }`}
           >
@@ -79,12 +79,12 @@ export default function MacroDetail({ lang: propLang }: MacroDetailProps) {
               : "Engineered collar construction that retains its sharp posture wash after wash, paired with reinforced 4-hole button fastening for everyday durability."}
           </p>
 
-          {/* 3 Sleek Integrated Frosted Spec Cards (Placed on Left to Keep Right Models Unobstructed) */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+          {/* 3 Sleek Integrated Frosted Spec Cards (Compact layout to keep both models visible) */}
+          <div className="grid grid-cols-3 gap-2.5 pt-2">
             <div
-              className="p-4 rounded-xl shadow-lg transition-all"
+              className="p-3 sm:p-3.5 rounded-xl shadow-lg transition-all"
               style={{
-                backgroundColor: "rgba(0, 0, 0, 0.55)",
+                backgroundColor: "rgba(0, 0, 0, 0.6)",
                 backdropFilter: "blur(20px)",
                 WebkitBackdropFilter: "blur(20px)",
                 borderColor: "rgba(255, 255, 255, 0.18)",
@@ -93,26 +93,24 @@ export default function MacroDetail({ lang: propLang }: MacroDetailProps) {
                 color: "#FFFFFF",
               }}
             >
-              <div className="flex items-center gap-2 mb-1.5">
-                <div className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center shrink-0 border border-white/20">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-white" />
-                </div>
-                <div className="text-lg sm:text-xl font-bold tracking-tight text-white">
+              <div className="flex items-center gap-1.5 mb-1">
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#FFB900]" />
+                <div className="text-base sm:text-lg font-bold tracking-tight text-white">
                   16–18
                 </div>
               </div>
-              <div className="text-xs font-semibold text-white/90">
-                {lang === "th" ? "ฝีเข็มละเอียด (SPI)" : "Stitch Density (SPI)"}
+              <div className="text-[11px] font-semibold text-white/90">
+                {lang === "th" ? "ฝีเข็มละเอียด" : "SPI Count"}
               </div>
-              <div className="text-[11px] text-white/60 mt-0.5 leading-snug">
-                {lang === "th" ? "ตะเข็บแน่น เรียบเนียน ไม่ระคายผิว" : "High density clean drape"}
+              <div className="text-[10px] text-white/60 mt-0.5 leading-snug line-clamp-1">
+                {lang === "th" ? "ตะเข็บแน่น เรียบเนียน" : "Clean drape"}
               </div>
             </div>
 
             <div
-              className="p-4 rounded-xl shadow-lg transition-all"
+              className="p-3 sm:p-3.5 rounded-xl shadow-lg transition-all"
               style={{
-                backgroundColor: "rgba(0, 0, 0, 0.55)",
+                backgroundColor: "rgba(0, 0, 0, 0.6)",
                 backdropFilter: "blur(20px)",
                 WebkitBackdropFilter: "blur(20px)",
                 borderColor: "rgba(255, 255, 255, 0.18)",
@@ -121,26 +119,24 @@ export default function MacroDetail({ lang: propLang }: MacroDetailProps) {
                 color: "#FFFFFF",
               }}
             >
-              <div className="flex items-center gap-2 mb-1.5">
-                <div className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center shrink-0 border border-white/20">
-                  <ShieldCheck className="w-3.5 h-3.5 text-white" />
-                </div>
-                <div className="text-lg sm:text-xl font-bold tracking-tight text-white">
+              <div className="flex items-center gap-1.5 mb-1">
+                <ShieldCheck className="w-3.5 h-3.5 text-[#FFB900]" />
+                <div className="text-base sm:text-lg font-bold tracking-tight text-white">
                   2-Layer
                 </div>
               </div>
-              <div className="text-xs font-semibold text-white/90">
-                {lang === "th" ? "ปกเสริมความคมชัด" : "Collar Fusing"}
+              <div className="text-[11px] font-semibold text-white/90">
+                {lang === "th" ? "ปกอัดกาวคู่" : "Dual Fused"}
               </div>
-              <div className="text-[11px] text-white/60 mt-0.5 leading-snug">
-                {lang === "th" ? "ปกตั้งสวย ไม่แบะย้วย ทนการซัก" : "Crisp stance post-wash"}
+              <div className="text-[10px] text-white/60 mt-0.5 leading-snug line-clamp-1">
+                {lang === "th" ? "ปกตั้งสวย ไม่ย้วย" : "Crisp stance"}
               </div>
             </div>
 
             <div
-              className="p-4 rounded-xl shadow-lg transition-all"
+              className="p-3 sm:p-3.5 rounded-xl shadow-lg transition-all"
               style={{
-                backgroundColor: "rgba(0, 0, 0, 0.55)",
+                backgroundColor: "rgba(0, 0, 0, 0.6)",
                 backdropFilter: "blur(20px)",
                 WebkitBackdropFilter: "blur(20px)",
                 borderColor: "rgba(255, 255, 255, 0.18)",
@@ -149,19 +145,17 @@ export default function MacroDetail({ lang: propLang }: MacroDetailProps) {
                 color: "#FFFFFF",
               }}
             >
-              <div className="flex items-center gap-2 mb-1.5">
-                <div className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center shrink-0 border border-white/20">
-                  <Sparkles className="w-3.5 h-3.5 text-white" />
-                </div>
-                <div className="text-lg sm:text-xl font-bold tracking-tight text-white">
+              <div className="flex items-center gap-1.5 mb-1">
+                <Sparkles className="w-3.5 h-3.5 text-[#FFB900]" />
+                <div className="text-base sm:text-lg font-bold tracking-tight text-white">
                   4-Hole
                 </div>
               </div>
-              <div className="text-xs font-semibold text-white/90">
-                {lang === "th" ? "กระดุมเย็บย้ำ 4 รู" : "Reinforced Buttons"}
+              <div className="text-[11px] font-semibold text-white/90">
+                {lang === "th" ? "กระดุม 4 รู" : "Reinforced"}
               </div>
-              <div className="text-[11px] text-white/60 mt-0.5 leading-snug">
-                {lang === "th" ? "ทนแรงดึงสูง ไม่หลุดง่าย" : "High tensile strength"}
+              <div className="text-[10px] text-white/60 mt-0.5 leading-snug line-clamp-1">
+                {lang === "th" ? "เย็บย้ำแน่นหนา" : "High strength"}
               </div>
             </div>
           </div>
