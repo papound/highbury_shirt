@@ -1,83 +1,95 @@
 import Link from "next/link";
-import { ShieldCheck, Scissors, Truck, MessageCircle } from "lucide-react";
-
-const guarantees = [
-  {
-    icon: <ShieldCheck className="w-6 h-6 text-blue-600 dark:text-blue-400" />,
-    title: "รับประกันเปลี่ยนไซส์ฟรี 7 วัน",
-    desc: "สั่งซื้อไปแล้วใส่ไม่พอดี สามารถติดต่อขอเปลี่ยนขนาดเสื้อได้ฟรีภายใน 7 วันหลังได้รับสินค้า",
-  },
-  {
-    icon: <Scissors className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />,
-    title: "มาตรฐานการตัดเย็บประณีต",
-    desc: "ดูแลการผลิตโดยช่างชำนาญการ แพทเทิร์นเข้ารูปสมส่วน และตรวจสอบคุณภาพ QC ละเอียดทุกชิ้น",
-  },
-  {
-    icon: <Truck className="w-6 h-6 text-amber-600 dark:text-amber-400" />,
-    title: "จัดส่งทั่วประเทศอย่างปลอดภัย",
-    desc: "บรรจุกล่องพัสดุป้องกันการยับ จัดส่งรวดเร็วพร้อมแจ้งรหัสติดตามพัสดุชัดเจน",
-  },
-  {
-    icon: <MessageCircle className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />,
-    title: "ปรึกษาผู้เชี่ยวชาญผ่าน LINE",
-    desc: "มีทีมงานพร้อมให้คำแนะนำเรื่องขนาดเสื้อ สไตล์ และการเลือกเนื้อผ้าให้เหมาะกับคุณ",
-  },
-];
+import { ShieldCheck, CheckCircle2, MessageSquare, QrCode } from "lucide-react";
 
 export default function TrustGuarantee() {
   return (
-    <section className="w-full py-16 md:py-20 bg-slate-50 dark:bg-slate-900/40 border-y border-border/80">
+    <section className="w-full py-16 sm:py-20 bg-[#F9FAFB] border-b border-[#E7E5E4]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="max-w-2xl mx-auto text-center mb-12">
-          <span className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
-            Highbury Commitment
-          </span>
-          <h2 className="text-2xl sm:text-3xl font-black text-foreground mt-2 tracking-tight">
-            ความมั่นใจในทุกคำสั่งซื้อ
+        <div className="max-w-2xl mb-12">
+          <h2 className="text-2xl sm:text-3xl font-bold text-[#0F172B] tracking-tight">
+            ความมั่นใจในการบริการ
           </h2>
-          <p className="text-sm text-muted-foreground mt-3 leading-relaxed">
-            เรามุ่งมั่นส่งมอบเสื้อเชิ้ตที่ใส่สบายและบริการที่จริงใจ
-            เพื่อให้คุณมั่นใจในทุกครั้งที่สวมใส่ Highbury
+          <p className="text-sm text-[#79716B] mt-1">
+            มาตรฐานการดูแลลูกค้าที่ Highbury ยึดถือปฏิบัติอย่างเคร่งครัด
           </p>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {guarantees.map((item) => (
-            <div
-              key={item.title}
-              className="p-6 rounded-2xl border border-border/80 bg-background flex flex-col justify-between space-y-4 hover:border-blue-500/30 transition-[border-color] duration-200"
-            >
-              <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0">
-                {item.icon}
-              </div>
-              <div className="space-y-1.5 flex-1">
-                <h3 className="font-bold text-sm sm:text-base text-foreground">
-                  {item.title}
-                </h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  {item.desc}
-                </p>
-              </div>
+        {/* 4 Clean Solid Cards (No frosted glass, no stock shadows, no emoji) */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="p-5 rounded-xl border border-[#E7E5E4] bg-white flex flex-col justify-between space-y-3">
+            <div className="w-9 h-9 rounded-lg bg-[#F1F5F9] text-[#163666] flex items-center justify-center shrink-0">
+              <ShieldCheck className="w-5 h-5" />
             </div>
-          ))}
+            <div>
+              <h3 className="font-bold text-sm text-[#0F172B]">
+                เปลี่ยนไซส์ฟรี 7 วัน
+              </h3>
+              <p className="text-xs text-[#79716B] mt-1 leading-relaxed">
+                สั่งซื้อไปแล้วใส่ไม่พอดี สามารถติดต่อขอเปลี่ยนไซส์ได้ฟรีภายใน 7 วัน
+              </p>
+            </div>
+          </div>
+
+          <div className="p-5 rounded-xl border border-[#E7E5E4] bg-white flex flex-col justify-between space-y-3">
+            <div className="w-9 h-9 rounded-lg bg-[#F1F5F9] text-[#163666] flex items-center justify-center shrink-0">
+              <CheckCircle2 className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="font-bold text-sm text-[#0F172B]">
+                ตรวจสอบคุณภาพทุกชิ้น
+              </h3>
+              <p className="text-xs text-[#79716B] mt-1 leading-relaxed">
+                ทีมช่างตรวจสอบความสมบูรณ์ของกระดุมและตะเข็บก่อนบรรจุจัดส่ง
+              </p>
+            </div>
+          </div>
+
+          <div className="p-5 rounded-xl border border-[#E7E5E4] bg-white flex flex-col justify-between space-y-3">
+            <div className="w-9 h-9 rounded-lg bg-[#F1F5F9] text-[#163666] flex items-center justify-center shrink-0">
+              <QrCode className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="font-bold text-sm text-[#0F172B]">
+                Thai QR PromptPay
+              </h3>
+              <p className="text-xs text-[#79716B] mt-1 leading-relaxed">
+                รองรับการชำระเงินสะดวกและปลอดภัยผ่านระบบสแกน QR มาตรฐาน
+              </p>
+            </div>
+          </div>
+
+          <div className="p-5 rounded-xl border border-[#E7E5E4] bg-white flex flex-col justify-between space-y-3">
+            <div className="w-9 h-9 rounded-lg bg-[#F1F5F9] text-[#163666] flex items-center justify-center shrink-0">
+              <MessageSquare className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="font-bold text-sm text-[#0F172B]">
+                ปรึกษาช่างและแอดมิน
+              </h3>
+              <p className="text-xs text-[#79716B] mt-1 leading-relaxed">
+                ให้คำแนะนำเรื่องไซส์และเนื้อผ้าอย่างตรงไปตรงมาผ่าน LINE Official
+              </p>
+            </div>
+          </div>
         </div>
 
-        {/* LINE Contact Callout */}
-        <div className="mt-10 p-6 rounded-2xl bg-[#0A2540] dark:bg-slate-900 text-white flex flex-col sm:flex-row items-center justify-between gap-4 border border-white/10">
-          <div className="text-center sm:text-left">
-            <h3 className="font-bold text-base text-white">ต้องการสอบถามขนาดเสื้อเพิ่มเติม?</h3>
-            <p className="text-xs text-white/75 mt-0.5">
-              ทีมงานยินดีช่วยวัดไซส์และแนะนำรุ่นเสื้อเชิ้ตที่เหมาะสมกับคุณ
+        {/* Clean Contact Callout */}
+        <div className="mt-8 p-6 rounded-xl border border-[#E7E5E4] bg-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <h3 className="font-bold text-sm sm:text-base text-[#0F172B]">
+              ต้องการสอบถามขนาดเสื้อหรือสั่งผลิตจำนวนมาก?
+            </h3>
+            <p className="text-xs text-[#79716B] mt-0.5">
+              ทีมงานยินดีให้ข้อมูลและประเมินราคาตามจำนวนที่ต้องการ
             </p>
           </div>
           <Link
             href="https://lin.ee/highbury"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-semibold text-xs transition-colors shrink-0"
+            className="v3-btn-brand shrink-0"
           >
-            <MessageCircle className="w-4 h-4" />
-            <span>ติดต่อทาง LINE Official</span>
+            <span>ติดต่อ LINE Official</span>
           </Link>
         </div>
       </div>

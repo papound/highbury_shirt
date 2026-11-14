@@ -19,7 +19,7 @@ export default function StorefrontShell({
 
   if (isV3) {
     return (
-      <div className="w-full min-h-screen bg-[#0A0B0E] flex flex-col text-[#F8FAFC]">
+      <div className="w-full min-h-screen bg-white flex flex-col text-[#0F172B]">
         {children}
         <Toaster richColors position="top-right" closeButton />
       </div>

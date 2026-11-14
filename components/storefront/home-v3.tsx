@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Prisma } from "@prisma/client";
-import { Sparkles } from "lucide-react";
 
 import AnnouncementBar from "./v3/announcement-bar";
 import HeaderV3 from "./v3/header-v3";
@@ -11,7 +10,7 @@ import HeroV3 from "./v3/hero-v3";
 import CraftStory from "./v3/craft-story";
 import CarouselShowcase from "./v3/carousel-showcase";
 import MacroDetail from "./v3/macro-detail";
-import PromiseLandscape from "./v3/promise-landscape";
+import TrustGuarantee from "./v3/trust-guarantee";
 import PreFooterCta from "./v3/pre-footer-cta";
 import CorporateBanner from "./v3/corporate-banner";
 import QuickViewModal, { QuickViewProduct } from "./v3/quick-view-modal";
@@ -65,49 +64,48 @@ export default function HomeV3({ featuredProducts, categories }: HomeV3Props) {
   }));
 
   return (
-    <div className="v3-page-wrapper flex flex-col w-full bg-[#0A0B0E] text-[#F8FAFC] antialiased selection:bg-blue-600/30 selection:text-white">
+    <div className="v3-page-wrapper flex flex-col w-full bg-[#FFFFFF] text-[#0F172B] antialiased selection:bg-[#163666]/10 selection:text-[#163666]">
       {/* 1. Top Announcement Bar */}
       <AnnouncementBar />
 
-      {/* 2. Floating Quantum Glass Header */}
+      {/* 2. Header */}
       <HeaderV3 onOpenSizeGuide={() => setIsSizeGuideOpen(true)} />
 
-      {/* 3. Hero Section: Cinematic Full-Bleed with 3-Spec Bar */}
+      {/* 3. Hero Section: Real product photo & Asian fit tailoring */}
       <HeroV3 onOpenSizeGuide={() => setIsSizeGuideOpen(true)} />
 
-      {/* 4. Craftsmanship Story: Editorial Split (White Background) */}
+      {/* 4. Craftsmanship Story: Editorial Split with real factory specs */}
       <CraftStory />
 
-      {/* 5. Curated Collection Carousel: Dark Dusk Embla Carousel */}
+      {/* 5. Curated Collection Carousel: Clean cards with 1px border */}
       <CarouselShowcase
         products={products}
         onQuickView={(p) => setQuickViewProduct(p)}
       />
 
-      {/* 6. Macro Detail & Fabric Weave: Split Section (White Background) */}
+      {/* 6. Macro Detail & Fabric Weave: Real fabric information */}
       <div className="v3-section-deferred">
         <MacroDetail />
       </div>
 
       {/* 7. Quick Category Browse Bar */}
       {categories.length > 0 && (
-        <section className="w-full py-12 bg-white text-[#0A0B0E] border-b border-[#E2E8F0]">
+        <section className="w-full py-8 bg-[#F9FAFB] border-b border-[#E7E5E4]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-2 text-xs font-semibold text-[#64748B] tracking-wider uppercase">
-                <Sparkles className="w-4 h-4 text-amber-500" />
-                <span>หมวดหมู่แนะนำ:</span>
+              <div className="text-xs font-semibold text-[#79716B] uppercase tracking-wider">
+                หมวดหมู่สินค้า
               </div>
               <div className="flex flex-wrap items-center justify-center sm:justify-end gap-2.5">
                 <Link
                   href="/products?category=mens-shirts"
-                  className="px-5 py-2.5 rounded-full border border-[#E2E8F0] bg-[#F8FAFC] hover:bg-[#F1F5F9] text-xs font-bold text-[#0A0B0E] transition-colors"
+                  className="px-4 py-2 rounded-lg border border-[#E7E5E4] bg-white hover:border-[#163666] hover:text-[#163666] text-xs font-medium text-[#0F172B] transition-colors"
                 >
                   เสื้อเชิ้ตผู้ชาย
                 </Link>
                 <Link
                   href="/products?category=womens-shirts"
-                  className="px-5 py-2.5 rounded-full border border-[#E2E8F0] bg-[#F8FAFC] hover:bg-[#F1F5F9] text-xs font-bold text-[#0A0B0E] transition-colors"
+                  className="px-4 py-2 rounded-lg border border-[#E7E5E4] bg-white hover:border-[#163666] hover:text-[#163666] text-xs font-medium text-[#0F172B] transition-colors"
                 >
                   เสื้อเชิ้ตผู้หญิง
                 </Link>
@@ -123,7 +121,7 @@ export default function HomeV3({ featuredProducts, categories }: HomeV3Props) {
                     <Link
                       key={cat.id}
                       href={`/products?category=${cat.slug}`}
-                      className="px-5 py-2.5 rounded-full border border-[#E2E8F0] bg-[#F8FAFC] hover:bg-[#F1F5F9] text-xs font-bold text-[#0A0B0E] transition-colors"
+                      className="px-4 py-2 rounded-lg border border-[#E7E5E4] bg-white hover:border-[#163666] hover:text-[#163666] text-xs font-medium text-[#0F172B] transition-colors"
                     >
                       {cat.nameTh}
                     </Link>
@@ -134,22 +132,22 @@ export default function HomeV3({ featuredProducts, categories }: HomeV3Props) {
         </section>
       )}
 
-      {/* 8. Quality & Promise Landscape Banner (Dark Cinematic) */}
+      {/* 8. Trust & Guarantee Section */}
       <div className="v3-section-deferred">
-        <PromiseLandscape />
+        <TrustGuarantee />
       </div>
 
-      {/* 9. Pre-Footer Dramatic CTA ('Feel the Difference') */}
-      <div className="v3-section-deferred">
-        <PreFooterCta onOpenSizeGuide={() => setIsSizeGuideOpen(true)} />
-      </div>
-
-      {/* 10. Corporate Uniform & OEM Service Banner */}
+      {/* 9. Corporate Uniform & OEM Service Banner */}
       <div className="v3-section-deferred">
         <CorporateBanner />
       </div>
 
-      {/* Modals: Native HTML5 <dialog> */}
+      {/* 10. Pre-Footer Direct CTA */}
+      <div className="v3-section-deferred">
+        <PreFooterCta onOpenSizeGuide={() => setIsSizeGuideOpen(true)} />
+      </div>
+
+      {/* Modals: Accessible dialogs */}
       <SmartSizeGuideModal
         isOpen={isSizeGuideOpen}
         onClose={() => setIsSizeGuideOpen(false)}

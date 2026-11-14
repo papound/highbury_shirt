@@ -1,167 +1,113 @@
 /* ─────────────────────────────────────────────────────────────────────────────
-   QUANTUM LUXURY EDITORIAL DTC DESIGN SYSTEM FOR HIGHBURY V3
-   Inspired by: Quantum Motors (https://z9994-eo58it.ps15.zwhhosting.com/)
-   Scoped exclusively for Storefront v3 (.v3-page-wrapper)
+   HIGHBURY STOREFRONT V3 — ANTI-AI SLOP BESPOKE DESIGN SYSTEM
+   Designed to score 0/100 on Sitepeel AI Slop Checker
+   Theme: Light | Font: Google Sans | Brand: #163666
    ───────────────────────────────────────────────────────────────────────────── */
 
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
-
-/* ── Global Level Isolation: Overrides globals.css when v3 is mounted ── */
+/* Global container styling */
 html:has(.v3-page-wrapper),
 body:has(.v3-page-wrapper) {
-  background-color: #0A0B0E !important;
-  color: #F8FAFC !important;
-  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  background-color: #FFFFFF !important;
+  color: #0F172B !important;
+  font-family: 'Google Sans', 'Google Sans Flex', 'Product Sans', -apple-system, sans-serif !important;
   overflow-x: clip !important;
 }
 
 .v3-page-wrapper {
-  /* ── Typography Tokens ── */
-  --v3-font-display: 'Cormorant Garamond', Georgia, serif;
-  --v3-font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-  --v3-font-mono: 'JetBrains Mono', monospace;
+  /* ── Sitepeel Measured Palette ── */
+  --v3-brand: #163666;
+  --v3-secondary: #0A2B5E;
+  --v3-tertiary: #1447E6;
+  --v3-bg: #FFFFFF;
+  --v3-bg-subtle: #F9FAFB;
+  --v3-text: #79716B;
+  --v3-ink: #0F172B;
+  --v3-outline: #E7E5E4;
+  --v3-outline-subtle: #F0EFEA;
+  --v3-error: #FB2C36;
 
-  /* ── Color Palette: Quantum Pitch Dark & Pure White ── */
-  --v3-bg-dark: #0A0B0E;
-  --v3-bg-dark-surface: #101217;
-  --v3-bg-dark-card: rgba(255, 255, 255, 0.035);
-  --v3-border-dark: rgba(255, 255, 255, 0.08);
-  --v3-border-dark-hover: rgba(255, 255, 255, 0.2);
+  /* ── Typography Token: Pure Google Sans ── */
+  --v3-font: 'Google Sans', 'Google Sans Flex', 'Product Sans', -apple-system, sans-serif;
 
-  --v3-bg-light: #FFFFFF;
-  --v3-bg-light-muted: #F8FAFC;
-  --v3-border-light: #E2E8F0;
-
-  --v3-text-main: #F8FAFC;
-  --v3-text-muted: #94A3B8;
-  --v3-text-subtle: #64748B;
-  --v3-text-dark: #0A0B0E;
-  --v3-text-dark-muted: #475569;
-
-  --v3-accent-blue: #2E90FA;
-  --v3-accent-amber: #F59E0B;
-  --v3-accent-emerald: #10B981;
-
-  /* ── Base Setup ── */
-  font-family: var(--v3-font-sans);
-  background-color: var(--v3-bg-dark);
-  color: var(--v3-text-main);
+  font-family: var(--v3-font);
+  background-color: var(--v3-bg);
+  color: var(--v3-ink);
   overflow-x: clip;
   width: 100%;
 }
 
-/* ── Typography Utility Classes ── */
-.v3-page-wrapper .font-display {
-  font-family: var(--v3-font-display);
+/* ── Typography & Headings ── */
+.v3-page-wrapper h1,
+.v3-page-wrapper h2,
+.v3-page-wrapper h3,
+.v3-page-wrapper h4 {
+  font-family: var(--v3-font);
+  color: var(--v3-ink);
+  letter-spacing: -0.015em;
+  font-weight: 700;
 }
 
-.v3-page-wrapper .font-mono {
-  font-family: var(--v3-font-mono);
+.v3-page-wrapper p,
+.v3-page-wrapper span,
+.v3-page-wrapper a,
+.v3-page-wrapper button,
+.v3-page-wrapper input {
+  font-family: var(--v3-font);
 }
 
-.v3-page-wrapper .font-sans {
-  font-family: var(--v3-font-sans);
-}
-
-/* ── Quantum Pill Buttons ── */
-.v3-page-wrapper .v3-btn-white {
+/* ── Solid Buttons (No gradients, no glassmorphism) ── */
+.v3-page-wrapper .v3-btn-brand {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.875rem 2rem;
-  border-radius: 9999px;
-  background-color: #FFFFFF;
-  color: #0A0B0E;
-  font-weight: 700;
-  font-size: 0.875rem;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
-  cursor: pointer;
-}
-
-.v3-page-wrapper .v3-btn-white:hover {
-  background-color: #F1F5F9;
-  transform: translateY(-1px);
-  box-shadow: 0 14px 28px -5px rgba(0, 0, 0, 0.45);
-}
-
-.v3-page-wrapper .v3-btn-white:active {
-  transform: scale(0.98);
-}
-
-.v3-page-wrapper .v3-btn-glass {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.625rem;
-  padding: 0.875rem 2rem;
-  border-radius: 9999px;
-  background-color: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  padding: 0.75rem 1.75rem;
+  border-radius: 0.5rem;
+  background-color: var(--v3-brand);
   color: #FFFFFF;
   font-weight: 600;
-  font-size: 0.875rem;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+  font-size: 0.9375rem;
+  border: 1px solid var(--v3-brand);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
   cursor: pointer;
 }
 
-.v3-page-wrapper .v3-btn-glass:hover {
-  background-color: rgba(255, 255, 255, 0.14);
-  border-color: rgba(255, 255, 255, 0.35);
-  transform: translateY(-1px);
+.v3-page-wrapper .v3-btn-brand:hover {
+  background-color: var(--v3-secondary);
+  border-color: var(--v3-secondary);
 }
 
-.v3-page-wrapper .v3-btn-glass:active {
-  transform: scale(0.98);
-}
-
-.v3-page-wrapper .v3-btn-black {
+.v3-page-wrapper .v3-btn-outline {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.875rem 2rem;
-  border-radius: 9999px;
-  background-color: #0A0B0E;
-  color: #FFFFFF;
-  font-weight: 700;
-  font-size: 0.875rem;
-  box-shadow: 0 10px 20px -5px rgba(10, 11, 14, 0.3);
-  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+  padding: 0.75rem 1.75rem;
+  border-radius: 0.5rem;
+  background-color: #FFFFFF;
+  color: var(--v3-ink);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  border: 1px solid var(--v3-outline);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
   cursor: pointer;
 }
 
-.v3-page-wrapper .v3-btn-black:hover {
-  background-color: #1A1D24;
-  transform: translateY(-1px);
+.v3-page-wrapper .v3-btn-outline:hover {
+  background-color: var(--v3-bg-subtle);
+  border-color: #D1D5DB;
 }
 
-.v3-page-wrapper .v3-btn-black:active {
-  transform: scale(0.98);
+/* ── Clean 1px Border Cards (No stock shadows, no glassmorphism) ── */
+.v3-page-wrapper .v3-card {
+  background-color: #FFFFFF;
+  border: 1px solid var(--v3-outline);
+  border-radius: 0.75rem;
+  transition: border-color 0.2s ease;
 }
 
-/* ── Circular Arrow Controls ── */
-.v3-page-wrapper .v3-arrow-btn {
-  width: 2.75rem;
-  height: 2.75rem;
-  border-radius: 9999px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  background-color: rgba(255, 255, 255, 0.04);
-  color: #FFFFFF;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
-  cursor: pointer;
-}
-
-.v3-page-wrapper .v3-arrow-btn:hover {
-  background-color: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.35);
-  transform: scale(1.05);
+.v3-page-wrapper .v3-card:hover {
+  border-color: #CBD5E1;
 }
 
 /* ── Embla Carousel Rules ── */
@@ -194,35 +140,31 @@ body:has(.v3-page-wrapper) {
   }
 }
 
-/* ── Native <dialog> Modal Styles ── */
+/* ── Clean Native <dialog> Modal (No blur backdrop) ── */
 dialog.v3-dialog:modal {
   overscroll-behavior: contain;
   margin: auto;
-  border: none;
-  font-family: var(--v3-font-sans);
+  border: 1px solid var(--v3-outline);
+  border-radius: 0.75rem;
+  font-family: var(--v3-font);
+  background: #FFFFFF;
 }
 
 dialog.v3-dialog::backdrop {
   overflow: hidden;
   overscroll-behavior: contain;
-  background-color: rgba(7, 8, 11, 0.78);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background-color: rgba(15, 23, 43, 0.4);
 }
 
-/* ── Performance & Accessibility ── */
-.v3-page-wrapper .v3-section-deferred {
-  content-visibility: auto;
-  contain-intrinsic-size: auto 600px;
-}
-
+/* ── Focus Visible ── */
 .v3-page-wrapper a:focus-visible,
 .v3-page-wrapper button:focus-visible,
 .v3-page-wrapper input:focus-visible {
-  outline: 2px solid var(--v3-accent-blue);
+  outline: 2px solid var(--v3-brand);
   outline-offset: 2px;
 }
 
+/* ── Reduced Motion Accessibility ── */
 @media (prefers-reduced-motion: reduce) {
   .v3-page-wrapper *,
   .v3-page-wrapper *::before,

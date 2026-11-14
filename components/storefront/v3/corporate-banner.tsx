@@ -1,74 +1,65 @@
 import Link from "next/link";
-import { Building2, ArrowRight, Check } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 export default function CorporateBanner() {
   return (
-    <section className="w-full py-16 md:py-20 bg-background">
+    <section id="oem" className="w-full py-16 sm:py-20 bg-white border-b border-[#E7E5E4]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="rounded-3xl border border-border/80 bg-gradient-to-br from-slate-900 to-[#0A2540] text-white p-8 sm:p-12 lg:p-16 relative overflow-hidden shadow-xl">
-          {/* Subtle grid pattern */}
-          <div
-            className="absolute inset-0 pointer-events-none opacity-5"
-            style={{
-              backgroundImage:
-                "radial-gradient(circle at 20% 50%, rgba(255,255,255,0.4) 0%, transparent 40%)",
-            }}
-          />
-
-          <div className="relative z-10 max-w-3xl space-y-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white/90 text-xs font-semibold border border-white/15">
-              <Building2 className="w-3.5 h-3.5 text-amber-300" />
-              <span>Corporate Uniform & OEM Service</span>
-            </div>
-
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight leading-tight">
-              ผลิตเสื้อเชิ้ตยูนิฟอร์มองค์กร
-              <br />
-              <span className="text-amber-300">
-                สั่งตัดตามแบบและบริการปักโลโก้ครบวงจร
-              </span>
+        <div className="rounded-2xl border border-[#163666] bg-[#163666] text-white p-8 sm:p-12">
+          <div className="max-w-2xl space-y-6">
+            <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight leading-tight">
+              บริการผลิตเสื้อเชิ้ตยูนิฟอร์มองค์กร และงาน OEM
             </h2>
 
-            <p className="text-sm sm:text-base text-white/80 leading-relaxed max-w-2xl">
-              ยกระดับภาพลักษณ์องค์กรด้วยเสื้อเชิ้ตคุณภาพสูง ทรงสวย ใส่สบาย ทนทานต่อการซักรีด
-              พร้อมบริการวัดไซส์พนักงานและให้คำปรึกษาเนื้อผ้าโดยผู้เชี่ยวชาญ
+            <p className="text-sm sm:text-base text-white/90 leading-relaxed">
+              Highbury รองรับการสั่งตัดเสื้อเชิ้ตสำหรับบริษัท หน่วยงาน และแบรนด์เสื้อผ้า
+              ด้วยทีมช่างตัดเย็บมืออาชีพและการควบคุมคุณภาพมาตรฐาน
             </p>
 
-            {/* Feature Points */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-2 text-xs sm:text-sm text-white/90 font-medium">
-              <div className="flex items-center gap-2">
-                <Check className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>ขั้นต่ำเพียง 100 ตัว</span>
+            {/* Concrete Highbury Manufacturing Details (From real business copy) */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 pt-2 border-t border-white/15">
+              <div>
+                <div className="text-xl sm:text-2xl font-bold text-white">
+                  3,500 ตัว/เดือน
+                </div>
+                <div className="text-xs text-white/75 mt-0.5">
+                  กำลังการผลิตรองรับ
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <Check className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>ปัก / สกรีนโลโก้</span>
+
+              <div>
+                <div className="text-xl sm:text-2xl font-bold text-white">
+                  100 ตัว
+                </div>
+                <div className="text-xs text-white/75 mt-0.5">
+                  เริ่มต้นต่อไซส์และสี
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <Check className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>ไซส์ครอบคลุม S - 4XL</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Check className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>ราคาพิเศษสำหรับองค์กร</span>
+
+              <div>
+                <div className="text-xl sm:text-2xl font-bold text-white">
+                  3 - 4 สัปดาห์
+                </div>
+                <div className="text-xs text-white/75 mt-0.5">
+                  ระยะเวลาผลิตมาตรฐาน
+                </div>
               </div>
             </div>
 
-            {/* Action */}
-            <div className="pt-4 flex flex-wrap gap-4 items-center">
+            <div className="pt-4 flex flex-wrap gap-3 items-center">
               <a
                 href="mailto:contact@highbury.co.th"
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-white text-[#0A2540] font-bold text-xs sm:text-sm hover:bg-slate-100 transition-[background-color,transform] duration-200 active:scale-[0.98] shadow-md"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-white text-[#163666] font-bold text-sm hover:bg-[#F9FAFB] transition-colors"
               >
-                <span>ขอใบเสนอราคา / ปรึกษาทีมงาน</span>
+                <span>ขอใบเสนอราคาและปรึกษางานผลิต</span>
                 <ArrowRight className="w-4 h-4" />
               </a>
 
               <Link
                 href="/about"
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl border border-white/20 bg-white/5 hover:bg-white/10 text-white font-medium text-xs sm:text-sm transition-colors"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-white/30 text-white font-medium text-sm hover:bg-white/10 transition-colors"
               >
-                <span>เกี่ยวกับ Highbury</span>
+                <span>เกี่ยวกับโรงงาน</span>
               </Link>
             </div>
           </div>

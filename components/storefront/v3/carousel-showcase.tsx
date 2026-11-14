@@ -34,54 +34,37 @@ export default function CarouselShowcase({
   if (!products || products.length === 0) return null;
 
   return (
-    <section id="collection" className="w-full py-24 lg:py-32 bg-[#0A0B0E] text-[#F8FAFC] relative overflow-hidden border-b border-white/[0.08]">
-      {/* Background cinematic dusk gradient matching Quantum */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-20"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle at 80% 20%, rgba(46, 144, 250, 0.25) 0%, transparent 55%), radial-gradient(circle at 20% 80%, rgba(245, 158, 11, 0.12) 0%, transparent 45%)",
-        }}
-      />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Top Header & Carousel Controls (Quantum style) */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14">
-          <div className="space-y-3">
-            <span className="text-xs font-bold uppercase tracking-[0.25em] text-blue-400">
-              COLLECTION
-            </span>
-            <h2 className="font-display text-4xl sm:text-5xl lg:text-6xl font-normal text-white tracking-tight leading-[1.05]">
-              Designed for
-              <br />
-              <span className="italic font-light text-white/90">Every Silhouette</span>
+    <section id="collection" className="w-full py-16 sm:py-20 bg-[#F9FAFB] border-b border-[#E7E5E4]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10 pb-4 border-b border-[#E7E5E4]">
+          <div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#0F172B] tracking-tight">
+              สินค้าแนะนำ
             </h2>
+            <p className="text-sm text-[#79716B] mt-1">
+              เสื้อเชิ้ตคุณภาพสูงหลากหลายรุ่นที่เป็นเอกลักษณ์ของ Highbury
+            </p>
           </div>
 
-          <div className="flex items-center gap-6">
-            <p className="hidden lg:block text-xs sm:text-sm text-white/60 max-w-xs leading-relaxed font-sans">
-              เลือกสรรเสื้อเชิ้ตรุ่นซิกเนเจอร์ที่พร้อมตอบโจทย์การแต่งกายในทุกช่วงเวลา
-            </p>
-
-            {/* Circular Prev/Next Controls (Matching Quantum) */}
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={scrollPrev}
-                className="v3-arrow-btn"
-                aria-label="ย้อนกลับ"
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </button>
-              <button
-                type="button"
-                onClick={scrollNext}
-                className="v3-arrow-btn"
-                aria-label="ถัดไป"
-              >
-                <ChevronRight className="w-5 h-5" />
-              </button>
-            </div>
+          {/* Clean Carousel Controls (No frosted glass) */}
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={scrollPrev}
+              className="w-9 h-9 rounded-lg border border-[#E7E5E4] bg-white hover:bg-[#F9FAFB] text-[#0F172B] flex items-center justify-center transition-colors cursor-pointer"
+              aria-label="ย้อนกลับ"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <button
+              type="button"
+              onClick={scrollNext}
+              className="w-9 h-9 rounded-lg border border-[#E7E5E4] bg-white hover:bg-[#F9FAFB] text-[#0F172B] flex items-center justify-center transition-colors cursor-pointer"
+              aria-label="ถัดไป"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
           </div>
         </div>
 
@@ -97,68 +80,44 @@ export default function CarouselShowcase({
 
               return (
                 <div key={product.id} className="embla__slide">
-                  <div className="group relative flex flex-col h-full rounded-3xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-md overflow-hidden hover:border-white/25 transition-all duration-300">
+                  <div className="group flex flex-col h-full rounded-xl border border-[#E7E5E4] bg-white overflow-hidden transition-all">
                     {/* Image Area */}
-                    <div className="relative aspect-[4/5] bg-black/40 overflow-hidden">
+                    <div className="relative aspect-[4/5] bg-[#F1F5F9] overflow-hidden">
                       <Image
                         src={primaryImg}
                         alt={product.nameTh}
                         fill
                         loading="lazy"
                         sizes="(max-width: 640px) 85vw, (max-width: 1024px) 50vw, 33vw"
-                        className="object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                        className="object-cover object-top group-hover:scale-[1.02] transition-transform duration-300"
                       />
 
-                      {/* Floating Category Pill */}
-                      <div className="absolute top-4 left-4">
-                        <span className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-[11px] font-semibold text-white/90 tracking-wider uppercase">
-                          {product.category.nameTh}
-                        </span>
-                      </div>
-
-                      {/* Quick View Button Hover Overlay */}
-                      <div className="absolute inset-x-4 bottom-4 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                      {/* Clean Quick View Button Overlay */}
+                      <div className="absolute inset-x-3 bottom-3 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
                           type="button"
                           onClick={() => onQuickView(product)}
-                          className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-full bg-white text-[#0A0B0E] font-bold text-xs shadow-xl hover:bg-slate-100 transition-colors cursor-pointer"
+                          className="w-full inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg bg-white border border-[#E7E5E4] text-[#0F172B] font-semibold text-xs shadow-xs hover:bg-[#F9FAFB] transition-colors cursor-pointer"
                         >
-                          <Eye className="w-3.5 h-3.5 text-blue-600" />
-                          <span>ดูข้อมูลด่วน</span>
+                          <Eye className="w-3.5 h-3.5 text-[#163666]" />
+                          <span>ดูรายละเอียดด่วน</span>
                         </button>
                       </div>
                     </div>
 
-                    {/* Card Content & Mini-Specs Bar (Matching Quantum) */}
-                    <div className="p-6 flex-1 flex flex-col justify-between space-y-5">
+                    {/* Card Content (Solid, clean typography, no middle dots) */}
+                    <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
                       <div>
-                        <h3 className="font-display text-2xl font-normal text-white line-clamp-1 group-hover:text-blue-300 transition-colors">
+                        <div className="text-xs text-[#79716B] mb-1 font-medium">
+                          {product.category.nameTh}
+                        </div>
+                        <h3 className="font-bold text-base text-[#0F172B] line-clamp-2 leading-snug group-hover:text-[#163666] transition-colors">
                           {product.nameTh}
                         </h3>
-                        <p className="text-xs text-white/50 line-clamp-1 mt-1 font-sans">
-                          Pure. Tailored. Everyday Comfort.
-                        </p>
                       </div>
 
-                      {/* 3 Mini Specs in font-mono (Matching Quantum) */}
-                      <div className="grid grid-cols-3 gap-2 py-3 border-y border-white/[0.08] text-center font-mono">
-                        <div>
-                          <div className="text-xs font-semibold text-white">Regular</div>
-                          <div className="text-[9px] text-white/40 tracking-wider uppercase mt-0.5">FIT</div>
-                        </div>
-                        <div className="border-x border-white/[0.08]">
-                          <div className="text-xs font-semibold text-white">Easy-Care</div>
-                          <div className="text-[9px] text-white/40 tracking-wider uppercase mt-0.5">FABRIC</div>
-                        </div>
-                        <div>
-                          <div className="text-xs font-semibold text-white">S – 4XL</div>
-                          <div className="text-[9px] text-white/40 tracking-wider uppercase mt-0.5">SIZES</div>
-                        </div>
-                      </div>
-
-                      {/* Bottom Price & Link */}
-                      <div className="flex items-center justify-between pt-1">
-                        <div className="font-mono text-lg font-bold text-white">
+                      <div className="pt-3 border-t border-[#E7E5E4] flex items-center justify-between">
+                        <div className="font-bold text-base text-[#163666]">
                           {minPrice === maxPrice
                             ? `฿${minPrice.toLocaleString()}`
                             : `฿${minPrice.toLocaleString()} – ฿${maxPrice.toLocaleString()}`}
@@ -166,10 +125,10 @@ export default function CarouselShowcase({
 
                         <Link
                           href={`/products/${product.slug}`}
-                          className="inline-flex items-center gap-1.5 text-xs font-semibold text-white/80 hover:text-white transition-colors group/link"
+                          className="inline-flex items-center gap-1 text-xs font-semibold text-[#163666] hover:text-[#0A2B5E] transition-colors"
                         >
-                          <span>Explore Model</span>
-                          <ArrowRight className="w-3.5 h-3.5 group-hover/link:translate-x-1 transition-transform" />
+                          <span>สั่งซื้อ</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
                         </Link>
                       </div>
                     </div>
@@ -181,9 +140,12 @@ export default function CarouselShowcase({
         </div>
 
         {/* View All Collection Link */}
-        <div className="mt-14 text-center">
-          <Link href="/products" className="v3-btn-glass">
-            <span>ดูเสื้อเชิ้ตทั้งหมด ({products.length} รายการ)</span>
+        <div className="mt-10 text-center">
+          <Link
+            href="/products"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-[#E7E5E4] bg-white hover:bg-[#F9FAFB] text-[#163666] font-semibold text-sm transition-colors"
+          >
+            <span>ดูสินค้าทั้งหมดในแคตตาล็อก ({products.length} รายการ)</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
