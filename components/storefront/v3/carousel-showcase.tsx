@@ -246,7 +246,7 @@ export default function CarouselShowcase({
 
                         <div className="border-l border-white/10 pl-3">
                           <div className="font-mono text-sm sm:text-base font-semibold text-white">
-                            XS - 4XL
+                            S – 4XL
                           </div>
                           <div className="text-[10px] text-white/40 tracking-[0.1em] uppercase mt-0.5">
                             SIZES
