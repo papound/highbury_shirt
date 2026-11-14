@@ -85,14 +85,14 @@ export default function CraftStory({ lang = "th" }: CraftStoryProps) {
           </div>
 
           {/* Right Column: Local Highbury photo asset (No hotlinked stock photo) */}
-          <div className="lg:col-span-5">
-            <div className="relative aspect-[4/3] rounded-lg overflow-hidden border border-[#262830] bg-[#13161D]">
+          <div className="lg:col-span-5 flex justify-center lg:justify-end">
+            <div className="relative w-full max-w-[440px] aspect-[3/4] rounded-lg overflow-hidden border border-[#262830] bg-[#13161D]">
               <Image
-                src="/images/hero-main.jpg"
-                alt="Highbury Asian Fit Tailoring"
+                src="/images/craft-story.jpg"
+                alt="Highbury Asian Fit Tailoring Craftsmanship"
                 fill
-                sizes="(max-width: 1024px) 100vw, 40vw"
-                className="object-cover object-[70%_center]"
+                sizes="(max-width: 1024px) 100vw, 440px"
+                className="object-cover object-center"
               />
             </div>
           </div>

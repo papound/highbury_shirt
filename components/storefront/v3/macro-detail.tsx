@@ -46,14 +46,14 @@ export default function MacroDetail({ lang = "th" }: MacroDetailProps) {
           </div>
 
           {/* Right Column: Local Highbury photo asset (No hotlinked stock photo) */}
-          <div className="lg:col-span-6">
-            <div className="relative aspect-[4/3] sm:aspect-[16/11] lg:aspect-[4/3] rounded-lg overflow-hidden border border-[#262830] bg-[#13161D]">
+          <div className="lg:col-span-6 flex justify-center lg:justify-end">
+            <div className="relative w-full max-w-[460px] aspect-[3/4] rounded-lg overflow-hidden border border-[#262830] bg-[#13161D]">
               <Image
                 src="/images/macro-detail.jpg"
                 alt="Highbury Asian Fit Tailoring Details"
                 fill
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-cover object-[center_12%]"
+                sizes="(max-width: 1024px) 100vw, 460px"
+                className="object-cover object-center"
               />
             </div>
           </div>
