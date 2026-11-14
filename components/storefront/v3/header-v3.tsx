@@ -185,17 +185,17 @@ export default function HeaderV3({
               }}
               className={`text-lg font-bold tracking-[0.2em] ${
                 theme === "light" ? "text-[#0F172A]" : "text-white"
-              } hover:opacity-90 transition-opacity uppercase font-sans cursor-pointer`}
+              } hover:opacity-90 transition-opacity uppercase font-sans cursor-pointer shrink-0`}
             >
               HIGHBURY
             </Link>
 
             {/* Center: Desktop Navigation Links */}
-            <nav className="hidden md:flex items-center gap-8">
+            <nav className="hidden lg:flex items-center gap-5 xl:gap-8 shrink-0">
               <a
                 href="#models"
                 onClick={(e) => scrollToSection(e, "models")}
-                className={`text-sm font-medium ${
+                className={`text-xs xl:text-sm font-medium whitespace-nowrap ${
                   theme === "light" ? "text-[#334155] hover:text-[#0F172A]" : "text-[#E7E7E7] hover:text-white"
                 } transition-colors cursor-pointer`}
               >
@@ -204,7 +204,7 @@ export default function HeaderV3({
               <a
                 href="#craftsmanship"
                 onClick={(e) => scrollToSection(e, "craftsmanship")}
-                className={`text-sm font-medium ${
+                className={`text-xs xl:text-sm font-medium whitespace-nowrap ${
                   theme === "light" ? "text-[#334155] hover:text-[#0F172A]" : "text-[#E7E7E7] hover:text-white"
                 } transition-colors cursor-pointer`}
               >
@@ -213,7 +213,7 @@ export default function HeaderV3({
               <a
                 href="#standards"
                 onClick={(e) => scrollToSection(e, "standards")}
-                className={`text-sm font-medium ${
+                className={`text-xs xl:text-sm font-medium whitespace-nowrap ${
                   theme === "light" ? "text-[#334155] hover:text-[#0F172A]" : "text-[#E7E7E7] hover:text-white"
                 } transition-colors cursor-pointer`}
               >
@@ -222,7 +222,7 @@ export default function HeaderV3({
               <a
                 href="#about"
                 onClick={(e) => scrollToSection(e, "about")}
-                className={`text-sm font-medium ${
+                className={`text-xs xl:text-sm font-medium whitespace-nowrap ${
                   theme === "light" ? "text-[#334155] hover:text-[#0F172A]" : "text-[#E7E7E7] hover:text-white"
                 } transition-colors cursor-pointer`}
               >
@@ -231,7 +231,7 @@ export default function HeaderV3({
             </nav>
 
             {/* Right: Quantum Pill Actions */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 xl:gap-3 shrink-0">
               {/* Theme Switcher (Dark / Light Version) - Crisp White Pill Button */}
               {onToggleTheme && (
                 <button
@@ -286,7 +286,7 @@ export default function HeaderV3({
                       if (searchResults.length > 0) setShowDropdown(true);
                     }}
                     placeholder={lang === "th" ? "ค้นหา เสื้อเชิ้ต, ทรง, ไซส์..." : "Search shirts, fit, size..."}
-                    className="w-40 md:w-52 lg:w-64 pl-9.5 pr-8 py-1.5 rounded-full text-xs sm:text-sm bg-[#F2F4F8] hover:bg-white focus:bg-white text-[#07080B] placeholder:text-[#64748B] border border-white/20 focus:border-white focus:outline-none focus:ring-2 focus:ring-white/40 shadow-sm transition-all select-text selection:bg-[#2563EB] selection:text-white"
+                    className="w-32 sm:w-36 md:w-44 lg:w-48 xl:w-64 pl-9.5 pr-8 py-1.5 rounded-full text-xs sm:text-sm bg-[#F2F4F8] hover:bg-white focus:bg-white text-[#07080B] placeholder:text-[#64748B] border border-white/20 focus:border-white focus:outline-none focus:ring-2 focus:ring-white/40 shadow-sm transition-all select-text selection:bg-[#2563EB] selection:text-white"
                   />
                   {isSearching ? (
                     <Loader2 className="w-3.5 h-3.5 text-[#64748B] animate-spin absolute right-3 pointer-events-none" />
@@ -398,7 +398,7 @@ export default function HeaderV3({
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className={`md:hidden p-2 rounded-md transition-colors ${
+                className={`lg:hidden p-2 rounded-md transition-colors ${
                   theme === "light"
                     ? "text-[#0F172A] hover:bg-[#F1F5F9]"
                     : "text-[#E7E7E7] hover:text-white hover:bg-[#13161D]"
@@ -415,7 +415,7 @@ export default function HeaderV3({
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
         <div
-          className={`fixed inset-0 z-40 flex flex-col pt-24 px-6 md:hidden overflow-y-auto ${
+          className={`fixed inset-0 z-40 flex flex-col pt-24 px-6 lg:hidden overflow-y-auto ${
             theme === "light" ? "bg-white text-[#0F172A]" : "bg-[#07080B] text-white"
           }`}
         >
