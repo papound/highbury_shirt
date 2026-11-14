@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ShoppingBag, Menu, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ShoppingBag, Menu, X, Search } from "lucide-react";
 import { useCartStore } from "@/hooks/use-cart";
 
 interface HeaderV3Props {
@@ -12,10 +13,19 @@ interface HeaderV3Props {
 }
 
 export default function HeaderV3({ onOpenSizeGuide, lang, onToggleLang }: HeaderV3Props) {
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("");
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const items = useCartStore((state) => state.items);
   const totalCount = items.reduce((sum, i) => sum + i.quantity, 0);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -84,14 +94,20 @@ export default function HeaderV3({ onOpenSizeGuide, lang, onToggleLang }: Header
                 {lang === "th" ? "TH / EN" : "EN / TH"}
               </button>
 
-              {/* Exact Quantum White Pill Button */}
-              <button
-                type="button"
-                onClick={onOpenSizeGuide}
-                className="hidden sm:inline-flex v3-btn-white text-xs sm:text-sm py-2 px-5"
+              {/* Search Bar Pill (Replaces Smart Size Finder button as requested) */}
+              <form
+                onSubmit={handleSearch}
+                className="hidden sm:flex items-center relative"
               >
-                {lang === "th" ? "คำนวณไซส์ Smart Size" : "Smart Size Finder"}
-              </button>
+                <Search className="w-4 h-4 text-[#64748B] absolute left-3.5 pointer-events-none" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder={lang === "th" ? "ค้นหา เสื้อเชิ้ต, ทรง, ไซส์..." : "Search shirts, fit, size..."}
+                  className="w-40 md:w-52 lg:w-64 pl-9.5 pr-4 py-1.5 rounded-full text-xs sm:text-sm bg-[#F2F4F8] hover:bg-white focus:bg-white text-[#07080B] placeholder:text-[#64748B] border border-white/20 focus:border-white focus:outline-none focus:ring-2 focus:ring-white/40 shadow-sm transition-all"
+                />
+              </form>
 
               <Link
                 href="/cart"
@@ -123,6 +139,24 @@ export default function HeaderV3({ onOpenSizeGuide, lang, onToggleLang }: Header
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-40 bg-[#07080B] flex flex-col pt-24 px-6 md:hidden">
+          {/* Mobile Search Bar */}
+          <form
+            onSubmit={(e) => {
+              handleSearch(e);
+              setMobileMenuOpen(false);
+            }}
+            className="relative mb-6"
+          >
+            <Search className="w-4 h-4 text-[#64748B] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={lang === "th" ? "ค้นหา เสื้อเชิ้ต, ทรง, ไซส์..." : "Search shirts, fit, size..."}
+              className="w-full pl-9.5 pr-4 py-2.5 rounded-full text-sm bg-[#F2F4F8] text-[#07080B] placeholder:text-[#64748B] focus:outline-none focus:bg-white"
+            />
+          </form>
+
           <nav className="flex flex-col gap-5 text-base font-medium text-white">
             <Link
               href="#models"
