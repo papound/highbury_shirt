@@ -213,12 +213,12 @@ export default function CarouselShowcase({
                   <div
                     className={`flex flex-col h-full rounded-2xl border overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl ${
                       isLight
-                        ? "bg-white border-[#E2E8F0] shadow-xs"
-                        : "bg-[#13161D] border-white/10 shadow-lg"
+                        ? "bg-gradient-to-b from-white via-white to-[#F8FAFC] border-[#E2E8F0] shadow-xs"
+                        : "bg-gradient-to-b from-[#13161D] via-[#13161D] to-[#0A0C10] border-white/10 shadow-lg"
                     }`}
                   >
-                    {/* Model Photo Container */}
-                    <div className="relative aspect-[16/11] bg-[#0E1015] overflow-hidden border-b border-inherit">
+                    {/* Model Photo Container with Quantum Gradient Dissolve */}
+                    <div className="relative aspect-[4/3] bg-[#0E1015] overflow-hidden">
                       <Image
                         src={primaryImg}
                         alt={p.nameTh || p.name}
@@ -226,8 +226,18 @@ export default function CarouselShowcase({
                         sizes="(max-width: 640px) 90vw, (max-width: 1024px) 50vw, 33vw"
                         className="object-cover object-top"
                       />
+
+                      {/* Smooth Gradient Dissolve Layer (Matches Standards/Hero Dissolve) */}
+                      <div
+                        className={`absolute inset-x-0 bottom-0 h-28 pointer-events-none transition-colors duration-300 bg-gradient-to-t ${
+                          isLight
+                            ? "from-white via-white/90 via-35% to-transparent"
+                            : "from-[#13161D] via-[#13161D]/90 via-35% to-transparent"
+                        }`}
+                      />
+
                       {/* Frosted Category Badge */}
-                      <div className="absolute top-3 left-3 pointer-events-none">
+                      <div className="absolute top-3 left-3 pointer-events-none z-10">
                         <span
                           className="px-2.5 py-1 rounded-full text-[11px] font-semibold"
                           style={{
