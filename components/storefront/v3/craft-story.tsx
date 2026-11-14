@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Scissors, ShieldCheck, Sparkles, Shirt } from "lucide-react";
+import { ArrowRight, Scissors, Sparkles, Shirt } from "lucide-react";
 import { useStorefrontV3Safe } from "../storefront-shell";
 
 interface CraftStoryProps {
@@ -16,12 +16,31 @@ export default function CraftStory({ lang: propLang }: CraftStoryProps) {
   const isLight = theme === "light";
 
   return (
-    <section id="craftsmanship" className="w-full py-12 sm:py-16 lg:py-24 scroll-mt-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-12 gap-10 lg:gap-14 items-center">
-          {/* Left Column: Heading, Sourced facts, Real spec list */}
-          <div className="lg:col-span-7 space-y-6">
-            {/* Category Tracker Tag (Exact Quantum Style) */}
+    <section id="craftsmanship" className="relative w-full min-h-[580px] lg:min-h-[660px] flex items-center overflow-hidden scroll-mt-20">
+      {/* Background Image: Highbury Tailoring Models / Workshop (Edge-to-Edge, No Outer Border) */}
+      <Image
+        src="/images/craft-story.jpg"
+        alt="Highbury Asian Fit Tailoring Craftsmanship"
+        fill
+        sizes="100vw"
+        className="object-cover object-[75%_center] lg:object-center"
+      />
+
+      {/* Smooth Gradient Fade Layer (Matches Reference Left-to-Right Dissolve) */}
+      <div
+        className={`absolute inset-0 pointer-events-none transition-colors duration-300 ${
+          isLight
+            ? "bg-gradient-to-r from-white via-white/95 via-45% to-transparent max-lg:bg-gradient-to-t max-lg:from-white/95 max-lg:via-white/80 max-lg:to-transparent"
+            : "bg-gradient-to-r from-[#07080B] via-[#07080B]/95 via-45% to-transparent max-lg:bg-gradient-to-t max-lg:from-[#07080B]/95 max-lg:via-[#07080B]/80 max-lg:to-transparent"
+        }`}
+      />
+
+      {/* Content Container aligned with site grid */}
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-28">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
+          {/* Left Column: Heading, Subtitle & Action Button (Exact Reference Replica) */}
+          <div className="lg:col-span-7 space-y-6 max-w-xl">
+            {/* Reference-style Category Tracker (e.g. CRAFTSMANSHIP+) */}
             <div
               className={`text-[11px] sm:text-xs font-semibold tracking-[0.25em] uppercase ${
                 isLight ? "text-[#64748B]" : "text-[#9496A1]"
@@ -30,7 +49,7 @@ export default function CraftStory({ lang: propLang }: CraftStoryProps) {
               CRAFTSMANSHIP+
             </div>
 
-            {/* Display Heading */}
+            {/* Big Display Heading */}
             <h2
               className={`text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight leading-[1.15] ${
                 isLight ? "text-[#0F172A]" : "text-white"
@@ -51,81 +70,25 @@ export default function CraftStory({ lang: propLang }: CraftStoryProps) {
               )}
             </h2>
 
+            {/* Refined Explanatory Paragraph */}
             <p
-              className={`text-sm sm:text-base leading-relaxed max-w-xl ${
+              className={`text-sm sm:text-base leading-relaxed max-w-lg ${
                 isLight ? "text-[#475569]" : "text-[#E7E7E7]"
               }`}
             >
               {lang === "th"
                 ? "Highbury พัฒนาแพทเทิร์นเสื้อเชิ้ตสำเร็จรูปสำหรับสรีระคนไทยโดยเฉพาะ คำนวณความกว้างช่วงไหล่ ความลึกของวงแขน และความยาวเสื้อที่สอดเข้ากางเกงได้พอดี ผลิตในเวิร์กช็อปที่มีกำลังผลิต 3,500 ตัวต่อเดือน"
-                : "Highbury develops ready-to-wear shirt patterns sculpted specifically for the Asian torso. Calibrated shoulder widths, armhole depths, and tuck-in lengths crafted in our 3,500 pcs/month workshop."}
+                : "Highbury develops ready-to-wear shirt patterns sculpted specifically for Asian proportions. Calibrated shoulder widths, armhole depths, and tuck-in lengths crafted in our 3,500 pcs/month workshop."}
             </p>
 
-            {/* 3 Real Concrete Engineering Breakdown Cards */}
-            <div className="pt-2 grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-              <div
-                className={`p-4 rounded-xl border transition-all ${
-                  isLight
-                    ? "bg-[#F8FAFC] border-[#E2E8F0] shadow-xs"
-                    : "bg-[#13161D] border-[#262830] shadow-md"
-                }`}
-              >
-                <div className="text-[11px] font-semibold text-[#FFB900] uppercase tracking-wider">
-                  {lang === "th" ? "01 โครงสร้างปก" : "01 COLLAR"}
-                </div>
-                <div className={`text-sm font-semibold mt-1 ${isLight ? "text-[#0F172A]" : "text-white"}`}>
-                  {lang === "th" ? "เสริมทรงพิเศษ" : "Reinforced Posture"}
-                </div>
-                <div className={`text-xs mt-0.5 ${isLight ? "text-[#64748B]" : "text-[#9496A1]"}`}>
-                  {lang === "th" ? "ปกตั้งสวย ไม่แบะย้วย" : "Retains crisp shape"}
-                </div>
-              </div>
-
-              <div
-                className={`p-4 rounded-xl border transition-all ${
-                  isLight
-                    ? "bg-[#F8FAFC] border-[#E2E8F0] shadow-xs"
-                    : "bg-[#13161D] border-[#262830] shadow-md"
-                }`}
-              >
-                <div className="text-[11px] font-semibold text-[#FFB900] uppercase tracking-wider">
-                  {lang === "th" ? "02 แพทเทิร์น" : "02 ASIAN FIT"}
-                </div>
-                <div className={`text-sm font-semibold mt-1 ${isLight ? "text-[#0F172A]" : "text-white"}`}>
-                  {lang === "th" ? "สัดส่วนคนไทย" : "Calibrated Fit"}
-                </div>
-                <div className={`text-xs mt-0.5 ${isLight ? "text-[#64748B]" : "text-[#9496A1]"}`}>
-                  {lang === "th" ? "วงแขนกระชับ ไม่รั้งตัว" : "Zero shoulder pull"}
-                </div>
-              </div>
-
-              <div
-                className={`p-4 rounded-xl border transition-all ${
-                  isLight
-                    ? "bg-[#F8FAFC] border-[#E2E8F0] shadow-xs"
-                    : "bg-[#13161D] border-[#262830] shadow-md"
-                }`}
-              >
-                <div className="text-[11px] font-semibold text-[#FFB900] uppercase tracking-wider">
-                  {lang === "th" ? "03 การรีด" : "03 EASY CARE"}
-                </div>
-                <div className={`text-sm font-semibold mt-1 ${isLight ? "text-[#0F172A]" : "text-white"}`}>
-                  {lang === "th" ? "คืนทรงหลังซัก" : "Wrinkle Recovery"}
-                </div>
-                <div className={`text-xs mt-0.5 ${isLight ? "text-[#64748B]" : "text-[#9496A1]"}`}>
-                  {lang === "th" ? "ประหยัดเวลารีด 50%" : "50% less ironing time"}
-                </div>
-              </div>
-            </div>
-
-            {/* Quantum Pill Button */}
+            {/* Quantum Pill Button (Exact Reference Styling) */}
             <div className="pt-2">
               <Link
                 href="#models"
                 className={`inline-flex items-center gap-2.5 px-6 py-3 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 shadow-md group cursor-pointer ${
                   isLight
                     ? "bg-[#0F172A] text-white hover:bg-[#1E293B]"
-                    : "bg-white text-[#07080B] hover:bg-white/90"
+                    : "bg-black text-white border border-white/20 hover:bg-white/10"
                 }`}
               >
                 <span>{lang === "th" ? "เลือกดูคอลเลกชันสินค้า" : "Explore Collection"}</span>
@@ -134,43 +97,70 @@ export default function CraftStory({ lang: propLang }: CraftStoryProps) {
             </div>
           </div>
 
-          {/* Right Column: Local Highbury Photo with Floating Frosted Glass Badge */}
+          {/* Right Column: Floating Frosted Glass Card with 3 Specs */}
           <div className="lg:col-span-5 flex justify-center lg:justify-end">
             <div
-              className={`relative w-full max-w-[480px] aspect-[4/5] rounded-2xl sm:rounded-3xl overflow-hidden border shadow-2xl transition-all ${
-                isLight ? "border-[#E2E8F0] bg-[#F8FAFC]" : "border-white/15 bg-[#13161D]"
-              }`}
+              className="w-full max-w-md p-6 sm:p-8 rounded-2xl sm:rounded-3xl shadow-2xl space-y-6 transition-all duration-300"
+              style={{
+                backgroundColor: "rgba(0, 0, 0, 0.55)",
+                backdropFilter: "blur(20px)",
+                WebkitBackdropFilter: "blur(20px)",
+                borderColor: "rgba(255, 255, 255, 0.18)",
+                borderWidth: "1px",
+                borderStyle: "solid",
+                color: "#FFFFFF",
+              }}
             >
-              <Image
-                src="/images/craft-story.jpg"
-                alt="Highbury Asian Fit Tailoring Craftsmanship"
-                fill
-                sizes="(max-width: 1024px) 100vw, 480px"
-                className="object-cover object-center"
-              />
-
-              {/* Floating Frosted Glass Badge over Photo (Matches Standards Section) */}
-              <div
-                className="absolute bottom-5 left-5 right-5 sm:left-5 sm:right-auto p-3.5 sm:p-4 rounded-xl shadow-2xl flex items-center gap-3.5"
-                style={{
-                  backgroundColor: "rgba(0, 0, 0, 0.55)",
-                  backdropFilter: "blur(16px)",
-                  WebkitBackdropFilter: "blur(16px)",
-                  borderColor: "rgba(255, 255, 255, 0.2)",
-                  borderWidth: "1px",
-                  borderStyle: "solid",
-                  color: "#FFFFFF",
-                }}
-              >
-                <div className="w-9 h-9 rounded-lg bg-[#FFB900]/20 border border-[#FFB900]/40 flex items-center justify-center shrink-0">
-                  <Scissors className="w-4 h-4 text-[#FFB900]" />
+              {/* Stat 1: Collar */}
+              <div className="flex items-start gap-4">
+                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0 mt-0.5 border border-white/20">
+                  <Scissors className="w-4 h-4 text-white" />
                 </div>
                 <div>
-                  <div className="text-[11px] font-semibold text-[#FFB900] uppercase tracking-wider">
-                    {lang === "th" ? "เวิร์กช็อปมาตรฐานสูง" : "Workshop Standard"}
+                  <div className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+                    01
                   </div>
-                  <div className="text-xs sm:text-sm font-medium text-white mt-0.5">
-                    {lang === "th" ? "3,500 ตัว / เดือน ผลิตในไทย 100%" : "3,500 Pcs/Mo Tailored in Thailand"}
+                  <div className="text-xs sm:text-sm text-white/80 font-medium mt-0.5">
+                    {lang === "th" ? "โครงสร้างปก (Dual-Fused Collar)" : "Dual-Fused Collar Stance"}
+                  </div>
+                  <div className="text-[11px] sm:text-xs text-white/60 mt-0.5">
+                    {lang === "th" ? "ปกอัดกาวสองชั้น ตั้งทรงสวย ไม่ย้วย แม้ไม่ผูกเนกไท" : "Two-layer fusing maintains crisp stance all day"}
+                  </div>
+                </div>
+              </div>
+
+              {/* Stat 2: Asian Fit Armhole */}
+              <div className="flex items-start gap-4 border-t border-white/15 pt-5">
+                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0 mt-0.5 border border-white/20">
+                  <Shirt className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <div className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+                    02
+                  </div>
+                  <div className="text-xs sm:text-sm text-white/80 font-medium mt-0.5">
+                    {lang === "th" ? "วงแขน Asian Fit (Sculpted Armhole)" : "Sculpted Asian Fit Armhole"}
+                  </div>
+                  <div className="text-[11px] sm:text-xs text-white/60 mt-0.5">
+                    {lang === "th" ? "ลดการรั้งช่วงไหล่ ขยับตัวคล่องตัวตลอดวันทำงาน" : "Engineered curves eliminate torso & shoulder pull"}
+                  </div>
+                </div>
+              </div>
+
+              {/* Stat 3: Easy Care */}
+              <div className="flex items-start gap-4 border-t border-white/15 pt-5">
+                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0 mt-0.5 border border-white/20">
+                  <Sparkles className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <div className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+                    03
+                  </div>
+                  <div className="text-xs sm:text-sm text-white/80 font-medium mt-0.5">
+                    {lang === "th" ? "การรีด Easy Care (Wrinkle Recovery)" : "Easy-Care Wrinkle Recovery"}
+                  </div>
+                  <div className="text-[11px] sm:text-xs text-white/60 mt-0.5">
+                    {lang === "th" ? "คืนทรงหลังซัก สะบัดแขวน ประหยัดเวลารีด 50%" : "Fabric rebounds post-wash, 50% less ironing"}
                   </div>
                 </div>
               </div>
