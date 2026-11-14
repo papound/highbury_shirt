@@ -15,23 +15,25 @@ export default function HeroV3({ onOpenSizeGuide, lang = "th" }: HeroV3Props) {
       {/* Background Visual: Real high-res luxury tailored shirt studio visual */}
       <div className="absolute inset-0 pointer-events-none z-0">
         <Image
-          src="https://images.unsplash.com/photo-1620012253295-c15c429fbb41?q=80&w=1600&auto=format&fit=crop"
-          alt="Highbury Flagship Tailored Shirt Studio"
+          src="/images/hero-main.jpg"
+          alt="Highbury Asian Fit Tailoring Models"
           fill
           priority
           sizes="100vw"
-          className="object-cover object-[center_35%] md:object-[right_25%] opacity-35 md:opacity-45 mix-blend-luminosity scale-105 transition-transform duration-1000"
+          className="object-cover object-[78%_center] md:object-[right_center] scale-100 transition-transform duration-1000"
         />
-        {/* Cinematic gradient overlays matching Quantum */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#07080B] via-[#07080B]/50 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#07080B] via-[#07080B]/70 to-transparent" />
+        {/* Seamless cinematic gradient: solid dark for typography on left, gentle transition, crystal-clear models on right */}
         <div
-          className="absolute inset-0 opacity-20"
+          className="absolute inset-0 z-1"
           style={{
-            backgroundImage:
-              "radial-gradient(circle at 15% 45%, rgba(46, 144, 250, 0.4) 0%, transparent 60%)",
+            background:
+              "linear-gradient(to right, #07080B 0%, #07080B 35%, rgba(7, 8, 11, 0.85) 50%, rgba(7, 8, 11, 0.2) 70%, transparent 85%)",
           }}
         />
+        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#07080B] to-transparent z-1" />
+        <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-[#07080B]/80 to-transparent z-1" />
+        {/* Mobile scrim for readability */}
+        <div className="absolute inset-0 bg-[#07080B]/55 md:hidden z-1" />
       </div>
 
       {/* Main Content Area */}
