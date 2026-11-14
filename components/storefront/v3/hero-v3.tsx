@@ -20,32 +20,30 @@ export default function HeroV3({ onOpenSizeGuide, lang = "th" }: HeroV3Props) {
           fill
           priority
           sizes="100vw"
-          className="object-cover object-[78%_center] md:object-[right_center] scale-100 transition-transform duration-1000"
+          className="object-cover object-[56%_center] sm:object-[62%_center] lg:object-[68%_center] scale-100 transition-transform duration-1000"
         />
-        {/* Seamless cinematic gradient: solid dark for typography on left, gentle transition, crystal-clear models on right */}
+        {/* Seamless cinematic gradient: solid dark for typography on left, clears up by 50% so female and male models are both fully visible */}
         <div
           className="absolute inset-0 z-1"
           style={{
             background:
-              "linear-gradient(to right, #07080B 0%, #07080B 35%, rgba(7, 8, 11, 0.85) 50%, rgba(7, 8, 11, 0.2) 70%, transparent 85%)",
+              "linear-gradient(to right, #07080B 0%, #07080B 20%, rgba(7, 8, 11, 0.8) 35%, rgba(7, 8, 11, 0.2) 48%, transparent 58%)",
           }}
         />
-        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#07080B] to-transparent z-1" />
-        <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-[#07080B]/80 to-transparent z-1" />
-        {/* Mobile scrim for readability */}
-        <div className="absolute inset-0 bg-[#07080B]/55 md:hidden z-1" />
+        <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-[#07080B] to-transparent z-1" />
+        <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-[#07080B]/80 to-transparent z-1" />
       </div>
 
       {/* Main Content Area */}
       <div className="relative z-10 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-36 md:pt-44 pb-20 my-auto">
-        <div className="max-w-3xl space-y-6">
+        <div className="max-w-lg lg:max-w-2xl space-y-6">
           {/* Tag above headline (Quantum Style) */}
           <div className="text-white/60 text-xs font-semibold tracking-[0.28em] uppercase font-sans">
             HIGHBURY INTERNATIONAL
           </div>
 
           {/* Headline (Quantum Style: Two-line large, clean modern sans) */}
-          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-[80px] font-medium tracking-[-0.03em] leading-[1.05] text-white font-sans">
+          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-medium tracking-[-0.03em] leading-[1.08] text-white font-sans drop-shadow-md">
             {lang === "th" ? (
               <>
                 ปฏิวัติความพอดี
