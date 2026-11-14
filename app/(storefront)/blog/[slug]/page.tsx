@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { blogPosts } from "@/lib/mock-blog";
 import { notFound } from "next/navigation";
 import Image from "next/image";
@@ -5,18 +6,59 @@ import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import ReactMarkdown from "react-markdown";
+import JsonLd from "@/components/shared/json-ld";
+import {
+  getBaseUrl,
+  siteConfig,
+  generateArticleSchema,
+  generateBreadcrumbSchema,
+} from "@/lib/seo";
 
 interface Props {
   params: Promise<{ slug: string }>;
 }
 
-export async function generateMetadata({ params }: Props) {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = blogPosts.find((p) => p.slug === slug);
-  if (!post) return { title: "Not Found" };
+  if (!post) return { title: "บทความไม่พบ" };
+
+  const baseUrl = getBaseUrl();
+  const canonicalUrl = `${baseUrl}/blog/${post.slug}`;
+  const ogImageUrl = post.imageUrl.startsWith("http")
+    ? post.imageUrl
+    : `${baseUrl}${post.imageUrl}`;
+
   return {
     title: post.title,
     description: post.excerpt,
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title: `${post.title} | Highbury International`,
+      description: post.excerpt,
+      url: canonicalUrl,
+      type: "article",
+      publishedTime: post.date,
+      authors: [siteConfig.name],
+      images: [
+        {
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
+      locale: siteConfig.locale,
+      siteName: siteConfig.name,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${post.title} | Highbury International`,
+      description: post.excerpt,
+      images: [ogImageUrl],
+    },
   };
 }
 
@@ -34,8 +76,25 @@ export default async function BlogPostPage({ params }: Props) {
     notFound();
   }
 
+  const articleJsonLd = generateArticleSchema({
+    title: post.title,
+    slug: post.slug,
+    excerpt: post.excerpt,
+    date: post.date,
+    imageUrl: post.imageUrl,
+    authorName: siteConfig.name,
+  });
+
+  const breadcrumbJsonLd = generateBreadcrumbSchema([
+    { name: "หน้าแรก", url: "/" },
+    { name: "บทความ", url: "/blog" },
+    { name: post.title, url: `/blog/${post.slug}` },
+  ]);
+
   return (
     <article className="container mx-auto px-4 py-12 md:py-20 space-y-12">
+      <JsonLd data={articleJsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
       {/* Header */}
       <header className="max-w-3xl mx-auto text-center space-y-6">
         <div className="flex flex-wrap items-center justify-center gap-3">

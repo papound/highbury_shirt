@@ -3,8 +3,12 @@ import prisma from "@/lib/prisma";
 import HomeV3 from "@/components/storefront/home-v3";
 
 export const metadata: Metadata = {
-  title: "Highbury International – เสื้อเชิ้ตคุณภาพพรีเมียม",
-  description: "เสื้อเชิ้ตดีไซน์ทันสมัยสำหรับทั้งผู้ชายและผู้หญิงยุคใหม่ คัตติ้งเนี้ยบ ทรงสวย พอดีตัว พร้อมเนื้อผ้าระบายอากาศได้ดีเยี่ยม ตอบโจทย์ทุกวันทำงานและทุกโอกาสของคุณ",
+  title: "Highbury International – เสื้อเชิ้ตคุณภาพพรีเมียม สไตล์และสรีระคนเอเชีย",
+  description:
+    "เสื้อเชิ้ตดีไซน์ทันสมัยสำหรับทั้งผู้ชายและผู้หญิงยุคใหม่ คัตติ้งเนี้ยบ ทรงสวย พอดีตัว พร้อมเนื้อผ้าระบายอากาศได้ดีเยี่ยม ตอบโจทย์ทุกวันทำงานและทุกโอกาสของคุณ",
+  alternates: {
+    canonical: "./",
+  },
 };
 
 async function getFeaturedProducts() {

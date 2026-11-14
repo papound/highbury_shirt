@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { PaginationJump } from "@/components/storefront/pagination-jump";
@@ -10,6 +11,30 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Search, SlidersHorizontal } from "lucide-react";
+import { getBaseUrl, siteConfig } from "@/lib/seo";
+
+export const metadata: Metadata = {
+  title: "สินค้าทั้งหมด เสื้อเชิ้ตพรีเมียม ชาย-หญิง",
+  description:
+    "เลือกซื้อเสื้อเชิ้ตสำเร็จรูปคุณภาพสูงสำหรับผู้ชายและผู้หญิง เสื้อเชิ้ตแขนยาว แขนสั้น สามส่วน ทรงสวย พอดีตัว สวมใส่สบายทุกวันทำงาน",
+  alternates: {
+    canonical: `${getBaseUrl()}/products`,
+  },
+  openGraph: {
+    title: "สินค้าทั้งหมด | Highbury International",
+    description:
+      "เลือกซื้อเสื้อเชิ้ตสำเร็จรูปคุณภาพสูงสำหรับผู้ชายและผู้หญิง ครบทุกไซส์ S - 5XL หลากสีสันพร้อมส่ง",
+    url: `${getBaseUrl()}/products`,
+    images: [
+      {
+        url: `${getBaseUrl()}${siteConfig.defaultOgImage}`,
+        width: 1200,
+        height: 630,
+        alt: "Highbury All Products",
+      },
+    ],
+  },
+};
 
 interface SearchParams {
   category?: string;
@@ -65,10 +90,6 @@ async function getProducts(sp: SearchParams) {
 
   return { products, total, categories, page, totalPages: Math.ceil(total / PAGE_SIZE) };
 }
-
-export const metadata = {
-  title: "สินค้าทั้งหมด",
-};
 
 export default async function ProductsPage({ searchParams }: Props) {
   const sp = await searchParams;

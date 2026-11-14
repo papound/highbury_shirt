@@ -1,12 +1,30 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { blogPosts } from "@/lib/mock-blog";
+import { getBaseUrl, siteConfig } from "@/lib/seo";
 
-export const metadata = {
-  title: "บทความ",
-  description: "อ่านบทความและเคล็ดลับดีๆ เกี่ยวกับเสื้อเชิ้ต การแต่งตัว และการดูแลรักษา",
+export const metadata: Metadata = {
+  title: "บทความและสาระน่ารู้เรื่องเสื้อเชิ้ต",
+  description: "รวมบทความ สาระน่ารู้ เคล็ดลับการแต่งตัว การเลือกเนื้อผ้า และเบื้องหลังงานผลิตเสื้อเชิ้ตคุณภาพสูง Highbury",
+  alternates: {
+    canonical: `${getBaseUrl()}/blog`,
+  },
+  openGraph: {
+    title: "บทความและสาระน่ารู้เรื่องเสื้อเชิ้ต | Highbury International",
+    description: "รวมบทความ สาระน่ารู้ เคล็ดลับการแต่งตัว การเลือกเนื้อผ้า และเบื้องหลังงานผลิตเสื้อเชิ้ตคุณภาพสูง",
+    url: `${getBaseUrl()}/blog`,
+    images: [
+      {
+        url: `${getBaseUrl()}${siteConfig.defaultOgImage}`,
+        width: 1200,
+        height: 630,
+        alt: "Highbury Blog",
+      },
+    ],
+  },
 };
 
 export default function BlogPage() {

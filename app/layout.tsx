@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { Prompt, Geist_Mono } from "next/font/google";
 import NextAuthSessionProvider from "@/components/shared/session-provider";
 import { ThemeProvider } from "@/components/shared/theme-provider";
+import JsonLd from "@/components/shared/json-ld";
+import { getBaseUrl, siteConfig, generateOrganizationSchema, generateWebSiteSchema } from "@/lib/seo";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
@@ -19,17 +21,48 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(getBaseUrl()),
   title: {
-    default: "Highbury International",
-    template: "%s | Highbury International",
+    default: siteConfig.titleDefault,
+    template: siteConfig.titleTemplate,
   },
-  description:
-    "เสื้อเชิ้ตสำเร็จรูปคุณภาพสูง ชาย-หญิง หลากสีสัน หลายไซส์ Premium ready-made shirts for men and women.",
-  keywords: ["เสื้อเชิ้ต", "Highbury International", "shirt", "เสื้อสำเร็จรูป"],
+  description: siteConfig.description,
+  keywords: siteConfig.keywords,
+  alternates: {
+    canonical: "./",
+  },
   openGraph: {
-    siteName: "Highbury International",
-    locale: "th_TH",
+    title: siteConfig.titleDefault,
+    description: siteConfig.description,
+    url: getBaseUrl(),
+    siteName: siteConfig.name,
+    images: [
+      {
+        url: siteConfig.defaultOgImage,
+        width: 1200,
+        height: 630,
+        alt: siteConfig.name,
+      },
+    ],
+    locale: siteConfig.locale,
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteConfig.titleDefault,
+    description: siteConfig.description,
+    images: [siteConfig.defaultOgImage],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 
@@ -38,6 +71,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const orgSchema = generateOrganizationSchema();
+  const websiteSchema = generateWebSiteSchema();
+
   return (
     <html
       lang="th"
@@ -45,6 +81,8 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
+        <JsonLd data={orgSchema} />
+        <JsonLd data={websiteSchema} />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

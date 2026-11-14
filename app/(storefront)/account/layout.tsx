@@ -1,6 +1,15 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+
+export const metadata: Metadata = {
+  title: "บัญชีของฉัน",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default async function AccountLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();

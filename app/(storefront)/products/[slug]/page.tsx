@@ -1,8 +1,16 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
 import { getProductPlaceholderImage } from "@/lib/placeholders";
 import ProductView from "@/components/storefront/product-view";
+import JsonLd from "@/components/shared/json-ld";
+import {
+  getBaseUrl,
+  generateProductSchema,
+  generateBreadcrumbSchema,
+  siteConfig,
+} from "@/lib/seo";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -19,13 +27,50 @@ async function getProduct(slug: string) {
   });
 }
 
-export async function generateMetadata({ params }: Props) {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const product = await getProduct(slug);
   if (!product) return {};
+
+  const baseUrl = getBaseUrl();
+  const canonicalUrl = `${baseUrl}/products/${product.slug}`;
+  const title = product.nameTh || product.name;
+  const description =
+    product.descTh ??
+    product.description ??
+    `${title} เสื้อเชิ้ตสำเร็จรูปคุณภาพสูงจาก Highbury International คัตติ้งเนี้ยบ ทรงสวย พอดีตัว`;
+
+  const primaryImage = product.images?.[0]?.url || siteConfig.defaultOgImage;
+  const ogImageUrl = primaryImage.startsWith("http") ? primaryImage : `${baseUrl}${primaryImage}`;
+
   return {
-    title: product.nameTh,
-    description: product.descTh ?? product.description,
+    title,
+    description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title: `${title} | Highbury International`,
+      description,
+      url: canonicalUrl,
+      type: "website",
+      images: [
+        {
+          url: ogImageUrl,
+          width: 800,
+          height: 1000,
+          alt: title,
+        },
+      ],
+      locale: siteConfig.locale,
+      siteName: siteConfig.name,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} | Highbury International`,
+      description,
+      images: [ogImageUrl],
+    },
   };
 }
 
@@ -53,8 +98,31 @@ export default async function ProductDetailPage({ params }: Props) {
     })),
   };
 
+  const productJsonLd = generateProductSchema({
+    name: product.name,
+    nameTh: product.nameTh,
+    slug: product.slug,
+    description: product.description,
+    descTh: product.descTh,
+    images: product.images,
+    variants: productData.variants,
+    categoryName: product.category?.nameTh,
+  });
+
+  const breadcrumbJsonLd = generateBreadcrumbSchema([
+    { name: "หน้าแรก", url: "/" },
+    { name: "สินค้าทั้งหมด", url: "/products" },
+    {
+      name: product.category?.nameTh || "หมวดหมู่",
+      url: `/products?category=${product.category?.slug}`,
+    },
+    { name: product.nameTh, url: `/products/${product.slug}` },
+  ]);
+
   return (
     <div className="container mx-auto px-4 py-8">
+      <JsonLd data={productJsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
         <Link href="/" className="hover:text-foreground">หน้าแรก</Link>
