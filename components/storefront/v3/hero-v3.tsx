@@ -30,7 +30,7 @@ export default function HeroV3({
           priority
           sizes="100vw"
           quality={95}
-          className="object-cover object-[56%_center] sm:object-[62%_center] lg:object-[68%_center] scale-100"
+          className="object-cover object-[62%_center] sm:object-[68%_center] lg:object-[72%_center] scale-100"
         />
         {/* Crisp linear gradient adapted for dark/light themes */}
         <div
