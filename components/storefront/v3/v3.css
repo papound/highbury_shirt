@@ -1,31 +1,28 @@
 /* ─────────────────────────────────────────────────────────────────────────────
-   QUANTUM MOTORS 1-TO-1 VISUAL CLONE DESIGN SYSTEM FOR HIGHBURY V3
-   Faithful replication of: https://z9994-eo58it.ps15.zwhhosting.com/
+   HIGHBURY V3 DESIGN SYSTEM - PURPOSEFUL, DESIGNED, ANTI-SLOP
    Scoped to .v3-page-wrapper
+   Palette: Dark #07080B, Text #FFFFFF, Muted #E7E7E7, Secondary #FFB900, Border #262830
+   Type: Google Sans
+   Corner Radius: 8px (rounded-lg) consistent throughout (No generic pill buttons)
+   Zero filter: blur(), Zero radial glowing blobs
    ───────────────────────────────────────────────────────────────────────────── */
-
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 .v3-page-wrapper {
   /* ── Typography Tokens ── */
-  --v3-font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --v3-font-mono: 'JetBrains Mono', monospace;
+  --v3-font-sans: 'Google Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --v3-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  /* ── Palette: Quantum Pitch Dark & Architectural White ── */
+  /* ── Color Palette: Strict Architectural Contrast ── */
   --v3-bg-dark: #07080B;
-  --v3-bg-dark-surface: #0E1015;
-  --v3-bg-dark-card: rgba(255, 255, 255, 0.035);
-  --v3-border-dark: rgba(255, 255, 255, 0.1);
-  --v3-border-dark-hover: rgba(255, 255, 255, 0.3);
-
-  --v3-bg-light: #FFFFFF;
-  --v3-bg-light-muted: #F8FAFC;
-  --v3-border-light: #E2E8F0;
+  --v3-bg-surface: #0E1015;
+  --v3-bg-card: #13161D;
+  --v3-border: #262830;
+  --v3-border-subtle: #1C1E26;
 
   --v3-text-main: #FFFFFF;
-  --v3-text-muted: #94A3B8;
-  --v3-text-dark: #0A0B0E;
-  --v3-text-dark-muted: #64748B;
+  --v3-text-muted: #E7E7E7;
+  --v3-text-subtle: #9496A1;
+  --v3-accent-gold: #FFB900;
 
   font-family: var(--v3-font-sans);
   background-color: var(--v3-bg-dark);
@@ -43,107 +40,67 @@
   font-family: var(--v3-font-sans);
 }
 
-/* ── Quantum Pill Buttons ── */
-.v3-page-wrapper .v3-btn-white {
+/* ── Consistent 8px Radius Buttons (Anti-Slop: No generic pill buttons) ── */
+.v3-page-wrapper .v3-btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.75rem;
-  border-radius: 9999px;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
   background-color: #FFFFFF;
-  color: #0A0B0E;
+  color: #07080B;
   font-weight: 600;
   font-size: 0.875rem;
   line-height: 1.25rem;
-  letter-spacing: -0.01em;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid #FFFFFF;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
   cursor: pointer;
 }
 
-.v3-page-wrapper .v3-btn-white:hover {
-  background-color: #E2E8F0;
-  transform: translateY(-1px);
+.v3-page-wrapper .v3-btn-primary:hover {
+  background-color: #E7E7E7;
+  border-color: #E7E7E7;
 }
 
-.v3-page-wrapper .v3-btn-white:active {
-  transform: scale(0.98);
-}
-
-.v3-page-wrapper .v3-btn-glass {
+.v3-page-wrapper .v3-btn-secondary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.625rem;
-  padding: 0.75rem 1.75rem;
-  border-radius: 9999px;
-  background-color: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  color: #FFFFFF;
-  font-weight: 500;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  cursor: pointer;
-}
-
-.v3-page-wrapper .v3-btn-glass:hover {
-  background-color: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.5);
-  transform: translateY(-1px);
-}
-
-.v3-page-wrapper .v3-btn-glass:active {
-  transform: scale(0.98);
-}
-
-.v3-page-wrapper .v3-btn-black {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.75rem;
-  border-radius: 9999px;
-  background-color: #0A0B0E;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  background-color: #13161D;
   color: #FFFFFF;
   font-weight: 600;
   font-size: 0.875rem;
   line-height: 1.25rem;
-  letter-spacing: -0.01em;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid #262830;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
   cursor: pointer;
 }
 
-.v3-page-wrapper .v3-btn-black:hover {
-  background-color: #27272A;
-  transform: translateY(-1px);
+.v3-page-wrapper .v3-btn-secondary:hover {
+  background-color: #1A1E27;
+  border-color: #383B46;
 }
 
-.v3-page-wrapper .v3-btn-black:active {
-  transform: scale(0.98);
-}
-
-/* ── Circular Arrow Controls (Quantum Carousel Arrows) ── */
+/* ── Carousel Arrows (Consistent 8px Rounded Square Controls) ── */
 .v3-page-wrapper .v3-arrow-btn {
-  width: 2.75rem;
-  height: 2.75rem;
-  border-radius: 9999px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background-color: rgba(255, 255, 255, 0.05);
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 8px;
+  border: 1px solid #262830;
+  background-color: #13161D;
   color: #FFFFFF;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
   cursor: pointer;
 }
 
 .v3-page-wrapper .v3-arrow-btn:hover {
-  background-color: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.4);
-  transform: scale(1.05);
+  background-color: #1C202B;
+  border-color: #3D4252;
 }
 
 .v3-page-wrapper .v3-arrow-btn:disabled {
@@ -161,13 +118,13 @@
 .v3-page-wrapper .embla__container {
   display: flex;
   touch-action: pan-y pinch-zoom;
-  margin-left: -1.5rem;
+  margin-left: -1.25rem;
 }
 
 .v3-page-wrapper .embla__slide {
-  flex: 0 0 90%;
+  flex: 0 0 88%;
   min-width: 0;
-  padding-left: 1.5rem;
+  padding-left: 1.25rem;
 }
 
 @media (min-width: 640px) {
@@ -182,31 +139,21 @@
   }
 }
 
-/* ── Dialog Backdrop ── */
+/* ── Dialog ── */
 dialog.v3-dialog:modal {
   overscroll-behavior: contain;
   margin: auto;
-  border: none;
+  border: 1px solid #262830;
+  border-radius: 8px;
+  background-color: #0E1015;
 }
 
 dialog.v3-dialog::backdrop {
-  background-color: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background-color: rgba(7, 8, 11, 0.85);
 }
 
 /* ── Performance & Accessibility ── */
 .v3-page-wrapper .v3-section-deferred {
   content-visibility: auto;
   contain-intrinsic-size: auto 600px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .v3-page-wrapper *,
-  .v3-page-wrapper *::before,
-  .v3-page-wrapper *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
 }

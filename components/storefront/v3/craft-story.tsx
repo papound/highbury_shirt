@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Wind, Scissors, ShieldCheck } from "lucide-react";
 
 interface CraftStoryProps {
   lang?: "th" | "en";
@@ -10,21 +9,17 @@ interface CraftStoryProps {
 
 export default function CraftStory({ lang = "th" }: CraftStoryProps) {
   return (
-    <section id="about" className="w-full py-24 sm:py-32 bg-white text-[#0A0B0E]">
+    <section id="about" className="w-full py-20 sm:py-28 bg-[#0E1015] text-white border-b border-[#262830]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-          {/* Left Column (Quantum Style: Tag, Headline, Paragraph, Black Pill, 3 Features) */}
-          <div className="lg:col-span-6 space-y-6">
-            <div className="text-xs font-semibold tracking-[0.25em] text-[#64748B] uppercase">
-              ABOUT · เรื่องราวของ HIGHBURY
-            </div>
-
-            <h2 className="text-4xl sm:text-5xl font-medium tracking-[-0.03em] text-[#0A0B0E] leading-[1.1]">
+        <div className="grid lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+          {/* Left Column: Heading, Concrete facts, Real spec list (No repeated icon cards) */}
+          <div className="lg:col-span-7 space-y-6">
+            <h2 className="text-3xl sm:text-4xl font-medium tracking-tight text-white leading-tight">
               {lang === "th" ? (
                 <>
                   มิติใหม่ของงานตัดเย็บ
                   <br />
-                  ที่ใส่สบายได้ทุกวัน
+                  ที่ใส่สบายได้ทุกวันทำงาน
                 </>
               ) : (
                 <>
@@ -35,62 +30,67 @@ export default function CraftStory({ lang = "th" }: CraftStoryProps) {
               )}
             </h2>
 
-            <p className="text-base text-[#475569] leading-relaxed max-w-lg">
+            <p className="text-sm sm:text-base text-[#E7E7E7] leading-relaxed max-w-xl">
               {lang === "th"
-                ? "Highbury ผสานศาสตร์ช่างเสื้อเชิ้ตประณีตเข้ากับนวัตกรรมเนื้อผ้ารีดง่าย ผลิตในเวิร์กช็อปที่มีกำลังผลิตกว่า 3,500 ตัวต่อเดือน ออกแบบสัดส่วนช่วงไหล่ อก และวงแขนให้เข้ากับสรีระคนไทยโดยเฉพาะ เพื่อความมั่นใจในทุกวันทำงาน"
-                : "Highbury combines bespoke tailoring craftsmanship with modern easy-care fabric engineering. Handcrafted in our dedicated workshop with over 3,500 shirts monthly capacity, every piece is sculpted specifically for the Asian torso."}
+                ? "Highbury พัฒนาแพทเทิร์นเสื้อเชิ้ตสำเร็จรูปสำหรับสรีระคนไทยโดยเฉพาะ คำนวณความกว้างช่วงไหล่ ความลึกของวงแขน และความยาวเสื้อที่สอดเข้ากางเกงได้พอดี ผลิตในเวิร์กช็อปที่มีกำลังผลิต 3,500 ตัวต่อเดือน"
+                : "Highbury develops ready-to-wear shirt patterns sculpted specifically for the Asian torso. Calibrated shoulder widths, armhole depths, and tuck-in lengths crafted in our 3,500 pcs/month workshop."}
             </p>
 
-            <div className="pt-2">
-              <Link href="#models" className="v3-btn-black">
-                <span>{lang === "th" ? "เรื่องราวงานตัดเย็บ" : "Our Story"}</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
+            {/* Real concrete engineering breakdown (Anti-Slop: replaces 3 icon cards with real metrics) */}
+            <div className="pt-2 grid grid-cols-1 sm:grid-cols-3 gap-4 border-t border-[#262830]">
+              <div className="bg-[#13161D] p-4 rounded-lg border border-[#262830]">
+                <div className="text-xs font-semibold text-[#FFB900] uppercase tracking-wider">
+                  {lang === "th" ? "โครงสร้างปก" : "Collar Weave"}
+                </div>
+                <div className="text-sm font-medium text-white mt-1">
+                  {lang === "th" ? "ผ้าอัดกาวเยอรมัน" : "German Interlining"}
+                </div>
+                <div className="text-xs text-[#9496A1] mt-0.5">
+                  {lang === "th" ? "ปกตั้งอยู่ทรง ไม่แบะย้วย" : "Retains crisp posture"}
+                </div>
+              </div>
+
+              <div className="bg-[#13161D] p-4 rounded-lg border border-[#262830]">
+                <div className="text-xs font-semibold text-[#FFB900] uppercase tracking-wider">
+                  {lang === "th" ? "แพทเทิร์น" : "Asian Torso"}
+                </div>
+                <div className="text-sm font-medium text-white mt-1">
+                  {lang === "th" ? "สัดส่วนคนไทย" : "Calibrated Fit"}
+                </div>
+                <div className="text-xs text-[#9496A1] mt-0.5">
+                  {lang === "th" ? "วงแขนกระชับ ไม่รั้งตัว" : "Zero shoulder pull"}
+                </div>
+              </div>
+
+              <div className="bg-[#13161D] p-4 rounded-lg border border-[#262830]">
+                <div className="text-xs font-semibold text-[#FFB900] uppercase tracking-wider">
+                  {lang === "th" ? "การรีด" : "Easy Care"}
+                </div>
+                <div className="text-sm font-medium text-white mt-1">
+                  {lang === "th" ? "คืนทรงหลังซัก" : "Wrinkle Recovery"}
+                </div>
+                <div className="text-xs text-[#9496A1] mt-0.5">
+                  {lang === "th" ? "ประหยัดเวลารีด 50%" : "50% less ironing time"}
+                </div>
+              </div>
             </div>
 
-            {/* 3 Minimal Feature Items Below (Quantum Style) */}
-            <div className="pt-10 border-t border-[#E2E8F0] grid grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Wind className="w-5 h-5 text-[#0A0B0E]" />
-                <div className="text-xs font-semibold text-[#0A0B0E]">
-                  {lang === "th" ? "ระบายอากาศ 3 เท่า" : "Ultra Breathability"}
-                </div>
-                <div className="text-[10px] text-[#64748B]">
-                  {lang === "th" ? "ไม่อมเหงื่อ แห้งไว" : "All-Day Freshness"}
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Scissors className="w-5 h-5 text-[#0A0B0E]" />
-                <div className="text-xs font-semibold text-[#0A0B0E]">
-                  {lang === "th" ? "สรีระคนไทย" : "Asian Ergonomic Fit"}
-                </div>
-                <div className="text-[10px] text-[#64748B]">
-                  {lang === "th" ? "ไหล่ อก พอดีตัว" : "Tailored Proportions"}
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <ShieldCheck className="w-5 h-5 text-[#0A0B0E]" />
-                <div className="text-xs font-semibold text-[#0A0B0E]">
-                  {lang === "th" ? "คืนทรง รีดง่าย" : "Wrinkle Resistant"}
-                </div>
-                <div className="text-[10px] text-[#64748B]">
-                  {lang === "th" ? "ประหยัดเวลารีด" : "Easy-Care Finish"}
-                </div>
-              </div>
+            <div className="pt-2">
+              <Link href="#models" className="v3-btn-primary">
+                <span>{lang === "th" ? "เลือกดูคอลเลกชันสินค้า" : "Explore Collection"}</span>
+              </Link>
             </div>
           </div>
 
-          {/* Right Column: Architectural Photography (Quantum Style) */}
-          <div className="lg:col-span-6">
-            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl bg-[#0A0B0E]">
+          {/* Right Column: Local Highbury photo asset (No hotlinked stock photo) */}
+          <div className="lg:col-span-5">
+            <div className="relative aspect-[4/3] rounded-lg overflow-hidden border border-[#262830] bg-[#13161D]">
               <Image
-                src="https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?q=80&w=1200&auto=format&fit=crop"
-                alt="Highbury Tailoring Studio"
+                src="/images/hero-main.jpg"
+                alt="Highbury Asian Fit Tailoring"
                 fill
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-cover object-center hover:scale-105 transition-transform duration-700"
+                sizes="(max-width: 1024px) 100vw, 40vw"
+                className="object-cover object-[70%_center]"
               />
             </div>
           </div>

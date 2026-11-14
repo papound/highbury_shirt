@@ -4,7 +4,7 @@ import { useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import useEmblaCarousel from "embla-carousel-react";
-import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { QuickViewProduct } from "./quick-view-modal";
 import { getProductPlaceholderImage, CATEGORY_REAL_IMAGES } from "@/lib/placeholders";
 
@@ -14,13 +14,12 @@ interface CarouselShowcaseProps {
   lang?: "th" | "en";
 }
 
-// Category English Mapping
 const CAT_EN_MAP: Record<string, string> = {
-  "เสื้อเชิ้ตผู้ชายแขนยาว": "Men's Long Sleeve Shirt",
-  "เสื้อเชิ้ตผู้หญิงแขนยาว": "Women's Long Sleeve Shirt",
-  "เสื้อเชิ้ตผู้ชายแขนสั้น": "Men's Short Sleeve Shirt",
-  "เสื้อเชิ้ตผู้หญิงแขนสั้น": "Women's Short Sleeve Shirt",
-  "เสื้อเชิ้ตผู้หญิงแขนสามส่วน": "Women's 3/4 Sleeve Shirt",
+  "เสื้อเชิ้ตผู้ชายแขนยาว": "Men's Long Sleeve",
+  "เสื้อเชิ้ตผู้หญิงแขนยาว": "Women's Long Sleeve",
+  "เสื้อเชิ้ตผู้ชายแขนสั้น": "Men's Short Sleeve",
+  "เสื้อเชิ้ตผู้หญิงแขนสั้น": "Women's Short Sleeve",
+  "เสื้อเชิ้ตผู้หญิงแขนสามส่วน": "Women's 3/4 Sleeve",
   "เสื้อโปโล": "Polo Shirt",
 };
 
@@ -44,12 +43,11 @@ export default function CarouselShowcase({
     if (emblaApi) emblaApi.scrollNext();
   }, [emblaApi]);
 
-  // Fallback real category models with authentic high-res photos
   const fallbackProducts: QuickViewProduct[] = [
     {
       id: "demo-men-ls",
       name: "Men's Long Sleeve Shirt",
-      nameTh: "เสื้อเชิ้ตผู้ชายแขนยาว ทรงเข้ารูป",
+      nameTh: "141002 เสื้อเชิ้ตผู้ชายแขนยาวผ้าลายริ้ว",
       slug: "141002",
       descTh: "คัตติ้งพอดีตัว เนื้อผ้าระบายอากาศ รีดง่าย ทรงสวยตลอดวัน",
       basePrice: 595,
@@ -60,7 +58,7 @@ export default function CarouselShowcase({
     {
       id: "demo-women-ls",
       name: "Women's Long Sleeve Shirt",
-      nameTh: "เสื้อเชิ้ตผู้หญิงแขนยาว ทรงสุภาพ",
+      nameTh: "131015 เสื้อเชิ้ตผู้หญิงแขนยาวผ้าลายริ้ว",
       slug: "131015",
       descTh: "แพทเทิร์นเว้าเอวเล็กน้อย สุภาพ เสริมบุคลิกภาพสำหรับทุกการประชุม",
       basePrice: 495,
@@ -71,7 +69,7 @@ export default function CarouselShowcase({
     {
       id: "demo-men-ss",
       name: "Men's Short Sleeve Shirt",
-      nameTh: "เสื้อเชิ้ตผู้ชายแขนสั้น ทรงสมาร์ท",
+      nameTh: "241001 เสื้อเชิ้ตผู้ชายแขนสั้นลายริ้ว",
       slug: "241001",
       descTh: "คล่องตัวในวันทำงานที่แอคทีฟ ระบายอากาศได้ดี ไม่อึดอัด",
       basePrice: 595,
@@ -82,7 +80,7 @@ export default function CarouselShowcase({
     {
       id: "demo-women-ss",
       name: "Women's Short Sleeve Shirt",
-      nameTh: "เสื้อเชิ้ตผู้หญิงแขนสั้น ลุคสมาร์ทแคชชวล",
+      nameTh: "231056 เสื้อเชิ้ตผู้หญิงแขนสั้นลายริ้ว",
       slug: "231056",
       descTh: "ใส่สบาย คัตติ้งเนี้ยบ ดูดีได้ทั้งในและนอกออฟฟิศ",
       basePrice: 495,
@@ -93,7 +91,7 @@ export default function CarouselShowcase({
     {
       id: "demo-women-34",
       name: "Women's 3/4 Sleeve Shirt",
-      nameTh: "เสื้อเชิ้ตผู้หญิงแขนสามส่วน ทรงภูมิฐาน",
+      nameTh: "331022ST เสื้อเชิ้ตผู้หญิงแขนสามส่วนลายริ้ว",
       slug: "331022ST",
       descTh: "ความยาวแขนสามส่วนยอดนิยม พอดีกับสรีระผู้หญิงเอเชีย",
       basePrice: 495,
@@ -104,7 +102,7 @@ export default function CarouselShowcase({
     {
       id: "demo-polo",
       name: "Highbury Premium Polo",
-      nameTh: "เสื้อโปโลเนื้อนุ่มพรีเมียม",
+      nameTh: "P234101 เสื้อโปโลผู้หญิงแขนสั้น",
       slug: "P234101",
       descTh: "เส้นใยทอพิเศษ คืนรูปไว นุ่มสบาย เหมาะสำหรับวันสบายและชุดยูนิฟอร์ม",
       basePrice: 495,
@@ -117,68 +115,51 @@ export default function CarouselShowcase({
   const displayProducts = products.length > 0 ? products : fallbackProducts;
 
   return (
-    <section id="models" className="relative w-full py-28 sm:py-36 bg-[#07080B] text-white overflow-hidden border-t border-b border-white/10">
-      {/* Subtle warm sunset atmospheric gradient matching Quantum sunset backdrop */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-20"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.15) 0%, transparent 60%), radial-gradient(circle at 80% 80%, rgba(46, 144, 250, 0.15) 0%, transparent 50%)",
-        }}
-      />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Top Header Row (Quantum Style with Bilingual TH / ENG) */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-16">
-          <div className="space-y-4 max-w-xl">
-            <div className="text-xs font-semibold tracking-[0.25em] text-white/60 uppercase">
-              MODELS · หมวดหมู่สินค้าจริง
-            </div>
-            <h2 className="text-4xl sm:text-5xl font-medium tracking-[-0.03em] text-white leading-[1.1]">
+    <section id="models" className="relative w-full py-20 sm:py-28 bg-[#07080B] text-white border-b border-[#262830]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Top Header Row: Clean, No eyebrow clutter */}
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12">
+          <div className="space-y-2 max-w-xl">
+            <h2 className="text-3xl sm:text-4xl font-medium tracking-tight text-white leading-tight">
               {lang === "th" ? (
                 <>
-                  ออกแบบเพื่อความมั่นใจ
+                  คอลเลกชันสินค้า
                   <br />
-                  <span className="text-white/90">ในทุกวันทำงาน</span>
+                  คัดสรรตามหมวดหมู่จริง
                 </>
               ) : (
                 <>
-                  Designed for a
+                  Real Garment Collection
                   <br />
-                  <span className="text-white/90">Brighter Tomorrow</span>
+                  Across Every Category
                 </>
               )}
             </h2>
-            <p className="text-xs text-white/40 tracking-wider uppercase font-medium">
-              {lang === "th" ? "Designed for a Sharper Tomorrow" : "คัดสรรสินค้าจริงครบทุกหมวดหมู่"}
+            <p className="text-sm text-[#9496A1]">
+              {lang === "th"
+                ? "เสื้อเชิ้ตสำเร็จรูปผลิตจริงในสต็อก พร้อมข้อมูลไซส์และราคาจริงจากฐานข้อมูล Highbury"
+                : "Real ready-to-wear shirts in stock, backed by exact sizing and verified factory pricing."}
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row sm:items-center gap-6 lg:max-w-md">
-            <p className="text-sm text-white/60 leading-relaxed">
-              {lang === "th"
-                ? "เลือกชมสินค้าจริงในแต่ละหมวดหมู่ ตัดเย็บอย่างประณีตด้วยแพทเทิร์นที่คำนวณมาเพื่อสรีระคนไทยโดยเฉพาะ"
-                : "Discover our real collection across every shirt category, engineered for Asian posture with effortless easy-care comfort."}
-            </p>
-            {/* Circular Carousel Arrow Controls */}
-            <div className="flex items-center gap-3 shrink-0">
-              <button
-                type="button"
-                onClick={scrollPrev}
-                className="v3-arrow-btn"
-                aria-label="Previous shirt model"
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </button>
-              <button
-                type="button"
-                onClick={scrollNext}
-                className="v3-arrow-btn"
-                aria-label="Next shirt model"
-              >
-                <ChevronRight className="w-5 h-5" />
-              </button>
-            </div>
+          {/* Carousel Arrow Controls (Consistent 8px radius) */}
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={scrollPrev}
+              className="v3-arrow-btn"
+              aria-label="Previous shirt model"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <button
+              type="button"
+              onClick={scrollNext}
+              className="v3-arrow-btn"
+              aria-label="Next shirt model"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
           </div>
         </div>
 
@@ -186,9 +167,8 @@ export default function CarouselShowcase({
         <div className="embla" ref={emblaRef}>
           <div className="embla__container">
             {displayProducts.map((p) => {
-              // Get real photo from product or category image mapping (never vintage hanger sketch)
               const primaryImg =
-                p.images[0]?.url && !p.images[0].url.includes("placeholders")
+                p.images[0]?.url && !p.images[0].url.includes("unsplash")
                   ? p.images[0].url
                   : getProductPlaceholderImage(p.slug, p.category.nameTh);
 
@@ -201,84 +181,84 @@ export default function CarouselShowcase({
 
               return (
                 <div key={p.id} className="embla__slide">
-                  <div className="group flex flex-col h-full rounded-2xl bg-[#0E1015] border border-white/10 hover:border-white/25 transition-all duration-300 overflow-hidden">
-                    {/* Model Photo Container with Real High-Res Photography */}
-                    <div className="relative aspect-[16/11] bg-[#14171F] overflow-hidden">
+                  {/* Card: 8px radius, solid background #13161D, 1px border #262830 (NO backdrop-blur) */}
+                  <div className="flex flex-col h-full rounded-lg bg-[#13161D] border border-[#262830] overflow-hidden">
+                    {/* Model Photo Container */}
+                    <div className="relative aspect-[16/11] bg-[#0E1015] overflow-hidden border-b border-[#262830]">
                       <Image
                         src={primaryImg}
                         alt={p.nameTh || p.name}
                         fill
                         sizes="(max-width: 640px) 90vw, (max-width: 1024px) 50vw, 33vw"
-                        className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                        className="object-cover object-top"
                       />
-                      {/* Floating Category Badge */}
-                      <div className="absolute top-3 left-3 pointer-events-none">
-                        <span className="px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-md text-[10px] font-semibold text-white/90 border border-white/10">
+                      {/* Solid Category Badge (NO backdrop-blur) */}
+                      <div className="absolute top-2.5 left-2.5 pointer-events-none">
+                        <span className="px-2 py-0.5 rounded text-[11px] font-semibold text-white bg-[#07080B] border border-[#262830]">
                           {p.category.nameTh}
                         </span>
                       </div>
                     </div>
 
-                    {/* Model Details (Quantum Style: Title, Sub, 3-Spec Bar, Explore Link) */}
-                    <div className="p-6 sm:p-7 flex flex-col justify-between flex-1 space-y-6">
+                    {/* Model Details */}
+                    <div className="p-5 flex flex-col justify-between flex-1 space-y-4">
                       <div>
-                        <div className="text-[11px] font-semibold text-white/50 tracking-wider uppercase mb-1">
+                        <div className="text-[11px] font-semibold text-[#9496A1] uppercase tracking-wider">
                           {catEn}
                         </div>
-                        <h3 className="text-xl sm:text-2xl font-medium text-white tracking-tight line-clamp-1">
+                        <h3 className="text-base font-semibold text-white tracking-tight line-clamp-1 mt-0.5">
                           {p.nameTh || p.name}
                         </h3>
-                        <p className="text-xs text-white/50 mt-1 line-clamp-1">
-                          {p.descTh || "Asian Fit Tailoring · Easy-Care Fabric"}
+                        <p className="text-xs text-[#9496A1] mt-1 line-clamp-1">
+                          {p.descTh || "แพทเทิร์นพอดีตัวสรีระคนไทย · ดูแลง่าย"}
                         </p>
                       </div>
 
-                      {/* 3-Spec Bar (Quantum Style) */}
-                      <div className="grid grid-cols-3 gap-2 py-4 border-t border-b border-white/10">
+                      {/* 3-Spec Bar with real sourced numbers */}
+                      <div className="grid grid-cols-3 gap-2 py-3 border-t border-b border-[#262830] text-center">
                         <div>
-                          <div className="font-mono text-sm sm:text-base font-semibold text-white">
+                          <div className="font-mono text-sm font-semibold text-white">
                             100%
                           </div>
-                          <div className="text-[10px] text-white/40 tracking-[0.1em] uppercase mt-0.5">
+                          <div className="text-[10px] text-[#9496A1] uppercase">
                             COTTON
                           </div>
                         </div>
 
-                        <div className="border-l border-white/10 pl-3">
-                          <div className="font-mono text-sm sm:text-base font-semibold text-white">
+                        <div className="border-l border-[#262830]">
+                          <div className="font-mono text-sm font-semibold text-white">
                             S – 4XL
                           </div>
-                          <div className="text-[10px] text-white/40 tracking-[0.1em] uppercase mt-0.5">
+                          <div className="text-[10px] text-[#9496A1] uppercase">
                             SIZES
                           </div>
                         </div>
 
-                        <div className="border-l border-white/10 pl-3">
-                          <div className="font-mono text-sm sm:text-base font-semibold text-white">
+                        <div className="border-l border-[#262830]">
+                          <div className="font-mono text-sm font-semibold text-[#FFB900]">
                             {priceStr}
                           </div>
-                          <div className="text-[10px] text-white/40 tracking-[0.1em] uppercase mt-0.5">
+                          <div className="text-[10px] text-[#9496A1] uppercase">
                             STARTING
                           </div>
                         </div>
                       </div>
 
-                      {/* Link & Quick View */}
+                      {/* Links */}
                       <div className="flex items-center justify-between pt-1">
                         <Link
                           href={`/products/${p.slug}`}
-                          className="inline-flex items-center gap-2 text-sm font-semibold text-white hover:text-white/80 transition-colors"
+                          className="text-xs font-semibold text-white hover:text-[#FFB900] transition-colors"
                         >
-                          <span>{lang === "th" ? "ดูข้อมูลสินค้า" : "Explore Model"}</span>
-                          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                          {lang === "th" ? "ดูรายละเอียดสินค้า" : "Explore Model"}
                         </Link>
 
                         <button
                           type="button"
                           onClick={() => onQuickView(p)}
-                          className="text-xs text-white/50 hover:text-white transition-colors cursor-pointer"
+                          className="text-xs text-[#9496A1] hover:text-white transition-colors cursor-pointer"
                         >
-                          {lang === "th" ? "ข้อมูลด่วน" : "Quick View"}
+                          {lang === "th" ? "ดูข้อมูลด่วน" : "Quick View"}
                         </button>
                       </div>
                     </div>

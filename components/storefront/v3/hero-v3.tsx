@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Play } from "lucide-react";
 
 interface HeroV3Props {
   onOpenSizeGuide: () => void;
@@ -11,8 +10,8 @@ interface HeroV3Props {
 
 export default function HeroV3({ onOpenSizeGuide, lang = "th" }: HeroV3Props) {
   return (
-    <section className="relative w-full min-h-screen flex flex-col justify-between bg-[#07080B] text-white overflow-hidden">
-      {/* Background Visual: Real high-res luxury tailored shirt studio visual */}
+    <section className="relative w-full min-h-[90vh] flex flex-col justify-between bg-[#07080B] text-white overflow-hidden">
+      {/* Background Visual: Official Highbury models photo */}
       <div className="absolute inset-0 pointer-events-none z-0">
         <Image
           src="/images/hero-main.jpg"
@@ -20,9 +19,9 @@ export default function HeroV3({ onOpenSizeGuide, lang = "th" }: HeroV3Props) {
           fill
           priority
           sizes="100vw"
-          className="object-cover object-[56%_center] sm:object-[62%_center] lg:object-[68%_center] scale-100 transition-transform duration-1000"
+          className="object-cover object-[56%_center] sm:object-[62%_center] lg:object-[68%_center] scale-100"
         />
-        {/* Seamless cinematic gradient: solid dark for typography on left, clears up by 50% so female and male models are both fully visible */}
+        {/* Crisp linear gradient: dark left for typography, models clear on right */}
         <div
           className="absolute inset-0 z-1"
           style={{
@@ -30,20 +29,15 @@ export default function HeroV3({ onOpenSizeGuide, lang = "th" }: HeroV3Props) {
               "linear-gradient(to right, #07080B 0%, #07080B 20%, rgba(7, 8, 11, 0.8) 35%, rgba(7, 8, 11, 0.2) 48%, transparent 58%)",
           }}
         />
-        <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-[#07080B] to-transparent z-1" />
-        <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-[#07080B]/80 to-transparent z-1" />
+        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#07080B] to-transparent z-1" />
+        <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#07080B]/80 to-transparent z-1" />
       </div>
 
       {/* Main Content Area */}
-      <div className="relative z-10 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-36 md:pt-44 pb-20 my-auto">
-        <div className="max-w-lg lg:max-w-2xl space-y-6">
-          {/* Tag above headline (Quantum Style) */}
-          <div className="text-white/60 text-xs font-semibold tracking-[0.28em] uppercase font-sans">
-            HIGHBURY INTERNATIONAL
-          </div>
-
-          {/* Headline (Quantum Style: Two-line large, clean modern sans) */}
-          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-medium tracking-[-0.03em] leading-[1.08] text-white font-sans drop-shadow-md">
+      <div className="relative z-10 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-32 sm:pt-40 pb-16 my-auto">
+        <div className="max-w-lg lg:max-w-2xl space-y-5">
+          {/* Headline (No tiny eyebrow clutter) */}
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-medium tracking-tight leading-[1.1] text-white font-sans">
             {lang === "th" ? (
               <>
                 ปฏิวัติความพอดี
@@ -59,76 +53,67 @@ export default function HeroV3({ onOpenSizeGuide, lang = "th" }: HeroV3Props) {
             )}
           </h1>
 
-          {/* Subtitle (Bilingual TH / ENG) */}
+          {/* Subtitle */}
           <div className="space-y-1 max-w-xl">
-            <p className="text-base sm:text-lg text-white/80 font-normal leading-relaxed">
+            <p className="text-base sm:text-lg text-[#E7E7E7] font-normal leading-relaxed">
               {lang === "th"
                 ? "ความประณีตระดับพรีเมียม สวมใส่สบาย คัตติ้งพอดีตัวสำหรับคนไทยโดยเฉพาะ"
-                : "Performance. Precision. Easy-Care Luxury Designed for Asian Posture."}
+                : "Precision Fit. Easy-Care Luxury Designed for Asian Posture."}
             </p>
-            <p className="text-xs sm:text-sm text-white/50 font-normal">
+            <p className="text-xs sm:text-sm text-[#9496A1]">
               {lang === "th"
-                ? "Performance. Comfort. Easy-Care Craftsmanship."
-                : "ตัดเย็บอย่างประณีตด้วยเนื้อผ้าระบายอากาศ รีดง่าย ทรงสวยตลอดวันทำงาน"}
+                ? "ตัดเย็บอย่างประณีตด้วยเนื้อผ้าระบายอากาศ รีดง่าย ทรงสวยตลอดวันทำงาน"
+                : "Performance. Comfort. Easy-Care Craftsmanship."}
             </p>
           </div>
 
-          {/* Action Buttons (Quantum Style: White Pill & Glass Pill with Play Icon) */}
-          <div className="pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-            <Link href="#models" className="v3-btn-white">
+          {/* Action Buttons: Consistent 8px radius, no decorative icons */}
+          <div className="pt-3 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            <Link href="#models" className="v3-btn-primary">
               <span>{lang === "th" ? "เลือกชมคอลเลกชัน" : "Explore Collection"}</span>
-              <ArrowRight className="w-4 h-4" />
             </Link>
 
             <button
               type="button"
               onClick={onOpenSizeGuide}
-              className="v3-btn-glass"
+              className="v3-btn-secondary"
             >
-              <Play className="w-3.5 h-3.5 fill-current" />
-              <span>{lang === "th" ? "คำนวณไซส์ Smart Size Finder" : "Smart Size Finder"}</span>
+              <span>{lang === "th" ? "คำนวณไซส์ Smart Size" : "Smart Size Finder"}</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* Bottom Spec Bar (Matching Quantum exactly) */}
-      <div className="relative z-10 w-full border-t border-white/10 bg-[#07080B]/60 backdrop-blur-md py-6 sm:py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-          {/* 3 Telemetry Specs (Bilingual) */}
-          <div className="grid grid-cols-3 gap-6 sm:gap-14 md:gap-20">
+      {/* Bottom Spec Bar: Solid #0E1015, 1px border #262830, NO backdrop-blur */}
+      <div className="relative z-10 w-full border-t border-[#262830] bg-[#0E1015] py-5 sm:py-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-8">
             <div>
-              <div className="font-mono text-2xl sm:text-3xl font-semibold text-white tracking-tight">
+              <div className="font-mono text-xl sm:text-2xl font-semibold text-white">
                 S – 4XL
               </div>
-              <div className="text-[10px] sm:text-xs font-semibold text-white/50 tracking-[0.15em] uppercase mt-1">
-                {lang === "th" ? "Asian Fit Range (ไซส์คนไทย)" : "Asian Fit Range"}
+              <div className="text-xs text-[#9496A1] mt-0.5">
+                {lang === "th" ? "ช่วงไซส์มาตรฐาน (รอบอก 38\" - 50\")" : "Standard Range (Chest 38\" - 50\")"}
               </div>
             </div>
 
-            <div className="border-l border-white/10 pl-6 sm:pl-14 md:pl-20">
-              <div className="font-mono text-2xl sm:text-3xl font-semibold text-white tracking-tight">
+            <div className="sm:border-l sm:border-[#262830] sm:pl-8">
+              <div className="font-mono text-xl sm:text-2xl font-semibold text-white">
                 100%
               </div>
-              <div className="text-[10px] sm:text-xs font-semibold text-white/50 tracking-[0.15em] uppercase mt-1">
-                {lang === "th" ? "Easy-Care Cotton (รีดง่าย)" : "Easy-Care Cotton"}
+              <div className="text-xs text-[#9496A1] mt-0.5">
+                {lang === "th" ? "ผ้าฝ้าย Premium Cotton รีดง่าย คืนทรง" : "Easy-Care Long-Staple Cotton"}
               </div>
             </div>
 
-            <div className="border-l border-white/10 pl-6 sm:pl-14 md:pl-20">
-              <div className="font-mono text-2xl sm:text-3xl font-semibold text-white tracking-tight">
-                7 Days
+            <div className="sm:border-l sm:border-[#262830] sm:pl-8">
+              <div className="font-mono text-xl sm:text-2xl font-semibold text-white">
+                7 วัน
               </div>
-              <div className="text-[10px] sm:text-xs font-semibold text-white/50 tracking-[0.15em] uppercase mt-1">
-                {lang === "th" ? "Free Exchange (เปลี่ยนฟรี)" : "Free Size Exchange"}
+              <div className="text-xs text-[#9496A1] mt-0.5">
+                {lang === "th" ? "เปลี่ยนไซส์ฟรีภายใน 7 วันหลังรับพัสดุ" : "Free Size Exchange within 7 Days"}
               </div>
             </div>
-          </div>
-
-          {/* Far Right: SCROLL | */}
-          <div className="hidden lg:flex items-center gap-2 text-xs font-medium text-white/50 tracking-[0.25em] uppercase">
-            <span>SCROLL</span>
-            <span className="w-px h-4 bg-white/40" />
           </div>
         </div>
       </div>

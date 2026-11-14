@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 
 interface MacroDetailProps {
   lang?: "th" | "en";
@@ -10,21 +9,17 @@ interface MacroDetailProps {
 
 export default function MacroDetail({ lang = "th" }: MacroDetailProps) {
   return (
-    <section id="craftsmanship" className="w-full py-24 sm:py-32 bg-white text-[#0A0B0E] border-b border-[#E2E8F0]">
+    <section id="craftsmanship" className="w-full py-20 sm:py-28 bg-[#07080B] text-white border-b border-[#262830]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-          {/* Left Column (Quantum Style: Tag, Headline, Paragraph, Black Pill) */}
-          <div className="lg:col-span-5 space-y-6">
-            <div className="text-xs font-semibold tracking-[0.25em] text-[#64748B] uppercase">
-              TECHNOLOGY · เทคโนโลยีงานตัดเย็บ
-            </div>
-
-            <h2 className="text-4xl sm:text-5xl font-medium tracking-[-0.03em] text-[#0A0B0E] leading-[1.1]">
+        <div className="grid lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+          {/* Left Column: Heading, Concrete facts */}
+          <div className="lg:col-span-6 space-y-6">
+            <h2 className="text-3xl sm:text-4xl font-medium tracking-tight text-white leading-tight">
               {lang === "th" ? (
                 <>
                   ความประณีต
                   <br />
-                  ในทุกรายละเอียด
+                  ในทุกรายละเอียดโครงสร้าง
                 </>
               ) : (
                 <>
@@ -35,29 +30,28 @@ export default function MacroDetail({ lang = "th" }: MacroDetailProps) {
               )}
             </h2>
 
-            <p className="text-base text-[#475569] leading-relaxed max-w-lg">
+            <p className="text-sm sm:text-base text-[#E7E7E7] leading-relaxed max-w-lg">
               {lang === "th"
-                ? "ตั้งแต่โครงสร้างปกเสื้ออัดกาวเยอรมันที่ไม่ยุบตัว การตัดเย็บทรงพอดีตัวสรีระ ไปจนถึงการเย็บย้ำกระดุมทนทาน Highbury ใส่ใจในทุกรายละเอียดเชิงวิศวกรรมการตัดเย็บเสื้อเชิ้ต"
-                : "From heat-bonded German collar interlinings that never buckle to ergonomic Asian-fit sculpting and reinforced buttons, Highbury integrates structural garment engineering into every single cut."}
+                ? "โครงสร้างปกเสื้อเสริมผ้ากาวคุณภาพเยอรมันที่ผ่านการทดสอบการซัก สะบัดแขวนแล้วปกยังคงรูปสวย ไม่แบะย้วย กระดุมทุกเม็ดเย็บย้ำด้วยด้ายเหนียวพิเศษ ป้องกันปัญหากระดุมหลุดระหว่างวันทำงาน"
+                : "Reinforced collar structure with German interlining engineered to withstand repeated washing without collar collapse. Every button is cross-stitched with reinforced thread to eliminate unraveling."}
             </p>
 
             <div className="pt-2">
-              <Link href="#models" className="v3-btn-black">
-                <span>{lang === "th" ? "เจาะลึกงานตัดเย็บ" : "Explore Technology"}</span>
-                <ArrowRight className="w-4 h-4" />
+              <Link href="#models" className="v3-btn-secondary">
+                <span>{lang === "th" ? "ดูแบบเสื้อทั้งหมด" : "View All Shirts"}</span>
               </Link>
             </div>
           </div>
 
-          {/* Right Column: Ultra Macro Visual (Quantum Cockpit Equivalent) */}
-          <div className="lg:col-span-7">
-            <div className="relative aspect-[16/10] rounded-2xl overflow-hidden shadow-2xl bg-[#0A0B0E]">
+          {/* Right Column: Local Highbury photo asset (No hotlinked stock photo) */}
+          <div className="lg:col-span-6">
+            <div className="relative aspect-[16/11] rounded-lg overflow-hidden border border-[#262830] bg-[#13161D]">
               <Image
-                src="https://images.unsplash.com/photo-1598033129183-c4f50c736f10?q=80&w=1200&auto=format&fit=crop"
-                alt="Highbury Collar and Fabric Macro Detail"
+                src="/images/hero-main.jpg"
+                alt="Highbury Asian Fit Tailoring Details"
                 fill
-                sizes="(max-width: 1024px) 100vw, 58vw"
-                className="object-cover object-center hover:scale-105 transition-transform duration-700"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-cover object-[62%_25%]"
               />
             </div>
           </div>
