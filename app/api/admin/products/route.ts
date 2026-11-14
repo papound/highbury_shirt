@@ -3,6 +3,8 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import slugify from "slugify";
 
+export const dynamic = "force-dynamic";
+
 const ADMIN_ROLES = ["SUPERADMIN", "ADMIN", "STAFF"];
 
 async function authorize() {

@@ -3,6 +3,8 @@ import prisma from "@/lib/prisma";
 import { blogPosts } from "@/lib/mock-blog";
 import { getBaseUrl } from "@/lib/seo";
 
+export const dynamic = "force-dynamic";
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = getBaseUrl();
 
@@ -36,20 +38,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // 2. Dynamic Products
   let productRoutes: MetadataRoute.Sitemap = [];
-  try {
-    const products = await prisma.product.findMany({
-      where: { status: "ACTIVE" },
-      select: { slug: true, updatedAt: true },
-    });
+  const isPlaceholderDb = !process.env.DATABASE_URL || process.env.DATABASE_URL.includes("placeholder");
 
-    productRoutes = products.map((product) => ({
-      url: `${baseUrl}/products/${product.slug}`,
-      lastModified: product.updatedAt || new Date(),
-      changeFrequency: "weekly",
-      priority: 0.8,
-    }));
-  } catch (error) {
-    console.error("[Sitemap] Failed to fetch active products:", error);
+  if (!isPlaceholderDb) {
+    try {
+      const products = await prisma.product.findMany({
+        where: { status: "ACTIVE" },
+        select: { slug: true, updatedAt: true },
+      });
+
+      productRoutes = products.map((product) => ({
+        url: `${baseUrl}/products/${product.slug}`,
+        lastModified: product.updatedAt || new Date(),
+        changeFrequency: "weekly",
+        priority: 0.8,
+      }));
+    } catch (error) {
+      console.error("[Sitemap] Failed to fetch active products:", error);
+    }
   }
 
   // 3. Dynamic Blog Articles

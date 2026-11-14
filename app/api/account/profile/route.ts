@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { z } from "zod/v3";
 import bcrypt from "bcryptjs";
 
+export const dynamic = "force-dynamic";
+
 const updateSchema = z.object({
   name: z.string().min(2, "กรุณาระบุชื่อ").optional(),
   phone: z.string().optional(),

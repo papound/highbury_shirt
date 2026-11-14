@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import prisma from "@/lib/prisma";
 import HomeV3 from "@/components/storefront/home-v3";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Highbury International – เสื้อเชิ้ตคุณภาพพรีเมียม สไตล์และสรีระคนเอเชีย",
   description:
@@ -12,51 +14,61 @@ export const metadata: Metadata = {
 };
 
 async function getFeaturedProducts() {
-  // Query representative products across all active shirt categories
-  const categories = await prisma.category.findMany({
-    where: { isActive: true, slug: { not: "" } },
-    orderBy: { sortOrder: "asc" },
-    include: {
-      products: {
-        where: { status: "ACTIVE" },
-        take: 1,
+  try {
+    // Query representative products across all active shirt categories
+    const categories = await prisma.category.findMany({
+      where: { isActive: true, slug: { not: "" } },
+      orderBy: { sortOrder: "asc" },
+      include: {
+        products: {
+          where: { status: "ACTIVE" },
+          take: 1,
+          include: {
+            images: { orderBy: { sortOrder: "asc" } },
+            variants: true,
+            category: true,
+          },
+        },
+      },
+    });
+
+    const categoryProducts = categories.flatMap((c) => c.products);
+
+    if (categoryProducts.length < 6) {
+      const existingIds = categoryProducts.map((p) => p.id);
+      const extra = await prisma.product.findMany({
+        where: {
+          status: "ACTIVE",
+          id: { notIn: existingIds },
+          category: { slug: { not: "" } },
+        },
         include: {
           images: { orderBy: { sortOrder: "asc" } },
           variants: true,
           category: true,
         },
-      },
-    },
-  });
+        take: 6 - categoryProducts.length,
+      });
+      return [...categoryProducts, ...extra];
+    }
 
-  const categoryProducts = categories.flatMap((c) => c.products);
-
-  if (categoryProducts.length < 6) {
-    const existingIds = categoryProducts.map((p) => p.id);
-    const extra = await prisma.product.findMany({
-      where: {
-        status: "ACTIVE",
-        id: { notIn: existingIds },
-        category: { slug: { not: "" } },
-      },
-      include: {
-        images: { orderBy: { sortOrder: "asc" } },
-        variants: true,
-        category: true,
-      },
-      take: 6 - categoryProducts.length,
-    });
-    return [...categoryProducts, ...extra];
+    return categoryProducts;
+  } catch (err) {
+    console.error("[HomePage] Error loading featured products:", err);
+    return [];
   }
-
-  return categoryProducts;
 }
 
 async function getCategories() {
-  return prisma.category.findMany({
-    where: { isActive: true },
-    orderBy: { sortOrder: "asc" },
-  });
+  try {
+    return await prisma.category.findMany({
+      where: { isActive: true },
+      orderBy: { sortOrder: "asc" },
+    });
+  } catch (err) {
+    console.error("[HomePage] Error loading categories:", err);
+    return [];
+  }
 }
 
 export default async function HomePage() {

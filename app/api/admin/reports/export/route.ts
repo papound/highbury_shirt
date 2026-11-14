@@ -3,6 +3,8 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import ExcelJS from "exceljs";
 
+export const dynamic = "force-dynamic";
+
 const ALLOWED_ROLES = ["SUPERADMIN", "ADMIN", "ACCOUNTANT"];
 
 export async function GET() {

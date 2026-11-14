@@ -3,6 +3,8 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { randomUUID } from "crypto";
 
+export const dynamic = "force-dynamic";
+
 async function authorizeSuperAdmin() {
   const session = await auth();
   if (!session?.user?.role || session.user.role !== "SUPERADMIN") return null;

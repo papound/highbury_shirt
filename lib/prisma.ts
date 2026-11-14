@@ -13,8 +13,29 @@ function resolveSqliteUrl(raw: string): string {
   return `file:${path.resolve(process.cwd(), relativePath)}`;
 }
 
-function createPrismaClient() {
+function createPrismaClient(): PrismaClient {
   const url = process.env.DATABASE_URL ?? "file:./dev.db";
+
+  // When building in CI/Docker without a live DB connection, use a safe no-op proxy
+  if (url.includes("placeholder")) {
+    const createDummyHandler = (): any => {
+      const fn = () => Promise.resolve([]);
+      return new Proxy(fn, {
+        get: (_target, prop) => {
+          if (prop === "then") return undefined;
+          if (prop === "$connect" || prop === "$disconnect") return () => Promise.resolve();
+          return createDummyHandler();
+        },
+        apply: () => Promise.resolve([]),
+      });
+    };
+    return new Proxy({} as PrismaClient, {
+      get: (_target, prop) => {
+        if (prop === "$connect" || prop === "$disconnect") return () => Promise.resolve();
+        return createDummyHandler();
+      },
+    });
+  }
 
   if (url.startsWith("postgresql://") || url.startsWith("postgres://")) {
     const adapter = new PrismaPg({ connectionString: url });
