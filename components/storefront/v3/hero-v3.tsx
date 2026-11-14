@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowRight, Play } from "lucide-react";
 
 interface HeroV3Props {
   onOpenSizeGuide: () => void;
@@ -67,17 +68,19 @@ export default function HeroV3({ onOpenSizeGuide, lang = "th" }: HeroV3Props) {
             </p>
           </div>
 
-          {/* Action Buttons: Consistent 8px radius, no decorative icons */}
-          <div className="pt-3 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-            <Link href="#models" className="v3-btn-primary">
+          {/* Action Buttons: Exact Quantum Pill Buttons (White pill + Glass outline pill) */}
+          <div className="pt-3 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+            <Link href="#models" className="v3-btn-white">
               <span>{lang === "th" ? "เลือกชมคอลเลกชัน" : "Explore Collection"}</span>
+              <ArrowRight className="w-4 h-4" />
             </Link>
 
             <button
               type="button"
               onClick={onOpenSizeGuide}
-              className="v3-btn-secondary"
+              className="v3-btn-glass"
             >
+              <Play className="w-3.5 h-3.5 fill-current" />
               <span>{lang === "th" ? "คำนวณไซส์ Smart Size" : "Smart Size Finder"}</span>
             </button>
           </div>

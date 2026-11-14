@@ -1,10 +1,8 @@
 /* ─────────────────────────────────────────────────────────────────────────────
-   HIGHBURY V3 DESIGN SYSTEM - PURPOSEFUL, DESIGNED, ANTI-SLOP
+   HIGHBURY V3 DESIGN SYSTEM - EXACT QUANTUM MOTORS AESTHETIC
    Scoped to .v3-page-wrapper
-   Palette: Dark #07080B, Text #FFFFFF, Muted #E7E7E7, Secondary #FFB900, Border #262830
-   Type: Google Sans
-   Corner Radius: 8px (rounded-lg) consistent throughout (No generic pill buttons)
-   Zero filter: blur(), Zero radial glowing blobs
+   Palette: Dark #07080B, Text #FFFFFF, Muted #E7E7E7, Accent #FFB900, Border #262830
+   Buttons: Exact Quantum Pill Shapes (rounded-full)
    ───────────────────────────────────────────────────────────────────────────── */
 
 .v3-page-wrapper {
@@ -40,67 +38,109 @@
   font-family: var(--v3-font-sans);
 }
 
-/* ── Consistent 8px Radius Buttons (Anti-Slop: No generic pill buttons) ── */
-.v3-page-wrapper .v3-btn-primary {
+/* ── EXACT QUANTUM PILL BUTTONS ── */
+.v3-page-wrapper .v3-btn-white {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
+  gap: 0.5rem;
+  padding: 0.75rem 1.75rem;
+  border-radius: 9999px;
   background-color: #FFFFFF;
   color: #07080B;
   font-weight: 600;
   font-size: 0.875rem;
   line-height: 1.25rem;
   border: 1px solid #FFFFFF;
-  transition: background-color 0.15s ease, border-color 0.15s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
 }
 
-.v3-page-wrapper .v3-btn-primary:hover {
-  background-color: #E7E7E7;
-  border-color: #E7E7E7;
+.v3-page-wrapper .v3-btn-white:hover {
+  background-color: #E2E8F0;
+  border-color: #E2E8F0;
+  transform: translateY(-1px);
 }
 
-.v3-page-wrapper .v3-btn-secondary {
+.v3-page-wrapper .v3-btn-white:active {
+  transform: scale(0.98);
+}
+
+.v3-page-wrapper .v3-btn-glass {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  background-color: #13161D;
+  gap: 0.625rem;
+  padding: 0.75rem 1.75rem;
+  border-radius: 9999px;
+  background-color: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #FFFFFF;
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.v3-page-wrapper .v3-btn-glass:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+.v3-page-wrapper .v3-btn-glass:active {
+  transform: scale(0.98);
+}
+
+.v3-page-wrapper .v3-btn-black {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.75rem;
+  border-radius: 9999px;
+  background-color: #07080B;
   color: #FFFFFF;
   font-weight: 600;
   font-size: 0.875rem;
   line-height: 1.25rem;
   border: 1px solid #262830;
-  transition: background-color 0.15s ease, border-color 0.15s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
 }
 
-.v3-page-wrapper .v3-btn-secondary:hover {
+.v3-page-wrapper .v3-btn-black:hover {
   background-color: #1A1E27;
   border-color: #383B46;
+  transform: translateY(-1px);
 }
 
-/* ── Carousel Arrows (Consistent 8px Rounded Square Controls) ── */
+.v3-page-wrapper .v3-btn-black:active {
+  transform: scale(0.98);
+}
+
+/* ── EXACT QUANTUM CIRCULAR ARROWS ── */
 .v3-page-wrapper .v3-arrow-btn {
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 8px;
-  border: 1px solid #262830;
-  background-color: #13161D;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.05);
   color: #FFFFFF;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.15s ease, border-color 0.15s ease;
+  transition: all 0.2s ease;
   cursor: pointer;
 }
 
 .v3-page-wrapper .v3-arrow-btn:hover {
-  background-color: #1C202B;
-  border-color: #3D4252;
+  background-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: scale(1.05);
 }
 
 .v3-page-wrapper .v3-arrow-btn:disabled {
@@ -144,12 +184,14 @@ dialog.v3-dialog:modal {
   overscroll-behavior: contain;
   margin: auto;
   border: 1px solid #262830;
-  border-radius: 8px;
+  border-radius: 16px;
   background-color: #0E1015;
 }
 
 dialog.v3-dialog::backdrop {
   background-color: rgba(7, 8, 11, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 /* ── Performance & Accessibility ── */

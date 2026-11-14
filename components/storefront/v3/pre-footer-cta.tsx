@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { ArrowRight, Ruler } from "lucide-react";
 
 interface PreFooterCtaProps {
   onOpenSizeGuide: () => void;
@@ -34,17 +35,19 @@ export default function PreFooterCta({ onOpenSizeGuide, lang = "th" }: PreFooter
               : "Experience the comfort, effortless drape, and tailored confidence of Highbury shirts for yourself."}
           </p>
 
-          {/* Action Buttons: 8px radius */}
-          <div className="pt-3 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-            <Link href="#models" className="v3-btn-primary">
+          {/* Action Buttons: Exact Quantum Pill Buttons */}
+          <div className="pt-3 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+            <Link href="#models" className="v3-btn-white">
               <span>{lang === "th" ? "เลือกซื้อสินค้า" : "Shop Collection"}</span>
+              <ArrowRight className="w-4 h-4" />
             </Link>
 
             <button
               type="button"
               onClick={onOpenSizeGuide}
-              className="v3-btn-secondary"
+              className="v3-btn-glass"
             >
+              <Ruler className="w-3.5 h-3.5" />
               <span>{lang === "th" ? "คำนวณไซส์ Smart Size Finder" : "Smart Size Finder"}</span>
             </button>
           </div>

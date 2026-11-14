@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 interface CraftStoryProps {
   lang?: "th" | "en";
@@ -76,8 +77,9 @@ export default function CraftStory({ lang = "th" }: CraftStoryProps) {
             </div>
 
             <div className="pt-2">
-              <Link href="#models" className="v3-btn-primary">
+              <Link href="#models" className="v3-btn-white">
                 <span>{lang === "th" ? "เลือกดูคอลเลกชันสินค้า" : "Explore Collection"}</span>
+                <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
           </div>

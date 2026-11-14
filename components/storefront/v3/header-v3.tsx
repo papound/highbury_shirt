@@ -72,29 +72,30 @@ export default function HeaderV3({ onOpenSizeGuide, lang, onToggleLang }: Header
               </Link>
             </nav>
 
-            {/* Right: Language Switcher, Action Button (8px radius) & Cart */}
+            {/* Right: Quantum Pill Actions */}
             <div className="flex items-center gap-3">
-              {/* Language Switcher */}
+              {/* Language Switcher (Quantum Pill Style) */}
               <button
                 type="button"
                 onClick={onToggleLang}
-                className="px-2.5 py-1.5 rounded-md text-xs font-semibold border border-[#262830] bg-[#13161D] text-[#E7E7E7] hover:text-white hover:border-[#3D4252] transition-colors cursor-pointer"
+                className="px-3 py-1.5 rounded-full text-xs font-semibold border border-white/20 bg-white/5 text-[#E7E7E7] hover:text-white hover:border-white/40 transition-colors cursor-pointer"
                 aria-label="Toggle Language"
               >
                 {lang === "th" ? "TH / EN" : "EN / TH"}
               </button>
 
+              {/* Exact Quantum White Pill Button */}
               <button
                 type="button"
                 onClick={onOpenSizeGuide}
-                className="hidden sm:inline-flex v3-btn-primary text-xs py-2 px-4"
+                className="hidden sm:inline-flex v3-btn-white text-xs sm:text-sm py-2 px-5"
               >
                 {lang === "th" ? "คำนวณไซส์ Smart Size" : "Smart Size Finder"}
               </button>
 
               <Link
                 href="/cart"
-                className="relative p-2 rounded-md text-[#E7E7E7] hover:text-white hover:bg-[#13161D] transition-colors"
+                className="relative p-2 rounded-full text-[#E7E7E7] hover:text-white hover:bg-white/10 transition-colors"
                 aria-label="Cart"
               >
                 <ShoppingBag className="w-5 h-5" />

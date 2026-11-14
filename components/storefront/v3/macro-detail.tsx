@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 interface MacroDetailProps {
   lang?: "th" | "en";
@@ -37,8 +38,9 @@ export default function MacroDetail({ lang = "th" }: MacroDetailProps) {
             </p>
 
             <div className="pt-2">
-              <Link href="#models" className="v3-btn-secondary">
+              <Link href="#models" className="v3-btn-glass">
                 <span>{lang === "th" ? "ดูแบบเสื้อทั้งหมด" : "View All Shirts"}</span>
+                <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
           </div>

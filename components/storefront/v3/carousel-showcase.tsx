@@ -4,7 +4,7 @@ import { useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import useEmblaCarousel from "embla-carousel-react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { QuickViewProduct } from "./quick-view-modal";
 import { getProductPlaceholderImage, CATEGORY_REAL_IMAGES } from "@/lib/placeholders";
 
@@ -248,9 +248,10 @@ export default function CarouselShowcase({
                       <div className="flex items-center justify-between pt-1">
                         <Link
                           href={`/products/${p.slug}`}
-                          className="text-xs font-semibold text-white hover:text-[#FFB900] transition-colors"
+                          className="inline-flex items-center gap-1.5 text-xs font-semibold text-white hover:text-white/80 transition-colors"
                         >
-                          {lang === "th" ? "ดูรายละเอียดสินค้า" : "Explore Model"}
+                          <span>{lang === "th" ? "ดูรายละเอียดสินค้า" : "Explore Model"}</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
                         </Link>
 
                         <button

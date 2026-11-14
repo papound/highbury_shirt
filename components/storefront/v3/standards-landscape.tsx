@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 interface StandardsLandscapeProps {
   lang?: "th" | "en";
@@ -36,8 +37,9 @@ export default function StandardsLandscape({ lang = "th" }: StandardsLandscapePr
             </p>
 
             <div className="pt-2">
-              <Link href="https://lin.ee/T8tlget" target="_blank" rel="noopener noreferrer" className="v3-btn-primary">
+              <Link href="https://lin.ee/T8tlget" target="_blank" rel="noopener noreferrer" className="v3-btn-white">
                 <span>{lang === "th" ? "ปรึกษาสั่งตัดยูนิฟอร์มผ่าน LINE" : "Corporate Uniform Inquiry (LINE)"}</span>
+                <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
           </div>
