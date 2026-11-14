@@ -6,6 +6,15 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
+/* ── Global Level Isolation: Overrides globals.css when v3 is mounted ── */
+html:has(.v3-page-wrapper),
+body:has(.v3-page-wrapper) {
+  background-color: #0A0B0E !important;
+  color: #F8FAFC !important;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  overflow-x: clip !important;
+}
+
 .v3-page-wrapper {
   /* ── Typography Tokens ── */
   --v3-font-display: 'Cormorant Garamond', Georgia, serif;

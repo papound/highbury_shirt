@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { Toaster } from "sonner";
 import StorefrontHeader from "@/components/storefront/header";
 import StorefrontFooter from "@/components/storefront/footer";
+import StorefrontShell from "@/components/storefront/storefront-shell";
 
 export const metadata: Metadata = {
   title: {
@@ -16,11 +16,11 @@ export default function StorefrontLayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
-      <StorefrontHeader />
-      <main className="flex-1">{children}</main>
-      <StorefrontFooter />
-      <Toaster richColors position="top-right" closeButton />
-    </>
+    <StorefrontShell
+      header={<StorefrontHeader />}
+      footer={<StorefrontFooter />}
+    >
+      {children}
+    </StorefrontShell>
   );
 }
