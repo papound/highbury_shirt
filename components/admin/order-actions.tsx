@@ -266,7 +266,7 @@ export default function AdminOrderActions({ order }: { order: any }) {
             <div className="rounded-lg border bg-muted/40 p-3 text-sm space-y-1">
               <p className="font-medium">📍 ที่อยู่ Highbury International</p>
               <p className="text-muted-foreground">กรุณาติดต่อล่วงหน้าก่อนมารับสินค้า</p>
-              <p className="text-muted-foreground">โทร: 02-896-8066 ต่อ 9</p>
+              <p className="text-muted-foreground">โทร: 086-311-6292</p>
               <p className="text-muted-foreground">LINE: @highbury</p>
             </div>
           )}

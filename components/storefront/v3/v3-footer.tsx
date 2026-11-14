@@ -84,10 +84,10 @@ export default function V3Footer() {
               <li className="flex items-center gap-2.5">
                 <Phone className="w-3.5 h-3.5 text-[#FFB900] shrink-0" />
                 <a
-                  href="tel:028968066"
+                  href="tel:0863116292"
                   className="hover:text-white text-[#E7E7E7] transition-colors"
                 >
-                  02-896-8066 ต่อ 9
+                  086-311-6292
                 </a>
               </li>
               <li className="flex items-center gap-2.5">

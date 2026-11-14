@@ -43,7 +43,7 @@ export default function StorefrontFooter({ locale = "th" }: { locale?: "th" | "e
             <ul className="space-y-2 text-sm text-white/70">
               <li className="flex items-center gap-2">
                 <Phone className="h-3 w-3 shrink-0" />
-                <a href="tel:028968066" className="hover:text-white transition-colors">02-896-8066 ต่อ 9</a>
+                <a href="tel:0863116292" className="hover:text-white transition-colors">086-311-6292</a>
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="h-3 w-3 shrink-0" />
