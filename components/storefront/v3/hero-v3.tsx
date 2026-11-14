@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Ruler, CheckCircle2 } from "lucide-react";
+import { ArrowRight, Ruler, ChevronDown } from "lucide-react";
 
 interface HeroV3Props {
   onOpenSizeGuide: () => void;
@@ -10,108 +10,109 @@ interface HeroV3Props {
 
 export default function HeroV3({ onOpenSizeGuide }: HeroV3Props) {
   return (
-    <section className="relative w-full bg-background border-b border-border/60 overflow-hidden">
-      {/* Subtle luxury neutral background glow */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-40 dark:opacity-20"
-        aria-hidden="true"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle at 15% 25%, rgba(10, 37, 64, 0.05) 0%, transparent 45%), radial-gradient(circle at 85% 70%, rgba(37, 99, 235, 0.04) 0%, transparent 40%)",
-        }}
-      />
+    <section className="relative w-full min-h-[92vh] flex flex-col justify-between bg-[#071322] text-white overflow-hidden">
+      {/* Background Cinematic Atmosphere & Hero Shirt Visual */}
+      <div className="absolute inset-0 pointer-events-none z-0">
+        <Image
+          src="/images/placeholders/men-ls.jpg"
+          alt="Highbury Signature Shirt"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-[center_28%] md:object-[right_20%] opacity-30 md:opacity-40 mix-blend-luminosity scale-105"
+        />
+        {/* Cinematic gradient overlays matching Quantum reference */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#071322] via-[#071322]/60 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#071322] via-[#071322]/80 to-transparent" />
+        <div
+          className="absolute inset-0 opacity-30"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 20% 30%, rgba(37, 99, 235, 0.25) 0%, transparent 60%)",
+          }}
+        />
+      </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14 lg:py-16 grid lg:grid-cols-12 gap-8 lg:gap-12 items-center relative z-10">
-        {/* Left Column: Typography & CTAs (Fits 1280x800 comfortably) */}
-        <div className="lg:col-span-7 flex flex-col justify-center space-y-6">
-          {/* Eyebrow / Tag */}
-          <div className="inline-flex items-center gap-2 self-start px-3.5 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-xs font-semibold tracking-wide border border-slate-200 dark:border-slate-700">
-            <span>Highbury Tailoring</span>
-            <span className="text-slate-400">·</span>
-            <span className="text-blue-600 dark:text-blue-400">คัตติ้งระดับพรีเมียม</span>
+      {/* Main Content Area */}
+      <div className="relative z-10 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-20 md:pt-28 pb-12 my-auto">
+        <div className="max-w-2xl space-y-6">
+          {/* Eyebrow */}
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-white/90 text-xs font-semibold tracking-wider uppercase border border-white/15">
+            <span>HIGHBURY INTERNATIONAL</span>
           </div>
 
-          {/* Headline */}
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[44px] font-black text-foreground tracking-tight leading-[1.18]">
-            เสื้อเชิ้ตใส่สบาย คัตติ้งเนี้ยบ
+          {/* Massive Editorial Headline */}
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[68px] font-black tracking-tight leading-[1.08] text-white">
+            The Definition
             <br />
-            <span className="text-[#0A2540] dark:text-blue-400">
-              ทรงสวยพอดีตัวในทุกวันทำงาน
-            </span>
+            of Perfect Fit
           </h1>
 
-          {/* One clear sentence description */}
-          <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-xl">
-            ตัดเย็บประณีตด้วยเนื้อผ้าคัดสรรพิเศษ ระบายอากาศได้ดี ยับยาก คืนทรงไว
-            พร้อมแพทเทิร์นที่ออกแบบสำหรับสรีระคนไทยโดยเฉพาะ
+          {/* Subtitle */}
+          <p className="text-base sm:text-lg md:text-xl text-white/80 font-normal leading-relaxed max-w-xl">
+            ความประณีตที่สัมผัสได้ในทุกวันทำงาน ตัดเย็บด้วยเนื้อผ้าคัดสรรพิเศษ
+            ยับยาก ใส่สบาย และออกแบบมาเพื่อสรีระคนไทยโดยเฉพาะ
           </p>
 
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 pt-2">
+          {/* Dual Pill CTA Buttons */}
+          <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5">
+            <Link
+              href="/products"
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-white text-[#071322] font-bold text-sm hover:bg-slate-100 transition-[background-color,transform] duration-200 active:scale-[0.98] shadow-lg cursor-pointer"
+            >
+              <span>เลือกชมคอลเลกชัน</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+
             <button
               type="button"
               onClick={onOpenSizeGuide}
-              className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl bg-[#0A2540] dark:bg-blue-600 text-white font-semibold text-sm hover:bg-[#13385e] dark:hover:bg-blue-500 transition-[background-color,transform] duration-200 active:scale-[0.98] shadow-sm cursor-pointer"
+              className="inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-full bg-white/10 hover:bg-white/15 backdrop-blur-md text-white font-semibold text-sm border border-white/20 transition-[background-color,border-color] duration-200 cursor-pointer"
             >
               <Ruler className="w-4 h-4 text-amber-300" />
-              <span>ค้นหาไซส์ที่พอดี (Smart Size Finder)</span>
+              <span>Smart Size Finder</span>
             </button>
-
-            <Link
-              href="/products"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl border border-border bg-card hover:bg-muted text-foreground font-semibold text-sm transition-[background-color,border-color] duration-200"
-            >
-              <span>ดูสินค้าทั้งหมด</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-
-          {/* Trust Value Points */}
-          <div className="grid grid-cols-3 gap-3 pt-4 border-t border-border/60 max-w-lg text-xs sm:text-sm text-muted-foreground font-medium">
-            <div className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-              <span>ผ้ายับยาก รีดง่าย</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-              <span>ระบายอากาศดี</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-              <span>เปลี่ยนไซส์ฟรี 7 วัน</span>
-            </div>
           </div>
         </div>
+      </div>
 
-        {/* Right Column: Shirt Showcase with Callout Pins */}
-        <div className="lg:col-span-5 relative flex justify-center items-center">
-          <div className="relative w-full max-w-[420px] aspect-[4/5] rounded-2xl overflow-hidden border border-border/80 bg-slate-50 dark:bg-slate-900 shadow-lg">
-            <Image
-              src="/images/placeholders/men-ls.jpg"
-              alt="Highbury Signature Premium Shirt"
-              fill
-              priority
-              sizes="(max-width: 768px) 100vw, 420px"
-              className="object-cover object-top"
-            />
-
-            {/* Feature Callout Tag 1: Collar */}
-            <div className="absolute top-[18%] left-4 sm:left-6 z-20 bg-background/95 dark:bg-slate-950/90 backdrop-blur-sm border border-border/80 shadow-md rounded-lg px-3 py-1.5 flex items-center gap-2 text-xs font-semibold text-foreground pointer-events-none">
-              <span className="w-2 h-2 rounded-full bg-blue-600" />
-              <span>ทรงปกสวย อยู่ทรงตลอดวัน</span>
+      {/* Bottom 3-Metric Spec Bar & Scroll Indicator (Quantum style) */}
+      <div className="relative z-10 w-full border-t border-white/10 bg-[#071322]/80 backdrop-blur-md py-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+          {/* 3 Key Specs */}
+          <div className="grid grid-cols-3 gap-6 sm:gap-12 md:gap-16">
+            <div>
+              <div className="text-xl sm:text-2xl font-black text-white leading-none">
+                100%
+              </div>
+              <div className="text-[11px] sm:text-xs font-medium text-white/60 tracking-wider uppercase mt-1">
+                Cotton คัดสรร
+              </div>
             </div>
 
-            {/* Feature Callout Tag 2: Breathable Fabric */}
-            <div className="absolute top-[48%] right-4 sm:right-6 z-20 bg-background/95 dark:bg-slate-950/90 backdrop-blur-sm border border-border/80 shadow-md rounded-lg px-3 py-1.5 flex items-center gap-2 text-xs font-semibold text-foreground pointer-events-none">
-              <span className="w-2 h-2 rounded-full bg-emerald-600" />
-              <span>เนื้อผ้าระบายอากาศ สวมใส่สบาย</span>
+            <div className="border-l border-white/10 pl-6 sm:pl-12 md:pl-16">
+              <div className="text-xl sm:text-2xl font-black text-white leading-none">
+                Easy-Care
+              </div>
+              <div className="text-[11px] sm:text-xs font-medium text-white/60 tracking-wider uppercase mt-1">
+                ยับยาก คืนทรงไว
+              </div>
             </div>
 
-            {/* Feature Callout Tag 3: Fit & Wrinkle Resistance */}
-            <div className="absolute bottom-[14%] left-4 sm:left-6 z-20 bg-background/95 dark:bg-slate-950/90 backdrop-blur-sm border border-border/80 shadow-md rounded-lg px-3 py-1.5 flex items-center gap-2 text-xs font-semibold text-foreground pointer-events-none">
-              <span className="w-2 h-2 rounded-full bg-amber-500" />
-              <span>แพทเทิร์นพอดีตัว ยับยาก ดูแลรักษาง่าย</span>
+            <div className="border-l border-white/10 pl-6 sm:pl-12 md:pl-16">
+              <div className="text-xl sm:text-2xl font-black text-white leading-none">
+                S – 4XL
+              </div>
+              <div className="text-[11px] sm:text-xs font-medium text-white/60 tracking-wider uppercase mt-1">
+                ทรงพอดีคนไทย
+              </div>
             </div>
+          </div>
+
+          {/* Scroll Indicator */}
+          <div className="hidden lg:flex items-center gap-2 text-xs font-semibold text-white/60 uppercase tracking-widest">
+            <span>SCROLL TO EXPLORE</span>
+            <ChevronDown className="w-4 h-4 animate-bounce text-white/80" />
           </div>
         </div>
       </div>
