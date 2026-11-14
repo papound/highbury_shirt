@@ -31,15 +31,85 @@ export default function PreFooterCta({
       />
       <div
         aria-hidden="true"
-        className={`absolute -top-32 right-10 w-[500px] h-[500px] rounded-full blur-3xl pointer-events-none transition-opacity duration-300 ${
+        className={`absolute -top-32 left-10 w-[500px] h-[500px] rounded-full blur-3xl pointer-events-none transition-opacity duration-300 ${
           isLight ? "bg-[#2563EB]/10" : "bg-[#FFB900]/10"
         }`}
       />
 
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
-          {/* Left Column: Heading, Subtitle & Action Pills */}
-          <div className="lg:col-span-7 space-y-6 max-w-xl">
+          {/* Left Column: Floating Frosted Glass Card with 3 Assurances (order-2 on mobile, order-1 on lg) */}
+          <div className="lg:col-span-5 order-2 lg:order-1 flex justify-center lg:justify-start">
+            <div
+              className="w-full max-w-md p-6 sm:p-8 rounded-2xl sm:rounded-3xl shadow-2xl space-y-6 transition-all duration-300"
+              style={{
+                backgroundColor: "rgba(0, 0, 0, 0.55)",
+                backdropFilter: "blur(20px)",
+                WebkitBackdropFilter: "blur(20px)",
+                borderColor: "rgba(255, 255, 255, 0.18)",
+                borderWidth: "1px",
+                borderStyle: "solid",
+                color: "#FFFFFF",
+              }}
+            >
+              {/* Stat 1: 7 Days Return */}
+              <div className="flex items-start gap-4">
+                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0 mt-0.5 border border-white/20">
+                  <ShieldCheck className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <div className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+                    7 Days
+                  </div>
+                  <div className="text-xs sm:text-sm text-white/80 font-medium mt-0.5">
+                    {lang === "th" ? "รับประกันเปลี่ยนไซส์ฟรี" : "Free Size Exchange"}
+                  </div>
+                  <div className="text-[11px] sm:text-xs text-white/60 mt-0.5">
+                    {lang === "th" ? "ลองใส่แล้วไม่พอดี เปลี่ยนใหม่ได้ทันที ไม่มีค่าใช้จ่าย" : "Swap sizes hassle-free if it doesn't fit perfectly"}
+                  </div>
+                </div>
+              </div>
+
+              {/* Stat 2: Asian Fit */}
+              <div className="flex items-start gap-4 border-t border-white/15 pt-5">
+                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0 mt-0.5 border border-white/20">
+                  <Sparkles className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <div className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+                    Asian Fit
+                  </div>
+                  <div className="text-xs sm:text-sm text-white/80 font-medium mt-0.5">
+                    {lang === "th" ? "แพทเทิร์นสรีระคนไทยโดยเฉพาะ" : "Asian Proportion Silhouette"}
+                  </div>
+                  <div className="text-[11px] sm:text-xs text-white/60 mt-0.5">
+                    {lang === "th" ? "สัดส่วนไหล่และวงแขนพอดี คล่องตัว ไม่ตึงรั้ง" : "Sculpted proportions deliver effortless mobility"}
+                  </div>
+                </div>
+              </div>
+
+              {/* Stat 3: Corporate OEM */}
+              <div className="flex items-start gap-4 border-t border-white/15 pt-5">
+                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0 mt-0.5 border border-white/20">
+                  <Building2 className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <div className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+                    3,500 Pcs
+                  </div>
+                  <div className="text-xs sm:text-sm text-white/80 font-medium mt-0.5">
+                    {lang === "th" ? "บริการสั่งผลิตยูนิฟอร์มองค์กร (OEM)" : "Corporate Uniform OEM Capacity"}
+                  </div>
+                  <div className="text-[11px] sm:text-xs text-white/60 mt-0.5">
+                    {lang === "th" ? "กำลังผลิตต่อเดือน พร้อมบริการปักโลโก้และเลือกผ้าตาม CI" : "Monthly capacity with custom embroidery & fabric CI"}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Heading, Subtitle & Action Pills (order-1 on mobile, order-2 on lg) */}
+          <div className="lg:col-span-7 order-1 lg:order-2 space-y-6 max-w-xl lg:ml-auto">
             {/* Category Tracker Tag (Exact Quantum Style) */}
             <div
               className={`text-[11px] sm:text-xs font-semibold tracking-[0.25em] uppercase ${
@@ -106,76 +176,6 @@ export default function PreFooterCta({
                 <Ruler className="w-4 h-4 text-[#FFB900]" />
                 <span>{lang === "th" ? "คำนวณไซส์ Smart Size Finder" : "Smart Size Finder"}</span>
               </button>
-            </div>
-          </div>
-
-          {/* Right Column: Floating Frosted Glass Card with 3 Assurances (No Outer Enclosing Box) */}
-          <div className="lg:col-span-5 flex justify-center lg:justify-end">
-            <div
-              className="w-full max-w-md p-6 sm:p-8 rounded-2xl sm:rounded-3xl shadow-2xl space-y-6 transition-all duration-300"
-              style={{
-                backgroundColor: "rgba(0, 0, 0, 0.55)",
-                backdropFilter: "blur(20px)",
-                WebkitBackdropFilter: "blur(20px)",
-                borderColor: "rgba(255, 255, 255, 0.18)",
-                borderWidth: "1px",
-                borderStyle: "solid",
-                color: "#FFFFFF",
-              }}
-            >
-              {/* Stat 1: 7 Days Return */}
-              <div className="flex items-start gap-4">
-                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0 mt-0.5 border border-white/20">
-                  <ShieldCheck className="w-4 h-4 text-white" />
-                </div>
-                <div>
-                  <div className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
-                    7 Days
-                  </div>
-                  <div className="text-xs sm:text-sm text-white/80 font-medium mt-0.5">
-                    {lang === "th" ? "รับประกันเปลี่ยนไซส์ฟรี" : "Free Size Exchange"}
-                  </div>
-                  <div className="text-[11px] sm:text-xs text-white/60 mt-0.5">
-                    {lang === "th" ? "ลองใส่แล้วไม่พอดี เปลี่ยนใหม่ได้ทันที ไม่มีค่าใช้จ่าย" : "Swap sizes hassle-free if it doesn't fit perfectly"}
-                  </div>
-                </div>
-              </div>
-
-              {/* Stat 2: Asian Fit */}
-              <div className="flex items-start gap-4 border-t border-white/15 pt-5">
-                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0 mt-0.5 border border-white/20">
-                  <Sparkles className="w-4 h-4 text-white" />
-                </div>
-                <div>
-                  <div className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
-                    Asian Fit
-                  </div>
-                  <div className="text-xs sm:text-sm text-white/80 font-medium mt-0.5">
-                    {lang === "th" ? "แพทเทิร์นสรีระคนไทยโดยเฉพาะ" : "Asian Proportion Silhouette"}
-                  </div>
-                  <div className="text-[11px] sm:text-xs text-white/60 mt-0.5">
-                    {lang === "th" ? "สัดส่วนไหล่และวงแขนพอดี คล่องตัว ไม่ตึงรั้ง" : "Sculpted proportions deliver effortless mobility"}
-                  </div>
-                </div>
-              </div>
-
-              {/* Stat 3: Corporate OEM */}
-              <div className="flex items-start gap-4 border-t border-white/15 pt-5">
-                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0 mt-0.5 border border-white/20">
-                  <Building2 className="w-4 h-4 text-white" />
-                </div>
-                <div>
-                  <div className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
-                    3,500 Pcs
-                  </div>
-                  <div className="text-xs sm:text-sm text-white/80 font-medium mt-0.5">
-                    {lang === "th" ? "บริการสั่งผลิตยูนิฟอร์มองค์กร (OEM)" : "Corporate Uniform OEM Capacity"}
-                  </div>
-                  <div className="text-[11px] sm:text-xs text-white/60 mt-0.5">
-                    {lang === "th" ? "กำลังผลิตต่อเดือน พร้อมบริการปักโลโก้และเลือกผ้าตาม CI" : "Monthly capacity with custom embroidery & fabric CI"}
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>

@@ -17,88 +17,29 @@ export default function CraftStory({ lang: propLang }: CraftStoryProps) {
 
   return (
     <section id="craftsmanship" className="relative w-full min-h-[580px] lg:min-h-[660px] flex items-center overflow-hidden scroll-mt-20">
-      {/* Background Image: Highbury Tailoring Models / Workshop (Edge-to-Edge, No Outer Border) */}
+      {/* Background Image: Highbury Tailoring Workshop (Edge-to-Edge, No Outer Border) */}
       <Image
         src="/images/craft-story.jpg"
         alt="Highbury Asian Fit Tailoring Craftsmanship"
         fill
         sizes="100vw"
-        className="object-cover object-[75%_center] lg:object-center"
+        className="object-cover object-[25%_center] lg:object-center"
       />
 
-      {/* Smooth Gradient Fade Layer (Matches Reference Left-to-Right Dissolve) */}
+      {/* Smooth Gradient Fade Layer (Dissolves from Right for Text Readability on Right) */}
       <div
         className={`absolute inset-0 pointer-events-none transition-colors duration-300 ${
           isLight
-            ? "bg-gradient-to-r from-white via-white/95 via-45% to-transparent max-lg:bg-gradient-to-t max-lg:from-white/95 max-lg:via-white/80 max-lg:to-transparent"
-            : "bg-gradient-to-r from-[#07080B] via-[#07080B]/95 via-45% to-transparent max-lg:bg-gradient-to-t max-lg:from-[#07080B]/95 max-lg:via-[#07080B]/80 max-lg:to-transparent"
+            ? "bg-gradient-to-l from-white via-white/95 via-45% to-transparent max-lg:bg-gradient-to-t max-lg:from-white/95 max-lg:via-white/80 max-lg:to-transparent"
+            : "bg-gradient-to-l from-[#07080B] via-[#07080B]/95 via-45% to-transparent max-lg:bg-gradient-to-t max-lg:from-[#07080B]/95 max-lg:via-[#07080B]/80 max-lg:to-transparent"
         }`}
       />
 
       {/* Content Container aligned with site grid */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-28">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
-          {/* Left Column: Heading, Subtitle & Action Button (Exact Reference Replica) */}
-          <div className="lg:col-span-7 space-y-6 max-w-xl">
-            {/* Reference-style Category Tracker (e.g. CRAFTSMANSHIP+) */}
-            <div
-              className={`text-[11px] sm:text-xs font-semibold tracking-[0.25em] uppercase ${
-                isLight ? "text-[#64748B]" : "text-[#9496A1]"
-              }`}
-            >
-              CRAFTSMANSHIP+
-            </div>
-
-            {/* Big Display Heading */}
-            <h2
-              className={`text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight leading-[1.15] ${
-                isLight ? "text-[#0F172A]" : "text-white"
-              }`}
-            >
-              {lang === "th" ? (
-                <>
-                  มิติใหม่ของงานตัดเย็บ
-                  <br />
-                  ที่ใส่สบายได้ทุกวันทำงาน.
-                </>
-              ) : (
-                <>
-                  A New Era
-                  <br />
-                  of Everyday Tailoring.
-                </>
-              )}
-            </h2>
-
-            {/* Refined Explanatory Paragraph */}
-            <p
-              className={`text-sm sm:text-base leading-relaxed max-w-lg ${
-                isLight ? "text-[#475569]" : "text-[#E7E7E7]"
-              }`}
-            >
-              {lang === "th"
-                ? "Highbury พัฒนาแพทเทิร์นเสื้อเชิ้ตสำเร็จรูปสำหรับสรีระคนไทยโดยเฉพาะ คำนวณความกว้างช่วงไหล่ ความลึกของวงแขน และความยาวเสื้อที่สอดเข้ากางเกงได้พอดี ผลิตในเวิร์กช็อปที่มีกำลังผลิต 3,500 ตัวต่อเดือน"
-                : "Highbury develops ready-to-wear shirt patterns sculpted specifically for Asian proportions. Calibrated shoulder widths, armhole depths, and tuck-in lengths crafted in our 3,500 pcs/month workshop."}
-            </p>
-
-            {/* Quantum Pill Button (Exact Reference Styling) */}
-            <div className="pt-2">
-              <Link
-                href="#models"
-                className={`inline-flex items-center gap-2.5 px-6 py-3 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 shadow-md group cursor-pointer ${
-                  isLight
-                    ? "bg-[#0F172A] text-white hover:bg-[#1E293B]"
-                    : "bg-black text-white border border-white/20 hover:bg-white/10"
-                }`}
-              >
-                <span>{lang === "th" ? "เลือกดูคอลเลกชันสินค้า" : "Explore Collection"}</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-              </Link>
-            </div>
-          </div>
-
-          {/* Right Column: Floating Frosted Glass Card with 3 Specs */}
-          <div className="lg:col-span-5 flex justify-center lg:justify-end">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+          {/* Left Column: Floating Frosted Glass Card with 3 Specs (order-2 on mobile, order-1 on lg) */}
+          <div className="lg:col-span-5 order-2 lg:order-1 flex justify-center lg:justify-start">
             <div
               className="w-full max-w-md p-6 sm:p-8 rounded-2xl sm:rounded-3xl shadow-2xl space-y-6 transition-all duration-300"
               style={{
@@ -164,6 +105,65 @@ export default function CraftStory({ lang: propLang }: CraftStoryProps) {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Right Column: Heading, Subtitle & Action Button (order-1 on mobile, order-2 on lg) */}
+          <div className="lg:col-span-7 order-1 lg:order-2 space-y-6 max-w-xl lg:ml-auto">
+            {/* Reference-style Category Tracker */}
+            <div
+              className={`text-[11px] sm:text-xs font-semibold tracking-[0.25em] uppercase ${
+                isLight ? "text-[#64748B]" : "text-[#9496A1]"
+              }`}
+            >
+              CRAFTSMANSHIP+
+            </div>
+
+            {/* Big Display Heading */}
+            <h2
+              className={`text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight leading-[1.15] ${
+                isLight ? "text-[#0F172A]" : "text-white"
+              }`}
+            >
+              {lang === "th" ? (
+                <>
+                  มิติใหม่ของงานตัดเย็บ
+                  <br />
+                  ที่ใส่สบายได้ทุกวันทำงาน.
+                </>
+              ) : (
+                <>
+                  A New Era
+                  <br />
+                  of Everyday Tailoring.
+                </>
+              )}
+            </h2>
+
+            {/* Refined Explanatory Paragraph */}
+            <p
+              className={`text-sm sm:text-base leading-relaxed max-w-lg ${
+                isLight ? "text-[#475569]" : "text-[#E7E7E7]"
+              }`}
+            >
+              {lang === "th"
+                ? "Highbury พัฒนาแพทเทิร์นเสื้อเชิ้ตสำเร็จรูปสำหรับสรีระคนไทยโดยเฉพาะ คำนวณความกว้างช่วงไหล่ ความลึกของวงแขน และความยาวเสื้อที่สอดเข้ากางเกงได้พอดี ผลิตในเวิร์กช็อปที่มีกำลังผลิต 3,500 ตัวต่อเดือน"
+                : "Highbury develops ready-to-wear shirt patterns sculpted specifically for Asian proportions. Calibrated shoulder widths, armhole depths, and tuck-in lengths crafted in our 3,500 pcs/month workshop."}
+            </p>
+
+            {/* Quantum Pill Button */}
+            <div className="pt-2">
+              <Link
+                href="#models"
+                className={`inline-flex items-center gap-2.5 px-6 py-3 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 shadow-md group cursor-pointer ${
+                  isLight
+                    ? "bg-[#0F172A] text-white hover:bg-[#1E293B]"
+                    : "bg-black text-white border border-white/20 hover:bg-white/10"
+                }`}
+              >
+                <span>{lang === "th" ? "เลือกดูคอลเลกชันสินค้า" : "Explore Collection"}</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              </Link>
             </div>
           </div>
         </div>
