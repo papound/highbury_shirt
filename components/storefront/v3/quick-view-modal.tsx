@@ -31,12 +31,14 @@ interface QuickViewModalProps {
   product: QuickViewProduct | null;
   onClose: () => void;
   onOpenSizeGuide: () => void;
+  theme?: "dark" | "light";
 }
 
 export default function QuickViewModal({
   product,
   onClose,
   onOpenSizeGuide,
+  theme = "dark",
 }: QuickViewModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
 
@@ -81,6 +83,7 @@ export default function QuickViewModal({
       ref={dialogRef}
       onCancel={handleCancel}
       onClick={handleBackdropClick}
+      data-theme={theme}
       className="v3-dialog w-[92vw] max-w-2xl rounded-2xl border border-[#262830] bg-[#0E1015] p-0 text-white overflow-hidden shadow-2xl backdrop:bg-black/80"
       aria-labelledby="quick-view-title"
     >

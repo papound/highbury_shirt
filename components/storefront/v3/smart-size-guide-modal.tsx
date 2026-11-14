@@ -7,6 +7,7 @@ import { X, Ruler, CheckCircle, Calculator, Table as TableIcon, User, Shirt } fr
 interface SmartSizeGuideModalProps {
   isOpen: boolean;
   onClose: () => void;
+  theme?: "dark" | "light";
 }
 
 export type Gender = "men" | "women";
@@ -82,7 +83,11 @@ const WOMEN_THREE_QUARTER_SLEEVE: HighburySizeRow[] = [
   { size: "5XL", chestInch: 48, lengthInch: 27, sleeveInch: 17.5, neckInch: 17, shoulderInch: 18, recommendedChestInch: "44 - 46" },
 ];
 
-export default function SmartSizeGuideModal({ isOpen, onClose }: SmartSizeGuideModalProps) {
+export default function SmartSizeGuideModal({
+  isOpen,
+  onClose,
+  theme = "dark",
+}: SmartSizeGuideModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   // Category & Sleeve Selection
@@ -208,6 +213,7 @@ export default function SmartSizeGuideModal({ isOpen, onClose }: SmartSizeGuideM
       ref={dialogRef}
       onCancel={handleCancel}
       onClick={handleBackdropClick}
+      data-theme={theme}
       className="v3-dialog w-[94vw] max-w-4xl rounded-2xl border border-[#262830] bg-[#0E1015] p-0 text-white overflow-hidden shadow-2xl backdrop:bg-black/80"
       aria-labelledby="size-guide-title"
     >

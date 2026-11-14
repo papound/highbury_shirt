@@ -1,7 +1,6 @@
 /* ─────────────────────────────────────────────────────────────────────────────
    HIGHBURY V3 DESIGN SYSTEM - EXACT QUANTUM MOTORS AESTHETIC
-   Scoped to .v3-page-wrapper
-   Palette: Dark #07080B, Text #FFFFFF, Muted #E7E7E7, Accent #FFB900, Border #262830
+   Supports Dark (Quantum Dark #07080B) and Light (Architectural White #FFFFFF)
    Buttons: Exact Quantum Pill Shapes (rounded-full)
    ───────────────────────────────────────────────────────────────────────────── */
 
@@ -43,6 +42,7 @@ html {
   color: var(--v3-text-main);
   overflow-x: clip;
   width: 100%;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 /* ── Typography Utilities ── */
@@ -195,7 +195,7 @@ html {
   }
 }
 
-/* ── Dialog ── */
+/* ── Dialog Default ── */
 dialog.v3-dialog:modal {
   overscroll-behavior: contain;
   margin: auto;
@@ -214,4 +214,151 @@ dialog.v3-dialog::backdrop {
 .v3-page-wrapper .v3-section-deferred {
   content-visibility: auto;
   contain-intrinsic-size: auto 600px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   HIGHBURY V3 LIGHT THEME OVERRIDES (data-theme="light")
+   Clean, luminous, crisp architectural tailoring aesthetic
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.v3-page-wrapper[data-theme="light"] {
+  --v3-bg-dark: #FFFFFF;
+  --v3-bg-surface: #F8F9FA;
+  --v3-bg-card: #FFFFFF;
+  --v3-border: #E5E7EB;
+  --v3-border-subtle: #F1F5F9;
+
+  --v3-text-main: #0F172A;
+  --v3-text-muted: #334155;
+  --v3-text-subtle: #64748B;
+  --v3-accent-gold: #B45309;
+
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+}
+
+/* Background Color Remappings */
+.v3-page-wrapper[data-theme="light"] .bg-\[\#07080B\] {
+  background-color: #FFFFFF !important;
+}
+
+.v3-page-wrapper[data-theme="light"] .bg-\[\#0E1015\] {
+  background-color: #F8F9FA !important;
+}
+
+.v3-page-wrapper[data-theme="light"] .bg-\[\#13161D\] {
+  background-color: #FFFFFF !important;
+}
+
+.v3-page-wrapper[data-theme="light"] .bg-\[\#181B24\] {
+  background-color: #F1F5F9 !important;
+}
+
+.v3-page-wrapper[data-theme="light"] .bg-\[\#1A1E27\] {
+  background-color: #F8F9FA !important;
+}
+
+.v3-page-wrapper[data-theme="light"] .bg-white\/5,
+.v3-page-wrapper[data-theme="light"] .bg-white\/10 {
+  background-color: rgba(15, 23, 42, 0.04) !important;
+}
+
+/* Border Color Remappings */
+.v3-page-wrapper[data-theme="light"] .border-\[\#262830\],
+.v3-page-wrapper[data-theme="light"] .border-\[\#1C1E26\] {
+  border-color: #E5E7EB !important;
+}
+
+.v3-page-wrapper[data-theme="light"] .border-white\/10,
+.v3-page-wrapper[data-theme="light"] .border-white\/20 {
+  border-color: rgba(15, 23, 42, 0.12) !important;
+}
+
+.v3-page-wrapper[data-theme="light"] .divide-\[\#262830\] > :not([hidden]) ~ :not([hidden]),
+.v3-page-wrapper[data-theme="light"] .divide-\[\#1C1E26\] > :not([hidden]) ~ :not([hidden]) {
+  border-color: #E5E7EB !important;
+}
+
+/* Text Color Remappings */
+.v3-page-wrapper[data-theme="light"] .text-white {
+  color: #0F172A !important;
+}
+
+.v3-page-wrapper[data-theme="light"] .text-\[\#E7E7E7\] {
+  color: #334155 !important;
+}
+
+.v3-page-wrapper[data-theme="light"] .text-\[\#9496A1\] {
+  color: #64748B !important;
+}
+
+.v3-page-wrapper[data-theme="light"] .text-\[\#FFB900\] {
+  color: #B45309 !important;
+}
+
+/* Hover States in Light Mode */
+.v3-page-wrapper[data-theme="light"] .hover\:text-white:hover {
+  color: #0F172A !important;
+}
+
+.v3-page-wrapper[data-theme="light"] .hover\:bg-white\/5:hover,
+.v3-page-wrapper[data-theme="light"] .hover\:bg-white\/10:hover {
+  background-color: rgba(15, 23, 42, 0.06) !important;
+}
+
+/* Light Theme Button Overrides */
+.v3-page-wrapper[data-theme="light"] .v3-btn-white {
+  background-color: #0F172A !important;
+  color: #FFFFFF !important;
+  border-color: #0F172A !important;
+}
+
+.v3-page-wrapper[data-theme="light"] .v3-btn-white:hover {
+  background-color: #1E293B !important;
+  border-color: #1E293B !important;
+}
+
+.v3-page-wrapper[data-theme="light"] .v3-btn-glass {
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+  border-color: #D1D5DB !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.v3-page-wrapper[data-theme="light"] .v3-btn-glass:hover {
+  background-color: #F8F9FA !important;
+  border-color: #9CA3AF !important;
+}
+
+.v3-page-wrapper[data-theme="light"] .v3-arrow-btn {
+  border-color: #E2E8F0 !important;
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.v3-page-wrapper[data-theme="light"] .v3-arrow-btn:hover {
+  background-color: #F8F9FA !important;
+  border-color: #CBD5E1 !important;
+}
+
+/* Card Elevation & Crisp Shadow in Light Mode */
+.v3-page-wrapper[data-theme="light"] .rounded-lg.bg-\[\#13161D\],
+.v3-page-wrapper[data-theme="light"] .rounded-xl.bg-\[\#13161D\] {
+  box-shadow: 0 2px 10px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Modal Dialog in Light Mode */
+dialog.v3-dialog[data-theme="light"]:modal,
+.v3-page-wrapper[data-theme="light"] dialog.v3-dialog:modal {
+  background-color: #FFFFFF !important;
+  border-color: #E5E7EB !important;
+  color: #0F172A !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15) !important;
+}
+
+dialog.v3-dialog[data-theme="light"]::backdrop,
+.v3-page-wrapper[data-theme="light"] dialog.v3-dialog::backdrop {
+  background-color: rgba(15, 23, 42, 0.5) !important;
+  backdrop-filter: blur(8px) !important;
 }

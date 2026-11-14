@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ShoppingBag, Menu, X, Search, Loader2 } from "lucide-react";
+import { ShoppingBag, Menu, X, Search, Loader2, Sun, Moon } from "lucide-react";
 import { useCartStore } from "@/hooks/use-cart";
 
 interface SearchResult {
@@ -26,9 +26,17 @@ interface HeaderV3Props {
   onOpenSizeGuide: () => void;
   lang: "th" | "en";
   onToggleLang: () => void;
+  theme?: "dark" | "light";
+  onToggleTheme?: () => void;
 }
 
-export default function HeaderV3({ onOpenSizeGuide, lang, onToggleLang }: HeaderV3Props) {
+export default function HeaderV3({
+  onOpenSizeGuide,
+  lang,
+  onToggleLang,
+  theme = "dark",
+  onToggleTheme,
+}: HeaderV3Props) {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
@@ -148,8 +156,12 @@ export default function HeaderV3({ onOpenSizeGuide, lang, onToggleLang }: Header
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-200 ${
           isScrolled
-            ? "bg-[#07080B] border-b border-[#262830] py-3.5 shadow-lg"
-            : "bg-gradient-to-b from-[#07080B]/90 to-transparent py-5"
+            ? theme === "light"
+              ? "bg-white/95 border-b border-[#E5E7EB] py-3.5 shadow-sm backdrop-blur-md"
+              : "bg-[#07080B] border-b border-[#262830] py-3.5 shadow-lg"
+            : theme === "light"
+              ? "bg-gradient-to-b from-white/95 via-white/80 to-transparent py-5"
+              : "bg-gradient-to-b from-[#07080B]/90 to-transparent py-5"
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -161,7 +173,9 @@ export default function HeaderV3({ onOpenSizeGuide, lang, onToggleLang }: Header
                 e.preventDefault();
                 window.scrollTo({ top: 0, behavior: "smooth" });
               }}
-              className="text-lg font-bold tracking-[0.2em] text-white hover:opacity-90 transition-opacity uppercase font-sans cursor-pointer"
+              className={`text-lg font-bold tracking-[0.2em] ${
+                theme === "light" ? "text-[#0F172A]" : "text-white"
+              } hover:opacity-90 transition-opacity uppercase font-sans cursor-pointer`}
             >
               HIGHBURY
             </a>
@@ -171,28 +185,36 @@ export default function HeaderV3({ onOpenSizeGuide, lang, onToggleLang }: Header
               <a
                 href="#models"
                 onClick={(e) => scrollToSection(e, "models")}
-                className="text-sm font-medium text-[#E7E7E7] hover:text-white transition-colors cursor-pointer"
+                className={`text-sm font-medium ${
+                  theme === "light" ? "text-[#334155] hover:text-[#0F172A]" : "text-[#E7E7E7] hover:text-white"
+                } transition-colors cursor-pointer`}
               >
                 {lang === "th" ? "คอลเลกชันสินค้า" : "Collection"}
               </a>
               <a
                 href="#craftsmanship"
                 onClick={(e) => scrollToSection(e, "craftsmanship")}
-                className="text-sm font-medium text-[#E7E7E7] hover:text-white transition-colors cursor-pointer"
+                className={`text-sm font-medium ${
+                  theme === "light" ? "text-[#334155] hover:text-[#0F172A]" : "text-[#E7E7E7] hover:text-white"
+                } transition-colors cursor-pointer`}
               >
                 {lang === "th" ? "งานตัดเย็บ" : "Craftsmanship"}
               </a>
               <a
                 href="#standards"
                 onClick={(e) => scrollToSection(e, "standards")}
-                className="text-sm font-medium text-[#E7E7E7] hover:text-white transition-colors cursor-pointer"
+                className={`text-sm font-medium ${
+                  theme === "light" ? "text-[#334155] hover:text-[#0F172A]" : "text-[#E7E7E7] hover:text-white"
+                } transition-colors cursor-pointer`}
               >
                 {lang === "th" ? "มาตรฐานโรงงาน" : "Standards"}
               </a>
               <a
                 href="#about"
                 onClick={(e) => scrollToSection(e, "about")}
-                className="text-sm font-medium text-[#E7E7E7] hover:text-white transition-colors cursor-pointer"
+                className={`text-sm font-medium ${
+                  theme === "light" ? "text-[#334155] hover:text-[#0F172A]" : "text-[#E7E7E7] hover:text-white"
+                } transition-colors cursor-pointer`}
               >
                 {lang === "th" ? "เกี่ยวกับเรา" : "About"}
               </a>
@@ -200,11 +222,36 @@ export default function HeaderV3({ onOpenSizeGuide, lang, onToggleLang }: Header
 
             {/* Right: Quantum Pill Actions */}
             <div className="flex items-center gap-3">
+              {/* Theme Switcher (Dark / Light Version) */}
+              {onToggleTheme && (
+                <button
+                  type="button"
+                  onClick={onToggleTheme}
+                  className={`p-2 rounded-full text-xs font-semibold border transition-all cursor-pointer flex items-center justify-center ${
+                    theme === "light"
+                      ? "border-[#E5E7EB] bg-[#F1F5F9] text-[#0F172A] hover:bg-[#E2E8F0]"
+                      : "border-white/20 bg-white/5 text-[#E7E7E7] hover:text-white hover:border-white/40"
+                  }`}
+                  aria-label={theme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"}
+                  title={theme === "light" ? "สลับเป็นโหมดมืด (Dark Version)" : "สลับเป็นโหมดสว่าง (Light Version)"}
+                >
+                  {theme === "light" ? (
+                    <Moon className="w-3.5 h-3.5 text-[#0F172A]" />
+                  ) : (
+                    <Sun className="w-3.5 h-3.5 text-[#FFB900]" />
+                  )}
+                </button>
+              )}
+
               {/* Language Switcher (Quantum Pill Style) */}
               <button
                 type="button"
                 onClick={onToggleLang}
-                className="px-3 py-1.5 rounded-full text-xs font-semibold border border-white/20 bg-white/5 text-[#E7E7E7] hover:text-white hover:border-white/40 transition-colors cursor-pointer"
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors cursor-pointer ${
+                  theme === "light"
+                    ? "border-[#E5E7EB] bg-[#F1F5F9] text-[#0F172A] hover:bg-[#E2E8F0]"
+                    : "border-white/20 bg-white/5 text-[#E7E7E7] hover:text-white hover:border-white/40"
+                }`}
                 aria-label="Toggle Language"
               >
                 {lang === "th" ? "TH / EN" : "EN / TH"}
@@ -316,7 +363,11 @@ export default function HeaderV3({ onOpenSizeGuide, lang, onToggleLang }: Header
 
               <Link
                 href="/cart"
-                className="relative p-2 rounded-full text-[#E7E7E7] hover:text-white hover:bg-white/10 transition-colors"
+                className={`relative p-2 rounded-full transition-colors flex items-center justify-center ${
+                  theme === "light"
+                    ? "text-[#0F172A] hover:bg-[#F1F5F9]"
+                    : "text-[#E7E7E7] hover:text-white hover:bg-white/10"
+                }`}
                 aria-label="Cart"
               >
                 <ShoppingBag className="w-5 h-5" />
@@ -331,7 +382,11 @@ export default function HeaderV3({ onOpenSizeGuide, lang, onToggleLang }: Header
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="md:hidden p-2 rounded-md text-[#E7E7E7] hover:text-white hover:bg-[#13161D] transition-colors"
+                className={`md:hidden p-2 rounded-md transition-colors ${
+                  theme === "light"
+                    ? "text-[#0F172A] hover:bg-[#F1F5F9]"
+                    : "text-[#E7E7E7] hover:text-white hover:bg-[#13161D]"
+                }`}
                 aria-label="Toggle menu"
               >
                 {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -343,7 +398,11 @@ export default function HeaderV3({ onOpenSizeGuide, lang, onToggleLang }: Header
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-40 bg-[#07080B] flex flex-col pt-24 px-6 md:hidden">
+        <div
+          className={`fixed inset-0 z-40 flex flex-col pt-24 px-6 md:hidden overflow-y-auto ${
+            theme === "light" ? "bg-white text-[#0F172A]" : "bg-[#07080B] text-white"
+          }`}
+        >
           {/* Mobile Search Bar with Partial Search */}
           <div ref={mobileSearchRef} className="relative mb-6">
             <form
@@ -490,6 +549,32 @@ export default function HeaderV3({ onOpenSizeGuide, lang, onToggleLang }: Header
           </nav>
 
           <div className="mt-8 pt-6 border-t border-[#262830] flex flex-col gap-3">
+            {onToggleTheme && (
+              <button
+                type="button"
+                onClick={() => {
+                  onToggleTheme();
+                  setMobileMenuOpen(false);
+                }}
+                className={`w-full py-2.5 px-4 rounded-full text-xs font-semibold border flex items-center justify-center gap-2 transition-colors ${
+                  theme === "light"
+                    ? "border-[#E5E7EB] bg-[#F1F5F9] text-[#0F172A] hover:bg-[#E2E8F0]"
+                    : "border-white/20 bg-white/5 text-white hover:bg-white/10"
+                }`}
+              >
+                {theme === "light" ? (
+                  <>
+                    <Moon className="w-4 h-4 text-[#0F172A]" />
+                    <span>เปลี่ยนเป็นโหมดมืด (Dark Version)</span>
+                  </>
+                ) : (
+                  <>
+                    <Sun className="w-4 h-4 text-[#FFB900]" />
+                    <span>เปลี่ยนเป็นโหมดสว่าง (Light Version)</span>
+                  </>
+                )}
+              </button>
+            )}
             <button
               type="button"
               onClick={() => {

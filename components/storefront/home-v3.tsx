@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Prisma } from "@prisma/client";
 
 import HeaderV3 from "./v3/header-v3";
@@ -32,12 +32,56 @@ interface HomeV3Props {
 }
 
 export default function HomeV3({ featuredProducts }: HomeV3Props) {
+  // Theme State: 'dark' (Quantum standard) or 'light' (Clean architectural tailoring)
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
+
   // Language State: Defaults to 'th' with smooth 'en' toggle
   const [lang, setLang] = useState<"th" | "en">("th");
 
   // Modal states
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
   const [quickViewProduct, setQuickViewProduct] = useState<QuickViewProduct | null>(null);
+
+  // Initialize theme from URL query param (?theme=light) or localStorage
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const urlTheme = params.get("theme");
+      if (urlTheme === "light" || urlTheme === "dark") {
+        setTheme(urlTheme);
+        localStorage.setItem("highbury-theme", urlTheme);
+        return;
+      }
+
+      const stored = localStorage.getItem("highbury-theme");
+      if (stored === "light" || stored === "dark") {
+        setTheme(stored);
+      }
+    } catch {}
+  }, []);
+
+  // Sync color-scheme meta tag with theme for browser native UI adaptation
+  useEffect(() => {
+    try {
+      let meta = document.querySelector('meta[name="color-scheme"]');
+      if (!meta) {
+        meta = document.createElement("meta");
+        meta.setAttribute("name", "color-scheme");
+        document.head.appendChild(meta);
+      }
+      meta.setAttribute("content", theme === "light" ? "light" : "dark");
+    } catch {}
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => {
+      const next = prev === "dark" ? "light" : "dark";
+      try {
+        localStorage.setItem("highbury-theme", next);
+      } catch {}
+      return next;
+    });
+  };
 
   const toggleLang = () => {
     setLang((prev) => (prev === "th" ? "en" : "th"));
@@ -69,18 +113,28 @@ export default function HomeV3({ featuredProducts }: HomeV3Props) {
   }));
 
   return (
-    <div className="v3-page-wrapper flex flex-col w-full bg-[#07080B] text-white antialiased selection:bg-white selection:text-black">
-      {/* 1. Quantum Floating Glass Header (With Language Switcher) */}
+    <div
+      data-theme={theme}
+      className={`v3-page-wrapper flex flex-col w-full antialiased transition-colors duration-200 ${
+        theme === "light"
+          ? "bg-[#FFFFFF] text-[#0F172A] selection:bg-[#2563EB] selection:text-white"
+          : "bg-[#07080B] text-white selection:bg-white selection:text-black"
+      }`}
+    >
+      {/* 1. Quantum Floating Glass Header (With Language Switcher & Dark/Light Switcher) */}
       <HeaderV3
         onOpenSizeGuide={() => setIsSizeGuideOpen(true)}
         lang={lang}
         onToggleLang={toggleLang}
+        theme={theme}
+        onToggleTheme={toggleTheme}
       />
 
       {/* 2. Hero Section: Revolutionary Asian Fit Tailoring with 3-Spec Bar */}
       <HeroV3
         onOpenSizeGuide={() => setIsSizeGuideOpen(true)}
         lang={lang}
+        theme={theme}
       />
 
       {/* 3. Section 2: A New Era of Everyday Tailoring (Split Architectural Light) */}
@@ -111,19 +165,21 @@ export default function HomeV3({ featuredProducts }: HomeV3Props) {
         />
       </div>
 
-      {/* 8. Section 7: Quantum Deep Dark Footer */}
+      {/* 8. Section 7: Quantum Deep Dark / Light Tailoring Footer */}
       <V3Footer />
 
       {/* Modals: Accessible Native <dialog> */}
       <SmartSizeGuideModal
         isOpen={isSizeGuideOpen}
         onClose={() => setIsSizeGuideOpen(false)}
+        theme={theme}
       />
 
       <QuickViewModal
         product={quickViewProduct}
         onClose={() => setQuickViewProduct(null)}
         onOpenSizeGuide={() => setIsSizeGuideOpen(true)}
+        theme={theme}
       />
     </div>
   );
