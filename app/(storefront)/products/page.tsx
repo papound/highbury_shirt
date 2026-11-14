@@ -35,9 +35,15 @@ async function getProducts(sp: SearchParams) {
 
   if (sp.category) where.category = { slug: sp.category };
   if (sp.search) {
+    const q = sp.search.trim();
     where.OR = [
-      { nameTh: { contains: sp.search } },
-      { name: { contains: sp.search } },
+      { nameTh: { contains: q } },
+      { name: { contains: q } },
+      { descTh: { contains: q } },
+      { description: { contains: q } },
+      { category: { nameTh: { contains: q } } },
+      { category: { name: { contains: q } } },
+      { variants: { some: { color: { contains: q } } } },
     ];
   }
 

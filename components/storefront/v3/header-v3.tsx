@@ -1,10 +1,26 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ShoppingBag, Menu, X, Search } from "lucide-react";
+import { ShoppingBag, Menu, X, Search, Loader2 } from "lucide-react";
 import { useCartStore } from "@/hooks/use-cart";
+
+interface SearchResult {
+  id: string;
+  name: string;
+  nameTh: string;
+  slug: string;
+  basePrice: number;
+  category?: {
+    name: string;
+    nameTh: string;
+  };
+  images?: Array<{
+    url: string;
+    altText?: string | null;
+  }>;
+}
 
 interface HeaderV3Props {
   onOpenSizeGuide: () => void;
@@ -15,10 +31,60 @@ interface HeaderV3Props {
 export default function HeaderV3({ onOpenSizeGuide, lang, onToggleLang }: HeaderV3Props) {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
+  const mobileSearchRef = useRef<HTMLDivElement>(null);
+
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const items = useCartStore((state) => state.items);
   const totalCount = items.reduce((sum, i) => sum + i.quantity, 0);
+
+  // Debounced live partial search
+  useEffect(() => {
+    const q = searchQuery.trim();
+    if (!q) {
+      setSearchResults([]);
+      setShowDropdown(false);
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      setIsSearching(true);
+      try {
+        const res = await fetch(`/api/products/search?q=${encodeURIComponent(q)}`);
+        if (res.ok) {
+          const data = await res.json();
+          setSearchResults(data.results || []);
+          setShowDropdown(true);
+        }
+      } catch (err) {
+        console.error("Partial search error:", err);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 220);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // Click outside to dismiss dropdown
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        searchContainerRef.current &&
+        !searchContainerRef.current.contains(e.target as Node) &&
+        mobileSearchRef.current &&
+        !mobileSearchRef.current.contains(e.target as Node)
+      ) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -144,20 +210,109 @@ export default function HeaderV3({ onOpenSizeGuide, lang, onToggleLang }: Header
                 {lang === "th" ? "TH / EN" : "EN / TH"}
               </button>
 
-              {/* Search Bar Pill (Replaces Smart Size Finder button as requested) */}
-              <form
-                onSubmit={handleSearch}
-                className="hidden sm:flex items-center relative"
-              >
-                <Search className="w-4 h-4 text-[#64748B] absolute left-3.5 pointer-events-none" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder={lang === "th" ? "ค้นหา เสื้อเชิ้ต, ทรง, ไซส์..." : "Search shirts, fit, size..."}
-                  className="w-40 md:w-52 lg:w-64 pl-9.5 pr-4 py-1.5 rounded-full text-xs sm:text-sm bg-[#F2F4F8] hover:bg-white focus:bg-white text-[#07080B] placeholder:text-[#64748B] border border-white/20 focus:border-white focus:outline-none focus:ring-2 focus:ring-white/40 shadow-sm transition-all"
-                />
-              </form>
+              {/* Search Bar Pill with Live Partial Search */}
+              <div ref={searchContainerRef} className="relative hidden sm:block">
+                <form
+                  onSubmit={handleSearch}
+                  className="flex items-center relative"
+                >
+                  <Search className="w-4 h-4 text-[#64748B] absolute left-3.5 pointer-events-none" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onFocus={() => {
+                      if (searchResults.length > 0) setShowDropdown(true);
+                    }}
+                    placeholder={lang === "th" ? "ค้นหา เสื้อเชิ้ต, ทรง, ไซส์..." : "Search shirts, fit, size..."}
+                    className="w-40 md:w-52 lg:w-64 pl-9.5 pr-8 py-1.5 rounded-full text-xs sm:text-sm bg-[#F2F4F8] hover:bg-white focus:bg-white text-[#07080B] placeholder:text-[#64748B] border border-white/20 focus:border-white focus:outline-none focus:ring-2 focus:ring-white/40 shadow-sm transition-all"
+                  />
+                  {isSearching ? (
+                    <Loader2 className="w-3.5 h-3.5 text-[#64748B] animate-spin absolute right-3 pointer-events-none" />
+                  ) : searchQuery ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSearchQuery("");
+                        setShowDropdown(false);
+                      }}
+                      className="absolute right-2.5 p-0.5 rounded-full text-[#64748B] hover:text-[#07080B] transition-colors"
+                      aria-label="Clear search"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  ) : null}
+                </form>
+
+                {/* Partial Search Results Dropdown */}
+                {showDropdown && searchQuery.trim() && (
+                  <div className="absolute top-full right-0 mt-2 w-80 md:w-96 rounded-2xl bg-[#13161D] border border-[#262830] shadow-2xl p-2.5 z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-150">
+                    <div className="px-3 py-1.5 text-[11px] font-semibold text-[#9496A1] uppercase tracking-wider border-b border-[#262830] flex items-center justify-between">
+                      <span>{lang === "th" ? "ผลการค้นหาทันที" : "Instant Results"}</span>
+                      {isSearching && (
+                        <span className="text-[10px] text-[#FFB900]">กำลังค้นหา...</span>
+                      )}
+                    </div>
+
+                    {searchResults.length > 0 ? (
+                      <div className="py-1 divide-y divide-[#1C1E26]">
+                        {searchResults.map((item) => (
+                          <Link
+                            key={item.id}
+                            href={`/products/${item.slug}`}
+                            onClick={() => {
+                              setShowDropdown(false);
+                              setSearchQuery("");
+                            }}
+                            className="flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 transition-colors group cursor-pointer"
+                          >
+                            <div className="w-10 h-10 rounded-lg overflow-hidden bg-[#07080B] border border-[#262830] shrink-0 relative">
+                              {item.images?.[0]?.url ? (
+                                <img
+                                  src={item.images[0].url}
+                                  alt={item.name}
+                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center text-[10px] text-[#9496A1]">
+                                  Shirt
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="text-xs font-semibold text-white group-hover:text-[#FFB900] transition-colors truncate">
+                                {lang === "th" && item.nameTh ? item.nameTh : item.name}
+                              </div>
+                              <div className="text-[11px] text-[#9496A1] truncate">
+                                {lang === "th" && item.category?.nameTh ? item.category.nameTh : item.category?.name}
+                              </div>
+                            </div>
+                            <div className="font-mono text-xs font-bold text-[#FFB900] shrink-0">
+                              ฿{item.basePrice.toLocaleString()}
+                            </div>
+                          </Link>
+                        ))}
+
+                        <Link
+                          href={`/products?search=${encodeURIComponent(searchQuery.trim())}`}
+                          onClick={() => setShowDropdown(false)}
+                          className="block text-center py-2 text-xs font-medium text-[#E7E7E7] hover:text-[#FFB900] transition-colors pt-2.5"
+                        >
+                          {lang === "th"
+                            ? `ดูผลการค้นหาทั้งหมดสำหรับ "${searchQuery}" →`
+                            : `View all results for "${searchQuery}" →`}
+                        </Link>
+                      </div>
+                    ) : !isSearching ? (
+                      <div className="py-6 text-center text-xs text-[#9496A1]">
+                        {lang === "th"
+                          ? `ไม่พบสินค้าที่ตรงกับ "${searchQuery}"`
+                          : `No products matching "${searchQuery}"`}
+                      </div>
+                    ) : null}
+                  </div>
+                )}
+              </div>
 
               <Link
                 href="/cart"
@@ -189,23 +344,107 @@ export default function HeaderV3({ onOpenSizeGuide, lang, onToggleLang }: Header
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-40 bg-[#07080B] flex flex-col pt-24 px-6 md:hidden">
-          {/* Mobile Search Bar */}
-          <form
-            onSubmit={(e) => {
-              handleSearch(e);
-              setMobileMenuOpen(false);
-            }}
-            className="relative mb-6"
-          >
-            <Search className="w-4 h-4 text-[#64748B] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={lang === "th" ? "ค้นหา เสื้อเชิ้ต, ทรง, ไซส์..." : "Search shirts, fit, size..."}
-              className="w-full pl-9.5 pr-4 py-2.5 rounded-full text-sm bg-[#F2F4F8] text-[#07080B] placeholder:text-[#64748B] focus:outline-none focus:bg-white"
-            />
-          </form>
+          {/* Mobile Search Bar with Partial Search */}
+          <div ref={mobileSearchRef} className="relative mb-6">
+            <form
+              onSubmit={(e) => {
+                handleSearch(e);
+                setMobileMenuOpen(false);
+              }}
+              className="relative"
+            >
+              <Search className="w-4 h-4 text-[#64748B] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => {
+                  if (searchResults.length > 0) setShowDropdown(true);
+                }}
+                placeholder={lang === "th" ? "ค้นหา เสื้อเชิ้ต, ทรง, ไซส์..." : "Search shirts, fit, size..."}
+                className="w-full pl-9.5 pr-8 py-2.5 rounded-full text-sm bg-[#F2F4F8] text-[#07080B] placeholder:text-[#64748B] focus:outline-none focus:bg-white"
+              />
+              {isSearching ? (
+                <Loader2 className="w-3.5 h-3.5 text-[#64748B] animate-spin absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              ) : searchQuery ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearchQuery("");
+                    setShowDropdown(false);
+                  }}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 rounded-full text-[#64748B] hover:text-[#07080B]"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              ) : null}
+            </form>
+
+            {/* Mobile Dropdown Results */}
+            {showDropdown && searchQuery.trim() && (
+              <div className="absolute top-full left-0 right-0 mt-2 max-h-[50vh] overflow-y-auto rounded-2xl bg-[#13161D] border border-[#262830] shadow-2xl p-2 z-50">
+                {searchResults.length > 0 ? (
+                  <div className="divide-y divide-[#1C1E26]">
+                    {searchResults.map((item) => (
+                      <Link
+                        key={item.id}
+                        href={`/products/${item.slug}`}
+                        onClick={() => {
+                          setShowDropdown(false);
+                          setMobileMenuOpen(false);
+                          setSearchQuery("");
+                        }}
+                        className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-white/5 transition-colors"
+                      >
+                        <div className="w-9 h-9 rounded-lg overflow-hidden bg-[#07080B] border border-[#262830] shrink-0">
+                          {item.images?.[0]?.url ? (
+                            <img
+                              src={item.images[0].url}
+                              alt={item.name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-[10px] text-[#9496A1]">
+                              Shirt
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-xs font-semibold text-white truncate">
+                            {lang === "th" && item.nameTh ? item.nameTh : item.name}
+                          </div>
+                          <div className="text-[11px] text-[#9496A1] truncate">
+                            {lang === "th" && item.category?.nameTh ? item.category.nameTh : item.category?.name}
+                          </div>
+                        </div>
+                        <div className="font-mono text-xs font-bold text-[#FFB900] shrink-0">
+                          ฿{item.basePrice.toLocaleString()}
+                        </div>
+                      </Link>
+                    ))}
+                    <Link
+                      href={`/products?search=${encodeURIComponent(searchQuery.trim())}`}
+                      onClick={() => {
+                        setShowDropdown(false);
+                        setMobileMenuOpen(false);
+                      }}
+                      className="block text-center py-2.5 text-xs font-medium text-[#FFB900]"
+                    >
+                      {lang === "th"
+                        ? `ดูผลการค้นหาทั้งหมด (${searchResults.length}) →`
+                        : `View all results (${searchResults.length}) →`}
+                    </Link>
+                  </div>
+                ) : !isSearching ? (
+                  <div className="py-4 text-center text-xs text-[#9496A1]">
+                    {lang === "th"
+                      ? `ไม่พบสินค้าที่ตรงกับ "${searchQuery}"`
+                      : `No products matching "${searchQuery}"`}
+                  </div>
+                ) : null}
+              </div>
+            )}
+          </div>
 
           <nav className="flex flex-col gap-5 text-base font-medium text-white">
             <a
