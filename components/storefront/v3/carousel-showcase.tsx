@@ -200,6 +200,13 @@ export default function CarouselShowcase({
                 ? `฿${Math.min(...prices).toLocaleString()}`
                 : `฿${p.basePrice.toLocaleString()}`;
 
+              const hasStockInfo =
+                (p.variants?.length ?? 0) > 0 &&
+                p.variants.some((v) => typeof v.stock === "number");
+              const isOutOfStock =
+                hasStockInfo &&
+                p.variants.reduce((sum, v) => sum + (v.stock ?? 0), 0) <= 0;
+
               return (
                 <div key={p.id} className="embla__slide">
                   {/* Card: 16px radius, rounded-2xl, 1px border */}
@@ -219,6 +226,13 @@ export default function CarouselShowcase({
                         sizes="(max-width: 640px) 90vw, (max-width: 1024px) 50vw, 33vw"
                         className="object-cover object-top"
                       />
+                      {isOutOfStock && (
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                          <span className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-black/65 !text-white text-xs sm:text-sm font-medium flex items-center justify-center text-center whitespace-nowrap shadow-sm">
+                            สินค้าหมด
+                          </span>
+                        </div>
+                      )}
 
                       {/* Smooth Gradient Dissolve Layer (Matches Standards/Hero Dissolve) */}
                       <div

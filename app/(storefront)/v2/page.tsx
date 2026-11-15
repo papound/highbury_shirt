@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 async function getFeaturedProducts() {
   try {
-    return await prisma.product.findMany({
+    const rawProducts = await prisma.product.findMany({
       where: { isFeatured: true, status: "ACTIVE" },
       include: {
         images: { where: { variantId: null }, orderBy: { sortOrder: "asc" }, take: 1 },
@@ -21,6 +21,27 @@ async function getFeaturedProducts() {
       orderBy: { createdAt: "desc" },
       take: 6,
     });
+
+    const variantIds = rawProducts.flatMap((p) => p.variants.map((v) => v.id));
+    const variantStock =
+      variantIds.length > 0
+        ? await prisma.inventory.groupBy({
+            by: ["variantId"],
+            _sum: { quantity: true },
+            where: { variantId: { in: variantIds } },
+          })
+        : [];
+    const stockMap = Object.fromEntries(
+      variantStock.map((v) => [v.variantId, v._sum.quantity ?? 0])
+    );
+
+    return rawProducts.map((p) => ({
+      ...p,
+      variants: p.variants.map((v) => ({
+        ...v,
+        stock: stockMap[v.id] ?? 0,
+      })),
+    }));
   } catch (err) {
     console.error("[HomeV2Page] Error loading featured products:", err);
     return [];

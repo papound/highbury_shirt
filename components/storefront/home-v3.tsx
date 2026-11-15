@@ -17,13 +17,20 @@ import { useStorefrontV3Safe } from "./storefront-shell";
 import "./v3/v3.css";
 
 // ---------- types ----------
-type FeaturedProduct = Prisma.ProductGetPayload<{
-  include: {
-    images: true;
-    variants: true;
-    category: true;
-  };
-}>;
+type FeaturedProduct = Omit<
+  Prisma.ProductGetPayload<{
+    include: {
+      images: true;
+      variants: true;
+      category: true;
+    };
+  }>,
+  "variants"
+> & {
+  variants: (Prisma.ProductVariantGetPayload<Record<string, never>> & {
+    stock?: number;
+  })[];
+};
 
 type Category = Prisma.CategoryGetPayload<Record<string, never>>;
 
@@ -86,6 +93,7 @@ export default function HomeV3({ featuredProducts }: HomeV3Props) {
       colorHex: v.colorHex,
       size: v.size,
       price: v.price,
+      stock: v.stock,
     })),
   }));
 

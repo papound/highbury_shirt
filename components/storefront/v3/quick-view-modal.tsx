@@ -24,6 +24,7 @@ export interface QuickViewProduct {
     colorHex?: string | null;
     size: string;
     price: number;
+    stock?: number;
   }[];
 }
 
@@ -89,6 +90,13 @@ export default function QuickViewModal({
   );
   const colors = Array.from(new Set(product.variants.map((v) => v.color)));
 
+  const hasStockInfo =
+    product.variants.length > 0 &&
+    product.variants.some((v) => typeof v.stock === "number");
+  const isOutOfStock =
+    hasStockInfo &&
+    product.variants.reduce((sum, v) => sum + (v.stock ?? 0), 0) <= 0;
+
   return (
     <dialog
       ref={dialogRef}
@@ -127,6 +135,13 @@ export default function QuickViewModal({
               sizes="(max-width: 640px) 90vw, 320px"
               className="object-cover object-top"
             />
+            {isOutOfStock && (
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                <span className="w-24 h-24 rounded-full bg-black/65 !text-white text-sm font-medium flex items-center justify-center text-center whitespace-nowrap shadow-md">
+                  สินค้าหมด
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Right: Details & Options */}

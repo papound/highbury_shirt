@@ -73,7 +73,7 @@ async function getProducts(sp: SearchParams) {
     ];
   }
 
-  const [products, total, categories] = await Promise.all([
+  const [rawProducts, total, categories] = await Promise.all([
     prisma.product.findMany({
       where,
       include: {
@@ -88,6 +88,27 @@ async function getProducts(sp: SearchParams) {
     prisma.product.count({ where }),
     prisma.category.findMany({ where: { isActive: true }, orderBy: { sortOrder: "asc" } }),
   ]);
+
+  const variantIds = rawProducts.flatMap((p) => p.variants.map((v) => v.id));
+  const variantStock =
+    variantIds.length > 0
+      ? await prisma.inventory.groupBy({
+          by: ["variantId"],
+          _sum: { quantity: true },
+          where: { variantId: { in: variantIds } },
+        })
+      : [];
+  const stockMap = Object.fromEntries(
+    variantStock.map((v) => [v.variantId, v._sum.quantity ?? 0])
+  );
+
+  const products = rawProducts.map((p) => ({
+    ...p,
+    variants: p.variants.map((v) => ({
+      ...v,
+      stock: stockMap[v.id] ?? 0,
+    })),
+  }));
 
   return { products, total, categories, page, totalPages: Math.ceil(total / PAGE_SIZE) };
 }
@@ -193,6 +214,8 @@ export default async function ProductsPage({ searchParams }: Props) {
                   const minPrice = product.variants.length > 0 ? Math.min(...product.variants.map((v) => v.price)) : 0;
                   const maxPrice = product.variants.length > 0 ? Math.max(...product.variants.map((v) => v.price)) : 0;
                   const colors = [...new Set(product.variants.map((v) => v.color))];
+                  const totalStock = product.variants.reduce((sum, v) => sum + (v.stock ?? 0), 0);
+                  const isOutOfStock = product.variants.length === 0 || totalStock <= 0;
 
                   return (
                     <Card
@@ -219,8 +242,15 @@ export default async function ProductsPage({ searchParams }: Props) {
                                 sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                               />
                             )}
+                            {isOutOfStock && (
+                              <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                                <span className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-black/65 !text-white text-xs sm:text-sm font-medium flex items-center justify-center text-center whitespace-nowrap shadow-sm">
+                                  สินค้าหมด
+                                </span>
+                              </div>
+                            )}
                             {product.isFeatured && (
-                              <Badge className="absolute top-2 left-2 text-xs">
+                              <Badge className="absolute top-2 left-2 text-xs z-20">
                                 แนะนำ
                               </Badge>
                             )}
