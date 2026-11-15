@@ -300,6 +300,18 @@ dialog.v3-dialog::backdrop {
 }
 
 /* Explicitly preserve crisp white text & icons on dark buttons and surfaces in light mode */
+.v3-page-wrapper[data-theme="light"] .bg-\[\#163666\],
+.v3-page-wrapper[data-theme="light"] .bg-\[\#163666\] *,
+.v3-page-wrapper[data-theme="light"] a[class*="bg-[#163666]"],
+.v3-page-wrapper[data-theme="light"] a[class*="bg-[#163666]"] *,
+.v3-page-wrapper[data-theme="light"] button[class*="bg-[#163666]"],
+.v3-page-wrapper[data-theme="light"] button[class*="bg-[#163666]"] *,
+.v3-page-wrapper[data-theme="light"] .bg-primary,
+.v3-page-wrapper[data-theme="light"] .bg-primary *,
+.v3-page-wrapper[data-theme="light"] a[class*="bg-primary"],
+.v3-page-wrapper[data-theme="light"] a[class*="bg-primary"] *,
+.v3-page-wrapper[data-theme="light"] button[class*="bg-primary"],
+.v3-page-wrapper[data-theme="light"] button[class*="bg-primary"] *,
 .v3-page-wrapper[data-theme="light"] .bg-\[\#0F172A\],
 .v3-page-wrapper[data-theme="light"] .bg-\[\#0F172A\] *,
 .v3-page-wrapper[data-theme="light"] .bg-black,

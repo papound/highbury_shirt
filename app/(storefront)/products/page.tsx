@@ -149,7 +149,7 @@ export default async function ProductsPage({ searchParams }: Props) {
                         href="/products"
                         className={`block px-2.5 py-1.5 rounded-lg text-sm transition-colors ${
                           isAllActive
-                            ? "bg-[#163666] text-white font-medium dark:bg-white dark:text-[#0F172A]"
+                            ? "bg-[#163666] !text-white font-medium dark:bg-white dark:!text-[#0F172A]"
                             : "text-foreground hover:bg-secondary"
                         }`}
                       >
@@ -163,7 +163,7 @@ export default async function ProductsPage({ searchParams }: Props) {
                             href={`/products?category=${cat.slug}`}
                             className={`block px-2.5 py-1.5 rounded-lg text-sm transition-colors ${
                               isCatActive
-                                ? "bg-[#163666] text-white font-medium dark:bg-white dark:text-[#0F172A]"
+                                ? "bg-[#163666] !text-white font-medium dark:bg-white dark:!text-[#0F172A]"
                                 : "text-foreground hover:bg-secondary"
                             }`}
                           >
@@ -274,9 +274,11 @@ export default async function ProductsPage({ searchParams }: Props) {
                         <Button 
                           size="sm" 
                           asChild
-                          className="bg-[#163666] hover:bg-[#112a52] text-white dark:bg-white dark:text-[#0F172A] dark:hover:bg-slate-100 font-medium text-xs px-3.5 py-1.5 rounded-lg shadow-xs hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150 border-0 cursor-pointer"
+                          className="bg-[#163666] hover:bg-[#112a52] !text-white dark:bg-white dark:!text-[#0F172A] dark:hover:bg-slate-100 font-medium text-xs px-3.5 py-1.5 rounded-lg shadow-xs hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150 border-0 cursor-pointer"
                         >
-                          <Link href={`/products/${product.slug}`}>เลือกสินค้า</Link>
+                          <Link href={`/products/${product.slug}`} className="!text-white dark:!text-[#0F172A]">
+                            เลือกสินค้า
+                          </Link>
                         </Button>
                       </CardFooter>
                     </Card>
@@ -341,7 +343,7 @@ export default async function ProductsPage({ searchParams }: Props) {
                             href={`/products?${new URLSearchParams({ ...sp, page: String(p) })}`}
                             className={`w-9 h-9 flex items-center justify-center rounded-xl text-sm border font-medium transition-all ${
                               page === p
-                                ? "bg-[#163666] text-white border-[#163666] dark:bg-white dark:text-[#0F172A] dark:border-white shadow-xs"
+                                ? "bg-[#163666] !text-white border-[#163666] dark:bg-white dark:!text-[#0F172A] dark:border-white shadow-xs"
                                 : "border-input bg-background text-foreground hover:bg-muted/80 shadow-xs"
                             }`}
                           >
