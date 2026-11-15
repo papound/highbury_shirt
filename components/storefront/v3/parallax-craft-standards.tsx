@@ -7,6 +7,7 @@ import { ArrowRight } from "lucide-react";
 import { useStorefrontV3Safe } from "../storefront-shell";
 
 interface ParallaxCraftStandardsProps {
+  onOpenSizeGuide?: () => void;
   lang?: "th" | "en";
 }
 
@@ -20,26 +21,33 @@ function smoothstep(edge0: number, edge1: number, x: number) {
 }
 
 export default function ParallaxCraftStandards({
+  onOpenSizeGuide,
   lang: propLang,
 }: ParallaxCraftStandardsProps) {
   const v3 = useStorefrontV3Safe();
   const theme = v3?.theme || "dark";
   const lang = propLang || v3?.lang || "th";
+  const handleOpenSizeGuide = onOpenSizeGuide || v3?.openSizeGuide || (() => {});
   const isLight = theme === "light";
 
   // Refs for 60fps RAF Lerp (0.22 factor from parallax-landing-page skill)
   const trackRef = useRef<HTMLDivElement>(null);
   const bg1Ref = useRef<HTMLDivElement>(null);
   const bg2Ref = useRef<HTMLDivElement>(null);
+  const bg3Ref = useRef<HTMLDivElement>(null);
   const scene1TextRef = useRef<HTMLDivElement>(null);
   const scene1CardsRef = useRef<HTMLDivElement>(null);
   const scene2WrapRef = useRef<HTMLDivElement>(null);
   const scene2TextRef = useRef<HTMLDivElement>(null);
   const scene2CardRef = useRef<HTMLDivElement>(null);
+  const scene3WrapRef = useRef<HTMLDivElement>(null);
+  const scene3CardRef = useRef<HTMLDivElement>(null);
+  const scene3TextRef = useRef<HTMLDivElement>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
   const counterTextRef = useRef<HTMLSpanElement>(null);
   const dot1Ref = useRef<HTMLButtonElement>(null);
   const dot2Ref = useRef<HTMLButtonElement>(null);
+  const dot3Ref = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const track = trackRef.current;
@@ -62,16 +70,21 @@ export default function ParallaxCraftStandards({
     };
 
     const applySceneTransforms = (p: number) => {
-      // Crossfade window: 0.38 -> 0.58
-      const crossfade = smoothstep(0.38, 0.58, p);
-      const op1 = 1 - smoothstep(0.36, 0.50, p);
-      const op2 = smoothstep(0.46, 0.62, p);
+      // 3-Scene Crossfade Windows:
+      // Scene 1 -> Scene 2: 0.25 -> 0.40
+      // Scene 2 -> Scene 3: 0.62 -> 0.77
+      const cf12 = smoothstep(0.25, 0.40, p);
+      const cf23 = smoothstep(0.62, 0.77, p);
+
+      const op1 = 1 - smoothstep(0.23, 0.35, p);
+      const op2 = smoothstep(0.30, 0.42, p) * (1 - smoothstep(0.60, 0.72, p));
+      const op3 = smoothstep(0.67, 0.79, p);
 
       // Background 1: Macro Detail Studio (slow upward drift + subtle scale)
       if (bg1Ref.current) {
-        const bg1Op = 1 - crossfade;
-        const ty1 = -p * 44;
-        const s1 = 1 + p * 0.045;
+        const bg1Op = 1 - cf12;
+        const ty1 = -p * 52;
+        const s1 = 1 + p * 0.05;
         bg1Ref.current.style.opacity = bg1Op.toFixed(3);
         bg1Ref.current.style.transform = prefersReducedMotion
           ? "none"
@@ -79,11 +92,11 @@ export default function ParallaxCraftStandards({
         bg1Ref.current.style.visibility = bg1Op > 0.002 ? "visible" : "hidden";
       }
 
-      // Background 2: Coastal Highway (counter-drift + settle scale)
+      // Background 2: Coastal Highway (remains live behind Scene 2 & softened behind Scene 3)
       if (bg2Ref.current) {
-        const bg2Op = crossfade;
-        const ty2 = (1 - p) * 48;
-        const s2 = 1.06 - p * 0.06;
+        const bg2Op = cf12;
+        const ty2 = (0.55 - p) * 56;
+        const s2 = 1.05 - Math.abs(p - 0.52) * 0.05;
         bg2Ref.current.style.opacity = bg2Op.toFixed(3);
         bg2Ref.current.style.transform = prefersReducedMotion
           ? "none"
@@ -91,9 +104,15 @@ export default function ParallaxCraftStandards({
         bg2Ref.current.style.visibility = bg2Op > 0.002 ? "visible" : "hidden";
       }
 
+      // Background 3: Architectural Horizon Wash for Scene 3 (PreFooterCta Finale)
+      if (bg3Ref.current) {
+        bg3Ref.current.style.opacity = cf23.toFixed(3);
+        bg3Ref.current.style.visibility = cf23 > 0.002 ? "visible" : "hidden";
+      }
+
       // Scene 1 Foreground Copy + Spec Cards (staggered parallax speed)
       if (scene1TextRef.current) {
-        const tyText1 = prefersReducedMotion ? 0 : -p * 72;
+        const tyText1 = prefersReducedMotion ? 0 : -p * 88;
         scene1TextRef.current.style.opacity = op1.toFixed(3);
         scene1TextRef.current.style.transform = `translate3d(0, ${tyText1.toFixed(1)}px, 0)`;
         scene1TextRef.current.style.visibility =
@@ -102,7 +121,7 @@ export default function ParallaxCraftStandards({
       }
 
       if (scene1CardsRef.current) {
-        const tyCards1 = prefersReducedMotion ? 0 : -p * 18;
+        const tyCards1 = prefersReducedMotion ? 0 : -p * 24;
         scene1CardsRef.current.style.transform = `translate3d(0, ${tyCards1.toFixed(1)}px, 0)`;
       }
 
@@ -115,34 +134,52 @@ export default function ParallaxCraftStandards({
       }
 
       if (scene2TextRef.current) {
-        const tyText2 = prefersReducedMotion ? 0 : (1 - op2) * 34;
+        const tyText2 = prefersReducedMotion ? 0 : (0.5 - p) * 68;
         scene2TextRef.current.style.transform = `translate3d(0, ${tyText2.toFixed(1)}px, 0)`;
       }
 
       if (scene2CardRef.current) {
-        // Foreground glass card moves with stronger parallax amplitude for 3D depth
-        const tyCard2 = prefersReducedMotion
-          ? 0
-          : (1 - op2) * 64 + (0.75 - p) * 28;
+        const tyCard2 = prefersReducedMotion ? 0 : (0.5 - p) * 115;
         scene2CardRef.current.style.transform = `translate3d(0, ${tyCard2.toFixed(1)}px, 0)`;
       }
 
-      // Progress Bar & Scene Counter HUD (01 / 02)
+      // Scene 3 Foreground Copy + Left Assurance Glass Card (PreFooterCta Finale)
+      if (scene3WrapRef.current) {
+        scene3WrapRef.current.style.opacity = op3.toFixed(3);
+        scene3WrapRef.current.style.visibility =
+          op3 > 0.005 ? "visible" : "hidden";
+        scene3WrapRef.current.style.pointerEvents = op3 > 0.45 ? "auto" : "none";
+      }
+
+      if (scene3CardRef.current) {
+        const tyCard3 = prefersReducedMotion
+          ? 0
+          : (1 - op3) * 56 + (0.88 - p) * 24;
+        scene3CardRef.current.style.transform = `translate3d(0, ${tyCard3.toFixed(1)}px, 0)`;
+      }
+
+      if (scene3TextRef.current) {
+        const tyText3 = prefersReducedMotion ? 0 : (1 - op3) * 32;
+        scene3TextRef.current.style.transform = `translate3d(0, ${tyText3.toFixed(1)}px, 0)`;
+      }
+
+      // Progress Bar & 3-Scene Counter HUD (01 / 03 -> 02 / 03 -> 03 / 03)
       if (progressBarRef.current) {
         progressBarRef.current.style.transform = `scaleX(${p.toFixed(4)})`;
       }
-      const isBeat2 = p >= 0.48;
+      const activeScene = p < 0.34 ? 1 : p < 0.68 ? 2 : 3;
       if (counterTextRef.current) {
-        counterTextRef.current.textContent = isBeat2 ? "02 / 02" : "01 / 02";
+        counterTextRef.current.textContent = `0${activeScene} / 03`;
       }
-      if (dot1Ref.current && dot2Ref.current) {
-        dot1Ref.current.style.opacity = isBeat2 ? "0.45" : "1";
-        dot2Ref.current.style.opacity = isBeat2 ? "1" : "0.45";
+      if (dot1Ref.current && dot2Ref.current && dot3Ref.current) {
+        dot1Ref.current.style.opacity = activeScene === 1 ? "1" : "0.45";
+        dot2Ref.current.style.opacity = activeScene === 2 ? "1" : "0.45";
+        dot3Ref.current.style.opacity = activeScene === 3 ? "1" : "0.45";
       }
     };
 
     const tick = () => {
-      if ( isVisible ) {
+      if (isVisible) {
         const diff = targetProgress - currentProgress;
         if (Math.abs(diff) > 0.0005) {
           currentProgress += prefersReducedMotion ? diff : diff * 0.22;
@@ -188,34 +225,38 @@ export default function ParallaxCraftStandards({
     };
   }, []);
 
-  const scrollToBeat = (beatIndex: 0 | 1) => {
+  const scrollToBeat = (beatIndex: 0 | 1 | 2) => {
     if (!trackRef.current) return;
     const rect = trackRef.current.getBoundingClientRect();
     const trackTop = window.scrollY + rect.top;
     const scrollable = Math.max(0, rect.height - window.innerHeight);
-    const targetY = beatIndex === 0 ? trackTop : trackTop + scrollable * 0.78;
-    window.scrollTo({ top: targetY, behavior: "smooth" });
+    const ratio = beatIndex === 0 ? 0.04 : beatIndex === 1 ? 0.50 : 0.90;
+    window.scrollTo({ top: trackTop + scrollable * ratio, behavior: "smooth" });
   };
 
   return (
     <div
       ref={trackRef}
-      className={`relative w-full lg:h-[220vh] transition-colors duration-300 ${
+      className={`relative w-full lg:h-[310vh] transition-colors duration-300 ${
         isLight ? "bg-white" : "bg-[#07080B]"
       }`}
     >
-      {/* Hash Navigation Anchors for #details and #standards */}
+      {/* Hash Navigation Anchors for #details, #standards, and #about */}
       <div
         id="details"
         className="absolute top-0 inset-x-0 h-px pointer-events-none scroll-mt-20"
       />
       <div
         id="standards"
-        className="hidden lg:block absolute top-[58%] inset-x-0 h-px pointer-events-none scroll-mt-20"
+        className="hidden lg:block absolute top-[35%] inset-x-0 h-px pointer-events-none scroll-mt-20"
+      />
+      <div
+        id="about"
+        className="hidden lg:block absolute top-[72%] inset-x-0 h-px pointer-events-none scroll-mt-20"
       />
 
       {/* ═══════════════════════════════════════════════════════════════════════
-          DESKTOP PINNED PARALLAX STAGE (lg+: 100vh Pinned Scrollytelling)
+          ACT III DESKTOP PINNED PARALLAX STAGE (lg+: 100vh 3-Scene Scrollytelling)
          ═══════════════════════════════════════════════════════════════════════ */}
       <div className="hidden lg:flex sticky top-0 w-full h-screen overflow-hidden items-center">
         {/* ── BACKGROUND LAYER 1: Macro Detail Studio (Scene 1) ── */}
@@ -265,6 +306,24 @@ export default function ParallaxCraftStandards({
               background: isLight
                 ? "linear-gradient(to right, #FFFFFF 0%, rgba(255, 255, 255, 0.94) 18%, rgba(255, 255, 255, 0.68) 28%, rgba(255, 255, 255, 0.12) 40%, transparent 50%)"
                 : "linear-gradient(to right, #07080B 0%, rgba(7, 8, 11, 0.92) 18%, rgba(7, 8, 11, 0.62) 28%, rgba(7, 8, 11, 0.10) 40%, transparent 50%)",
+            }}
+          />
+        </div>
+
+        {/* ── BACKGROUND LAYER 3: Architectural Horizon Wash for Scene 3 (PreFooterCta Finale) ── */}
+        <div
+          ref={bg3Ref}
+          style={{ opacity: 0, visibility: "hidden" }}
+          className="absolute inset-0 pointer-events-none z-5 will-change-opacity"
+        >
+          <div
+            className="absolute inset-0"
+            style={{
+              background: isLight
+                ? "linear-gradient(115deg, rgba(248, 250, 252, 0.88) 0%, rgba(255, 255, 255, 0.78) 45%, rgba(255, 255, 255, 0.96) 100%)"
+                : "linear-gradient(115deg, rgba(7, 8, 11, 0.86) 0%, rgba(10, 12, 18, 0.76) 45%, rgba(7, 8, 11, 0.95) 100%)",
+              backdropFilter: "blur(6px)",
+              WebkitBackdropFilter: "blur(6px)",
             }}
           />
         </div>
@@ -599,12 +658,208 @@ export default function ParallaxCraftStandards({
           </div>
         </div>
 
-        {/* ── PARALLAX SCENE HUD (Inspired by parallax-landing-page frame counter & progress bar) ── */}
+        {/* ── SCENE 3 FOREGROUND: PreFooterCta Finale ("สัมผัสความต่าง...") ── */}
+        <div
+          ref={scene3WrapRef}
+          style={{ opacity: 0, visibility: "hidden", pointerEvents: "none" }}
+          className="absolute inset-0 z-20 flex items-center will-change-opacity"
+        >
+          <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-12 gap-12 items-center">
+              {/* Left Column: Grounded Assurance Glass Card */}
+              <div className="col-span-5 flex justify-start">
+                <div
+                  ref={scene3CardRef}
+                  className="w-full max-w-md p-6 sm:p-8 rounded-2xl sm:rounded-3xl border will-change-transform"
+                  style={{
+                    backgroundColor: isLight
+                      ? "rgba(255, 255, 255, 0.84)"
+                      : "rgba(10, 12, 16, 0.78)",
+                    backdropFilter: "blur(22px) saturate(180%)",
+                    WebkitBackdropFilter: "blur(22px) saturate(180%)",
+                    borderColor: isLight
+                      ? "rgba(226, 232, 240, 0.9)"
+                      : "rgba(255, 255, 255, 0.14)",
+                    boxShadow: isLight
+                      ? "inset 0 1px 1px 0 rgba(255, 255, 255, 0.95), 0 24px 48px -15px rgba(15, 23, 42, 0.10)"
+                      : "inset 0 1px 1px 0 rgba(255, 255, 255, 0.18), 0 24px 48px -12px rgba(0, 0, 0, 0.55)",
+                  }}
+                >
+                  <div>
+                    <div
+                      className={`text-2xl sm:text-3xl font-bold tracking-tight ${
+                        isLight ? "text-[#0F172A]" : "text-white"
+                      }`}
+                    >
+                      {lang === "th" ? "7 วัน" : "7 Days"}
+                    </div>
+                    <div
+                      className={`text-xs sm:text-sm font-medium mt-1 ${
+                        isLight ? "text-[#0F172A]" : "text-white/90"
+                      }`}
+                    >
+                      {lang === "th"
+                        ? "รับประกันเปลี่ยนไซส์ฟรี"
+                        : "Free Size Exchange"}
+                    </div>
+                    <div
+                      className={`text-xs mt-0.5 ${
+                        isLight ? "text-[#475569]" : "text-[#D1D5DB]"
+                      }`}
+                    >
+                      {lang === "th"
+                        ? "นับจากวันรับพัสดุ หากไม่พอดีเปลี่ยนใหม่ได้ทันที"
+                        : "From parcel delivery date; instant replacement if size is off."}
+                    </div>
+                  </div>
+
+                  <div
+                    className={`border-t pt-5 mt-5 ${
+                      isLight ? "border-slate-200/80" : "border-white/10"
+                    }`}
+                  >
+                    <div
+                      className={`text-2xl sm:text-3xl font-bold tracking-tight ${
+                        isLight ? "text-[#0F172A]" : "text-white"
+                      }`}
+                    >
+                      {lang === "th" ? "ทรงพอดีตัว" : "Asian Fit"}
+                    </div>
+                    <div
+                      className={`text-xs sm:text-sm font-medium mt-1 ${
+                        isLight ? "text-[#0F172A]" : "text-white/90"
+                      }`}
+                    >
+                      {lang === "th"
+                        ? "แพทเทิร์นสำหรับคนไทย"
+                        : "Tailored Proportion"}
+                    </div>
+                    <div
+                      className={`text-xs mt-0.5 ${
+                        isLight ? "text-[#475569]" : "text-[#D1D5DB]"
+                      }`}
+                    >
+                      {lang === "th"
+                        ? "สัดส่วนไหล่และวงแขนพอดี คล่องตัว ไม่ตึงรั้ง"
+                        : "Balanced shoulder-to-armhole ratio for natural everyday movement."}
+                    </div>
+                  </div>
+
+                  <div
+                    className={`border-t pt-5 mt-5 ${
+                      isLight ? "border-slate-200/80" : "border-white/10"
+                    }`}
+                  >
+                    <div
+                      className={`text-2xl sm:text-3xl font-bold tracking-tight ${
+                        isLight ? "text-[#0F172A]" : "text-white"
+                      }`}
+                    >
+                      {lang === "th" ? "3,500 ตัว" : "3,500 Pcs"}
+                    </div>
+                    <div
+                      className={`text-xs sm:text-sm font-medium mt-1 ${
+                        isLight ? "text-[#0F172A]" : "text-white/90"
+                      }`}
+                    >
+                      {lang === "th"
+                        ? "กำลังผลิตต่อเดือน (OEM)"
+                        : "Monthly Workshop Capacity"}
+                    </div>
+                    <div
+                      className={`text-xs mt-0.5 ${
+                        isLight ? "text-[#475569]" : "text-[#D1D5DB]"
+                      }`}
+                    >
+                      {lang === "th"
+                        ? "เวิร์กช็อปรองรับการปักโลโก้และเลือกผ้าตาม CI"
+                        : "Highbury workshop line with custom embroidery & fabric CI options."}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: Finale Heading, Copy & Action Pills */}
+              <div
+                ref={scene3TextRef}
+                className="col-span-7 space-y-6 max-w-xl ml-auto will-change-transform"
+              >
+                <h2
+                  className={`text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight leading-[1.15] ${
+                    isLight ? "text-[#0F172A]" : "text-white"
+                  }`}
+                >
+                  {lang === "th" ? (
+                    <>
+                      สัมผัสความต่าง
+                      <br />
+                      ที่สร้างความมั่นใจในทุกวันทำงาน.
+                    </>
+                  ) : (
+                    <>
+                      Feel the Difference
+                      <br />
+                      in Everyday Workwear.
+                    </>
+                  )}
+                </h2>
+
+                <p
+                  className={`text-sm sm:text-base leading-relaxed ${
+                    isLight ? "text-[#475569]" : "text-[#E7E7E7]"
+                  }`}
+                >
+                  {lang === "th"
+                    ? "เสื้อเชิ้ต Highbury ออกแบบเพื่อความสบาย คัตติ้งเนี้ยบ ดูแลง่าย พร้อมการรับประกันเปลี่ยนไซส์ฟรีภายใน 7 วัน"
+                    : "Highbury shirts deliver all-day comfort, clean tailoring, and easy-care fabrics, backed by a 7-day size exchange guarantee."}
+                </p>
+
+                <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5">
+                  <Link
+                    href="#models"
+                    className={`inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 group cursor-pointer border ${
+                      isLight
+                        ? "bg-[#163666] !text-white border-[#163666] hover:bg-[#112a52] shadow-xs"
+                        : "bg-white text-[#07080B] border-white hover:bg-white/90"
+                    }`}
+                  >
+                    <span className={isLight ? "!text-white" : ""}>
+                      {lang === "th" ? "เลือกซื้อสินค้า" : "Shop Collection"}
+                    </span>
+                    <ArrowRight
+                      className={`w-4 h-4 group-hover:translate-x-0.5 transition-transform ${
+                        isLight ? "!text-white" : ""
+                      }`}
+                    />
+                  </Link>
+
+                  <button
+                    type="button"
+                    onClick={handleOpenSizeGuide}
+                    className={`inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer ${
+                      isLight
+                        ? "bg-white text-[#0F172A] border border-[#CBD5E1] hover:bg-[#F8FAFC]"
+                        : "bg-transparent text-white border border-white/25 hover:bg-white/10"
+                    }`}
+                  >
+                    <span>
+                      {lang === "th"
+                        ? "คำนวณไซส์ Smart Size Finder"
+                        : "Smart Size Finder"}
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ── ACT III PARALLAX SCENE HUD (3-Scene Counter & Progress Bar) ── */}
         <div
           className={`absolute bottom-6 right-8 z-30 flex items-center gap-3 px-3.5 py-2 rounded-full border backdrop-blur-md transition-colors ${
             isLight
-              ? "bg-white/75 border-slate-200/80 text-[#0F172A] shadow-xs"
-              : "bg-black/55 border-white/15 text-white"
+              ? "bg-white/80 border-slate-200/80 text-[#0F172A] shadow-xs"
+              : "bg-black/60 border-white/15 text-white"
           }`}
         >
           <button
@@ -614,6 +869,24 @@ export default function ParallaxCraftStandards({
             className="text-[11px] font-semibold tracking-wider uppercase cursor-pointer transition-opacity"
           >
             {lang === "th" ? "โครงสร้าง" : "Craft"}
+          </button>
+          <button
+            ref={dot2Ref}
+            type="button"
+            onClick={() => scrollToBeat(1)}
+            style={{ opacity: 0.45 }}
+            className="text-[11px] font-semibold tracking-wider uppercase cursor-pointer transition-opacity"
+          >
+            {lang === "th" ? "มาตรฐาน" : "Standards"}
+          </button>
+          <button
+            ref={dot3Ref}
+            type="button"
+            onClick={() => scrollToBeat(2)}
+            style={{ opacity: 0.45 }}
+            className="text-[11px] font-semibold tracking-wider uppercase cursor-pointer transition-opacity"
+          >
+            {lang === "th" ? "ความมั่นใจ" : "Assurance"}
           </button>
           <div
             className={`w-14 h-1 rounded-full overflow-hidden ${
@@ -628,15 +901,6 @@ export default function ParallaxCraftStandards({
               style={{ transform: "scaleX(0)" }}
             />
           </div>
-          <button
-            ref={dot2Ref}
-            type="button"
-            onClick={() => scrollToBeat(1)}
-            style={{ opacity: 0.45 }}
-            className="text-[11px] font-semibold tracking-wider uppercase cursor-pointer transition-opacity"
-          >
-            {lang === "th" ? "มาตรฐาน" : "Standards"}
-          </button>
           <span
             ref={counterTextRef}
             className={`text-[10px] font-mono pl-1.5 border-l ${
@@ -645,7 +909,7 @@ export default function ParallaxCraftStandards({
                 : "border-white/20 text-white/70"
             }`}
           >
-            01 / 02
+            01 / 03
           </span>
         </div>
       </div>
@@ -839,6 +1103,76 @@ export default function ParallaxCraftStandards({
                 <div className="text-xs font-medium opacity-90">
                   {lang === "th" ? "QC ตรวจสอบรายตัวก่อนจัดส่ง" : "Piece-by-Piece QC Inspection"}
                 </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Mobile Beat 3: PreFooterCta Finale */}
+        <section
+          className={`relative w-full py-16 px-4 sm:px-6 rounded-t-3xl -mt-4 z-20 border-t ${
+            isLight
+              ? "bg-[#F8FAFC] border-slate-200/80 text-[#0F172A]"
+              : "bg-[#0E1015] border-white/10 text-white"
+          }`}
+        >
+          <div className="max-w-7xl mx-auto space-y-8">
+            <div className="space-y-4 max-w-xl">
+              <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight leading-[1.15]">
+                {lang === "th" ? (
+                  <>
+                    สัมผัสความต่าง
+                    <br />
+                    ที่สร้างความมั่นใจในทุกวันทำงาน.
+                  </>
+                ) : (
+                  <>
+                    Feel the Difference
+                    <br />
+                    in Everyday Workwear.
+                  </>
+                )}
+              </h2>
+              <p
+                className={`text-sm leading-relaxed ${
+                  isLight ? "text-[#475569]" : "text-[#E7E7E7]"
+                }`}
+              >
+                {lang === "th"
+                  ? "เสื้อเชิ้ต Highbury ออกแบบเพื่อความสบาย คัตติ้งเนี้ยบ ดูแลง่าย พร้อมการรับประกันเปลี่ยนไซส์ฟรีภายใน 7 วัน"
+                  : "Highbury shirts deliver all-day comfort, clean tailoring, and easy-care fabrics, backed by a 7-day size exchange guarantee."}
+              </p>
+
+              <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <Link
+                  href="#models"
+                  className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-xs font-semibold ${
+                    isLight
+                      ? "bg-[#163666] !text-white"
+                      : "bg-white text-[#07080B]"
+                  }`}
+                >
+                  <span className={isLight ? "!text-white" : ""}>
+                    {lang === "th" ? "เลือกซื้อสินค้า" : "Shop Collection"}
+                  </span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+
+                <button
+                  type="button"
+                  onClick={handleOpenSizeGuide}
+                  className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-xs font-semibold border ${
+                    isLight
+                      ? "bg-white text-[#0F172A] border-[#CBD5E1]"
+                      : "bg-transparent text-white border-white/25"
+                  }`}
+                >
+                  <span>
+                    {lang === "th"
+                      ? "คำนวณไซส์ Smart Size Finder"
+                      : "Smart Size Finder"}
+                  </span>
+                </button>
               </div>
             </div>
           </div>

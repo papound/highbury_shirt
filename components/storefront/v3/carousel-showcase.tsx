@@ -120,7 +120,14 @@ export default function CarouselShowcase({
   const displayProducts = products.length > 0 ? products : fallbackProducts;
 
   return (
-    <section id="models" className="relative w-full py-12 sm:py-16 lg:py-24 scroll-mt-20">
+    <section
+      id="models"
+      className={`relative z-20 w-full py-12 sm:py-16 lg:py-24 scroll-mt-20 lg:-mt-12 lg:mb-[-3rem] lg:rounded-t-[40px] lg:rounded-b-[40px] lg:border-t lg:border-b transition-colors duration-300 ${
+        isLight
+          ? "bg-white lg:border-slate-200/80 lg:shadow-[0_-24px_60px_-15px_rgba(15,23,42,0.08),0_24px_60px_-15px_rgba(15,23,42,0.08)]"
+          : "bg-[#0B0D13] lg:border-white/10 lg:shadow-[0_-28px_70px_-12px_rgba(0,0,0,0.85),0_28px_70px_-12px_rgba(0,0,0,0.85)]"
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Top Header Row: Section Heading */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12">

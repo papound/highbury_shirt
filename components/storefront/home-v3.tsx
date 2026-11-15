@@ -1,14 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Prisma } from "@prisma/client";
 
 import HeaderV3 from "./v3/header-v3";
-import HeroV3 from "./v3/hero-v3";
-import CraftStory from "./v3/craft-story";
+import ParallaxHeroCraft from "./v3/parallax-hero-craft";
 import CarouselShowcase from "./v3/carousel-showcase";
 import ParallaxCraftStandards from "./v3/parallax-craft-standards";
-import PreFooterCta from "./v3/pre-footer-cta";
 import V3Footer from "./v3/v3-footer";
 import QuickViewModal, { QuickViewProduct } from "./v3/quick-view-modal";
 import SmartSizeGuideModal from "./v3/smart-size-guide-modal";
@@ -47,6 +45,30 @@ export default function HomeV3({ featuredProducts }: HomeV3Props) {
   const [localLang, setLocalLang] = useState<"th" | "en">("th");
   const [localIsSizeGuideOpen, setLocalIsSizeGuideOpen] = useState(false);
 
+  // Global Top 2px Page Scroll Progress Bar (inspired by parallax-landing-page skill)
+  const pageProgressRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const updatePageProgress = () => {
+      if (!pageProgressRef.current) return;
+      const docHeight =
+        document.documentElement.scrollHeight - window.innerHeight;
+      const ratio =
+        docHeight > 0
+          ? Math.max(0, Math.min(1, window.scrollY / docHeight))
+          : 0;
+      pageProgressRef.current.style.transform = `scaleX(${ratio.toFixed(4)})`;
+    };
+
+    updatePageProgress();
+    window.addEventListener("scroll", updatePageProgress, { passive: true });
+    window.addEventListener("resize", updatePageProgress, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", updatePageProgress);
+      window.removeEventListener("resize", updatePageProgress);
+    };
+  }, []);
+
   // Local theme sync if standalone
   useEffect(() => {
     if (shellCtx) return;
@@ -68,7 +90,8 @@ export default function HomeV3({ featuredProducts }: HomeV3Props) {
     : () => setLocalIsSizeGuideOpen(false);
 
   // Modal states
-  const [quickViewProduct, setQuickViewProduct] = useState<QuickViewProduct | null>(null);
+  const [quickViewProduct, setQuickViewProduct] =
+    useState<QuickViewProduct | null>(null);
 
   // Map real products from each category
   const products: QuickViewProduct[] = featuredProducts.map((p) => ({
@@ -98,33 +121,39 @@ export default function HomeV3({ featuredProducts }: HomeV3Props) {
 
   const content = (
     <>
-      {/* 1. Hero Section: Revolutionary Asian Fit Tailoring with 3-Spec Bar */}
-      <HeroV3
+      {/* Global 2px Top Scroll Progress Bar (from parallax-landing-page skill) */}
+      <div
+        aria-hidden="true"
+        className="fixed top-0 left-0 right-0 h-[2px] z-[60] pointer-events-none"
+      >
+        <div
+          ref={pageProgressRef}
+          className={`h-full w-full origin-left will-change-transform ${
+            theme === "light" ? "bg-[#163666]" : "bg-white/90"
+          }`}
+          style={{ transform: "scaleX(0)" }}
+        />
+      </div>
+
+      {/* ACT I (Pinned 100vh Stage): HeroV3 + CraftStory (01 / 02 -> 02 / 02) */}
+      <ParallaxHeroCraft
         onOpenSizeGuide={openSizeGuide}
         lang={lang}
         theme={theme}
       />
 
-      {/* 2. Section 2: A New Era of Everyday Tailoring (Split Architectural Light) */}
-      <CraftStory lang={lang} />
-
-      {/* 3. Section 3: Models Carousel with Real Products from Each Category & Photos */}
+      {/* ACT II (Architectural Curtain Card): Interactive Product Collection Carousel */}
       <CarouselShowcase
         products={products}
         onQuickView={(p) => setQuickViewProduct(p)}
         lang={lang}
       />
 
-      {/* 4 & 5. Unified Parallax Stage: Macro Detail + Standards Landscape Scrollytelling */}
-      <ParallaxCraftStandards lang={lang} />
-
-      {/* 6. Section 6: Feel the Difference Pre-Footer (Sunset Golden Hour) */}
-      <div className="v3-section-deferred">
-        <PreFooterCta
-          onOpenSizeGuide={openSizeGuide}
-          lang={lang}
-        />
-      </div>
+      {/* ACT III (Pinned 100vh Stage): MacroDetail + StandardsLandscape + PreFooterCta (01 / 03 -> 03 / 03) */}
+      <ParallaxCraftStandards
+        onOpenSizeGuide={openSizeGuide}
+        lang={lang}
+      />
 
       {/* Quick View Modal */}
       <QuickViewModal
