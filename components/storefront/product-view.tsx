@@ -775,7 +775,7 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
           <Card>
             <CardContent className="p-3 text-sm">
               <p className="font-medium">🚚 จัดส่งทั่วประเทศ</p>
-              <p className="text-muted-foreground text-xs">ค่าส่ง ฿50</p>
+              <p className="text-muted-foreground text-xs">ค่าส่งเริ่มต้น ฿50</p>
             </CardContent>
           </Card>
           <Card>
