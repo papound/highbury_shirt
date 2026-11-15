@@ -59,7 +59,7 @@ export default function HeroV3({
         <div className="max-w-lg lg:max-w-2xl space-y-5">
           {/* Headline (No tiny eyebrow clutter) */}
           <h1
-            className={`text-4xl sm:text-5xl lg:text-6xl font-medium tracking-tight leading-[1.1] font-sans ${
+            className={`text-4xl sm:text-5xl lg:text-6xl font-medium tracking-tight leading-[1.22] sm:leading-[1.25] font-sans ${
               theme === "light" ? "text-[#0F172A]" : "text-white"
             }`}
           >
@@ -67,7 +67,7 @@ export default function HeroV3({
               <>
                 ปฏิวัติความพอดี
                 <br />
-                เสื้อเชิ้ตสรีระคนไทย
+                เสื้อเชิ้ตสำหรับคนไทย
               </>
             ) : (
               <>
