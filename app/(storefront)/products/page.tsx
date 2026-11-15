@@ -147,8 +147,10 @@ export default async function ProductsPage({ searchParams }: Props) {
                     <>
                       <Link
                         href="/products"
-                        className={`block px-2 py-1.5 rounded text-sm transition-colors ${
-                          isAllActive ? "bg-primary text-primary-foreground" : "hover:bg-secondary"
+                        className={`block px-2.5 py-1.5 rounded-lg text-sm transition-colors ${
+                          isAllActive
+                            ? "bg-[#163666] text-white font-medium dark:bg-white dark:text-[#0F172A]"
+                            : "text-foreground hover:bg-secondary"
                         }`}
                       >
                         ทั้งหมด
@@ -159,10 +161,10 @@ export default async function ProductsPage({ searchParams }: Props) {
                           <Link
                             key={cat.id}
                             href={`/products?category=${cat.slug}`}
-                            className={`block px-2 py-1.5 rounded text-sm transition-colors ${
+                            className={`block px-2.5 py-1.5 rounded-lg text-sm transition-colors ${
                               isCatActive
-                                ? "bg-primary text-primary-foreground"
-                                : "hover:bg-secondary"
+                                ? "bg-[#163666] text-white font-medium dark:bg-white dark:text-[#0F172A]"
+                                : "text-foreground hover:bg-secondary"
                             }`}
                           >
                             {cat.nameTh}
@@ -195,7 +197,7 @@ export default async function ProductsPage({ searchParams }: Props) {
                   return (
                     <Card
                       key={product.id}
-                      className="group overflow-hidden border border-border/50 bg-card/50 backdrop-blur-sm hover:bg-card hover:border-primary/20 hover:shadow-md transition-all duration-300 rounded-xl hover:-translate-y-0.5 flex flex-col h-full"
+                      className="group overflow-hidden border border-border/70 bg-card hover:border-[#163666]/30 hover:shadow-sm transition-all duration-200 rounded-xl hover:-translate-y-0.5 flex flex-col h-full"
                     >
                       <CardContent className="p-0 flex-1 flex flex-col">
                         <Link href={`/products/${product.slug}`} className="flex-1 flex flex-col">
@@ -228,7 +230,7 @@ export default async function ProductsPage({ searchParams }: Props) {
                               <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">
                                 {product.category.nameTh}
                               </p>
-                              <h3 className="font-semibold text-sm leading-snug text-foreground line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                              <h3 className="font-semibold text-sm leading-snug text-foreground line-clamp-2 group-hover:text-[#163666] dark:group-hover:text-blue-400 transition-colors">
                                 {product.nameTh}
                               </h3>
                             </div>
@@ -264,7 +266,7 @@ export default async function ProductsPage({ searchParams }: Props) {
                         </Link>
                       </CardContent>
                       <CardFooter className="p-3 pt-0 flex items-center justify-between">
-                        <span className="font-bold text-blue-600 dark:text-blue-400 text-base">
+                        <span className="font-bold text-[#163666] dark:text-blue-400 text-base">
                           {minPrice === maxPrice
                             ? `฿${minPrice.toLocaleString()}`
                             : `฿${minPrice.toLocaleString()}+`}
@@ -272,7 +274,7 @@ export default async function ProductsPage({ searchParams }: Props) {
                         <Button 
                           size="sm" 
                           asChild
-                          className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold text-xs px-4 py-2 rounded-lg shadow-sm hover:shadow-[0_4px_12px_rgba(59,130,246,0.25)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 border-0 cursor-pointer"
+                          className="bg-[#163666] hover:bg-[#112a52] text-white dark:bg-white dark:text-[#0F172A] dark:hover:bg-slate-100 font-medium text-xs px-3.5 py-1.5 rounded-lg shadow-xs hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150 border-0 cursor-pointer"
                         >
                           <Link href={`/products/${product.slug}`}>เลือกสินค้า</Link>
                         </Button>
@@ -339,8 +341,8 @@ export default async function ProductsPage({ searchParams }: Props) {
                             href={`/products?${new URLSearchParams({ ...sp, page: String(p) })}`}
                             className={`w-9 h-9 flex items-center justify-center rounded-xl text-sm border font-medium transition-all ${
                               page === p
-                                ? "bg-primary text-primary-foreground border-primary shadow-md"
-                                : "border-input bg-background text-foreground hover:bg-muted/80 shadow-sm"
+                                ? "bg-[#163666] text-white border-[#163666] dark:bg-white dark:text-[#0F172A] dark:border-white shadow-xs"
+                                : "border-input bg-background text-foreground hover:bg-muted/80 shadow-xs"
                             }`}
                           >
                             {p}
