@@ -74,7 +74,7 @@ export default function PreFooterCta({
                   <div className={`text-2xl sm:text-3xl font-bold tracking-tight ${
                     isLight ? "text-[#0F172A]" : "text-white"
                   }`}>
-                    7 Days
+                    {lang === "th" ? "7 วัน" : "7 Days"}
                   </div>
                   <div className={`text-xs sm:text-sm font-medium mt-0.5 ${
                     isLight ? "text-[#334155]" : "text-white/80"
@@ -102,7 +102,7 @@ export default function PreFooterCta({
                   <div className={`text-2xl sm:text-3xl font-bold tracking-tight ${
                     isLight ? "text-[#0F172A]" : "text-white"
                   }`}>
-                    Asian Fit
+                    {lang === "th" ? "สรีระคนไทย" : "Asian Fit"}
                   </div>
                   <div className={`text-xs sm:text-sm font-medium mt-0.5 ${
                     isLight ? "text-[#334155]" : "text-white/80"
@@ -130,7 +130,7 @@ export default function PreFooterCta({
                   <div className={`text-2xl sm:text-3xl font-bold tracking-tight ${
                     isLight ? "text-[#0F172A]" : "text-white"
                   }`}>
-                    3,500 Pcs
+                    {lang === "th" ? "3,500 ตัว" : "3,500 Pcs"}
                   </div>
                   <div className={`text-xs sm:text-sm font-medium mt-0.5 ${
                     isLight ? "text-[#334155]" : "text-white/80"
