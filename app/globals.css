@@ -404,3 +404,17 @@ html {
   opacity: 1;
 }
 
+/* Storefront V3 Seamless Macro Detail Image Mask */
+.v3-macro-image-mask {
+  mask-image: none;
+  -webkit-mask-image: none;
+}
+
+@media (min-width: 1024px) {
+  .v3-macro-image-mask {
+    mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.15) 12%, rgba(0, 0, 0, 0.65) 28%, black 48%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.15) 12%, rgba(0, 0, 0, 0.65) 28%, black 48%);
+  }
+}
+
+

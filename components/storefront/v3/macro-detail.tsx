@@ -16,15 +16,17 @@ export default function MacroDetail({ lang: propLang }: MacroDetailProps) {
   const isLight = theme === "light";
 
   return (
-    <section id="details" className="relative w-full min-h-[640px] lg:min-h-[720px] flex items-center overflow-hidden scroll-mt-20">
-      {/* Background Image: Shifted to right so both Woman and Man completely clear the left text */}
-      <div className="absolute inset-y-0 right-0 w-full sm:w-[90%] md:w-[85%] lg:w-[75%] xl:w-[70%] pointer-events-none z-0">
+    <section id="details" className={`relative w-full min-h-[640px] lg:min-h-[720px] flex items-center overflow-hidden scroll-mt-20 transition-colors duration-300 ${
+      isLight ? "bg-white" : "bg-[#07080B]"
+    }`}>
+      {/* Background Image: Shifted to right with soft feather mask on left edge */}
+      <div className="absolute inset-y-0 right-0 w-full lg:w-[78%] xl:w-[74%] pointer-events-none z-0 v3-macro-image-mask">
         <Image
           src="/images/macro-detail.jpg"
           alt="Highbury Asian Fit Tailoring Details"
           fill
           sizes="100vw"
-          className="object-cover object-top"
+          className="object-cover object-[75%_top] lg:object-[80%_top]"
           priority
         />
       </div>
@@ -47,21 +49,21 @@ export default function MacroDetail({ lang: propLang }: MacroDetailProps) {
         }`}
       />
 
-      {/* Smooth Gradient Fade Layer (Softer, Airier Dissolve so Wall and Models are Fully Bright) */}
+      {/* Smooth Gradient Fade Layer (Seamless dissolve from solid background into studio ambient) */}
       <div
         className="absolute inset-0 pointer-events-none transition-opacity duration-300 max-lg:hidden z-1"
         style={{
           background: isLight
-            ? "linear-gradient(to right, #FFFFFF 0%, rgba(255, 255, 255, 0.95) 18%, rgba(255, 255, 255, 0.65) 26%, rgba(255, 255, 255, 0.1) 36%, transparent 45%)"
-            : "linear-gradient(to right, #07080B 0%, rgba(7, 8, 11, 0.94) 18%, rgba(7, 8, 11, 0.6) 26%, rgba(7, 8, 11, 0.1) 36%, transparent 45%)",
+            ? "linear-gradient(to right, #FFFFFF 0%, #FFFFFF 22%, rgba(255, 255, 255, 0.98) 32%, rgba(255, 255, 255, 0.8) 44%, rgba(255, 255, 255, 0.3) 58%, transparent 72%)"
+            : "linear-gradient(to right, #07080B 0%, #07080B 22%, rgba(7, 8, 11, 0.98) 32%, rgba(7, 8, 11, 0.8) 44%, rgba(7, 8, 11, 0.3) 58%, transparent 72%)",
         }}
       />
       {/* Mobile Fade Layer */}
       <div
         className={`lg:hidden absolute inset-0 pointer-events-none transition-colors duration-300 z-1 ${
           isLight
-            ? "bg-gradient-to-t from-white/95 via-white/80 via-40% to-transparent"
-            : "bg-gradient-to-t from-[#07080B]/95 via-[#07080B]/80 via-40% to-transparent"
+            ? "bg-gradient-to-t from-white via-white/90 via-45% to-transparent"
+            : "bg-gradient-to-t from-[#07080B] via-[#07080B]/90 via-45% to-transparent"
         }`}
       />
 
