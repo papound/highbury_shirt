@@ -215,6 +215,7 @@ dialog.v3-dialog:modal {
   border: 1px solid #262830;
   border-radius: 16px;
   background-color: #0E1015;
+  color-scheme: dark;
 }
 
 dialog.v3-dialog::backdrop {
@@ -316,16 +317,22 @@ dialog.v3-dialog::backdrop {
 .v3-page-wrapper[data-theme="light"] .bg-\[\#0F172A\] *,
 .v3-page-wrapper[data-theme="light"] .bg-black,
 .v3-page-wrapper[data-theme="light"] .bg-black *,
-.v3-page-wrapper[data-theme="light"] [class*="bg-black"],
-.v3-page-wrapper[data-theme="light"] [class*="bg-black"] *,
+.v3-page-wrapper[data-theme="light"] .bg-black\/50,
+.v3-page-wrapper[data-theme="light"] .bg-black\/50 *,
+.v3-page-wrapper[data-theme="light"] .bg-black\/60,
+.v3-page-wrapper[data-theme="light"] .bg-black\/60 *,
+.v3-page-wrapper[data-theme="light"] .bg-black\/65,
+.v3-page-wrapper[data-theme="light"] .bg-black\/65 *,
+.v3-page-wrapper[data-theme="light"] .bg-black\/80,
+.v3-page-wrapper[data-theme="light"] .bg-black\/80 *,
 .v3-page-wrapper[data-theme="light"] a[class*="bg-[#0F172A]"],
 .v3-page-wrapper[data-theme="light"] a[class*="bg-[#0F172A]"] *,
 .v3-page-wrapper[data-theme="light"] button[class*="bg-[#0F172A]"],
 .v3-page-wrapper[data-theme="light"] button[class*="bg-[#0F172A]"] *,
-.v3-page-wrapper[data-theme="light"] a[class*="bg-black"],
-.v3-page-wrapper[data-theme="light"] a[class*="bg-black"] *,
-.v3-page-wrapper[data-theme="light"] button[class*="bg-black"],
-.v3-page-wrapper[data-theme="light"] button[class*="bg-black"] *,
+.v3-page-wrapper[data-theme="light"] a.bg-black,
+.v3-page-wrapper[data-theme="light"] a.bg-black *,
+.v3-page-wrapper[data-theme="light"] button.bg-black,
+.v3-page-wrapper[data-theme="light"] button.bg-black *,
 .v3-page-wrapper[data-theme="light"] .v3-btn-dark-pill,
 .v3-page-wrapper[data-theme="light"] .v3-btn-dark-pill * {
   color: #FFFFFF !important;
@@ -419,6 +426,7 @@ dialog.v3-dialog[data-theme="light"]:modal,
   background-color: #FFFFFF !important;
   border-color: #E5E7EB !important;
   color: #0F172A !important;
+  color-scheme: light;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15) !important;
 }
 

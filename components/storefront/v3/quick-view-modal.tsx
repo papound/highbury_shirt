@@ -103,7 +103,7 @@ export default function QuickViewModal({
       onCancel={handleCancel}
       onClick={handleBackdropClick}
       data-theme={theme}
-      className="v3-dialog w-[92vw] max-w-2xl max-h-[min(90dvh,90vh)] open:flex open:flex-col rounded-2xl border border-[#262830] bg-[#0E1015] p-0 text-white overflow-hidden shadow-2xl backdrop:bg-black/80"
+      className="v3-dialog w-[92vw] max-w-2xl max-h-[min(90dvh,90vh)] open:flex open:flex-col rounded-2xl border border-[#262830] bg-[#0E1015] p-0 text-white overflow-hidden shadow-2xl"
       aria-labelledby="quick-view-title"
     >
       {/* Header */}
