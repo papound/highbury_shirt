@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Scissors, Sparkles, Shirt } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useStorefrontV3Safe } from "../storefront-shell";
 
 interface CraftStoryProps {
@@ -65,86 +65,54 @@ export default function CraftStory({ lang: propLang }: CraftStoryProps) {
       {/* Content Container aligned with site grid */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-28">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
-          {/* Left Column: Floating Frosted Glass Card with 3 Specs (order-2 on mobile, order-1 on lg) */}
+          {/* Left Column: Solid 1px-border Card with 3 Craftsmanship Specifications */}
           <div className="lg:col-span-5 order-2 lg:order-1 flex justify-center lg:justify-start">
             <div
-              className="w-full max-w-md p-6 sm:p-8 rounded-2xl sm:rounded-3xl shadow-2xl space-y-6 transition-all duration-300"
-              style={{
-                backgroundColor: isLight ? "rgba(255, 255, 255, 0.88)" : "rgba(0, 0, 0, 0.55)",
-                backdropFilter: "blur(20px)",
-                WebkitBackdropFilter: "blur(20px)",
-                borderColor: isLight ? "rgba(226, 232, 240, 0.9)" : "rgba(255, 255, 255, 0.18)",
-                borderWidth: "1px",
-                borderStyle: "solid",
-                boxShadow: isLight
-                  ? "0 20px 40px -15px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(255, 255, 255, 0.6) inset"
-                  : "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
-              }}
+              className={`w-full max-w-md p-6 sm:p-8 rounded-2xl border space-y-6 transition-colors duration-200 ${
+                isLight
+                  ? "bg-white border-[#E2E8F0] shadow-sm"
+                  : "bg-[#0E1015] border-[#262830]"
+              }`}
             >
               {/* Feature 1: Collar */}
-              <div className="flex items-start gap-4">
-                <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 mt-0.5 border ${
-                  isLight ? "bg-[#0F172A]/5 border-[#0F172A]/10 text-[#0F172A]" : "bg-white/10 border-white/20 text-white"
+              <div>
+                <div className={`text-base font-semibold tracking-tight ${
+                  isLight ? "text-[#0F172A]" : "text-white"
                 }`}>
-                  <Scissors className="w-4 h-4" />
+                  {lang === "th" ? "โครงสร้างปกอัดกาวสองชั้น" : "Dual-Fused Collar Stance"}
                 </div>
-                <div>
-                  <div className={`text-sm sm:text-base font-semibold tracking-tight ${
-                    isLight ? "text-[#0F172A]" : "text-white"
-                  }`}>
-                    {lang === "th" ? "โครงสร้างปก (Dual-Fused Collar)" : "Dual-Fused Collar Stance"}
-                  </div>
-                  <div className={`text-xs sm:text-sm mt-1 leading-relaxed ${
-                    isLight ? "text-[#64748B]" : "text-white/70"
-                  }`}>
-                    {lang === "th" ? "ปกอัดกาวสองชั้น ตั้งทรงสวย ไม่ย้วย แม้ไม่ผูกเนกไท" : "Two-layer fusing maintains crisp stance all day"}
-                  </div>
+                <div className={`text-sm mt-1 leading-relaxed ${
+                  isLight ? "text-[#475569]" : "text-[#9496A1]"
+                }`}>
+                  {lang === "th" ? "ปกตั้งทรงคมชัด ไม่ย้วย อยู่ทรงตลอดวันแม้ไม่ผูกเนกไท" : "Two-layer fusing maintains crisp stance throughout the workday without a tie."}
                 </div>
               </div>
 
               {/* Feature 2: Asian Fit Armhole */}
-              <div className={`flex items-start gap-4 border-t pt-5 ${
-                isLight ? "border-[#E2E8F0]" : "border-white/15"
-              }`}>
-                <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 mt-0.5 border ${
-                  isLight ? "bg-[#0F172A]/5 border-[#0F172A]/10 text-[#0F172A]" : "bg-white/10 border-white/20 text-white"
+              <div className={`border-t pt-5 ${isLight ? "border-[#E2E8F0]" : "border-[#262830]"}`}>
+                <div className={`text-base font-semibold tracking-tight ${
+                  isLight ? "text-[#0F172A]" : "text-white"
                 }`}>
-                  <Shirt className="w-4 h-4" />
+                  {lang === "th" ? "วงแขนคัตติ้งเฉพาะคนไทย" : "Sculpted Asian Fit Armhole"}
                 </div>
-                <div>
-                  <div className={`text-sm sm:text-base font-semibold tracking-tight ${
-                    isLight ? "text-[#0F172A]" : "text-white"
-                  }`}>
-                    {lang === "th" ? "วงแขน Asian Fit (Sculpted Armhole)" : "Sculpted Asian Fit Armhole"}
-                  </div>
-                  <div className={`text-xs sm:text-sm mt-1 leading-relaxed ${
-                    isLight ? "text-[#64748B]" : "text-white/70"
-                  }`}>
-                    {lang === "th" ? "ลดการรั้งช่วงไหล่ ขยับตัวคล่องตัวตลอดวันทำงาน" : "Engineered curves eliminate torso & shoulder pull"}
-                  </div>
+                <div className={`text-sm mt-1 leading-relaxed ${
+                  isLight ? "text-[#475569]" : "text-[#9496A1]"
+                }`}>
+                  {lang === "th" ? "องศาวงแขนเว้าลึกพอดี ลดการรั้งตึงช่วงไหล่ ยกแขนและขยับตัวคล่องตัว" : "Calibrated armhole curvature eliminates shoulder tension during movement."}
                 </div>
               </div>
 
               {/* Feature 3: Easy Care */}
-              <div className={`flex items-start gap-4 border-t pt-5 ${
-                isLight ? "border-[#E2E8F0]" : "border-white/15"
-              }`}>
-                <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 mt-0.5 border ${
-                  isLight ? "bg-[#0F172A]/5 border-[#0F172A]/10 text-[#0F172A]" : "bg-white/10 border-white/20 text-white"
+              <div className={`border-t pt-5 ${isLight ? "border-[#E2E8F0]" : "border-[#262830]"}`}>
+                <div className={`text-base font-semibold tracking-tight ${
+                  isLight ? "text-[#0F172A]" : "text-white"
                 }`}>
-                  <Sparkles className="w-4 h-4" />
+                  {lang === "th" ? "เนื้อผ้า Easy-Care คืนทรงหลังซัก" : "Easy-Care Wrinkle Recovery"}
                 </div>
-                <div>
-                  <div className={`text-sm sm:text-base font-semibold tracking-tight ${
-                    isLight ? "text-[#0F172A]" : "text-white"
-                  }`}>
-                    {lang === "th" ? "การรีด Easy Care (Wrinkle Recovery)" : "Easy-Care Wrinkle Recovery"}
-                  </div>
-                  <div className={`text-xs sm:text-sm mt-1 leading-relaxed ${
-                    isLight ? "text-[#64748B]" : "text-white/70"
-                  }`}>
-                    {lang === "th" ? "คืนทรงหลังซัก สะบัดแขวน ประหยัดเวลารีด 50%" : "Fabric rebounds post-wash, 50% less ironing"}
-                  </div>
+                <div className={`text-sm mt-1 leading-relaxed ${
+                  isLight ? "text-[#475569]" : "text-[#9496A1]"
+                }`}>
+                  {lang === "th" ? "สะบัดแขวนหลังซัก คืนทรงไว ประหยัดเวลารีดกว่า 50%" : "Rebounds post-wash to reduce ironing time by half."}
                 </div>
               </div>
             </div>
@@ -152,16 +120,7 @@ export default function CraftStory({ lang: propLang }: CraftStoryProps) {
 
           {/* Right Column: Heading, Subtitle & Action Button (order-1 on mobile, order-2 on lg) */}
           <div className="lg:col-span-7 order-1 lg:order-2 space-y-6 max-w-xl lg:ml-auto">
-            {/* Reference-style Category Tracker */}
-            <div
-              className={`text-[11px] sm:text-xs font-semibold tracking-[0.25em] uppercase ${
-                isLight ? "text-[#64748B]" : "text-[#9496A1]"
-              }`}
-            >
-              CRAFTSMANSHIP+
-            </div>
-
-            {/* Big Display Heading */}
+            {/* Big Display Heading (No tiny eyebrow clutter) */}
             <h2
               className={`text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight leading-[1.15] ${
                 isLight ? "text-[#0F172A]" : "text-white"
@@ -182,22 +141,22 @@ export default function CraftStory({ lang: propLang }: CraftStoryProps) {
               )}
             </h2>
 
-            {/* Refined Explanatory Paragraph */}
+            {/* Direct, Concise Explanatory Paragraph (Halved copy, no repetitive fluff) */}
             <p
-              className={`text-sm sm:text-base leading-relaxed max-w-lg ${
+              className={`text-sm sm:text-base leading-relaxed ${
                 isLight ? "text-[#475569]" : "text-[#E7E7E7]"
               }`}
             >
               {lang === "th"
-                ? "Highbury พัฒนาแพทเทิร์นเสื้อเชิ้ตสำเร็จรูปสำหรับสรีระคนไทยโดยเฉพาะ คำนวณความกว้างช่วงไหล่ ความลึกของวงแขน และความยาวเสื้อที่สอดเข้ากางเกงได้พอดี ผลิตในเวิร์กช็อปที่มีกำลังผลิต 3,500 ตัวต่อเดือน"
-                : "Highbury develops ready-to-wear shirt patterns sculpted specifically for Asian proportions. Calibrated shoulder widths, armhole depths, and tuck-in lengths crafted in our 3,500 pcs/month workshop."}
+                ? "คำนวณสัดส่วนช่วงไหล่ วงแขน และความยาวเสื้อให้พอดีเมื่อสอดเข้ากางเกง ตัดเย็บจากเวิร์กช็อปที่มีกำลังผลิต 3,500 ตัวต่อเดือน"
+                : "Engineered shoulder widths, sculpted armholes, and tuck-in lengths crafted in our 3,500 pcs/month workshop."}
             </p>
 
-            {/* Quantum Pill Button */}
+            {/* Pill Button */}
             <div className="pt-2">
               <Link
                 href="#models"
-                className={`inline-flex items-center gap-2.5 px-6 py-3 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 shadow-md group cursor-pointer ${
+                className={`inline-flex items-center gap-2.5 px-6 py-3 rounded-full text-xs sm:text-sm font-semibold transition-colors duration-200 group cursor-pointer ${
                   isLight
                     ? "bg-[#0F172A] !text-white hover:bg-[#1E293B]"
                     : "bg-black text-white border border-white/20 hover:bg-white/10"

@@ -122,16 +122,9 @@ export default function CarouselShowcase({
   return (
     <section id="models" className="relative w-full py-12 sm:py-16 lg:py-24 scroll-mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Top Header Row: Exact Quantum Header with Category Tracker */}
+        {/* Top Header Row: Section Heading */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12">
           <div className="space-y-3 max-w-xl">
-            <div
-              className={`text-[11px] sm:text-xs font-semibold tracking-[0.25em] uppercase ${
-                isLight ? "text-[#64748B]" : "text-[#9496A1]"
-              }`}
-            >
-              COLLECTION+
-            </div>
             <h2
               className={`text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight leading-[1.15] ${
                 isLight ? "text-[#0F172A]" : "text-white"
@@ -209,12 +202,12 @@ export default function CarouselShowcase({
 
               return (
                 <div key={p.id} className="embla__slide">
-                  {/* Card: 16px radius, rounded-2xl, border, elegant shadow */}
+                  {/* Card: 16px radius, rounded-2xl, 1px border */}
                   <div
-                    className={`flex flex-col h-full rounded-2xl border overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl ${
+                    className={`flex flex-col h-full rounded-2xl border overflow-hidden transition-all duration-300 hover:-translate-y-1 ${
                       isLight
-                        ? "bg-gradient-to-b from-white via-white to-[#F8FAFC] border-[#E2E8F0] shadow-xs"
-                        : "bg-gradient-to-b from-[#13161D] via-[#13161D] to-[#0A0C10] border-white/10 shadow-lg"
+                        ? "bg-white border-[#E2E8F0] shadow-xs"
+                        : "bg-[#13161D] border-[#262830]"
                     }`}
                   >
                     {/* Model Photo Container with Quantum Gradient Dissolve */}
@@ -236,17 +229,14 @@ export default function CarouselShowcase({
                         }`}
                       />
 
-                      {/* Frosted Category Badge */}
+                      {/* Category Badge: solid background, 1px border, no blur */}
                       <div className="absolute top-3 left-3 pointer-events-none z-10">
                         <span
-                          className="px-2.5 py-1 rounded-full text-[11px] font-semibold"
-                          style={{
-                            backgroundColor: "rgba(0, 0, 0, 0.6)",
-                            backdropFilter: "blur(12px)",
-                            WebkitBackdropFilter: "blur(12px)",
-                            border: "1px solid rgba(255, 255, 255, 0.2)",
-                            color: "#FFFFFF",
-                          }}
+                          className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border ${
+                            isLight
+                              ? "bg-white text-[#0F172A] border-[#E2E8F0]"
+                              : "bg-[#0E1015] text-white border-white/20"
+                          }`}
                         >
                           {lang === "th" ? p.category.nameTh : catEn}
                         </span>
@@ -261,7 +251,7 @@ export default function CarouselShowcase({
                             isLight ? "text-[#64748B]" : "text-[#9496A1]"
                           }`}
                         >
-                          {catEn}
+                          {lang === "th" ? p.category.nameTh : catEn}
                         </div>
                         <h3
                           className={`text-base font-semibold tracking-tight line-clamp-1 mt-0.5 ${
@@ -275,7 +265,7 @@ export default function CarouselShowcase({
                             isLight ? "text-[#64748B]" : "text-[#9496A1]"
                           }`}
                         >
-                          {p.descTh || "แพทเทิร์นพอดีตัวสรีระคนไทย · ดูแลง่าย"}
+                          {p.descTh || (lang === "th" ? "ทรงพอดีตัวสำหรับคนไทย · ดูแลง่าย" : "Tailored Asian Fit · Easy Care")}
                         </p>
                       </div>
 

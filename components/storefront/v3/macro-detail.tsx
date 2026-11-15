@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useStorefrontV3Safe } from "../storefront-shell";
 
 interface MacroDetailProps {
@@ -68,16 +68,7 @@ export default function MacroDetail({ lang: propLang }: MacroDetailProps) {
       {/* Content Container aligned with site grid (Compact width so right models are unobstructed) */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-28">
         <div className="max-w-md lg:max-w-[420px] space-y-5">
-          {/* Reference-style Category Tracker */}
-          <div
-            className={`text-[11px] sm:text-xs font-semibold tracking-[0.25em] uppercase ${
-              isLight ? "text-[#64748B]" : "text-[#9496A1]"
-            }`}
-          >
-            PRECISION+
-          </div>
-
-          {/* Big Display Heading */}
+          {/* Big Display Heading (No tiny eyebrow clutter) */}
           <h2
             className={`text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight leading-[1.15] ${
               isLight ? "text-[#0F172A]" : "text-white"
@@ -98,39 +89,29 @@ export default function MacroDetail({ lang: propLang }: MacroDetailProps) {
             )}
           </h2>
 
-          {/* Refined Explanatory Paragraph */}
+          {/* Direct, Concise Explanatory Paragraph (Halved copy, factual) */}
           <p
             className={`text-sm sm:text-base leading-relaxed ${
               isLight ? "text-[#475569]" : "text-[#E7E7E7]"
             }`}
           >
             {lang === "th"
-              ? "โครงสร้างปกเสื้อออกแบบเป็นพิเศษเพื่อให้ตั้งอยู่ทรงสวยงาม ซักสะบัดแขวนแทบไม่ต้องรีด พร้อมการเย็บย้ำกระดุมแน่นหนาเพื่อความทนทานในการใช้งานทุกวัน"
-              : "Engineered collar construction that retains its sharp posture wash after wash, paired with reinforced 4-hole button fastening for everyday durability."}
+              ? "ปกอัดกาวสองชั้นตั้งทรงคมชัด ฝีเข็ม 16–18 เข็มต่อนิ้ว และกระดุม 4 รูเย็บย้ำแน่นหนาเพื่อความทนทาน"
+              : "Dual-fused collar stance, 16–18 SPI dense stitching, and cross-stitched 4-hole buttons for lasting durability."}
           </p>
 
-          {/* 3 Sleek Integrated Frosted Spec Cards (Monochrome Clean Icons, No Orange) */}
+          {/* 3 Sleek Solid Spec Cards (1px border, typography-led, no decorative icons or blur) */}
           <div className="grid grid-cols-3 gap-2.5 pt-2">
             <div
-              className="p-3 sm:p-3.5 rounded-xl shadow-lg transition-all"
-              style={{
-                backgroundColor: isLight ? "rgba(255, 255, 255, 0.88)" : "rgba(0, 0, 0, 0.6)",
-                backdropFilter: "blur(20px)",
-                WebkitBackdropFilter: "blur(20px)",
-                borderColor: isLight ? "rgba(226, 232, 240, 0.9)" : "rgba(255, 255, 255, 0.18)",
-                borderWidth: "1px",
-                borderStyle: "solid",
-                boxShadow: isLight ? "0 4px 20px -2px rgba(0, 0, 0, 0.06)" : undefined,
-              }}
+              className={`p-3 sm:p-3.5 rounded-xl border transition-colors duration-200 ${
+                isLight ? "bg-white border-[#E2E8F0]" : "bg-[#0E1015] border-[#262830]"
+              }`}
             >
-              <div className="flex items-center gap-1.5 mb-1">
-                <CheckCircle2 className={`w-3.5 h-3.5 ${isLight ? "text-[#0F172A]" : "text-white"}`} />
-                <div className={`text-base sm:text-lg font-bold tracking-tight ${isLight ? "text-[#0F172A]" : "text-white"}`}>
-                  16–18
-                </div>
+              <div className={`text-base sm:text-lg font-bold tracking-tight ${isLight ? "text-[#0F172A]" : "text-white"}`}>
+                16–18
               </div>
-              <div className={`text-[11px] font-semibold ${isLight ? "text-[#334155]" : "text-white/90"}`}>
-                {lang === "th" ? "ฝีเข็มละเอียด" : "SPI Count"}
+              <div className={`text-[11px] font-semibold mt-1 ${isLight ? "text-[#334155]" : "text-white/90"}`}>
+                {lang === "th" ? "ฝีเข็มต่อนิ้ว (SPI)" : "SPI Density"}
               </div>
               <div className={`text-[10px] mt-0.5 leading-snug line-clamp-1 ${isLight ? "text-[#64748B]" : "text-white/60"}`}>
                 {lang === "th" ? "ตะเข็บแน่น เรียบเนียน" : "Clean drape"}
@@ -138,51 +119,31 @@ export default function MacroDetail({ lang: propLang }: MacroDetailProps) {
             </div>
 
             <div
-              className="p-3 sm:p-3.5 rounded-xl shadow-lg transition-all"
-              style={{
-                backgroundColor: isLight ? "rgba(255, 255, 255, 0.88)" : "rgba(0, 0, 0, 0.6)",
-                backdropFilter: "blur(20px)",
-                WebkitBackdropFilter: "blur(20px)",
-                borderColor: isLight ? "rgba(226, 232, 240, 0.9)" : "rgba(255, 255, 255, 0.18)",
-                borderWidth: "1px",
-                borderStyle: "solid",
-                boxShadow: isLight ? "0 4px 20px -2px rgba(0, 0, 0, 0.06)" : undefined,
-              }}
+              className={`p-3 sm:p-3.5 rounded-xl border transition-colors duration-200 ${
+                isLight ? "bg-white border-[#E2E8F0]" : "bg-[#0E1015] border-[#262830]"
+              }`}
             >
-              <div className="flex items-center gap-1.5 mb-1">
-                <ShieldCheck className={`w-3.5 h-3.5 ${isLight ? "text-[#0F172A]" : "text-white"}`} />
-                <div className={`text-base sm:text-lg font-bold tracking-tight ${isLight ? "text-[#0F172A]" : "text-white"}`}>
-                  2-Layer
-                </div>
+              <div className={`text-base sm:text-lg font-bold tracking-tight ${isLight ? "text-[#0F172A]" : "text-white"}`}>
+                2-Layer
               </div>
-              <div className={`text-[11px] font-semibold ${isLight ? "text-[#334155]" : "text-white/90"}`}>
+              <div className={`text-[11px] font-semibold mt-1 ${isLight ? "text-[#334155]" : "text-white/90"}`}>
                 {lang === "th" ? "ปกอัดกาวคู่" : "Dual Fused"}
               </div>
               <div className={`text-[10px] mt-0.5 leading-snug line-clamp-1 ${isLight ? "text-[#64748B]" : "text-white/60"}`}>
-                {lang === "th" ? "ปกตั้งสวย ไม่ย้วย" : "Crisp stance"}
+                {lang === "th" ? "ปกตั้งทรง ไม่ย้วย" : "Crisp stance"}
               </div>
             </div>
 
             <div
-              className="p-3 sm:p-3.5 rounded-xl shadow-lg transition-all"
-              style={{
-                backgroundColor: isLight ? "rgba(255, 255, 255, 0.88)" : "rgba(0, 0, 0, 0.6)",
-                backdropFilter: "blur(20px)",
-                WebkitBackdropFilter: "blur(20px)",
-                borderColor: isLight ? "rgba(226, 232, 240, 0.9)" : "rgba(255, 255, 255, 0.18)",
-                borderWidth: "1px",
-                borderStyle: "solid",
-                boxShadow: isLight ? "0 4px 20px -2px rgba(0, 0, 0, 0.06)" : undefined,
-              }}
+              className={`p-3 sm:p-3.5 rounded-xl border transition-colors duration-200 ${
+                isLight ? "bg-white border-[#E2E8F0]" : "bg-[#0E1015] border-[#262830]"
+              }`}
             >
-              <div className="flex items-center gap-1.5 mb-1">
-                <Sparkles className={`w-3.5 h-3.5 ${isLight ? "text-[#0F172A]" : "text-white"}`} />
-                <div className={`text-base sm:text-lg font-bold tracking-tight ${isLight ? "text-[#0F172A]" : "text-white"}`}>
-                  4-Hole
-                </div>
+              <div className={`text-base sm:text-lg font-bold tracking-tight ${isLight ? "text-[#0F172A]" : "text-white"}`}>
+                4-Hole
               </div>
-              <div className={`text-[11px] font-semibold ${isLight ? "text-[#334155]" : "text-white/90"}`}>
-                {lang === "th" ? "กระดุม 4 รู" : "Reinforced"}
+              <div className={`text-[11px] font-semibold mt-1 ${isLight ? "text-[#334155]" : "text-white/90"}`}>
+                {lang === "th" ? "กระดุม 4 รู" : "Cross-Stitched"}
               </div>
               <div className={`text-[10px] mt-0.5 leading-snug line-clamp-1 ${isLight ? "text-[#64748B]" : "text-white/60"}`}>
                 {lang === "th" ? "เย็บย้ำแน่นหนา" : "High strength"}
@@ -190,11 +151,11 @@ export default function MacroDetail({ lang: propLang }: MacroDetailProps) {
             </div>
           </div>
 
-          {/* Quantum Pill Button */}
+          {/* Pill Button */}
           <div className="pt-2">
             <Link
               href="#models"
-              className={`inline-flex items-center gap-2.5 px-6 py-3 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 shadow-md group cursor-pointer ${
+              className={`inline-flex items-center gap-2.5 px-6 py-3 rounded-full text-xs sm:text-sm font-semibold transition-colors duration-200 group cursor-pointer ${
                 isLight
                   ? "bg-[#0F172A] !text-white hover:bg-[#1E293B]"
                   : "bg-black text-white border border-white/20 hover:bg-white/10"

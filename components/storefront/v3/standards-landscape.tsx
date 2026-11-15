@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, ShieldCheck, Factory, CheckCircle2 } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useStorefrontV3Safe } from "../storefront-shell";
 
 interface StandardsLandscapeProps {
@@ -66,17 +66,8 @@ export default function StandardsLandscape({ lang: propLang }: StandardsLandscap
       {/* Content Container aligned with site grid */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-28">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
-          {/* Left Column: Heading, Subtitle & Action Button (Exact Reference Replica) */}
+          {/* Left Column: Heading, Subtitle & Action Button */}
           <div className="lg:col-span-7 space-y-6 max-w-xl">
-            {/* Reference-style Category Tracker (e.g. STANDARDS+) */}
-            <div
-              className={`text-[11px] sm:text-xs font-semibold tracking-[0.25em] uppercase ${
-                isLight ? "text-[#64748B]" : "text-[#9496A1]"
-              }`}
-            >
-              STANDARDS+
-            </div>
-
             {/* Big Display Heading */}
             <h2
               className={`text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight leading-[1.15] ${
@@ -107,20 +98,20 @@ export default function StandardsLandscape({ lang: propLang }: StandardsLandscap
               }`}
             >
               {lang === "th"
-                ? "เรามุ่งมั่นขจัดปัญหาเสื้อไม่พอดีตัว เสื้อเชิ้ตทุกตัวผ่านการตรวจเช็กก่อนบรรจุ พร้อมการรับประกันเปลี่ยนไซส์ฟรีภายใน 7 วัน และเวิร์กช็อปของเราพร้อมรองรับการสั่งตัดยูนิฟอร์มองค์กรด้วยมาตรฐานขั้นสูง"
-                : "We eliminate ill-fitting workwear with dedicated quality controls. Backed by our 7-day hassle-free size exchange guarantee and dedicated 3,500 pcs/month OEM tailoring capacity."}
+                ? "เสื้อเชิ้ตทุกตัวผ่านการตรวจเช็กฝีเข็มก่อนบรรจุ พร้อมการรับประกันเปลี่ยนไซส์ฟรีภายใน 7 วัน และเวิร์กช็อปรองรับการสั่งตัดยูนิฟอร์มองค์กรตามมาตรฐาน"
+                : "Every shirt undergoes needle-to-seam inspection before packing, backed by a 7-day size exchange guarantee and dedicated OEM workshop capacity."}
             </p>
 
-            {/* Quantum Pill Button (Exact Reference Styling) */}
+            {/* Action Button */}
             <div className="pt-2">
               <Link
                 href="https://lin.ee/T8tlget"
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`inline-flex items-center gap-2.5 px-6 py-3 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 shadow-md group cursor-pointer ${
+                className={`inline-flex items-center gap-2.5 px-6 py-3 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 group cursor-pointer border ${
                   isLight
-                    ? "bg-[#0F172A] !text-white hover:bg-[#1E293B]"
-                    : "bg-black text-white border border-white/20 hover:bg-white/10"
+                    ? "bg-[#0F172A] !text-white border-[#0F172A] hover:bg-[#1E293B]"
+                    : "bg-white text-[#0B0C0E] border-white hover:bg-white/90"
                 }`}
               >
                 <span className={isLight ? "!text-white" : ""}>{lang === "th" ? "ปรึกษาสั่งตัดยูนิฟอร์มผ่าน LINE" : "Consult Corporate Tailoring via LINE"}</span>
@@ -129,86 +120,73 @@ export default function StandardsLandscape({ lang: propLang }: StandardsLandscap
             </div>
           </div>
 
-          {/* Right Column: Floating Frosted Glass Card with 3 Metrics */}
+          {/* Right Column: Solid Card with Grounded Metrics */}
           <div className="lg:col-span-5 flex justify-center lg:justify-end">
             <div
-              className="w-full max-w-md p-6 sm:p-8 rounded-2xl sm:rounded-3xl shadow-2xl space-y-6 transition-all duration-300"
-              style={{
-                backgroundColor: isLight ? "rgba(255, 255, 255, 0.88)" : "rgba(0, 0, 0, 0.55)",
-                backdropFilter: "blur(20px)",
-                WebkitBackdropFilter: "blur(20px)",
-                borderColor: isLight ? "rgba(226, 232, 240, 0.9)" : "rgba(255, 255, 255, 0.18)",
-                borderWidth: "1px",
-                borderStyle: "solid",
-                boxShadow: isLight
-                  ? "0 20px 40px -15px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(255, 255, 255, 0.6) inset"
-                  : "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
-              }}
+              className={`w-full max-w-md p-6 sm:p-8 rounded-2xl sm:rounded-3xl border transition-all duration-300 ${
+                isLight
+                  ? "bg-white border-[#E2E8F0] shadow-sm"
+                  : "bg-[#0E1015] border-[#262830]"
+              }`}
             >
               {/* Stat 1: 7-Day Free Exchange */}
-              <div className="flex items-start gap-4">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5 border ${
-                  isLight ? "bg-[#0F172A]/5 border-[#0F172A]/10 text-[#0F172A]" : "bg-white/10 border-white/20 text-white"
+              <div>
+                <div className={`text-2xl sm:text-3xl font-bold tracking-tight ${
+                  isLight ? "text-[#0F172A]" : "text-white"
                 }`}>
-                  <ShieldCheck className="w-4 h-4" />
+                  {lang === "th" ? "7 วัน" : "7 Days"}
                 </div>
-                <div>
-                  <div className={`text-2xl sm:text-3xl font-bold tracking-tight ${
-                    isLight ? "text-[#0F172A]" : "text-white"
-                  }`}>
-                    {lang === "th" ? "7 วัน" : "7 Days"}
-                  </div>
-                  <div className={`text-xs sm:text-sm font-medium mt-0.5 ${
-                    isLight ? "text-[#475569]" : "text-white/80"
-                  }`}>
-                    {lang === "th" ? "รับประกันเปลี่ยนไซส์ฟรี" : "Free Size Exchange Guarantee"}
-                  </div>
+                <div className={`text-xs sm:text-sm font-medium mt-1 ${
+                  isLight ? "text-[#0F172A]" : "text-white/90"
+                }`}>
+                  {lang === "th" ? "รับประกันเปลี่ยนไซส์ฟรี" : "Free Size Exchange Guarantee"}
+                </div>
+                <div className={`text-xs mt-0.5 ${
+                  isLight ? "text-[#64748B]" : "text-[#9496A1]"
+                }`}>
+                  {lang === "th" ? "นับจากวันรับพัสดุ หากลองแล้วไม่พอดีเปลี่ยนฟรีทันที" : "From parcel delivery date; instant free exchange if fit is off."}
                 </div>
               </div>
 
               {/* Stat 2: 3,500 Pcs/Month */}
-              <div className={`flex items-start gap-4 border-t pt-5 ${
-                isLight ? "border-[#E2E8F0]" : "border-white/15"
+              <div className={`border-t pt-5 mt-5 ${
+                isLight ? "border-[#E2E8F0]" : "border-[#262830]"
               }`}>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5 border ${
-                  isLight ? "bg-[#0F172A]/5 border-[#0F172A]/10 text-[#0F172A]" : "bg-white/10 border-white/20 text-white"
+                <div className={`text-2xl sm:text-3xl font-bold tracking-tight ${
+                  isLight ? "text-[#0F172A]" : "text-white"
                 }`}>
-                  <Factory className="w-4 h-4" />
+                  {lang === "th" ? "3,500 ตัว / เดือน" : "3,500 Pcs / Month"}
                 </div>
-                <div>
-                  <div className={`text-2xl sm:text-3xl font-bold tracking-tight ${
-                    isLight ? "text-[#0F172A]" : "text-white"
-                  }`}>
-                    3,500
-                  </div>
-                  <div className={`text-xs sm:text-sm font-medium mt-0.5 ${
-                    isLight ? "text-[#475569]" : "text-white/80"
-                  }`}>
-                    {lang === "th" ? "ตัว / เดือน กำลังผลิตเวิร์กช็อป" : "Pcs / Month Workshop Capacity"}
-                  </div>
+                <div className={`text-xs sm:text-sm font-medium mt-1 ${
+                  isLight ? "text-[#0F172A]" : "text-white/90"
+                }`}>
+                  {lang === "th" ? "กำลังผลิตเวิร์กช็อป Highbury" : "Highbury Workshop Capacity"}
+                </div>
+                <div className={`text-xs mt-0.5 ${
+                  isLight ? "text-[#64748B]" : "text-[#9496A1]"
+                }`}>
+                  {lang === "th" ? "สายการผลิตพร้อมรองรับยูนิฟอร์มองค์กรและงานปักโลโก้" : "Dedicated production line for corporate orders & logo embroidery."}
                 </div>
               </div>
 
               {/* Stat 3: 100% Quality Inspected */}
-              <div className={`flex items-start gap-4 border-t pt-5 ${
-                isLight ? "border-[#E2E8F0]" : "border-white/15"
+              <div className={`border-t pt-5 mt-5 ${
+                isLight ? "border-[#E2E8F0]" : "border-[#262830]"
               }`}>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5 border ${
-                  isLight ? "bg-[#0F172A]/5 border-[#0F172A]/10 text-[#0F172A]" : "bg-white/10 border-white/20 text-white"
+                <div className={`text-2xl sm:text-3xl font-bold tracking-tight ${
+                  isLight ? "text-[#0F172A]" : "text-white"
                 }`}>
-                  <CheckCircle2 className="w-4 h-4" />
+                  100%
                 </div>
-                <div>
-                  <div className={`text-2xl sm:text-3xl font-bold tracking-tight ${
-                    isLight ? "text-[#0F172A]" : "text-white"
-                  }`}>
-                    100%
-                  </div>
-                  <div className={`text-xs sm:text-sm font-medium mt-0.5 ${
-                    isLight ? "text-[#475569]" : "text-white/80"
-                  }`}>
-                    {lang === "th" ? "QC ตรวจสอบทุกตัวก่อนจัดส่ง" : "QC Inspection Before Delivery"}
-                  </div>
+                <div className={`text-xs sm:text-sm font-medium mt-1 ${
+                  isLight ? "text-[#0F172A]" : "text-white/90"
+                }`}>
+                  {lang === "th" ? "QC ตรวจสอบรายตัวก่อนจัดส่ง" : "Piece-by-Piece QC Inspection"}
+                </div>
+                <div className={`text-xs mt-0.5 ${
+                  isLight ? "text-[#64748B]" : "text-[#9496A1]"
+                }`}>
+                  {lang === "th" ? "ตรวจเช็กฝีเข็ม ตะเข็บกระดุม และการรีดก่อนส่งถึงมือคุณ" : "Individual check on stitch density, buttons, and iron finish."}
                 </div>
               </div>
             </div>

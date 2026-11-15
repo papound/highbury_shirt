@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Play } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 interface HeroV3Props {
   onOpenSizeGuide: () => void;
@@ -59,7 +59,7 @@ export default function HeroV3({
         <div className="max-w-lg lg:max-w-2xl space-y-5">
           {/* Headline (No tiny eyebrow clutter) */}
           <h1
-            className={`text-4xl sm:text-5xl lg:text-6xl font-medium tracking-tight leading-[1.22] sm:leading-[1.25] font-sans ${
+            className={`text-4xl sm:text-5xl lg:text-6xl font-medium tracking-tight leading-[1.35] sm:leading-[1.38] font-sans ${
               theme === "light" ? "text-[#0F172A]" : "text-white"
             }`}
           >
@@ -112,7 +112,6 @@ export default function HeroV3({
               onClick={onOpenSizeGuide}
               className="v3-btn-glass"
             >
-              <Play className="w-3.5 h-3.5 fill-current" />
               <span>{lang === "th" ? "คำนวณไซส์ Smart Size" : "Smart Size Finder"}</span>
             </button>
           </div>

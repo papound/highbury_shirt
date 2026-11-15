@@ -12,7 +12,6 @@ import {
   Ruler, 
   ArrowRight, 
   ShieldCheck, 
-  Sparkles, 
   Clock, 
   Building2,
   Scissors,
@@ -31,14 +30,13 @@ export default function AboutContent() {
     <div className="w-full pb-20 sm:pb-28">
       {/* 1. Hero Section */}
       <section className="relative overflow-hidden pt-8 pb-16 sm:pb-20 text-center max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold mb-6 transition-colors border shadow-xs"
+        <div className="inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-semibold mb-6 transition-colors border shadow-xs"
           style={{
             backgroundColor: isLight ? "#F1F5F9" : "rgba(255, 255, 255, 0.05)",
             borderColor: isLight ? "#E2E8F0" : "rgba(255, 255, 255, 0.15)",
             color: isLight ? "#0F172A" : "#E7E7E7",
           }}
         >
-          <Sparkles className="w-3.5 h-3.5 text-[#FFB900]" />
           <span>{lang === "th" ? "เกี่ยวกับ HIGHBURY INTERNATIONAL" : "ABOUT HIGHBURY INTERNATIONAL"}</span>
         </div>
 
@@ -86,9 +84,9 @@ export default function AboutContent() {
                 priority
               />
 
-              {/* Floating Floating Quantum Glass Badge */}
-              <div className={`absolute bottom-4 left-4 right-4 sm:right-auto sm:left-4 p-3.5 rounded-xl backdrop-blur-md border shadow-lg flex items-center gap-3 ${
-                isLight ? "bg-white/90 border-[#E2E8F0] text-[#0F172A]" : "bg-[#07080B]/85 border-white/20 text-white"
+              {/* Floating Quantum Solid Badge */}
+              <div className={`absolute bottom-4 left-4 right-4 sm:right-auto sm:left-4 p-3.5 rounded-xl border shadow-sm flex items-center gap-3 ${
+                isLight ? "bg-white border-[#E2E8F0] text-[#0F172A]" : "bg-[#0E1015] border-[#262830] text-white"
               }`}>
                 <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
                   isLight ? "bg-[#FEF3C7] border border-[#FDE68A] text-[#B45309]" : "bg-[#FFB900]/20 border border-[#FFB900]/40 text-[#FFB900]"
@@ -222,7 +220,7 @@ export default function AboutContent() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             {/* Value Card 1 */}
             <div className={`p-6 sm:p-8 rounded-2xl border transition-all duration-200 hover:-translate-y-1 ${
-              isLight ? "bg-white border-[#E2E8F0] shadow-sm" : "bg-[#13161D] border-[#262830] shadow-lg"
+              isLight ? "bg-white border-[#E2E8F0] shadow-xs" : "bg-[#13161D] border-[#262830]"
             }`}>
               <div className="w-12 h-12 rounded-xl bg-[#FFB900]/15 border border-[#FFB900]/30 text-[#FFB900] flex items-center justify-center mb-6">
                 <Shirt className="w-6 h-6" />
@@ -239,7 +237,7 @@ export default function AboutContent() {
 
             {/* Value Card 2 */}
             <div className={`p-6 sm:p-8 rounded-2xl border transition-all duration-200 hover:-translate-y-1 ${
-              isLight ? "bg-white border-[#E2E8F0] shadow-sm" : "bg-[#13161D] border-[#262830] shadow-lg"
+              isLight ? "bg-white border-[#E2E8F0] shadow-xs" : "bg-[#13161D] border-[#262830]"
             }`}>
               <div className="w-12 h-12 rounded-xl bg-[#2563EB]/15 border border-[#2563EB]/30 text-[#2563EB] flex items-center justify-center mb-6">
                 <CheckCircle2 className="w-6 h-6" />
@@ -256,7 +254,7 @@ export default function AboutContent() {
 
             {/* Value Card 3 */}
             <div className={`p-6 sm:p-8 rounded-2xl border transition-all duration-200 hover:-translate-y-1 ${
-              isLight ? "bg-white border-[#E2E8F0] shadow-sm" : "bg-[#13161D] border-[#262830] shadow-lg"
+              isLight ? "bg-white border-[#E2E8F0] shadow-xs" : "bg-[#13161D] border-[#262830]"
             }`}>
               <div className="w-12 h-12 rounded-xl bg-[#10B981]/15 border border-[#10B981]/30 text-[#10B981] flex items-center justify-center mb-6">
                 <Users className="w-6 h-6" />

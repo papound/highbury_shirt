@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Ruler, ShieldCheck, Sparkles, Building2 } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useStorefrontV3Safe } from "../storefront-shell";
 
 interface PreFooterCtaProps {
@@ -29,7 +29,7 @@ export default function PreFooterCta({
         }`}
       />
 
-      {/* Ambient Glow / Subtle Gradient Dissolve Background (No Box Border Frame) */}
+      {/* Ambient Subtle Background */}
       <div
         aria-hidden="true"
         className={`absolute inset-0 pointer-events-none transition-colors duration-300 ${
@@ -38,110 +38,76 @@ export default function PreFooterCta({
             : "bg-gradient-to-b from-transparent via-[#0E1015]/60 to-[#07080B]"
         }`}
       />
-      <div
-        aria-hidden="true"
-        className={`absolute -top-32 left-10 w-[500px] h-[500px] rounded-full blur-3xl pointer-events-none transition-opacity duration-300 ${
-          isLight ? "bg-[#2563EB]/10" : "bg-[#FFB900]/10"
-        }`}
-      />
 
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
-          {/* Left Column: Floating Frosted Glass Card with 3 Assurances (order-2 on mobile, order-1 on lg) */}
+          {/* Left Column: Solid Card with Grounded Assurances (order-2 on mobile, order-1 on lg) */}
           <div className="lg:col-span-5 order-2 lg:order-1 flex justify-center lg:justify-start">
             <div
-              className="w-full max-w-md p-6 sm:p-8 rounded-2xl sm:rounded-3xl shadow-2xl space-y-6 transition-all duration-300"
-              style={{
-                backgroundColor: isLight ? "rgba(255, 255, 255, 0.88)" : "rgba(0, 0, 0, 0.55)",
-                backdropFilter: "blur(20px)",
-                WebkitBackdropFilter: "blur(20px)",
-                borderColor: isLight ? "rgba(226, 232, 240, 0.9)" : "rgba(255, 255, 255, 0.18)",
-                borderWidth: "1px",
-                borderStyle: "solid",
-                boxShadow: isLight
-                  ? "0 20px 40px -15px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(255, 255, 255, 0.6) inset"
-                  : "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
-              }}
+              className={`w-full max-w-md p-6 sm:p-8 rounded-2xl sm:rounded-3xl border transition-all duration-300 ${
+                isLight
+                  ? "bg-white border-[#E2E8F0] shadow-sm"
+                  : "bg-[#0E1015] border-[#262830]"
+              }`}
             >
               {/* Stat 1: 7 Days Return */}
-              <div className="flex items-start gap-4">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5 border ${
-                  isLight ? "bg-[#0F172A]/5 border-[#0F172A]/10 text-[#0F172A]" : "bg-white/10 border-white/20 text-white"
+              <div>
+                <div className={`text-2xl sm:text-3xl font-bold tracking-tight ${
+                  isLight ? "text-[#0F172A]" : "text-white"
                 }`}>
-                  <ShieldCheck className="w-4 h-4" />
+                  {lang === "th" ? "7 วัน" : "7 Days"}
                 </div>
-                <div>
-                  <div className={`text-2xl sm:text-3xl font-bold tracking-tight ${
-                    isLight ? "text-[#0F172A]" : "text-white"
-                  }`}>
-                    {lang === "th" ? "7 วัน" : "7 Days"}
-                  </div>
-                  <div className={`text-xs sm:text-sm font-medium mt-0.5 ${
-                    isLight ? "text-[#334155]" : "text-white/80"
-                  }`}>
-                    {lang === "th" ? "รับประกันเปลี่ยนไซส์ฟรี" : "Free Size Exchange"}
-                  </div>
-                  <div className={`text-[11px] sm:text-xs mt-0.5 ${
-                    isLight ? "text-[#64748B]" : "text-white/60"
-                  }`}>
-                    {lang === "th" ? "ลองใส่แล้วไม่พอดี เปลี่ยนใหม่ได้ทันที ไม่มีค่าใช้จ่าย" : "Swap sizes hassle-free if it doesn't fit perfectly"}
-                  </div>
+                <div className={`text-xs sm:text-sm font-medium mt-1 ${
+                  isLight ? "text-[#0F172A]" : "text-white/90"
+                }`}>
+                  {lang === "th" ? "รับประกันเปลี่ยนไซส์ฟรี" : "Free Size Exchange"}
+                </div>
+                <div className={`text-xs mt-0.5 ${
+                  isLight ? "text-[#64748B]" : "text-[#9496A1]"
+                }`}>
+                  {lang === "th" ? "นับจากวันรับพัสดุ หากไม่พอดีเปลี่ยนใหม่ได้ทันที" : "From parcel delivery date; instant replacement if size is off."}
                 </div>
               </div>
 
-              {/* Stat 2: Asian Fit */}
-              <div className={`flex items-start gap-4 border-t pt-5 ${
-                isLight ? "border-[#E2E8F0]" : "border-white/15"
+              {/* Stat 2: Tailored Asian Fit */}
+              <div className={`border-t pt-5 mt-5 ${
+                isLight ? "border-[#E2E8F0]" : "border-[#262830]"
               }`}>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5 border ${
-                  isLight ? "bg-[#0F172A]/5 border-[#0F172A]/10 text-[#0F172A]" : "bg-white/10 border-white/20 text-white"
+                <div className={`text-2xl sm:text-3xl font-bold tracking-tight ${
+                  isLight ? "text-[#0F172A]" : "text-white"
                 }`}>
-                  <Sparkles className="w-4 h-4" />
+                  {lang === "th" ? "ทรงพอดีตัว" : "Asian Fit"}
                 </div>
-                <div>
-                  <div className={`text-2xl sm:text-3xl font-bold tracking-tight ${
-                    isLight ? "text-[#0F172A]" : "text-white"
-                  }`}>
-                    {lang === "th" ? "ทรงพอดีตัว" : "Asian Fit"}
-                  </div>
-                  <div className={`text-xs sm:text-sm font-medium mt-0.5 ${
-                    isLight ? "text-[#334155]" : "text-white/80"
-                  }`}>
-                    {lang === "th" ? "แพทเทิร์นสำหรับคนไทยโดยเฉพาะ" : "Asian Proportion Silhouette"}
-                  </div>
-                  <div className={`text-[11px] sm:text-xs mt-0.5 ${
-                    isLight ? "text-[#64748B]" : "text-white/60"
-                  }`}>
-                    {lang === "th" ? "สัดส่วนไหล่และวงแขนพอดี คล่องตัว ไม่ตึงรั้ง" : "Sculpted proportions deliver effortless mobility"}
-                  </div>
+                <div className={`text-xs sm:text-sm font-medium mt-1 ${
+                  isLight ? "text-[#0F172A]" : "text-white/90"
+                }`}>
+                  {lang === "th" ? "แพทเทิร์นสำหรับคนไทย" : "Tailored Proportion"}
+                </div>
+                <div className={`text-xs mt-0.5 ${
+                  isLight ? "text-[#64748B]" : "text-[#9496A1]"
+                }`}>
+                  {lang === "th" ? "สัดส่วนไหล่และวงแขนพอดี คล่องตัว ไม่ตึงรั้ง" : "Balanced shoulder-to-armhole ratio for natural everyday movement."}
                 </div>
               </div>
 
               {/* Stat 3: Corporate OEM */}
-              <div className={`flex items-start gap-4 border-t pt-5 ${
-                isLight ? "border-[#E2E8F0]" : "border-white/15"
+              <div className={`border-t pt-5 mt-5 ${
+                isLight ? "border-[#E2E8F0]" : "border-[#262830]"
               }`}>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5 border ${
-                  isLight ? "bg-[#0F172A]/5 border-[#0F172A]/10 text-[#0F172A]" : "bg-white/10 border-white/20 text-white"
+                <div className={`text-2xl sm:text-3xl font-bold tracking-tight ${
+                  isLight ? "text-[#0F172A]" : "text-white"
                 }`}>
-                  <Building2 className="w-4 h-4" />
+                  {lang === "th" ? "3,500 ตัว" : "3,500 Pcs"}
                 </div>
-                <div>
-                  <div className={`text-2xl sm:text-3xl font-bold tracking-tight ${
-                    isLight ? "text-[#0F172A]" : "text-white"
-                  }`}>
-                    {lang === "th" ? "3,500 ตัว" : "3,500 Pcs"}
-                  </div>
-                  <div className={`text-xs sm:text-sm font-medium mt-0.5 ${
-                    isLight ? "text-[#334155]" : "text-white/80"
-                  }`}>
-                    {lang === "th" ? "บริการสั่งผลิตยูนิฟอร์มองค์กร (OEM)" : "Corporate Uniform OEM Capacity"}
-                  </div>
-                  <div className={`text-[11px] sm:text-xs mt-0.5 ${
-                    isLight ? "text-[#64748B]" : "text-white/60"
-                  }`}>
-                    {lang === "th" ? "กำลังผลิตต่อเดือน พร้อมบริการปักโลโก้และเลือกผ้าตาม CI" : "Monthly capacity with custom embroidery & fabric CI"}
-                  </div>
+                <div className={`text-xs sm:text-sm font-medium mt-1 ${
+                  isLight ? "text-[#0F172A]" : "text-white/90"
+                }`}>
+                  {lang === "th" ? "กำลังผลิตต่อเดือน (OEM)" : "Monthly Workshop Capacity"}
+                </div>
+                <div className={`text-xs mt-0.5 ${
+                  isLight ? "text-[#64748B]" : "text-[#9496A1]"
+                }`}>
+                  {lang === "th" ? "เวิร์กช็อปรองรับการปักโลโก้และเลือกผ้าตาม CI" : "Highbury workshop line with custom embroidery & fabric CI options."}
                 </div>
               </div>
             </div>
@@ -149,15 +115,6 @@ export default function PreFooterCta({
 
           {/* Right Column: Heading, Subtitle & Action Pills (order-1 on mobile, order-2 on lg) */}
           <div className="lg:col-span-7 order-1 lg:order-2 space-y-6 max-w-xl lg:ml-auto">
-            {/* Category Tracker Tag (Exact Quantum Style) */}
-            <div
-              className={`text-[11px] sm:text-xs font-semibold tracking-[0.25em] uppercase ${
-                isLight ? "text-[#64748B]" : "text-[#9496A1]"
-              }`}
-            >
-              EXPERIENCE+
-            </div>
-
             {/* Display Heading */}
             <h2
               className={`text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight leading-[1.15] ${
@@ -185,18 +142,18 @@ export default function PreFooterCta({
               }`}
             >
               {lang === "th"
-                ? "สัมผัสความเบาสบาย คัตติ้งที่เสริมบุคลิกภาพ และความคงทนของเสื้อเชิ้ต Highbury ด้วยตัวคุณเอง มั่นใจได้ในทุกการสั่งซื้อด้วยการรับประกันเปลี่ยนไซส์ฟรีภายใน 7 วัน"
-                : "Experience the comfort, effortless drape, and tailored confidence of Highbury shirts for yourself, backed by our 7-day hassle-free size exchange guarantee."}
+                ? "เสื้อเชิ้ต Highbury ออกแบบเพื่อความสบาย คัตติ้งเนี้ยบ ดูแลง่าย พร้อมการรับประกันเปลี่ยนไซส์ฟรีภายใน 7 วัน"
+                : "Highbury shirts deliver all-day comfort, clean tailoring, and easy-care fabrics, backed by a 7-day size exchange guarantee."}
             </p>
 
-            {/* Action Buttons: Exact Quantum Pill Buttons */}
+            {/* Action Buttons */}
             <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5">
               <Link
                 href="#models"
-                className={`inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 shadow-md group cursor-pointer ${
+                className={`inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 group cursor-pointer border ${
                   isLight
-                    ? "bg-[#0F172A] !text-white hover:bg-[#1E293B]"
-                    : "bg-white text-[#07080B] hover:bg-white/90"
+                    ? "bg-[#0F172A] !text-white border-[#0F172A] hover:bg-[#1E293B]"
+                    : "bg-white text-[#07080B] border-white hover:bg-white/90"
                 }`}
               >
                 <span className={isLight ? "!text-white" : ""}>{lang === "th" ? "เลือกซื้อสินค้า" : "Shop Collection"}</span>
@@ -208,11 +165,10 @@ export default function PreFooterCta({
                 onClick={onOpenSizeGuide}
                 className={`inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer ${
                   isLight
-                    ? "bg-white text-[#0F172A] border border-[#CBD5E1] hover:bg-[#F8FAFC] shadow-xs"
-                    : "bg-black text-white border border-white/20 hover:bg-white/10"
+                    ? "bg-white text-[#0F172A] border border-[#CBD5E1] hover:bg-[#F8FAFC]"
+                    : "bg-transparent text-white border border-[#262830] hover:bg-white/10"
                 }`}
               >
-                <Ruler className="w-4 h-4 text-[#FFB900]" />
                 <span>{lang === "th" ? "คำนวณไซส์ Smart Size Finder" : "Smart Size Finder"}</span>
               </button>
             </div>
