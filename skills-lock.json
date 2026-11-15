@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "skills": {
+    "parallax-landing-page": {
+      "source": "hoodini/ai-agents-skills",
+      "sourceType": "github",
+      "skillPath": "skills/parallax-landing-page/SKILL.md",
+      "computedHash": "739d475643660353c766872119cdc44b597b472344f24be4d9316faa7fd9bd89"
+    }
+  }
+}

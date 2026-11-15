@@ -7,8 +7,7 @@ import HeaderV3 from "./v3/header-v3";
 import HeroV3 from "./v3/hero-v3";
 import CraftStory from "./v3/craft-story";
 import CarouselShowcase from "./v3/carousel-showcase";
-import MacroDetail from "./v3/macro-detail";
-import StandardsLandscape from "./v3/standards-landscape";
+import ParallaxCraftStandards from "./v3/parallax-craft-standards";
 import PreFooterCta from "./v3/pre-footer-cta";
 import V3Footer from "./v3/v3-footer";
 import QuickViewModal, { QuickViewProduct } from "./v3/quick-view-modal";
@@ -116,15 +115,8 @@ export default function HomeV3({ featuredProducts }: HomeV3Props) {
         lang={lang}
       />
 
-      {/* 4. Section 4: Technology & Intelligence in Every Stitch (Split Light Macro) */}
-      <div className="v3-section-deferred">
-        <MacroDetail lang={lang} />
-      </div>
-
-      {/* 5. Section 5: Standards Landscape with 3 Stats (Quantum Highway Equivalent) */}
-      <div className="v3-section-deferred relative z-10">
-        <StandardsLandscape lang={lang} />
-      </div>
+      {/* 4 & 5. Unified Parallax Stage: Macro Detail + Standards Landscape Scrollytelling */}
+      <ParallaxCraftStandards lang={lang} />
 
       {/* 6. Section 6: Feel the Difference Pre-Footer (Sunset Golden Hour) */}
       <div className="v3-section-deferred">

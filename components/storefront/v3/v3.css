@@ -441,3 +441,30 @@ dialog.v3-dialog[data-theme="light"]::backdrop,
   background-color: rgba(15, 23, 42, 0.5) !important;
   backdrop-filter: blur(8px) !important;
 }
+
+/* ── Scroll-Driven Parallax & Accessibility Safety ── */
+@keyframes v3-parallax-drift {
+  from {
+    transform: translate3d(0, var(--parallax-offset, 32px), 0);
+  }
+}
+
+@supports ((animation-timeline: view()) and (animation-range: entry)) {
+  .v3-parallax-wrapper {
+    view-timeline: --v3-parallax-tl block;
+  }
+
+  .v3-parallax-item {
+    animation: v3-parallax-drift linear both;
+    animation-timeline: --v3-parallax-tl;
+    animation-range: entry 0% exit 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v3-parallax-item {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
