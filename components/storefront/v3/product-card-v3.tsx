@@ -27,6 +27,13 @@ export default function ProductCardV3({
     .filter((s) => s !== "SS")
     .slice(0, 5);
 
+  const hasStockInfo =
+    product.variants.length > 0 &&
+    product.variants.some((v) => typeof v.stock === "number");
+  const isOutOfStock =
+    hasStockInfo &&
+    product.variants.reduce((sum, v) => sum + (v.stock ?? 0), 0) <= 0;
+
   return (
     <div className="group relative flex flex-col h-full rounded-xl border border-[#E7E5E4] bg-white overflow-hidden hover:border-[#163666] transition-colors duration-150">
       {/* Product Image Container */}
@@ -40,6 +47,13 @@ export default function ProductCardV3({
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover object-top"
           />
+          {isOutOfStock && (
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+              <span className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-black/65 !text-white text-xs sm:text-sm font-medium flex items-center justify-center text-center whitespace-nowrap shadow-sm">
+                สินค้าหมด
+              </span>
+            </div>
+          )}
         </Link>
 
         {/* Floating Category Badge */}

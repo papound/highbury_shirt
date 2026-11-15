@@ -316,6 +316,8 @@ dialog.v3-dialog::backdrop {
 .v3-page-wrapper[data-theme="light"] .bg-\[\#0F172A\] *,
 .v3-page-wrapper[data-theme="light"] .bg-black,
 .v3-page-wrapper[data-theme="light"] .bg-black *,
+.v3-page-wrapper[data-theme="light"] [class*="bg-black"],
+.v3-page-wrapper[data-theme="light"] [class*="bg-black"] *,
 .v3-page-wrapper[data-theme="light"] a[class*="bg-[#0F172A]"],
 .v3-page-wrapper[data-theme="light"] a[class*="bg-[#0F172A]"] *,
 .v3-page-wrapper[data-theme="light"] button[class*="bg-[#0F172A]"],

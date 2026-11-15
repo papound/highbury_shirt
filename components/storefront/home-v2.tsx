@@ -23,13 +23,20 @@ import { Prisma } from "@prisma/client";
 import { Reveal, Marquee, FloatingBlobs, TiltCard, Typewriter } from "./home-v2-animations";
 
 // ---------- types ----------
-type FeaturedProduct = Prisma.ProductGetPayload<{
-  include: {
-    images: true;
-    variants: true;
-    category: true;
-  };
-}>;
+type FeaturedProduct = Omit<
+  Prisma.ProductGetPayload<{
+    include: {
+      images: true;
+      variants: true;
+      category: true;
+    };
+  }>,
+  "variants"
+> & {
+  variants: (Prisma.ProductVariantGetPayload<Record<string, never>> & {
+    stock?: number;
+  })[];
+};
 
 type Category = Prisma.CategoryGetPayload<Record<string, never>>;
 
@@ -368,6 +375,12 @@ export default function HomeV2({ featuredProducts, categories }: HomeV2Props) {
                 const prices = product.variants.map((v) => v.price);
                 const minPrice = prices.length ? Math.min(...prices) : product.basePrice;
                 const maxPrice = prices.length ? Math.max(...prices) : product.basePrice;
+                const hasStockInfo =
+                  product.variants.length > 0 &&
+                  product.variants.some((v) => typeof v.stock === "number");
+                const isOutOfStock =
+                  hasStockInfo &&
+                  product.variants.reduce((sum, v) => sum + (v.stock ?? 0), 0) <= 0;
 
                 return (
                   <Reveal key={product.id} delay={i * 120} direction="scale">
@@ -396,6 +409,13 @@ export default function HomeV2({ featuredProducts, categories }: HomeV2Props) {
                             className="object-contain p-2 bg-[#FAF6EE] dark:bg-[#1f2125] group-hover:scale-[1.03] transition-transform duration-500"
                             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                           />
+                        )}
+                        {isOutOfStock && (
+                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                            <span className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-black/65 !text-white text-xs sm:text-sm font-medium flex items-center justify-center text-center whitespace-nowrap shadow-sm">
+                              สินค้าหมด
+                            </span>
+                          </div>
                         )}
                         {/* Interactive overlay card */}
                         <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors duration-300 flex items-end justify-center pb-5 opacity-0 group-hover:opacity-100">

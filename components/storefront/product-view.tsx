@@ -165,6 +165,27 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
     return Array.from(new Set(product.variants.map((v) => v.color)));
   }, [product.variants]);
 
+  // Total stock per color across all sizes, and total stock across entire product
+  const colorStockMap = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const v of product.variants) {
+      const key = v.color.trim();
+      map.set(key, (map.get(key) ?? 0) + (v.stock ?? 0));
+    }
+    return map;
+  }, [product.variants]);
+
+  const totalProductStock = useMemo(() => {
+    return product.variants.reduce((sum, v) => sum + (v.stock ?? 0), 0);
+  }, [product.variants]);
+
+  function isColorOutOfStock(color?: string | null): boolean {
+    if (!color) return product.variants.length === 0 || totalProductStock <= 0;
+    const key = color.trim();
+    if (!colorStockMap.has(key)) return product.variants.length === 0 || totalProductStock <= 0;
+    return (colorStockMap.get(key) ?? 0) <= 0;
+  }
+
   // Sizes for the product
   const standardSizes = ["SS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"];
   const variantSizes = useMemo(() => {
@@ -280,6 +301,13 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
   const currentImg = activeImageUrl || initialImage || placeholderImage;
   const isPlaceholder = currentImg === placeholderImage || currentImg.includes("placeholders");
 
+  const activeGalleryItem = useMemo(
+    () => gallery.find((img) => img.url === currentImg),
+    [gallery, currentImg]
+  );
+  const activeColor = selectedColor ?? activeGalleryItem?.color ?? null;
+  const isActiveVariantOutOfStock = isColorOutOfStock(activeColor);
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
       {/* Left: Image Gallery */}
@@ -297,6 +325,13 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
             sizes="(max-width: 768px) 100vw, 50vw"
             priority
           />
+          {isActiveVariantOutOfStock && (
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+              <div className="w-28 h-28 sm:w-36 sm:h-36 rounded-full bg-black/65 !text-white text-base sm:text-xl font-medium flex items-center justify-center text-center whitespace-nowrap shadow-md">
+                สินค้าหมด
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Thumbnails */}
@@ -304,6 +339,7 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
           <div className="flex gap-2.5 overflow-x-auto pb-2 pt-1 scrollbar-thin">
             {gallery.map((img, idx) => {
               const isActive = img.url === currentImg;
+              const isThumbOutOfStock = isColorOutOfStock(img.color);
               return (
                 <button
                   key={img.id || img.url || idx}
@@ -323,8 +359,15 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
                     className="object-cover"
                     sizes="80px"
                   />
+                  {isThumbOutOfStock && (
+                    <div className="absolute inset-0 pb-3 flex items-center justify-center pointer-events-none z-10">
+                      <span className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/65 !text-white text-[9px] sm:text-[10px] font-medium flex items-center justify-center text-center leading-none whitespace-nowrap">
+                        สินค้าหมด
+                      </span>
+                    </div>
+                  )}
                   {img.color && (
-                    <span className="absolute bottom-0 inset-x-0 bg-black/60 text-[10px] text-white text-center py-0.5 truncate px-1">
+                    <span className="absolute bottom-0 inset-x-0 bg-black/60 text-[10px] !text-white text-center py-0.5 truncate px-1 z-20">
                       {img.color}
                     </span>
                   )}
@@ -347,12 +390,12 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
 
         <div className="flex items-center gap-2">
           <Badge variant="secondary">SKU by variant</Badge>
-          {product.status === "ACTIVE" ? (
+          {product.status === "ACTIVE" && !isActiveVariantOutOfStock ? (
             <Badge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 shadow-none">
               มีสินค้า
             </Badge>
           ) : (
-            <Badge variant="destructive">หมด</Badge>
+            <Badge variant="destructive">สินค้าหมด</Badge>
           )}
         </div>
 
@@ -498,7 +541,9 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
             onClick={handleAddToCart}
             disabled={!selectedVariant || selectedVariant.stock === 0 || remaining === 0}
           >
-            {remaining === 0 && selectedVariant ? "สินค้าหมด" : "🛒 เพิ่มลงตะกร้า"}
+            {isActiveVariantOutOfStock || (remaining === 0 && selectedVariant)
+              ? "สินค้าหมด"
+              : "🛒 เพิ่มลงตะกร้า"}
           </Button>
         </div>
 

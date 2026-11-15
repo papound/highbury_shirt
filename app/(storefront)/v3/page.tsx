@@ -30,6 +30,8 @@ async function getFeaturedProducts() {
 
     const categoryProducts = categories.flatMap((c) => c.products);
 
+    let finalProducts = categoryProducts;
+
     // If fewer than 6, backfill with active products
     if (categoryProducts.length < 6) {
       const existingIds = categoryProducts.map((p) => p.id);
@@ -46,10 +48,29 @@ async function getFeaturedProducts() {
         },
         take: 6 - categoryProducts.length,
       });
-      return [...categoryProducts, ...extra];
+      finalProducts = [...categoryProducts, ...extra];
     }
 
-    return categoryProducts;
+    const variantIds = finalProducts.flatMap((p) => p.variants.map((v) => v.id));
+    const variantStock =
+      variantIds.length > 0
+        ? await prisma.inventory.groupBy({
+            by: ["variantId"],
+            _sum: { quantity: true },
+            where: { variantId: { in: variantIds } },
+          })
+        : [];
+    const stockMap = Object.fromEntries(
+      variantStock.map((v) => [v.variantId, v._sum.quantity ?? 0])
+    );
+
+    return finalProducts.map((p) => ({
+      ...p,
+      variants: p.variants.map((v) => ({
+        ...v,
+        stock: stockMap[v.id] ?? 0,
+      })),
+    }));
   } catch (err) {
     console.error("[HomeV3Page] Error loading featured products:", err);
     return [];
