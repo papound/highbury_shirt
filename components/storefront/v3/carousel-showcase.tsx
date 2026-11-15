@@ -279,9 +279,9 @@ export default function CarouselShowcase({
                         </p>
                       </div>
 
-                      {/* 3-Spec Bar with real sourced numbers */}
+                      {/* Spec Bar: SIZES & STARTING PRICE */}
                       <div
-                        className={`grid grid-cols-3 gap-2 py-3 border-t border-b text-center ${
+                        className={`grid grid-cols-2 gap-2 py-3 border-t border-b text-center ${
                           isLight ? "border-[#E2E8F0]" : "border-[#262830]"
                         }`}
                       >
@@ -291,31 +291,14 @@ export default function CarouselShowcase({
                               isLight ? "text-[#0F172A]" : "text-white"
                             }`}
                           >
-                            100%
-                          </div>
-                          <div
-                            className={`text-[10px] uppercase ${
-                              isLight ? "text-[#64748B]" : "text-[#9496A1]"
-                            }`}
-                          >
-                            COTTON
-                          </div>
-                        </div>
-
-                        <div className={`border-l ${isLight ? "border-[#E2E8F0]" : "border-[#262830]"}`}>
-                          <div
-                            className={`text-sm font-semibold ${
-                              isLight ? "text-[#0F172A]" : "text-white"
-                            }`}
-                          >
                             S – 5XL
                           </div>
                           <div
-                            className={`text-[10px] uppercase ${
+                            className={`text-[10px] uppercase font-medium ${
                               isLight ? "text-[#64748B]" : "text-[#9496A1]"
                             }`}
                           >
-                            SIZES
+                            {lang === "th" ? "ไซส์" : "SIZES"}
                           </div>
                         </div>
 
@@ -328,11 +311,11 @@ export default function CarouselShowcase({
                             {priceStr}
                           </div>
                           <div
-                            className={`text-[10px] uppercase ${
+                            className={`text-[10px] uppercase font-medium ${
                               isLight ? "text-[#64748B]" : "text-[#9496A1]"
                             }`}
                           >
-                            STARTING
+                            {lang === "th" ? "ราคาเริ่มต้น" : "STARTING"}
                           </div>
                         </div>
                       </div>
