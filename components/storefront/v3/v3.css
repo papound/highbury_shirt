@@ -300,21 +300,25 @@ dialog.v3-dialog::backdrop {
   color: #0F172A !important;
 }
 
-/* Explicitly preserve crisp white text & icons on dark buttons and surfaces in light mode */
+/* Explicitly preserve crisp white text & icons on dark solid buttons and surfaces in light mode */
 .v3-page-wrapper[data-theme="light"] .bg-\[\#163666\],
 .v3-page-wrapper[data-theme="light"] .bg-\[\#163666\] *,
-.v3-page-wrapper[data-theme="light"] a[class*="bg-[#163666]"],
-.v3-page-wrapper[data-theme="light"] a[class*="bg-[#163666]"] *,
-.v3-page-wrapper[data-theme="light"] button[class*="bg-[#163666]"],
-.v3-page-wrapper[data-theme="light"] button[class*="bg-[#163666]"] *,
+.v3-page-wrapper[data-theme="light"] a.bg-\[\#163666\],
+.v3-page-wrapper[data-theme="light"] a.bg-\[\#163666\] *,
+.v3-page-wrapper[data-theme="light"] button.bg-\[\#163666\],
+.v3-page-wrapper[data-theme="light"] button.bg-\[\#163666\] *,
 .v3-page-wrapper[data-theme="light"] .bg-primary,
 .v3-page-wrapper[data-theme="light"] .bg-primary *,
-.v3-page-wrapper[data-theme="light"] a[class*="bg-primary"],
-.v3-page-wrapper[data-theme="light"] a[class*="bg-primary"] *,
-.v3-page-wrapper[data-theme="light"] button[class*="bg-primary"],
-.v3-page-wrapper[data-theme="light"] button[class*="bg-primary"] *,
+.v3-page-wrapper[data-theme="light"] a.bg-primary,
+.v3-page-wrapper[data-theme="light"] a.bg-primary *,
+.v3-page-wrapper[data-theme="light"] button.bg-primary,
+.v3-page-wrapper[data-theme="light"] button.bg-primary *,
 .v3-page-wrapper[data-theme="light"] .bg-\[\#0F172A\],
 .v3-page-wrapper[data-theme="light"] .bg-\[\#0F172A\] *,
+.v3-page-wrapper[data-theme="light"] a.bg-\[\#0F172A\],
+.v3-page-wrapper[data-theme="light"] a.bg-\[\#0F172A\] *,
+.v3-page-wrapper[data-theme="light"] button.bg-\[\#0F172A\],
+.v3-page-wrapper[data-theme="light"] button.bg-\[\#0F172A\] *,
 .v3-page-wrapper[data-theme="light"] .bg-black,
 .v3-page-wrapper[data-theme="light"] .bg-black *,
 .v3-page-wrapper[data-theme="light"] .bg-black\/50,
@@ -325,10 +329,6 @@ dialog.v3-dialog::backdrop {
 .v3-page-wrapper[data-theme="light"] .bg-black\/65 *,
 .v3-page-wrapper[data-theme="light"] .bg-black\/80,
 .v3-page-wrapper[data-theme="light"] .bg-black\/80 *,
-.v3-page-wrapper[data-theme="light"] a[class*="bg-[#0F172A]"],
-.v3-page-wrapper[data-theme="light"] a[class*="bg-[#0F172A]"] *,
-.v3-page-wrapper[data-theme="light"] button[class*="bg-[#0F172A]"],
-.v3-page-wrapper[data-theme="light"] button[class*="bg-[#0F172A]"] *,
 .v3-page-wrapper[data-theme="light"] a.bg-black,
 .v3-page-wrapper[data-theme="light"] a.bg-black *,
 .v3-page-wrapper[data-theme="light"] button.bg-black,
@@ -336,6 +336,12 @@ dialog.v3-dialog::backdrop {
 .v3-page-wrapper[data-theme="light"] .v3-btn-dark-pill,
 .v3-page-wrapper[data-theme="light"] .v3-btn-dark-pill * {
   color: #FFFFFF !important;
+}
+
+/* Explicitly ensure transparent/tinted tags and badges (e.g. bg-primary/5, bg-primary/10) keep their primary/dark text color */
+.v3-page-wrapper[data-theme="light"] [class*="bg-primary/"],
+.v3-page-wrapper[data-theme="light"] [class*="bg-primary/"] * {
+  color: var(--primary) !important;
 }
 
 .v3-page-wrapper[data-theme="light"] .text-\[\#E7E7E7\] {

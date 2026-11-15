@@ -622,7 +622,7 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
                   onClick={() => handleColorSelect(color)}
                   className={`px-3 py-1.5 text-sm rounded-md border-2 transition-all flex items-center cursor-pointer ${
                     isSelected
-                      ? "border-primary bg-primary/5 font-medium text-primary shadow-sm"
+                      ? "border-primary bg-primary/10 font-medium !text-primary dark:!text-white shadow-sm"
                       : "border-border hover:border-primary/50 text-foreground"
                   }`}
                 >
@@ -668,7 +668,7 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
                     disabled={!inStock}
                     className={`w-12 h-12 text-sm rounded-md border-2 transition-all flex items-center justify-center cursor-pointer ${
                       isSelected
-                        ? "border-primary bg-primary/5 font-semibold text-primary shadow-sm"
+                        ? "border-primary bg-primary/10 font-semibold !text-primary dark:!text-white shadow-sm"
                         : inStock
                         ? "border-border hover:border-primary/50 text-foreground"
                         : "border-border opacity-40 cursor-not-allowed line-through text-muted-foreground"
