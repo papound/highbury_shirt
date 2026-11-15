@@ -58,7 +58,8 @@ async function getProducts(sp: SearchParams) {
     status: "ACTIVE",
   };
 
-  if (sp.category) where.category = { slug: sp.category };
+  const activeCategory = sp.category?.trim();
+  if (activeCategory) where.category = { slug: activeCategory };
   if (sp.search) {
     const q = sp.search.trim();
     where.OR = [
@@ -126,15 +127,10 @@ export default async function ProductsPage({ searchParams }: Props) {
                 หมวดหมู่
               </h3>
               <div className="space-y-1">
-                <Link
-                  href="/products"
-                  className={`block px-2 py-1.5 rounded text-sm transition-colors ${
-                    !sp.category ? "bg-primary text-primary-foreground" : "hover:bg-secondary"
-                  }`}
-                >
-                  ทั้งหมด
-                </Link>
                 {(() => {
+                  const currentCategory = sp.category?.trim();
+                  const isAllActive = !currentCategory;
+
                   const filtered = categories.filter(
                     (cat) => cat.slug !== "mens-shirts" && cat.slug !== "womens-shirts"
                   );
@@ -146,19 +142,35 @@ export default async function ProductsPage({ searchParams }: Props) {
                     filtered.splice(othersIndex, 1);
                     filtered.push(othersCat);
                   }
-                  return filtered.map((cat) => (
-                    <Link
-                      key={cat.id}
-                      href={`/products?category=${cat.slug}`}
-                      className={`block px-2 py-1.5 rounded text-sm transition-colors ${
-                        sp.category === cat.slug
-                          ? "bg-primary text-primary-foreground"
-                          : "hover:bg-secondary"
-                      }`}
-                    >
-                      {cat.nameTh}
-                    </Link>
-                  ));
+
+                  return (
+                    <>
+                      <Link
+                        href="/products"
+                        className={`block px-2 py-1.5 rounded text-sm transition-colors ${
+                          isAllActive ? "bg-primary text-primary-foreground" : "hover:bg-secondary"
+                        }`}
+                      >
+                        ทั้งหมด
+                      </Link>
+                      {filtered.map((cat) => {
+                        const isCatActive = Boolean(currentCategory) && Boolean(cat.slug) && currentCategory === cat.slug;
+                        return (
+                          <Link
+                            key={cat.id}
+                            href={`/products?category=${cat.slug}`}
+                            className={`block px-2 py-1.5 rounded text-sm transition-colors ${
+                              isCatActive
+                                ? "bg-primary text-primary-foreground"
+                                : "hover:bg-secondary"
+                            }`}
+                          >
+                            {cat.nameTh}
+                          </Link>
+                        );
+                      })}
+                    </>
+                  );
                 })()}
               </div>
             </div>
