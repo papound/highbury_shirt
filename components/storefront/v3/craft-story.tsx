@@ -65,14 +65,19 @@ export default function CraftStory({ lang: propLang }: CraftStoryProps) {
       {/* Content Container aligned with site grid */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-28">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
-          {/* Left Column: Solid 1px-border Card with 3 Craftsmanship Specifications */}
+          {/* Left Column: Liquid Glass Translucent Card with 3 Craftsmanship Specifications */}
           <div className="lg:col-span-5 order-2 lg:order-1 flex justify-center lg:justify-start">
             <div
-              className={`w-full max-w-md p-6 sm:p-8 rounded-2xl border space-y-6 transition-colors duration-200 ${
-                isLight
-                  ? "bg-white border-[#E2E8F0] shadow-sm"
-                  : "bg-[#0E1015] border-[#262830]"
-              }`}
+              className="w-full max-w-md p-6 sm:p-8 rounded-2xl border space-y-6 transition-all duration-300"
+              style={{
+                backgroundColor: isLight ? "rgba(255, 255, 255, 0.76)" : "rgba(10, 12, 16, 0.70)",
+                backdropFilter: "blur(20px) saturate(180%)",
+                WebkitBackdropFilter: "blur(20px) saturate(180%)",
+                borderColor: isLight ? "rgba(255, 255, 255, 0.85)" : "rgba(255, 255, 255, 0.12)",
+                boxShadow: isLight
+                  ? "inset 0 1px 1px 0 rgba(255, 255, 255, 0.95), 0 20px 40px -15px rgba(0, 0, 0, 0.06)"
+                  : "inset 0 1px 1px 0 rgba(255, 255, 255, 0.18), 0 24px 48px -12px rgba(0, 0, 0, 0.5)",
+              }}
             >
               {/* Feature 1: Collar */}
               <div>
@@ -82,35 +87,35 @@ export default function CraftStory({ lang: propLang }: CraftStoryProps) {
                   {lang === "th" ? "โครงสร้างปกอัดกาวสองชั้น" : "Dual-Fused Collar Stance"}
                 </div>
                 <div className={`text-sm mt-1 leading-relaxed ${
-                  isLight ? "text-[#475569]" : "text-[#9496A1]"
+                  isLight ? "text-[#475569]" : "text-[#D1D5DB]"
                 }`}>
                   {lang === "th" ? "ปกตั้งทรงคมชัด ไม่ย้วย อยู่ทรงตลอดวันแม้ไม่ผูกเนกไท" : "Two-layer fusing maintains crisp stance throughout the workday without a tie."}
                 </div>
               </div>
 
               {/* Feature 2: Asian Fit Armhole */}
-              <div className={`border-t pt-5 ${isLight ? "border-[#E2E8F0]" : "border-[#262830]"}`}>
+              <div className={`border-t pt-5 ${isLight ? "border-slate-200/80" : "border-white/10"}`}>
                 <div className={`text-base font-semibold tracking-tight ${
                   isLight ? "text-[#0F172A]" : "text-white"
                 }`}>
                   {lang === "th" ? "วงแขนคัตติ้งเฉพาะคนไทย" : "Sculpted Asian Fit Armhole"}
                 </div>
                 <div className={`text-sm mt-1 leading-relaxed ${
-                  isLight ? "text-[#475569]" : "text-[#9496A1]"
+                  isLight ? "text-[#475569]" : "text-[#D1D5DB]"
                 }`}>
                   {lang === "th" ? "องศาวงแขนเว้าลึกพอดี ลดการรั้งตึงช่วงไหล่ ยกแขนและขยับตัวคล่องตัว" : "Calibrated armhole curvature eliminates shoulder tension during movement."}
                 </div>
               </div>
 
               {/* Feature 3: Easy Care */}
-              <div className={`border-t pt-5 ${isLight ? "border-[#E2E8F0]" : "border-[#262830]"}`}>
+              <div className={`border-t pt-5 ${isLight ? "border-slate-200/80" : "border-white/10"}`}>
                 <div className={`text-base font-semibold tracking-tight ${
                   isLight ? "text-[#0F172A]" : "text-white"
                 }`}>
                   {lang === "th" ? "เนื้อผ้า Easy-Care คืนทรงหลังซัก" : "Easy-Care Wrinkle Recovery"}
                 </div>
                 <div className={`text-sm mt-1 leading-relaxed ${
-                  isLight ? "text-[#475569]" : "text-[#9496A1]"
+                  isLight ? "text-[#475569]" : "text-[#D1D5DB]"
                 }`}>
                   {lang === "th" ? "สะบัดแขวนหลังซัก คืนทรงไว ประหยัดเวลารีดกว่า 50%" : "Rebounds post-wash to reduce ironing time by half."}
                 </div>

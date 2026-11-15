@@ -41,14 +41,19 @@ export default function PreFooterCta({
 
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
-          {/* Left Column: Solid Card with Grounded Assurances (order-2 on mobile, order-1 on lg) */}
+          {/* Left Column: Liquid Glass Translucent Card with Grounded Assurances (order-2 on mobile, order-1 on lg) */}
           <div className="lg:col-span-5 order-2 lg:order-1 flex justify-center lg:justify-start">
             <div
-              className={`w-full max-w-md p-6 sm:p-8 rounded-2xl sm:rounded-3xl border transition-all duration-300 ${
-                isLight
-                  ? "bg-white border-[#E2E8F0] shadow-sm"
-                  : "bg-[#0E1015] border-[#262830]"
-              }`}
+              className="w-full max-w-md p-6 sm:p-8 rounded-2xl sm:rounded-3xl border transition-all duration-300"
+              style={{
+                backgroundColor: isLight ? "rgba(255, 255, 255, 0.76)" : "rgba(10, 12, 16, 0.70)",
+                backdropFilter: "blur(20px) saturate(180%)",
+                WebkitBackdropFilter: "blur(20px) saturate(180%)",
+                borderColor: isLight ? "rgba(255, 255, 255, 0.85)" : "rgba(255, 255, 255, 0.12)",
+                boxShadow: isLight
+                  ? "inset 0 1px 1px 0 rgba(255, 255, 255, 0.95), 0 20px 40px -15px rgba(0, 0, 0, 0.06)"
+                  : "inset 0 1px 1px 0 rgba(255, 255, 255, 0.18), 0 24px 48px -12px rgba(0, 0, 0, 0.5)",
+              }}
             >
               {/* Stat 1: 7 Days Return */}
               <div>
@@ -63,7 +68,7 @@ export default function PreFooterCta({
                   {lang === "th" ? "รับประกันเปลี่ยนไซส์ฟรี" : "Free Size Exchange"}
                 </div>
                 <div className={`text-xs mt-0.5 ${
-                  isLight ? "text-[#64748B]" : "text-[#9496A1]"
+                  isLight ? "text-[#475569]" : "text-[#D1D5DB]"
                 }`}>
                   {lang === "th" ? "นับจากวันรับพัสดุ หากไม่พอดีเปลี่ยนใหม่ได้ทันที" : "From parcel delivery date; instant replacement if size is off."}
                 </div>
@@ -71,7 +76,7 @@ export default function PreFooterCta({
 
               {/* Stat 2: Tailored Asian Fit */}
               <div className={`border-t pt-5 mt-5 ${
-                isLight ? "border-[#E2E8F0]" : "border-[#262830]"
+                isLight ? "border-slate-200/80" : "border-white/10"
               }`}>
                 <div className={`text-2xl sm:text-3xl font-bold tracking-tight ${
                   isLight ? "text-[#0F172A]" : "text-white"
@@ -84,7 +89,7 @@ export default function PreFooterCta({
                   {lang === "th" ? "แพทเทิร์นสำหรับคนไทย" : "Tailored Proportion"}
                 </div>
                 <div className={`text-xs mt-0.5 ${
-                  isLight ? "text-[#64748B]" : "text-[#9496A1]"
+                  isLight ? "text-[#475569]" : "text-[#D1D5DB]"
                 }`}>
                   {lang === "th" ? "สัดส่วนไหล่และวงแขนพอดี คล่องตัว ไม่ตึงรั้ง" : "Balanced shoulder-to-armhole ratio for natural everyday movement."}
                 </div>
@@ -92,7 +97,7 @@ export default function PreFooterCta({
 
               {/* Stat 3: Corporate OEM */}
               <div className={`border-t pt-5 mt-5 ${
-                isLight ? "border-[#E2E8F0]" : "border-[#262830]"
+                isLight ? "border-slate-200/80" : "border-white/10"
               }`}>
                 <div className={`text-2xl sm:text-3xl font-bold tracking-tight ${
                   isLight ? "text-[#0F172A]" : "text-white"
@@ -105,7 +110,7 @@ export default function PreFooterCta({
                   {lang === "th" ? "กำลังผลิตต่อเดือน (OEM)" : "Monthly Workshop Capacity"}
                 </div>
                 <div className={`text-xs mt-0.5 ${
-                  isLight ? "text-[#64748B]" : "text-[#9496A1]"
+                  isLight ? "text-[#475569]" : "text-[#D1D5DB]"
                 }`}>
                   {lang === "th" ? "เวิร์กช็อปรองรับการปักโลโก้และเลือกผ้าตาม CI" : "Highbury workshop line with custom embroidery & fabric CI options."}
                 </div>

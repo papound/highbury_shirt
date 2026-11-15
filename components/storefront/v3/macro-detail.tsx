@@ -102,12 +102,19 @@ export default function MacroDetail({ lang: propLang }: MacroDetailProps) {
               : "Dual-fused collar stance, 16–18 SPI dense stitching, and cross-stitched 4-hole buttons for lasting durability."}
           </p>
 
-          {/* 3 Sleek Solid Spec Cards (1px border, typography-led, no decorative icons or blur) */}
+          {/* 3 Sleek Liquid Glass Spec Cards */}
           <div className="grid grid-cols-3 gap-2.5 pt-2">
             <div
-              className={`p-3 sm:p-3.5 rounded-xl border transition-colors duration-200 ${
-                isLight ? "bg-white border-[#E2E8F0]" : "bg-[#0E1015] border-[#262830]"
-              }`}
+              className="p-3 sm:p-3.5 rounded-xl border transition-all duration-300"
+              style={{
+                backgroundColor: isLight ? "rgba(255, 255, 255, 0.76)" : "rgba(10, 12, 16, 0.70)",
+                backdropFilter: "blur(16px) saturate(180%)",
+                WebkitBackdropFilter: "blur(16px) saturate(180%)",
+                borderColor: isLight ? "rgba(255, 255, 255, 0.85)" : "rgba(255, 255, 255, 0.12)",
+                boxShadow: isLight
+                  ? "inset 0 1px 1px 0 rgba(255, 255, 255, 0.95), 0 8px 20px -6px rgba(0, 0, 0, 0.04)"
+                  : "inset 0 1px 1px 0 rgba(255, 255, 255, 0.15), 0 10px 25px -8px rgba(0, 0, 0, 0.4)",
+              }}
             >
               <div className={`text-base sm:text-lg font-bold tracking-tight ${isLight ? "text-[#0F172A]" : "text-white"}`}>
                 16–18
@@ -115,15 +122,22 @@ export default function MacroDetail({ lang: propLang }: MacroDetailProps) {
               <div className={`text-[11px] font-semibold mt-1 ${isLight ? "text-[#334155]" : "text-white/90"}`}>
                 {lang === "th" ? "ฝีเข็มต่อนิ้ว (SPI)" : "SPI Density"}
               </div>
-              <div className={`text-[10px] mt-0.5 leading-snug line-clamp-1 ${isLight ? "text-[#64748B]" : "text-white/60"}`}>
+              <div className={`text-[10px] mt-0.5 leading-snug line-clamp-1 ${isLight ? "text-[#475569]" : "text-[#D1D5DB]"}`}>
                 {lang === "th" ? "ตะเข็บแน่น เรียบเนียน" : "Clean drape"}
               </div>
             </div>
 
             <div
-              className={`p-3 sm:p-3.5 rounded-xl border transition-colors duration-200 ${
-                isLight ? "bg-white border-[#E2E8F0]" : "bg-[#0E1015] border-[#262830]"
-              }`}
+              className="p-3 sm:p-3.5 rounded-xl border transition-all duration-300"
+              style={{
+                backgroundColor: isLight ? "rgba(255, 255, 255, 0.76)" : "rgba(10, 12, 16, 0.70)",
+                backdropFilter: "blur(16px) saturate(180%)",
+                WebkitBackdropFilter: "blur(16px) saturate(180%)",
+                borderColor: isLight ? "rgba(255, 255, 255, 0.85)" : "rgba(255, 255, 255, 0.12)",
+                boxShadow: isLight
+                  ? "inset 0 1px 1px 0 rgba(255, 255, 255, 0.95), 0 8px 20px -6px rgba(0, 0, 0, 0.04)"
+                  : "inset 0 1px 1px 0 rgba(255, 255, 255, 0.15), 0 10px 25px -8px rgba(0, 0, 0, 0.4)",
+              }}
             >
               <div className={`text-base sm:text-lg font-bold tracking-tight ${isLight ? "text-[#0F172A]" : "text-white"}`}>
                 2-Layer
@@ -131,15 +145,22 @@ export default function MacroDetail({ lang: propLang }: MacroDetailProps) {
               <div className={`text-[11px] font-semibold mt-1 ${isLight ? "text-[#334155]" : "text-white/90"}`}>
                 {lang === "th" ? "ปกอัดกาวคู่" : "Dual Fused"}
               </div>
-              <div className={`text-[10px] mt-0.5 leading-snug line-clamp-1 ${isLight ? "text-[#64748B]" : "text-white/60"}`}>
+              <div className={`text-[10px] mt-0.5 leading-snug line-clamp-1 ${isLight ? "text-[#475569]" : "text-[#D1D5DB]"}`}>
                 {lang === "th" ? "ปกตั้งทรง ไม่ย้วย" : "Crisp stance"}
               </div>
             </div>
 
             <div
-              className={`p-3 sm:p-3.5 rounded-xl border transition-colors duration-200 ${
-                isLight ? "bg-white border-[#E2E8F0]" : "bg-[#0E1015] border-[#262830]"
-              }`}
+              className="p-3 sm:p-3.5 rounded-xl border transition-all duration-300"
+              style={{
+                backgroundColor: isLight ? "rgba(255, 255, 255, 0.76)" : "rgba(10, 12, 16, 0.70)",
+                backdropFilter: "blur(16px) saturate(180%)",
+                WebkitBackdropFilter: "blur(16px) saturate(180%)",
+                borderColor: isLight ? "rgba(255, 255, 255, 0.85)" : "rgba(255, 255, 255, 0.12)",
+                boxShadow: isLight
+                  ? "inset 0 1px 1px 0 rgba(255, 255, 255, 0.95), 0 8px 20px -6px rgba(0, 0, 0, 0.04)"
+                  : "inset 0 1px 1px 0 rgba(255, 255, 255, 0.15), 0 10px 25px -8px rgba(0, 0, 0, 0.4)",
+              }}
             >
               <div className={`text-base sm:text-lg font-bold tracking-tight ${isLight ? "text-[#0F172A]" : "text-white"}`}>
                 4-Hole
@@ -147,7 +168,7 @@ export default function MacroDetail({ lang: propLang }: MacroDetailProps) {
               <div className={`text-[11px] font-semibold mt-1 ${isLight ? "text-[#334155]" : "text-white/90"}`}>
                 {lang === "th" ? "กระดุม 4 รู" : "Cross-Stitched"}
               </div>
-              <div className={`text-[10px] mt-0.5 leading-snug line-clamp-1 ${isLight ? "text-[#64748B]" : "text-white/60"}`}>
+              <div className={`text-[10px] mt-0.5 leading-snug line-clamp-1 ${isLight ? "text-[#475569]" : "text-[#D1D5DB]"}`}>
                 {lang === "th" ? "เย็บย้ำแน่นหนา" : "High strength"}
               </div>
             </div>

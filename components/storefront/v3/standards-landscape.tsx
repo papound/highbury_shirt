@@ -120,14 +120,19 @@ export default function StandardsLandscape({ lang: propLang }: StandardsLandscap
             </div>
           </div>
 
-          {/* Right Column: Solid Card with Grounded Metrics */}
+          {/* Right Column: Liquid Glass Translucent Card with Grounded Metrics */}
           <div className="lg:col-span-5 flex justify-center lg:justify-end">
             <div
-              className={`w-full max-w-md p-6 sm:p-8 rounded-2xl sm:rounded-3xl border transition-all duration-300 ${
-                isLight
-                  ? "bg-white border-[#E2E8F0] shadow-sm"
-                  : "bg-[#0E1015] border-[#262830]"
-              }`}
+              className="w-full max-w-md p-6 sm:p-8 rounded-2xl sm:rounded-3xl border transition-all duration-300"
+              style={{
+                backgroundColor: isLight ? "rgba(255, 255, 255, 0.76)" : "rgba(10, 12, 16, 0.70)",
+                backdropFilter: "blur(20px) saturate(180%)",
+                WebkitBackdropFilter: "blur(20px) saturate(180%)",
+                borderColor: isLight ? "rgba(255, 255, 255, 0.85)" : "rgba(255, 255, 255, 0.12)",
+                boxShadow: isLight
+                  ? "inset 0 1px 1px 0 rgba(255, 255, 255, 0.95), 0 20px 40px -15px rgba(0, 0, 0, 0.06)"
+                  : "inset 0 1px 1px 0 rgba(255, 255, 255, 0.18), 0 24px 48px -12px rgba(0, 0, 0, 0.5)",
+              }}
             >
               {/* Stat 1: 7-Day Free Exchange */}
               <div>
@@ -142,7 +147,7 @@ export default function StandardsLandscape({ lang: propLang }: StandardsLandscap
                   {lang === "th" ? "รับประกันเปลี่ยนไซส์ฟรี" : "Free Size Exchange Guarantee"}
                 </div>
                 <div className={`text-xs mt-0.5 ${
-                  isLight ? "text-[#64748B]" : "text-[#9496A1]"
+                  isLight ? "text-[#475569]" : "text-[#D1D5DB]"
                 }`}>
                   {lang === "th" ? "นับจากวันรับพัสดุ หากลองแล้วไม่พอดีเปลี่ยนฟรีทันที" : "From parcel delivery date; instant free exchange if fit is off."}
                 </div>
@@ -150,7 +155,7 @@ export default function StandardsLandscape({ lang: propLang }: StandardsLandscap
 
               {/* Stat 2: 3,500 Pcs/Month */}
               <div className={`border-t pt-5 mt-5 ${
-                isLight ? "border-[#E2E8F0]" : "border-[#262830]"
+                isLight ? "border-slate-200/80" : "border-white/10"
               }`}>
                 <div className={`text-2xl sm:text-3xl font-bold tracking-tight ${
                   isLight ? "text-[#0F172A]" : "text-white"
@@ -163,7 +168,7 @@ export default function StandardsLandscape({ lang: propLang }: StandardsLandscap
                   {lang === "th" ? "กำลังผลิตเวิร์กช็อป Highbury" : "Highbury Workshop Capacity"}
                 </div>
                 <div className={`text-xs mt-0.5 ${
-                  isLight ? "text-[#64748B]" : "text-[#9496A1]"
+                  isLight ? "text-[#475569]" : "text-[#D1D5DB]"
                 }`}>
                   {lang === "th" ? "สายการผลิตพร้อมรองรับยูนิฟอร์มองค์กรและงานปักโลโก้" : "Dedicated production line for corporate orders & logo embroidery."}
                 </div>
@@ -171,7 +176,7 @@ export default function StandardsLandscape({ lang: propLang }: StandardsLandscap
 
               {/* Stat 3: 100% Quality Inspected */}
               <div className={`border-t pt-5 mt-5 ${
-                isLight ? "border-[#E2E8F0]" : "border-[#262830]"
+                isLight ? "border-slate-200/80" : "border-white/10"
               }`}>
                 <div className={`text-2xl sm:text-3xl font-bold tracking-tight ${
                   isLight ? "text-[#0F172A]" : "text-white"
@@ -184,7 +189,7 @@ export default function StandardsLandscape({ lang: propLang }: StandardsLandscap
                   {lang === "th" ? "QC ตรวจสอบรายตัวก่อนจัดส่ง" : "Piece-by-Piece QC Inspection"}
                 </div>
                 <div className={`text-xs mt-0.5 ${
-                  isLight ? "text-[#64748B]" : "text-[#9496A1]"
+                  isLight ? "text-[#475569]" : "text-[#D1D5DB]"
                 }`}>
                   {lang === "th" ? "ตรวจเช็กฝีเข็ม ตะเข็บกระดุม และการรีดก่อนส่งถึงมือคุณ" : "Individual check on stitch density, buttons, and iron finish."}
                 </div>
