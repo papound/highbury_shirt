@@ -145,7 +145,7 @@ export default function StandardsLandscape({ lang: propLang }: StandardsLandscap
                   : "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
               }}
             >
-              {/* Stat 1: 0 Risk */}
+              {/* Stat 1: 7-Day Free Exchange */}
               <div className="flex items-start gap-4">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5 border ${
                   isLight ? "bg-[#0F172A]/5 border-[#0F172A]/10 text-[#0F172A]" : "bg-white/10 border-white/20 text-white"
@@ -156,12 +156,12 @@ export default function StandardsLandscape({ lang: propLang }: StandardsLandscap
                   <div className={`text-2xl sm:text-3xl font-bold tracking-tight ${
                     isLight ? "text-[#0F172A]" : "text-white"
                   }`}>
-                    0
+                    {lang === "th" ? "7 วัน" : "7 Days"}
                   </div>
                   <div className={`text-xs sm:text-sm font-medium mt-0.5 ${
                     isLight ? "text-[#475569]" : "text-white/80"
                   }`}>
-                    {lang === "th" ? "ความเสี่ยงเรื่องไซส์ (เปลี่ยนฟรีใน 7 วัน)" : "Sizing Risk (7-Day Free Exchange)"}
+                    {lang === "th" ? "รับประกันเปลี่ยนไซส์ฟรี" : "Free Size Exchange Guarantee"}
                   </div>
                 </div>
               </div>

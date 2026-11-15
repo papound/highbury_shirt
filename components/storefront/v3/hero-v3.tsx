@@ -158,7 +158,7 @@ export default function HeroV3({
                   theme === "light" ? "text-[#0F172A]" : "text-white"
                 }`}
               >
-                100%
+                100% Premium Cotton
               </div>
               <div
                 className={`text-xs mt-0.5 ${
