@@ -122,7 +122,7 @@ export default function HomeV3({ featuredProducts }: HomeV3Props) {
       </div>
 
       {/* 5. Section 5: Standards Landscape with 3 Stats (Quantum Highway Equivalent) */}
-      <div className="v3-section-deferred">
+      <div className="v3-section-deferred relative z-10">
         <StandardsLandscape lang={lang} />
       </div>
 

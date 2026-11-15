@@ -16,52 +16,59 @@ export default function StandardsLandscape({ lang: propLang }: StandardsLandscap
   const isLight = theme === "light";
 
   return (
-    <section id="standards" className="relative w-full min-h-[640px] lg:min-h-[720px] flex items-center overflow-hidden scroll-mt-20">
-      {/* Background Image: Highbury Coastal Road Photoshoot (Edge-to-Edge, No Outer Border) */}
-      <Image
-        src="/images/standards-landscape.jpg"
-        alt="Highbury Standards Coastal Highway Tailoring"
-        fill
-        sizes="100vw"
-        className="object-cover object-[70%_35%] lg:object-[center_35%]"
-        priority
-      />
+    <section
+      id="standards"
+      className={`relative w-full min-h-[640px] lg:min-h-[720px] xl:min-h-[760px] flex items-center overflow-visible scroll-mt-20 transition-colors duration-300 ${
+        isLight ? "bg-white" : "bg-[#07080B]"
+      }`}
+    >
+      {/* Background Image Container with Overflow Hidden (Edge-to-Edge) */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+        <Image
+          src="/images/standards-landscape.jpg"
+          alt="Highbury Standards Coastal Highway Tailoring"
+          fill
+          sizes="100vw"
+          className="object-cover object-[70%_35%] lg:object-[center_35%]"
+          priority
+        />
 
-      {/* Top Edge Blend (Seamless Transition from Macro Detail) */}
-      <div
-        className={`absolute inset-x-0 top-0 h-14 sm:h-16 lg:h-20 pointer-events-none z-1 transition-colors duration-300 ${
-          isLight
-            ? "bg-gradient-to-b from-white/25 via-white/8 to-transparent"
-            : "bg-gradient-to-b from-[#07080B]/25 via-[#07080B]/8 to-transparent"
-        }`}
-      />
+        {/* Top Edge Blend (Deep Cinematic Feather Melt from Macro Detail) */}
+        <div
+          className={`absolute inset-x-0 top-0 h-36 sm:h-52 lg:h-72 pointer-events-none z-2 transition-colors duration-300 ${
+            isLight
+              ? "bg-gradient-to-b from-white via-white/95 via-25% via-white/50 via-60% to-transparent"
+              : "bg-gradient-to-b from-[#07080B] via-[#07080B]/95 via-25% via-[#07080B]/50 via-60% to-transparent"
+          }`}
+        />
 
-      {/* Bottom Edge Blend (Seamless Transition into Pre-Footer) */}
-      <div
-        className={`absolute inset-x-0 bottom-0 h-14 sm:h-16 lg:h-20 pointer-events-none z-1 transition-colors duration-300 ${
-          isLight
-            ? "bg-gradient-to-t from-white/25 via-white/8 to-transparent"
-            : "bg-gradient-to-t from-[#07080B]/25 via-[#07080B]/8 to-transparent"
-        }`}
-      />
+        {/* Bottom Edge Blend (Seamless Transition into Pre-Footer) */}
+        <div
+          className={`absolute inset-x-0 bottom-0 h-28 sm:h-40 lg:h-56 pointer-events-none z-2 transition-colors duration-300 ${
+            isLight
+              ? "bg-gradient-to-t from-white via-white/90 via-30% to-transparent"
+              : "bg-gradient-to-t from-[#07080B] via-[#07080B]/90 via-30% to-transparent"
+          }`}
+        />
 
-      {/* Smooth Gradient Fade Layer (Softer, Airier Dissolve so Road and Models are Fully Bright & Vibrant) */}
-      <div
-        className="absolute inset-0 pointer-events-none transition-opacity duration-300 max-lg:hidden z-1"
-        style={{
-          background: isLight
-            ? "linear-gradient(to right, #FFFFFF 0%, rgba(255, 255, 255, 0.96) 20%, rgba(255, 255, 255, 0.72) 30%, rgba(255, 255, 255, 0.15) 42%, transparent 52%)"
-            : "linear-gradient(to right, #07080B 0%, rgba(7, 8, 11, 0.94) 20%, rgba(7, 8, 11, 0.65) 30%, rgba(7, 8, 11, 0.12) 42%, transparent 52%)",
-        }}
-      />
-      {/* Mobile Fade Layer */}
-      <div
-        className={`lg:hidden absolute inset-0 pointer-events-none transition-colors duration-300 ${
-          isLight
-            ? "bg-gradient-to-t from-white/95 via-white/80 via-40% to-transparent"
-            : "bg-gradient-to-t from-[#07080B]/95 via-[#07080B]/80 via-40% to-transparent"
-        }`}
-      />
+        {/* Smooth Gradient Fade Layer (Softer, Airier Dissolve so Road and Models are Fully Bright & Vibrant) */}
+        <div
+          className="absolute inset-0 pointer-events-none transition-opacity duration-300 max-lg:hidden z-1"
+          style={{
+            background: isLight
+              ? "linear-gradient(to right, #FFFFFF 0%, rgba(255, 255, 255, 0.96) 20%, rgba(255, 255, 255, 0.72) 30%, rgba(255, 255, 255, 0.15) 42%, transparent 52%)"
+              : "linear-gradient(to right, #07080B 0%, rgba(7, 8, 11, 0.94) 20%, rgba(7, 8, 11, 0.65) 30%, rgba(7, 8, 11, 0.12) 42%, transparent 52%)",
+          }}
+        />
+        {/* Mobile Fade Layer */}
+        <div
+          className={`lg:hidden absolute inset-0 pointer-events-none transition-colors duration-300 z-1 ${
+            isLight
+              ? "bg-gradient-to-t from-white/95 via-white/80 via-40% to-transparent"
+              : "bg-gradient-to-t from-[#07080B]/95 via-[#07080B]/80 via-40% to-transparent"
+          }`}
+        />
+      </div>
 
       {/* Content Container aligned with site grid */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-28">
@@ -123,7 +130,7 @@ export default function StandardsLandscape({ lang: propLang }: StandardsLandscap
           {/* Right Column: Liquid Glass Translucent Card with Grounded Metrics */}
           <div className="lg:col-span-5 flex justify-center lg:justify-end">
             <div
-              className="w-full max-w-md p-6 sm:p-8 rounded-2xl sm:rounded-3xl border transition-all duration-300"
+              className="w-full max-w-md p-6 sm:p-8 rounded-2xl sm:rounded-3xl border transition-all duration-300 lg:-mt-12 xl:-mt-20 relative z-20"
               style={{
                 backgroundColor: isLight ? "rgba(255, 255, 255, 0.76)" : "rgba(10, 12, 16, 0.70)",
                 backdropFilter: "blur(20px) saturate(180%)",

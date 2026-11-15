@@ -16,36 +16,36 @@ export default function MacroDetail({ lang: propLang }: MacroDetailProps) {
   const isLight = theme === "light";
 
   return (
-    <section id="details" className={`relative w-full min-h-[640px] lg:min-h-[720px] flex items-center overflow-hidden scroll-mt-20 transition-colors duration-300 ${
+    <section id="details" className={`relative w-full min-h-[640px] lg:min-h-[720px] xl:min-h-[760px] flex items-center overflow-hidden scroll-mt-20 transition-colors duration-300 ${
       isLight ? "bg-white" : "bg-[#07080B]"
     }`}>
       {/* Background Image: Shifted to right with soft feather mask on left edge */}
-      <div className="absolute inset-y-0 right-0 w-full lg:w-[78%] xl:w-[74%] pointer-events-none z-0 v3-macro-image-mask">
+      <div className="absolute inset-y-0 right-0 w-full lg:w-[78%] xl:w-[74%] 2xl:w-[68%] 3xl:w-[58%] max-w-[1600px] pointer-events-none z-0 v3-macro-image-mask">
         <Image
           src="/images/macro-detail.jpg"
           alt="Highbury Asian Fit Tailoring Details"
           fill
-          sizes="100vw"
-          className="object-cover object-[75%_top] lg:object-[80%_top]"
+          sizes="(min-width: 1536px) 1600px, 100vw"
+          className="object-cover object-[75%_22%] lg:object-[80%_22%]"
           priority
         />
       </div>
 
       {/* Top Edge Blend (Seamless Transition from Previous Section) */}
       <div
-        className={`absolute inset-x-0 top-0 h-14 sm:h-16 lg:h-20 pointer-events-none z-1 transition-colors duration-300 ${
+        className={`absolute inset-x-0 top-0 h-16 sm:h-24 lg:h-32 pointer-events-none z-2 transition-colors duration-300 ${
           isLight
-            ? "bg-gradient-to-b from-white/25 via-white/8 to-transparent"
-            : "bg-gradient-to-b from-[#07080B]/25 via-[#07080B]/8 to-transparent"
+            ? "bg-gradient-to-b from-white via-white/50 to-transparent"
+            : "bg-gradient-to-b from-[#07080B] via-[#07080B]/50 to-transparent"
         }`}
       />
 
-      {/* Bottom Edge Blend (Seamless Transition into Next Section) */}
+      {/* Bottom Edge Blend (Deep Cinematic Melt into Standards Landscape) */}
       <div
-        className={`absolute inset-x-0 bottom-0 h-14 sm:h-16 lg:h-20 pointer-events-none z-1 transition-colors duration-300 ${
+        className={`absolute inset-x-0 bottom-0 h-36 sm:h-52 lg:h-72 pointer-events-none z-2 transition-colors duration-300 ${
           isLight
-            ? "bg-gradient-to-t from-white/25 via-white/8 to-transparent"
-            : "bg-gradient-to-t from-[#07080B]/25 via-[#07080B]/8 to-transparent"
+            ? "bg-gradient-to-t from-white via-white/95 via-25% via-white/50 via-60% to-transparent"
+            : "bg-gradient-to-t from-[#07080B] via-[#07080B]/95 via-25% via-[#07080B]/50 via-60% to-transparent"
         }`}
       />
 
