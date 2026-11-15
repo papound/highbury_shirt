@@ -102,12 +102,12 @@ export default function PreFooterCta({
                   <div className={`text-2xl sm:text-3xl font-bold tracking-tight ${
                     isLight ? "text-[#0F172A]" : "text-white"
                   }`}>
-                    {lang === "th" ? "สรีระคนไทย" : "Asian Fit"}
+                    {lang === "th" ? "ทรงพอดีตัว" : "Asian Fit"}
                   </div>
                   <div className={`text-xs sm:text-sm font-medium mt-0.5 ${
                     isLight ? "text-[#334155]" : "text-white/80"
                   }`}>
-                    {lang === "th" ? "แพทเทิร์นสรีระคนไทยโดยเฉพาะ" : "Asian Proportion Silhouette"}
+                    {lang === "th" ? "แพทเทิร์นสำหรับคนไทยโดยเฉพาะ" : "Asian Proportion Silhouette"}
                   </div>
                   <div className={`text-[11px] sm:text-xs mt-0.5 ${
                     isLight ? "text-[#64748B]" : "text-white/60"
