@@ -184,6 +184,10 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
   });
 
   const thumbRef = useRef<HTMLDivElement>(null);
+  const isLightboxOpenRef = useRef(false);
+  const selectedIndexRef = useRef(selectedIndex);
+  selectedIndexRef.current = selectedIndex;
+  const dragStartPos = useRef<{ x: number; y: number } | null>(null);
 
   // Sync selected index when user swipes on main gallery
   const onSelect = useCallback(() => {
@@ -214,7 +218,11 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
     if (emblaApi && emblaApi.selectedScrollSnap() !== idx) {
       emblaApi.scrollTo(idx, true);
     }
-  }, [lightboxApi, emblaApi]);
+    const activeImg = displayImages[idx];
+    if (activeImg?.color && activeImg.color !== selectedColor) {
+      setSelectedColor(activeImg.color);
+    }
+  }, [lightboxApi, emblaApi, displayImages, selectedColor]);
 
   useEffect(() => {
     if (!lightboxApi) return;
@@ -226,12 +234,22 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
     };
   }, [lightboxApi, onLightboxSelect]);
 
-  // When Lightbox opens, scroll to selectedIndex
+  // When Lightbox opens, sync its initial position ONCE (prevents race condition during swipe/drag)
   useEffect(() => {
     if (isLightboxOpen && lightboxApi) {
-      lightboxApi.scrollTo(selectedIndex, true);
+      if (!isLightboxOpenRef.current) {
+        isLightboxOpenRef.current = true;
+        const target = selectedIndexRef.current;
+        const raf = requestAnimationFrame(() => {
+          lightboxApi.reInit();
+          lightboxApi.scrollTo(target, true);
+        });
+        return () => cancelAnimationFrame(raf);
+      }
+    } else if (!isLightboxOpen) {
+      isLightboxOpenRef.current = false;
     }
-  }, [isLightboxOpen, lightboxApi, selectedIndex]);
+  }, [isLightboxOpen, lightboxApi]);
 
   // Auto-scroll active thumbnail into view
   useEffect(() => {
@@ -833,8 +851,16 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
                   <div
                     key={`lightbox-${img.id || img.url || idx}`}
                     className="relative flex-[0_0_100%] min-w-0 h-full flex items-center justify-center select-none"
-                    onClick={(e) => {
-                      if (e.target === e.currentTarget) {
+                    onPointerDown={(e) => {
+                      dragStartPos.current = { x: e.clientX, y: e.clientY };
+                    }}
+                    onPointerUp={(e) => {
+                      if (!dragStartPos.current) return;
+                      const dx = Math.abs(e.clientX - dragStartPos.current.x);
+                      const dy = Math.abs(e.clientY - dragStartPos.current.y);
+                      dragStartPos.current = null;
+                      // Close only on backdrop click without drag
+                      if (dx < 6 && dy < 6 && e.target === e.currentTarget) {
                         setIsLightboxOpen(false);
                       }
                     }}
@@ -844,9 +870,9 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
                         src={img.url}
                         alt={img.altText || product.nameTh}
                         fill
-                        className="object-contain"
+                        className="object-contain select-none"
                         sizes="(max-width: 1200px) 100vw, 1200px"
-                        priority
+                        priority={idx === selectedIndex}
                         draggable={false}
                       />
                     </div>
