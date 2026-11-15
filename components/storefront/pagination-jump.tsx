@@ -27,18 +27,18 @@ export function PaginationJump({ currentPage, totalPages, searchParams }: Props)
 
   return (
     <form onSubmit={handleSubmit} className="flex items-center gap-1.5">
-      <span className="text-sm text-slate-400 whitespace-nowrap">ไปหน้า</span>
+      <span className="text-sm text-muted-foreground whitespace-nowrap">ไปหน้า</span>
       <input
         type="number"
         min={1}
         max={totalPages}
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        className="w-14 h-9 rounded-xl border border-input bg-background text-foreground text-center text-sm font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all"
+        className="w-14 h-9 rounded-xl border border-input bg-background text-foreground text-center text-sm font-medium shadow-xs focus:outline-none focus:ring-2 focus:ring-[#163666]/20 focus:border-[#163666] dark:focus:ring-white/20 dark:focus:border-white transition-all"
       />
       <button
         type="submit"
-        className="h-9 px-3 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-colors shadow-sm"
+        className="h-9 px-3.5 rounded-xl bg-[#163666] hover:bg-[#112a52] !text-white dark:bg-white dark:!text-[#0F172A] dark:hover:bg-slate-100 text-sm font-medium transition-all duration-150 shadow-xs hover:shadow-sm cursor-pointer"
       >
         ไป
       </button>
