@@ -155,32 +155,47 @@ export default function CarouselShowcase({
             </p>
           </div>
 
-          {/* Carousel Arrow Controls (Quantum Circular Pills) */}
-          <div className="flex items-center gap-2.5">
-            <button
-              type="button"
-              onClick={scrollPrev}
-              className={`p-3 rounded-full border transition-all duration-200 cursor-pointer flex items-center justify-center ${
+          {/* Top Right Controls: View All Products CTA + Carousel Arrow Controls */}
+          <div className="flex items-center justify-between sm:justify-end gap-3 w-full lg:w-auto shrink-0">
+            <Link
+              href="/products"
+              className={`inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer ${
                 isLight
-                  ? "border-[#E2E8F0] bg-white text-[#0F172A] hover:bg-[#F1F5F9] shadow-xs"
-                  : "border-white/20 bg-white/5 text-white hover:bg-white/10"
+                  ? "bg-[#163666] hover:bg-[#112a52] !text-white shadow-xs hover:shadow-sm hover:-translate-y-0.5 active:translate-y-0"
+                  : "bg-white/10 hover:bg-white/20 text-white border border-white/20 hover:border-white/30 backdrop-blur-sm"
               }`}
-              aria-label="Previous shirt model"
             >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-            <button
-              type="button"
-              onClick={scrollNext}
-              className={`p-3 rounded-full border transition-all duration-200 cursor-pointer flex items-center justify-center ${
-                isLight
-                  ? "border-[#E2E8F0] bg-white text-[#0F172A] hover:bg-[#F1F5F9] shadow-xs"
-                  : "border-white/20 bg-white/5 text-white hover:bg-white/10"
-              }`}
-              aria-label="Next shirt model"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
+              <span>{lang === "th" ? "ดูสินค้าทั้งหมด" : "View All Products"}</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+
+            {/* Carousel Arrow Controls (Quantum Circular Pills) */}
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={scrollPrev}
+                className={`p-2.5 sm:p-3 rounded-full border transition-all duration-200 cursor-pointer flex items-center justify-center ${
+                  isLight
+                    ? "border-[#E2E8F0] bg-white text-[#0F172A] hover:bg-[#F1F5F9] shadow-xs"
+                    : "border-white/20 bg-white/5 text-white hover:bg-white/10"
+                }`}
+                aria-label="Previous shirt model"
+              >
+                <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+              </button>
+              <button
+                type="button"
+                onClick={scrollNext}
+                className={`p-2.5 sm:p-3 rounded-full border transition-all duration-200 cursor-pointer flex items-center justify-center ${
+                  isLight
+                    ? "border-[#E2E8F0] bg-white text-[#0F172A] hover:bg-[#F1F5F9] shadow-xs"
+                    : "border-white/20 bg-white/5 text-white hover:bg-white/10"
+                }`}
+                aria-label="Next shirt model"
+              >
+                <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+              </button>
+            </div>
           </div>
         </div>
 
