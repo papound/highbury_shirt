@@ -418,8 +418,6 @@ export default function AboutContent() {
                 <div className="flex items-center gap-1.5">
                   <Phone className={`w-3.5 h-3.5 ${isLight ? "text-[#B45309]" : "text-[#FFB900]"}`} />
                   <a href="tel:0863116292" className={`underline underline-offset-4 ${isLight ? "hover:text-[#0F172A]" : "hover:text-white"}`}>086-311-6292</a>
-                  <span>หรือ</span>
-                  <a href="tel:028968066" className={`underline underline-offset-4 ${isLight ? "hover:text-[#0F172A]" : "hover:text-white"}`}>02-896-8066 ต่อ 9</a>
                 </div>
               </div>
             </div>

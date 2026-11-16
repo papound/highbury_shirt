@@ -57,7 +57,7 @@ export default async function AdminOrderDetailPage({ params }: Props) {
             <div className="space-y-1">
               <p className="text-sm font-medium text-primary">🏪 รับที่ร้าน</p>
               <p className="text-sm text-muted-foreground">Highbury International</p>
-              <p className="text-sm text-muted-foreground">โทร: 02-896-8066 ต่อ 9</p>
+              <p className="text-sm text-muted-foreground">โทร: 086-311-6292</p>
             </div>
           ) : (
             <>
