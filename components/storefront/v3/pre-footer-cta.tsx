@@ -63,9 +63,6 @@ export default function PreFooterCta({
                   }`}>
                     {lang === "th" ? "พร้อมปักโลโก้" : "Custom Logo"}
                   </span>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#FFB900]/20 text-[#FFB900] border border-[#FFB900]/40">
-                    {lang === "th" ? "คอมพิวเตอร์" : "Embroidery"}
-                  </span>
                 </div>
                 <div className={`text-xs sm:text-sm font-medium mt-1 ${
                   isLight ? "text-[#0F172A]" : "text-white/90"
