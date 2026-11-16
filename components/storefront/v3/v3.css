@@ -300,6 +300,11 @@ dialog.v3-dialog::backdrop {
   color: #0F172A !important;
 }
 
+/* Ensure home monogram in light mode is always crisp dark/visible even if theme state lags */
+.v3-page-wrapper[data-theme="light"] .v3-home-monogram {
+  filter: brightness(0);
+}
+
 /* Explicitly preserve crisp white text & icons on dark solid buttons and surfaces in light mode */
 .v3-page-wrapper[data-theme="light"] .bg-\[\#163666\],
 .v3-page-wrapper[data-theme="light"] .bg-\[\#163666\] *,

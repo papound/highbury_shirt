@@ -9,12 +9,15 @@ import { useStorefrontV3Safe } from "../storefront-shell";
 export default function V3Footer() {
   const v3 = useStorefrontV3Safe();
   const lang = v3?.lang || "th";
+  const isLight = v3?.theme === "light";
   const pathname = usePathname();
   const isHomePage = pathname === "/" || pathname === "/v3";
 
   const footerLogoSrc = isHomePage
-    ? "/images/logo/home-monogram-white.svg"
-    : "/images/logo/highbury-emblem.png";
+    ? isLight
+      ? "/images/logo/home-monogram-black.svg"
+      : "/images/logo/home-monogram-white.svg"
+    : "/images/logo/highbury-emblem.svg";
 
   return (
     <footer className="w-full bg-[#07080B] text-[#9496A1] py-14 sm:py-16 border-t border-[#262830] font-sans">
@@ -32,7 +35,9 @@ export default function V3Footer() {
                 alt="Highbury International Logo"
                 width={36}
                 height={36}
-                className="w-8 h-8 sm:w-9 sm:h-9 object-contain shrink-0"
+                className={`w-8 h-8 sm:w-9 sm:h-9 object-contain shrink-0 ${
+                  isHomePage ? "v3-home-monogram" : ""
+                }`}
               />
               <span className="text-base font-bold tracking-[0.2em] text-white uppercase font-sans">
                 HIGHBURY INTERNATIONAL

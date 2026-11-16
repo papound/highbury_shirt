@@ -48,7 +48,7 @@ export default function HeaderV3({
     ? theme === "light"
       ? "/images/logo/home-monogram-black.svg"
       : "/images/logo/home-monogram-white.svg"
-    : "/images/logo/highbury-emblem.png";
+    : "/images/logo/highbury-emblem.svg";
 
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
@@ -202,7 +202,9 @@ export default function HeaderV3({
                 alt="Highbury Logo"
                 width={32}
                 height={32}
-                className="w-7 h-7 sm:w-8 sm:h-8 object-contain shrink-0 transition-opacity"
+                className={`w-7 h-7 sm:w-8 sm:h-8 object-contain shrink-0 transition-opacity ${
+                  isHomePage ? "v3-home-monogram" : ""
+                }`}
                 priority
               />
               <span

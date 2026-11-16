@@ -302,7 +302,7 @@ export default function ParallaxHeroCraft({
                 alt="Highbury Monogram"
                 width={16}
                 height={16}
-                className="w-4 h-4 object-contain shrink-0"
+                className="w-4 h-4 object-contain shrink-0 v3-home-monogram"
                 priority
               />
               <span className="tracking-[0.16em] uppercase text-[11px] font-medium">
@@ -708,7 +708,7 @@ export default function ParallaxHeroCraft({
                   alt="Highbury Monogram"
                   width={16}
                   height={16}
-                  className="w-4 h-4 object-contain shrink-0"
+                  className="w-4 h-4 object-contain shrink-0 v3-home-monogram"
                   priority
                 />
                 <span className="tracking-[0.16em] uppercase text-[11px] font-medium">
