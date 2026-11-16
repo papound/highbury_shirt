@@ -15,6 +15,7 @@ import {
 import { Plus, Pencil, Package, ImageIcon, Download, ChevronLeft, ChevronRight } from "lucide-react";
 import AdminProductImportDialog from "@/components/admin/product-import-dialog";
 import ProductClearButton from "@/components/admin/product-clear-button";
+import ProductDeleteButton from "@/components/admin/product-delete-button";
 
 const PAGE_SIZE = 20;
 
@@ -127,7 +128,7 @@ export default async function AdminProductsPage({ searchParams }: Props) {
                 <TableHead className="text-right">ราคา</TableHead>
                 <TableHead className="text-center">Variants</TableHead>
                 <TableHead className="text-center">สถานะ</TableHead>
-                <TableHead className="w-20" />
+                <TableHead className="text-right">จัดการ</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -194,12 +195,18 @@ export default async function AdminProductsPage({ searchParams }: Props) {
                         </span>
                       </TableCell>
                       <TableCell className="text-right">
-                        <Button asChild variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100 transition-opacity h-8 px-2 text-blue-600 hover:text-blue-700">
-                          <Link href={`/admin/products/${product.id}`}>
-                            <Pencil className="w-4 h-4 mr-1.5" />
-                            <span className="text-xs font-medium">แก้ไข</span>
-                          </Link>
-                        </Button>
+                        <div className="flex items-center justify-end gap-1">
+                          <Button asChild variant="ghost" size="sm" className="h-8 px-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50">
+                            <Link href={`/admin/products/${product.id}`}>
+                              <Pencil className="w-4 h-4 mr-1.5" />
+                              <span className="text-xs font-medium">แก้ไข</span>
+                            </Link>
+                          </Button>
+                          <ProductDeleteButton
+                            productId={product.id}
+                            productName={product.nameTh || product.name}
+                          />
+                        </div>
                       </TableCell>
                     </TableRow>
                   );
