@@ -11,6 +11,7 @@ import { useCartStore } from "@/hooks/use-cart";
 import { useStorefrontV3Safe } from "./storefront-shell";
 import { toast } from "sonner";
 import colorMap from "@/lib/color-map.json";
+import { getColorHex } from "@/lib/placeholders";
 
 export interface ProductImageItem {
   id: string;
@@ -57,6 +58,7 @@ interface GalleryImage {
   altText: string | null;
   color?: string | null;
   isPrimary?: boolean;
+  isMockup?: boolean;
 }
 
 export default function ProductView({ product, placeholderImage }: ProductViewProps) {
@@ -147,8 +149,34 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
       }
     }
 
+    // 3. For any variant color that does not have an image, add a mockup/placeholder slide
+    // so that every color option has a visual representation and renders in a full carousel.
+    const presentColors = new Set(
+      list.map((img) => img.color).filter(Boolean)
+    );
+
+    const uniqueVariantColors: string[] = [];
+    for (const v of product.variants || []) {
+      if (v.color && !uniqueVariantColors.includes(v.color)) {
+        uniqueVariantColors.push(v.color);
+      }
+    }
+
+    for (const c of uniqueVariantColors) {
+      if (!presentColors.has(c)) {
+        list.push({
+          id: `mockup-${c}`,
+          url: placeholderImage,
+          altText: `${product.nameTh} - สี${c} (ภาพตัวอย่าง/Mockup)`,
+          color: c,
+          isPrimary: false,
+          isMockup: true,
+        });
+      }
+    }
+
     return list;
-  }, [product.images, product.variants, product.nameTh]);
+  }, [product.images, product.variants, product.nameTh, placeholderImage]);
 
   const displayImages = useMemo(() => {
     if (gallery.length > 0) return gallery;
@@ -159,6 +187,7 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
         altText: product.nameTh,
         color: null,
         isPrimary: true,
+        isMockup: true,
       },
     ];
   }, [gallery, placeholderImage, product.nameTh]);
@@ -375,11 +404,31 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
     return null;
   }
 
+  // Hex color lookup map for variants
+  const variantColorHexMap = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const v of product.variants || []) {
+      if (v.color && v.colorHex && !map.has(v.color)) {
+        map.set(v.color, v.colorHex);
+      }
+    }
+    return map;
+  }, [product.variants]);
+
   // Handle color selection
   function handleColorSelect(color: string) {
     setSelectedColor(color);
     setSelectedSize(null);
 
+    // 1. Direct match by color in displayImages
+    const idxByColor = displayImages.findIndex((img) => img.color === color);
+    if (idxByColor !== -1) {
+      setSelectedIndex(idxByColor);
+      emblaApi?.scrollTo(idxByColor);
+      return;
+    }
+
+    // 2. Fallback to getImageForColor
     const matchingImage = getImageForColor(color);
     if (matchingImage) {
       const idx = displayImages.findIndex((img) => img.url === matchingImage);
@@ -427,14 +476,11 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
     toast.success(`เพิ่ม "${product.nameTh}" ลงตะกร้าแล้ว 🛒`);
   }
 
-  const currentImg = displayImages[selectedIndex]?.url || placeholderImage;
+  const currentImageItem = displayImages[selectedIndex];
+  const currentImg = currentImageItem?.url || placeholderImage;
   const isPlaceholder = currentImg === placeholderImage || currentImg.includes("placeholders");
 
-  const activeGalleryItem = useMemo(
-    () => gallery.find((img) => img.url === currentImg),
-    [gallery, currentImg]
-  );
-  const activeColor = selectedColor ?? activeGalleryItem?.color ?? null;
+  const activeColor = selectedColor ?? currentImageItem?.color ?? null;
   const isActiveVariantOutOfStock = isColorOutOfStock(activeColor);
 
   return (
@@ -452,6 +498,10 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
               {displayImages.map((img, idx) => {
                 const isPlaceholder =
                   img.url === placeholderImage || img.url.includes("placeholders");
+                const swatchHex = img.color
+                  ? variantColorHexMap.get(img.color) || getColorHex(img.color)
+                  : null;
+
                 return (
                   <div
                     key={img.id || img.url || idx}
@@ -467,13 +517,26 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
                       fill
                       className={
                         isPlaceholder
-                          ? "object-contain p-6 bg-[#FAF6EE]"
+                          ? "object-contain p-6 bg-[#FAF6EE] dark:bg-slate-900/40"
                           : "object-cover transition-transform duration-300 group-hover:scale-[1.02]"
                       }
                       sizes="(max-width: 768px) 100vw, 50vw"
                       priority={idx === 0}
                       draggable={false}
                     />
+
+                    {/* Mockup Badge Indicator */}
+                    {img.isMockup && img.color && (
+                      <div className="absolute top-3 left-3 z-10 px-2.5 py-1 rounded-full bg-black/65 backdrop-blur-md text-white text-[11px] font-medium flex items-center gap-1.5 shadow-sm">
+                        {swatchHex && (
+                          <span
+                            className="w-2.5 h-2.5 rounded-full border border-white/60 shrink-0"
+                            style={{ backgroundColor: swatchHex }}
+                          />
+                        )}
+                        <span>ภาพตัวอย่าง · สี{img.color}</span>
+                      </div>
+                    )}
                   </div>
                 );
               })}
@@ -554,6 +617,10 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
             {displayImages.map((img, idx) => {
               const isActive = idx === selectedIndex;
               const isThumbOutOfStock = isColorOutOfStock(img.color);
+              const swatchHex = img.color
+                ? variantColorHexMap.get(img.color) || getColorHex(img.color)
+                : null;
+
               return (
                 <button
                   key={img.id || img.url || idx}
@@ -570,9 +637,22 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
                     src={img.url}
                     alt={img.altText ?? `${product.nameTh} - รูปที่ ${idx + 1}`}
                     fill
-                    className="object-cover"
+                    className={
+                      img.isMockup
+                        ? "object-contain p-1.5 bg-[#FAF6EE] dark:bg-slate-900/40"
+                        : "object-cover"
+                    }
                     sizes="80px"
                   />
+                  {img.isMockup && swatchHex && (
+                    <div className="absolute top-1 left-1 z-10">
+                      <span
+                        className="w-2.5 h-2.5 rounded-full border border-white/70 block shadow-xs"
+                        style={{ backgroundColor: swatchHex }}
+                        title={`สี ${img.color} (ภาพตัวอย่าง)`}
+                      />
+                    </div>
+                  )}
                   {isThumbOutOfStock && (
                     <div className="absolute inset-0 pb-3 flex items-center justify-center pointer-events-none z-10">
                       <span className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/65 !text-white text-[9px] sm:text-[10px] font-medium flex items-center justify-center text-center leading-none whitespace-nowrap">
@@ -875,6 +955,11 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
                         priority={idx === selectedIndex}
                         draggable={false}
                       />
+                      {img.isMockup && img.color && (
+                        <div className="absolute top-4 left-4 z-10 px-3 py-1.5 rounded-full bg-black/70 backdrop-blur-md text-white text-xs font-medium flex items-center gap-2 shadow-md">
+                          <span>ภาพตัวอย่าง (Mockup) · สี{img.color}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -938,9 +1023,14 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
                         src={img.url}
                         alt={img.altText || `ภาพ ${idx + 1}`}
                         fill
-                        className="object-cover"
+                        className={img.isMockup ? "object-contain p-1 bg-[#FAF6EE]" : "object-cover"}
                         sizes="56px"
                       />
+                      {img.color && (
+                        <span className="absolute bottom-0 inset-x-0 bg-black/75 text-[9px] text-white text-center py-0.5 truncate px-0.5 leading-none">
+                          {img.color}
+                        </span>
+                      )}
                     </button>
                   );
                 })}
