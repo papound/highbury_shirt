@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, MessageSquare, Phone, Sparkles } from "lucide-react";
 import { useStorefrontV3Safe } from "../storefront-shell";
 
 interface PreFooterCtaProps {
-  onOpenSizeGuide: () => void;
+  onOpenSizeGuide?: () => void;
   lang?: "th" | "en";
 }
 
@@ -41,78 +41,89 @@ export default function PreFooterCta({
 
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
-          {/* Left Column: Liquid Glass Translucent Card with Grounded Assurances (order-2 on mobile, order-1 on lg) */}
+          {/* Left Column: Liquid Glass Translucent Card with OEM Highlights (order-2 on mobile, order-1 on lg) */}
           <div className="lg:col-span-5 order-2 lg:order-1 flex justify-center lg:justify-start">
             <div
               className="w-full max-w-md p-6 sm:p-8 rounded-2xl sm:rounded-3xl border transition-all duration-300"
               style={{
-                backgroundColor: isLight ? "rgba(255, 255, 255, 0.76)" : "rgba(10, 12, 16, 0.70)",
-                backdropFilter: "blur(20px) saturate(180%)",
-                WebkitBackdropFilter: "blur(20px) saturate(180%)",
-                borderColor: isLight ? "rgba(255, 255, 255, 0.85)" : "rgba(255, 255, 255, 0.12)",
+                backgroundColor: isLight ? "rgba(255, 255, 255, 0.84)" : "rgba(10, 12, 16, 0.78)",
+                backdropFilter: "blur(22px) saturate(180%)",
+                WebkitBackdropFilter: "blur(22px) saturate(180%)",
+                borderColor: isLight ? "rgba(226, 232, 240, 0.9)" : "rgba(255, 255, 255, 0.14)",
                 boxShadow: isLight
-                  ? "inset 0 1px 1px 0 rgba(255, 255, 255, 0.95), 0 20px 40px -15px rgba(0, 0, 0, 0.06)"
-                  : "inset 0 1px 1px 0 rgba(255, 255, 255, 0.18), 0 24px 48px -12px rgba(0, 0, 0, 0.5)",
+                  ? "inset 0 1px 1px 0 rgba(255, 255, 255, 0.95), 0 24px 48px -15px rgba(15, 23, 42, 0.10)"
+                  : "inset 0 1px 1px 0 rgba(255, 255, 255, 0.18), 0 24px 48px -12px rgba(0, 0, 0, 0.55)",
               }}
             >
-              {/* Stat 1: 7 Days Return */}
+              {/* Highlight 1: Custom Logo Embroidery */}
               <div>
-                <div className={`text-2xl sm:text-3xl font-bold tracking-tight ${
-                  isLight ? "text-[#0F172A]" : "text-white"
-                }`}>
-                  {lang === "th" ? "7 วัน" : "7 Days"}
+                <div className="flex items-center gap-2">
+                  <span className={`text-2xl sm:text-3xl font-bold tracking-tight ${
+                    isLight ? "text-[#0F172A]" : "text-white"
+                  }`}>
+                    {lang === "th" ? "พร้อมปักโลโก้" : "Custom Logo"}
+                  </span>
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#FFB900]/20 text-[#FFB900] border border-[#FFB900]/40">
+                    {lang === "th" ? "คอมพิวเตอร์" : "Embroidery"}
+                  </span>
                 </div>
                 <div className={`text-xs sm:text-sm font-medium mt-1 ${
                   isLight ? "text-[#0F172A]" : "text-white/90"
                 }`}>
-                  {lang === "th" ? "รับประกันเปลี่ยนไซส์ฟรี" : "Free Size Exchange"}
+                  {lang === "th" ? "บริการปักโลโก้ประจำองค์กร คมชัด ทนทาน" : "High-Precision Computer Embroidery"}
                 </div>
                 <div className={`text-xs mt-0.5 ${
                   isLight ? "text-[#475569]" : "text-[#D1D5DB]"
                 }`}>
-                  {lang === "th" ? "นับจากวันรับพัสดุ หากไม่พอดีเปลี่ยนใหม่ได้ทันที" : "From parcel delivery date; instant replacement if size is off."}
+                  {lang === "th"
+                    ? "ฝีเข็มละเอียด เส้นไหมเงางาม สีตรงตามโลโก้ ไม่หลุดลุ่ยตลอดอายุการใช้งาน"
+                    : "Tight stitch density with color-matched thread that endures daily wear."}
                 </div>
               </div>
 
-              {/* Stat 2: Tailored Asian Fit */}
+              {/* Highlight 2: Brand CI Matching & Asian Fit */}
               <div className={`border-t pt-5 mt-5 ${
                 isLight ? "border-slate-200/80" : "border-white/10"
               }`}>
                 <div className={`text-2xl sm:text-3xl font-bold tracking-tight ${
                   isLight ? "text-[#0F172A]" : "text-white"
                 }`}>
-                  {lang === "th" ? "ทรงพอดีตัว" : "Asian Fit"}
+                  {lang === "th" ? "ตาม CI องค์กร" : "Brand CI"}
                 </div>
                 <div className={`text-xs sm:text-sm font-medium mt-1 ${
                   isLight ? "text-[#0F172A]" : "text-white/90"
                 }`}>
-                  {lang === "th" ? "แพทเทิร์นสำหรับคนไทย" : "Tailored Proportion"}
+                  {lang === "th" ? "เลือกเนื้อผ้า ปกเสื้อ และเฉดสีเฉพาะของแบรนด์" : "Custom Fabrics, Collars & Colorways"}
                 </div>
                 <div className={`text-xs mt-0.5 ${
                   isLight ? "text-[#475569]" : "text-[#D1D5DB]"
                 }`}>
-                  {lang === "th" ? "สัดส่วนไหล่และวงแขนพอดี คล่องตัว ไม่ตึงรั้ง" : "Balanced shoulder-to-armhole ratio for natural everyday movement."}
+                  {lang === "th"
+                    ? "มีเนื้อผ้า Cotton, CVC, Oxford และ Twill ระบายอากาศดี คัตติ้งเนี้ยบ ไม่ร้อน"
+                    : "Breathable, wrinkle-resistant fabrics tailored for comfort in tropical climates."}
                 </div>
               </div>
 
-              {/* Stat 3: Corporate OEM */}
+              {/* Highlight 3: Capacity & Free Samples */}
               <div className={`border-t pt-5 mt-5 ${
                 isLight ? "border-slate-200/80" : "border-white/10"
               }`}>
                 <div className={`text-2xl sm:text-3xl font-bold tracking-tight ${
                   isLight ? "text-[#0F172A]" : "text-white"
                 }`}>
-                  {lang === "th" ? "3,500 ตัว" : "3,500 Pcs"}
+                  {lang === "th" ? "3,500+ ตัว" : "3,500+ Pcs"}
                 </div>
                 <div className={`text-xs sm:text-sm font-medium mt-1 ${
                   isLight ? "text-[#0F172A]" : "text-white/90"
                 }`}>
-                  {lang === "th" ? "กำลังผลิตต่อเดือน (OEM)" : "Monthly Workshop Capacity"}
+                  {lang === "th" ? "กำลังผลิตต่อเดือน พร้อมส่งตัวอย่างให้ลองไซส์ฟรี" : "Monthly Capacity & Free Sizing Kits"}
                 </div>
                 <div className={`text-xs mt-0.5 ${
                   isLight ? "text-[#475569]" : "text-[#D1D5DB]"
                 }`}>
-                  {lang === "th" ? "เวิร์กช็อปรองรับการปักโลโก้และเลือกผ้าตาม CI" : "Highbury workshop line with custom embroidery & fabric CI options."}
+                  {lang === "th"
+                    ? "ควบคุม QC รายตัว 100% รองรับทั้งทีม SME และองค์กรขนาดใหญ่ ส่งมอบตรงเวลา"
+                    : "100% individual QC inspection. Sample sizing sets delivered before production."}
                 </div>
               </div>
             </div>
@@ -120,6 +131,22 @@ export default function PreFooterCta({
 
           {/* Right Column: Heading, Subtitle & Action Pills (order-1 on mobile, order-2 on lg) */}
           <div className="lg:col-span-7 order-1 lg:order-2 space-y-6 max-w-xl lg:ml-auto">
+            {/* Section Badge */}
+            <div
+              className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-semibold tracking-wider uppercase ${
+                isLight
+                  ? "bg-slate-100 border-slate-300 text-slate-800"
+                  : "bg-white/10 border-white/20 text-white"
+              }`}
+            >
+              <Sparkles className="w-3.5 h-3.5 text-[#FFB900]" />
+              <span>
+                {lang === "th"
+                  ? "บริการผลิตเสื้อเชิ้ต OEM & ยูนิฟอร์มองค์กร"
+                  : "Corporate OEM & Custom Uniforms"}
+              </span>
+            </div>
+
             {/* Display Heading */}
             <h2
               className={`text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight leading-[1.15] ${
@@ -128,15 +155,15 @@ export default function PreFooterCta({
             >
               {lang === "th" ? (
                 <>
-                  สัมผัสความต่าง
+                  ยกระดับภาพลักษณ์องค์กร
                   <br />
-                  ที่สร้างความมั่นใจในทุกวันทำงาน.
+                  สั่งผลิตเสื้อเชิ้ต OEM พร้อมปักโลโก้แบรนด์คุณ.
                 </>
               ) : (
                 <>
-                  Feel the Difference
+                  Elevate Your Corporate Identity
                   <br />
-                  in Everyday Workwear.
+                  Premium OEM Tailoring & Custom Embroidery.
                 </>
               )}
             </h2>
@@ -147,35 +174,48 @@ export default function PreFooterCta({
               }`}
             >
               {lang === "th"
-                ? "เสื้อเชิ้ต Highbury ออกแบบเพื่อความสบาย คัตติ้งเนี้ยบ ดูแลง่าย พร้อมการรับประกันเปลี่ยนไซส์ฟรีภายใน 7 วัน"
-                : "Highbury shirts deliver all-day comfort, clean tailoring, and easy-care fabrics, backed by a 7-day size exchange guarantee."}
+                ? "Highbury International รับผลิตเสื้อเชิ้ตฟอร์มพนักงานและยูนิฟอร์มองค์กรมาตรฐานโรงงาน คัตติ้งประณีต เข้ารูปพอดีสรีระ (Asian Fit) พร้อมบริการปักโลโก้ด้วยเครื่องจักรคอมพิวเตอร์ความละเอียดสูง คมชัด สวยงาม ทนทานทุกการซัก ปรับแต่งเนื้อผ้าและเฉดสีตาม CI แบรนด์ของคุณได้อย่างสมบูรณ์แบบ พร้อมส่งตัวอย่างเทียบไซส์ฟรี"
+                : "Highbury International delivers premium OEM corporate uniforms and employee shirts. Featuring tailored Asian Fit, precision high-definition computer logo embroidery, and custom fabrics & color matching tailored to your exact brand CI."}
             </p>
 
             {/* Action Buttons */}
             <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5">
               <Link
-                href="#models"
+                href="https://lin.ee/T8tlget"
+                target="_blank"
+                rel="noopener noreferrer"
                 className={`inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 group cursor-pointer border ${
                   isLight
-                    ? "bg-[#0F172A] !text-white border-[#0F172A] hover:bg-[#1E293B]"
+                    ? "bg-[#163666] !text-white border-[#163666] hover:bg-[#112a52] shadow-xs"
                     : "bg-white text-[#07080B] border-white hover:bg-white/90"
                 }`}
               >
-                <span className={isLight ? "!text-white" : ""}>{lang === "th" ? "เลือกซื้อสินค้า" : "Shop Collection"}</span>
-                <ArrowRight className={`w-4 h-4 group-hover:translate-x-0.5 transition-transform ${isLight ? "!text-white" : ""}`} />
+                <MessageSquare className="w-4 h-4 text-[#FFB900]" />
+                <span className={isLight ? "!text-white" : ""}>
+                  {lang === "th" ? "ปรึกษาผลิต OEM & ขอใบเสนอราคา" : "Request OEM Quotation"}
+                </span>
+                <ArrowRight
+                  className={`w-4 h-4 group-hover:translate-x-0.5 transition-transform ${
+                    isLight ? "!text-white" : ""
+                  }`}
+                />
               </Link>
 
-              <button
-                type="button"
-                onClick={onOpenSizeGuide}
+              <a
+                href="tel:0863116292"
                 className={`inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer ${
                   isLight
                     ? "bg-white text-[#0F172A] border border-[#CBD5E1] hover:bg-[#F8FAFC]"
-                    : "bg-transparent text-white border border-[#262830] hover:bg-white/10"
+                    : "bg-transparent text-white border border-white/25 hover:bg-white/10"
                 }`}
               >
-                <span>{lang === "th" ? "คำนวณไซส์ Smart Size Finder" : "Smart Size Finder"}</span>
-              </button>
+                <Phone className="w-4 h-4 text-[#FFB900]" />
+                <span>
+                  {lang === "th"
+                    ? "โทรปรึกษาฝ่ายขาย 086-311-6292"
+                    : "Call Sales: 086-311-6292"}
+                </span>
+              </a>
             </div>
           </div>
         </div>

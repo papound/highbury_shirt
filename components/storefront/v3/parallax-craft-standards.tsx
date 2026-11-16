@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, MessageSquare, Phone, Sparkles } from "lucide-react";
 import { useStorefrontV3Safe } from "../storefront-shell";
 
 interface ParallaxCraftStandardsProps {
@@ -686,12 +686,17 @@ export default function ParallaxCraftStandards({
                   }}
                 >
                   <div>
-                    <div
-                      className={`text-2xl sm:text-3xl font-bold tracking-tight ${
-                        isLight ? "text-[#0F172A]" : "text-white"
-                      }`}
-                    >
-                      {lang === "th" ? "7 วัน" : "7 Days"}
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={`text-2xl sm:text-3xl font-bold tracking-tight ${
+                          isLight ? "text-[#0F172A]" : "text-white"
+                        }`}
+                      >
+                        {lang === "th" ? "พร้อมปักโลโก้" : "Custom Logo"}
+                      </span>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#FFB900]/20 text-[#FFB900] border border-[#FFB900]/40">
+                        {lang === "th" ? "คอมพิวเตอร์" : "Embroidery"}
+                      </span>
                     </div>
                     <div
                       className={`text-xs sm:text-sm font-medium mt-1 ${
@@ -699,8 +704,8 @@ export default function ParallaxCraftStandards({
                       }`}
                     >
                       {lang === "th"
-                        ? "รับประกันเปลี่ยนไซส์ฟรี"
-                        : "Free Size Exchange"}
+                        ? "บริการปักโลโก้ประจำองค์กร คมชัด ทนทาน"
+                        : "High-Precision Computer Embroidery"}
                     </div>
                     <div
                       className={`text-xs mt-0.5 ${
@@ -708,8 +713,8 @@ export default function ParallaxCraftStandards({
                       }`}
                     >
                       {lang === "th"
-                        ? "นับจากวันรับพัสดุ หากไม่พอดีเปลี่ยนใหม่ได้ทันที"
-                        : "From parcel delivery date; instant replacement if size is off."}
+                        ? "ฝีเข็มละเอียด เส้นไหมเงางาม สีตรงตามโลโก้ ไม่หลุดลุ่ยตลอดอายุการใช้งาน"
+                        : "Tight stitch density with color-matched thread that endures daily wear."}
                     </div>
                   </div>
 
@@ -723,7 +728,7 @@ export default function ParallaxCraftStandards({
                         isLight ? "text-[#0F172A]" : "text-white"
                       }`}
                     >
-                      {lang === "th" ? "ทรงพอดีตัว" : "Asian Fit"}
+                      {lang === "th" ? "ตาม CI องค์กร" : "Brand CI"}
                     </div>
                     <div
                       className={`text-xs sm:text-sm font-medium mt-1 ${
@@ -731,8 +736,8 @@ export default function ParallaxCraftStandards({
                       }`}
                     >
                       {lang === "th"
-                        ? "แพทเทิร์นสำหรับคนไทย"
-                        : "Tailored Proportion"}
+                        ? "เลือกเนื้อผ้า ปกเสื้อ และเฉดสีเฉพาะของแบรนด์"
+                        : "Custom Fabrics, Collars & Colorways"}
                     </div>
                     <div
                       className={`text-xs mt-0.5 ${
@@ -740,8 +745,8 @@ export default function ParallaxCraftStandards({
                       }`}
                     >
                       {lang === "th"
-                        ? "สัดส่วนไหล่และวงแขนพอดี คล่องตัว ไม่ตึงรั้ง"
-                        : "Balanced shoulder-to-armhole ratio for natural everyday movement."}
+                        ? "มีเนื้อผ้า Cotton, CVC, Oxford และ Twill ระบายอากาศดี คัตติ้งเนี้ยบ ไม่ร้อน"
+                        : "Breathable, wrinkle-resistant fabrics tailored for comfort in tropical climates."}
                     </div>
                   </div>
 
@@ -755,7 +760,7 @@ export default function ParallaxCraftStandards({
                         isLight ? "text-[#0F172A]" : "text-white"
                       }`}
                     >
-                      {lang === "th" ? "3,500 ตัว" : "3,500 Pcs"}
+                      {lang === "th" ? "3,500+ ตัว" : "3,500+ Pcs"}
                     </div>
                     <div
                       className={`text-xs sm:text-sm font-medium mt-1 ${
@@ -763,8 +768,8 @@ export default function ParallaxCraftStandards({
                       }`}
                     >
                       {lang === "th"
-                        ? "กำลังผลิตต่อเดือน (OEM)"
-                        : "Monthly Workshop Capacity"}
+                        ? "กำลังผลิตต่อเดือน พร้อมส่งตัวอย่างให้ลองไซส์ฟรี"
+                        : "Monthly Capacity & Free Sizing Kits"}
                     </div>
                     <div
                       className={`text-xs mt-0.5 ${
@@ -772,8 +777,8 @@ export default function ParallaxCraftStandards({
                       }`}
                     >
                       {lang === "th"
-                        ? "เวิร์กช็อปรองรับการปักโลโก้และเลือกผ้าตาม CI"
-                        : "Highbury workshop line with custom embroidery & fabric CI options."}
+                        ? "ควบคุม QC รายตัว 100% รองรับทั้งทีม SME และองค์กรขนาดใหญ่ ส่งมอบตรงเวลา"
+                        : "100% individual QC inspection. Sample sizing sets delivered before production."}
                     </div>
                   </div>
                 </div>
@@ -784,6 +789,22 @@ export default function ParallaxCraftStandards({
                 ref={scene3TextRef}
                 className="col-span-7 space-y-6 max-w-xl ml-auto will-change-transform"
               >
+                {/* Section Badge */}
+                <div
+                  className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-semibold tracking-wider uppercase ${
+                    isLight
+                      ? "bg-slate-100 border-slate-300 text-slate-800"
+                      : "bg-white/10 border-white/20 text-white"
+                  }`}
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-[#FFB900]" />
+                  <span>
+                    {lang === "th"
+                      ? "บริการผลิตเสื้อเชิ้ต OEM & ยูนิฟอร์มองค์กร"
+                      : "Corporate OEM & Custom Uniforms"}
+                  </span>
+                </div>
+
                 <h2
                   className={`text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight leading-[1.15] ${
                     isLight ? "text-[#0F172A]" : "text-white"
@@ -791,15 +812,15 @@ export default function ParallaxCraftStandards({
                 >
                   {lang === "th" ? (
                     <>
-                      สัมผัสความต่าง
+                      ยกระดับภาพลักษณ์องค์กร
                       <br />
-                      ที่สร้างความมั่นใจในทุกวันทำงาน.
+                      สั่งผลิตเสื้อเชิ้ต OEM พร้อมปักโลโก้แบรนด์คุณ.
                     </>
                   ) : (
                     <>
-                      Feel the Difference
+                      Elevate Your Corporate Identity
                       <br />
-                      in Everyday Workwear.
+                      Premium OEM Tailoring & Custom Embroidery.
                     </>
                   )}
                 </h2>
@@ -810,21 +831,26 @@ export default function ParallaxCraftStandards({
                   }`}
                 >
                   {lang === "th"
-                    ? "เสื้อเชิ้ต Highbury ออกแบบเพื่อความสบาย คัตติ้งเนี้ยบ ดูแลง่าย พร้อมการรับประกันเปลี่ยนไซส์ฟรีภายใน 7 วัน"
-                    : "Highbury shirts deliver all-day comfort, clean tailoring, and easy-care fabrics, backed by a 7-day size exchange guarantee."}
+                    ? "Highbury International รับผลิตเสื้อเชิ้ตฟอร์มพนักงานและยูนิฟอร์มองค์กรมาตรฐานโรงงาน คัตติ้งประณีต เข้ารูปพอดีสรีระ (Asian Fit) พร้อมบริการปักโลโก้ด้วยเครื่องจักรคอมพิวเตอร์ความละเอียดสูง คมชัด สวยงาม ทนทานทุกการซัก ปรับแต่งเนื้อผ้าและเฉดสีตาม CI แบรนด์ของคุณได้อย่างสมบูรณ์แบบ พร้อมส่งตัวอย่างเทียบไซส์ฟรี"
+                    : "Highbury International delivers premium OEM corporate uniforms and employee shirts. Featuring tailored Asian Fit, precision high-definition computer logo embroidery, and custom fabrics & color matching tailored to your exact brand CI."}
                 </p>
 
                 <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5">
                   <Link
-                    href="#models"
+                    href="https://lin.ee/T8tlget"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className={`inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 group cursor-pointer border ${
                       isLight
                         ? "bg-[#163666] !text-white border-[#163666] hover:bg-[#112a52] shadow-xs"
                         : "bg-white text-[#07080B] border-white hover:bg-white/90"
                     }`}
                   >
+                    <MessageSquare className="w-4 h-4 text-[#FFB900]" />
                     <span className={isLight ? "!text-white" : ""}>
-                      {lang === "th" ? "เลือกซื้อสินค้า" : "Shop Collection"}
+                      {lang === "th"
+                        ? "ปรึกษาผลิต OEM & ขอใบเสนอราคา"
+                        : "Request OEM Quotation"}
                     </span>
                     <ArrowRight
                       className={`w-4 h-4 group-hover:translate-x-0.5 transition-transform ${
@@ -833,21 +859,21 @@ export default function ParallaxCraftStandards({
                     />
                   </Link>
 
-                  <button
-                    type="button"
-                    onClick={handleOpenSizeGuide}
+                  <a
+                    href="tel:0863116292"
                     className={`inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer ${
                       isLight
                         ? "bg-white text-[#0F172A] border border-[#CBD5E1] hover:bg-[#F8FAFC]"
                         : "bg-transparent text-white border border-white/25 hover:bg-white/10"
                     }`}
                   >
+                    <Phone className="w-4 h-4 text-[#FFB900]" />
                     <span>
                       {lang === "th"
-                        ? "คำนวณไซส์ Smart Size Finder"
-                        : "Smart Size Finder"}
+                        ? "โทรปรึกษาฝ่ายขาย 086-311-6292"
+                        : "Call Sales: 086-311-6292"}
                     </span>
-                  </button>
+                  </a>
                 </div>
               </div>
             </div>
@@ -886,7 +912,7 @@ export default function ParallaxCraftStandards({
             style={{ opacity: 0.45 }}
             className="text-[11px] font-semibold tracking-wider uppercase cursor-pointer transition-opacity"
           >
-            {lang === "th" ? "ความมั่นใจ" : "Assurance"}
+            {lang === "th" ? "สั่งผลิต OEM" : "OEM Service"}
           </button>
           <div
             className={`w-14 h-1 rounded-full overflow-hidden ${
@@ -1108,7 +1134,7 @@ export default function ParallaxCraftStandards({
           </div>
         </section>
 
-        {/* Mobile Beat 3: PreFooterCta Finale */}
+        {/* Mobile Beat 3: Corporate OEM Finale */}
         <section
           className={`relative w-full py-16 px-4 sm:px-6 rounded-t-3xl -mt-4 z-20 border-t ${
             isLight
@@ -1118,61 +1144,139 @@ export default function ParallaxCraftStandards({
         >
           <div className="max-w-7xl mx-auto space-y-8">
             <div className="space-y-4 max-w-xl">
-              <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight leading-[1.15]">
+              <div
+                className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border text-[11px] font-semibold tracking-wider uppercase ${
+                  isLight
+                    ? "bg-slate-200/70 border-slate-300 text-slate-800"
+                    : "bg-white/10 border-white/20 text-white"
+                }`}
+              >
+                <Sparkles className="w-3 h-3 text-[#FFB900]" />
+                <span>
+                  {lang === "th"
+                    ? "บริการผลิตเสื้อเชิ้ต OEM & ยูนิฟอร์มองค์กร"
+                    : "Corporate OEM & Custom Uniforms"}
+                </span>
+              </div>
+
+              <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight leading-[1.18]">
                 {lang === "th" ? (
                   <>
-                    สัมผัสความต่าง
+                    ยกระดับภาพลักษณ์องค์กร
                     <br />
-                    ที่สร้างความมั่นใจในทุกวันทำงาน.
+                    สั่งผลิตเสื้อเชิ้ต OEM พร้อมปักโลโก้แบรนด์คุณ.
                   </>
                 ) : (
                   <>
-                    Feel the Difference
+                    Elevate Your Corporate Identity
                     <br />
-                    in Everyday Workwear.
+                    Premium OEM Tailoring & Custom Embroidery.
                   </>
                 )}
               </h2>
+
               <p
                 className={`text-sm leading-relaxed ${
                   isLight ? "text-[#475569]" : "text-[#E7E7E7]"
                 }`}
               >
                 {lang === "th"
-                  ? "เสื้อเชิ้ต Highbury ออกแบบเพื่อความสบาย คัตติ้งเนี้ยบ ดูแลง่าย พร้อมการรับประกันเปลี่ยนไซส์ฟรีภายใน 7 วัน"
-                  : "Highbury shirts deliver all-day comfort, clean tailoring, and easy-care fabrics, backed by a 7-day size exchange guarantee."}
+                  ? "Highbury International รับผลิตเสื้อเชิ้ตฟอร์มพนักงานและยูนิฟอร์มองค์กรมาตรฐานโรงงาน คัตติ้งประณีต เข้ารูปพอดีสรีระ (Asian Fit) พร้อมบริการปักโลโก้ด้วยเครื่องจักรคอมพิวเตอร์ความละเอียดสูง คมชัด สวยงาม ทนทานทุกการซัก ปรับแต่งเนื้อผ้าและเฉดสีตาม CI แบรนด์ของคุณได้อย่างสมบูรณ์แบบ พร้อมส่งตัวอย่างเทียบไซส์ฟรี"
+                  : "Highbury International delivers premium OEM corporate uniforms and employee shirts. Featuring tailored Asian Fit, precision high-definition computer logo embroidery, and custom fabrics & color matching tailored to your exact brand CI."}
               </p>
+
+              {/* Mobile OEM Highlights Box */}
+              <div
+                className={`p-4 rounded-2xl border space-y-3 ${
+                  isLight
+                    ? "bg-white border-slate-200/90 shadow-xs"
+                    : "bg-black/40 border-white/10"
+                }`}
+              >
+                <div className="flex items-start gap-2.5">
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#FFB900] mt-1.5 shrink-0" />
+                  <div>
+                    <div className="text-xs font-semibold">
+                      {lang === "th"
+                        ? "พร้อมปักโลโก้คอมพิวเตอร์คมชัด"
+                        : "High-Precision Computer Embroidery"}
+                    </div>
+                    <div className="text-[11px] opacity-75">
+                      {lang === "th"
+                        ? "ฝีเข็มละเอียด ทนทาน ไม่หลุดลุ่ยตลอดอายุการใช้งาน"
+                        : "Color-matched, dense stitching built for daily corporate wear."}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-2.5">
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#38BDF8] mt-1.5 shrink-0" />
+                  <div>
+                    <div className="text-xs font-semibold">
+                      {lang === "th"
+                        ? "เลือกเนื้อผ้า & เฉดสีตาม CI แบรนด์"
+                        : "Custom Fabrics & Colorways to Match Brand CI"}
+                    </div>
+                    <div className="text-[11px] opacity-75">
+                      {lang === "th"
+                        ? "Cotton, CVC, Oxford และ Twill คัตติ้งเนี้ยบ ไม่ร้อน"
+                        : "Breathable tropical weights & premium easy-care fabrics."}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-2.5">
+                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-1.5 shrink-0" />
+                  <div>
+                    <div className="text-xs font-semibold">
+                      {lang === "th"
+                        ? "กำลังผลิต 3,500+ ตัว/เดือน & ตัวอย่างไซส์ฟรี"
+                        : "3,500+ Pcs/mo & Complimentary Sizing Kits"}
+                    </div>
+                    <div className="text-[11px] opacity-75">
+                      {lang === "th"
+                        ? "QC ตรวจสอบรายตัว 100% ส่งมอบตรงเวลา"
+                        : "Individual piece QC with on-time delivery assurance."}
+                    </div>
+                  </div>
+                </div>
+              </div>
 
               <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                 <Link
-                  href="#models"
-                  className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-xs font-semibold ${
+                  href="https://lin.ee/T8tlget"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-xs font-semibold shadow-xs ${
                     isLight
-                      ? "bg-[#163666] !text-white"
-                      : "bg-white text-[#07080B]"
+                      ? "bg-[#163666] !text-white hover:bg-[#112a52]"
+                      : "bg-white text-[#07080B] hover:bg-white/90"
                   }`}
                 >
+                  <MessageSquare className="w-4 h-4 text-[#FFB900]" />
                   <span className={isLight ? "!text-white" : ""}>
-                    {lang === "th" ? "เลือกซื้อสินค้า" : "Shop Collection"}
+                    {lang === "th"
+                      ? "ปรึกษาผลิต OEM & ขอใบเสนอราคา"
+                      : "Request OEM Quotation"}
                   </span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
 
-                <button
-                  type="button"
-                  onClick={handleOpenSizeGuide}
+                <a
+                  href="tel:0863116292"
                   className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-xs font-semibold border ${
                     isLight
                       ? "bg-white text-[#0F172A] border-[#CBD5E1]"
                       : "bg-transparent text-white border-white/25"
                   }`}
                 >
+                  <Phone className="w-3.5 h-3.5 text-[#FFB900]" />
                   <span>
                     {lang === "th"
-                      ? "คำนวณไซส์ Smart Size Finder"
-                      : "Smart Size Finder"}
+                      ? "โทร 086-311-6292"
+                      : "Call 086-311-6292"}
                   </span>
-                </button>
+                </a>
               </div>
             </div>
           </div>
