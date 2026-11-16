@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="hbBlueGrad" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+      <stop offset="0%" stop-color="#38BDF8"/>
+      <stop offset="28%" stop-color="#0284C7"/>
+      <stop offset="68%" stop-color="#1E40AF"/>
+      <stop offset="100%" stop-color="#0F2557"/>
+    </radialGradient>
+    <linearGradient id="hbRimGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3B66B8"/>
+      <stop offset="50%" stop-color="#1D3F8A"/>
+      <stop offset="100%" stop-color="#0E2254"/>
+    </linearGradient>
+    <filter id="hbInnerShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#071330" flood-opacity="0.55"/>
+    </filter>
+  </defs>
+  <circle cx="256" cy="256" r="242" fill="url(#hbBlueGrad)"/>
+  <path d="M 201.15 40.88 A 222.00 222.00 0 0 1 246.32 34.21 V 477.79 A 222.00 222.00 0 0 1 201.15 471.12 V 279.14 H 80.67 A 176.83 178.23 0 0 0 172.10 412.89 V 461.54 A 222.00 222.00 0 0 1 172.10 50.46 V 99.11 A 176.83 178.23 0 0 0 80.51 234.11 H 201.15 Z M 265.68 34.21 A 222.00 222.00 0 0 1 265.68 477.79 Z M 310.85 234.11 H 431.49 A 176.83 178.23 0 0 0 310.85 86.57 Z M 310.85 279.14 V 425.43 A 176.83 178.23 0 0 0 431.33 279.14 Z" fill="#FFFFFF" fill-rule="evenodd" filter="url(#hbInnerShadow)"/>
+  <circle cx="256" cy="256" r="233" fill="none" stroke="url(#hbRimGrad)" stroke-width="18"/>
+</svg>

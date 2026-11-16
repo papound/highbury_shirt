@@ -42,12 +42,12 @@ export default function HeaderV3({
   const pathname = usePathname();
   const isHomePage = pathname === "/" || pathname === "/v3";
 
-  // Brand emblem: On Home page, use the modern geometric monogram (white for dark theme, black for light)
+  // Brand emblem: On Home page, use the modern geometric monogram SVG (white for dark theme, black for light)
   // On subpages, use the iconic Highbury emblem
   const logoSrc = isHomePage
     ? theme === "light"
-      ? "/images/logo/home-monogram-black.png"
-      : "/images/logo/home-monogram-white.png"
+      ? "/images/logo/home-monogram-black.svg"
+      : "/images/logo/home-monogram-white.svg"
     : "/images/logo/highbury-emblem.png";
 
   const [searchQuery, setSearchQuery] = useState("");

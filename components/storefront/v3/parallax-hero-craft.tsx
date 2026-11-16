@@ -298,7 +298,7 @@ export default function ParallaxHeroCraft({
               }}
             >
               <Image
-                src={isLight ? "/images/logo/home-monogram-black.png" : "/images/logo/home-monogram-white.png"}
+                src={isLight ? "/images/logo/home-monogram-black.svg" : "/images/logo/home-monogram-white.svg"}
                 alt="Highbury Monogram"
                 width={16}
                 height={16}
@@ -704,7 +704,7 @@ export default function ParallaxHeroCraft({
                 }}
               >
                 <Image
-                  src={isLight ? "/images/logo/home-monogram-black.png" : "/images/logo/home-monogram-white.png"}
+                  src={isLight ? "/images/logo/home-monogram-black.svg" : "/images/logo/home-monogram-white.svg"}
                   alt="Highbury Monogram"
                   width={16}
                   height={16}

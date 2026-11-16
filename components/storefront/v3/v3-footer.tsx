@@ -13,7 +13,7 @@ export default function V3Footer() {
   const isHomePage = pathname === "/" || pathname === "/v3";
 
   const footerLogoSrc = isHomePage
-    ? "/images/logo/home-monogram-white.png"
+    ? "/images/logo/home-monogram-white.svg"
     : "/images/logo/highbury-emblem.png";
 
   return (
