@@ -288,7 +288,7 @@ export default function ParallaxHeroCraft({
           className="relative z-20 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-36 pb-12 my-auto will-change-[transform,opacity]"
         >
           <div className="max-w-lg lg:max-w-2xl space-y-5">
-            {/* Atelier Brand Monogram Pill */}
+            {/* Brand Monogram Pill */}
             <div
               className="inline-flex items-center gap-2 px-3 py-1 rounded-full border text-xs font-semibold backdrop-blur-md shadow-xs"
               style={{
@@ -299,14 +299,14 @@ export default function ParallaxHeroCraft({
             >
               <Image
                 src={isLight ? "/images/logo/home-monogram-black.png" : "/images/logo/home-monogram-white.png"}
-                alt="Highbury Atelier Monogram"
+                alt="Highbury Monogram"
                 width={16}
                 height={16}
                 className="w-4 h-4 object-contain shrink-0"
                 priority
               />
               <span className="tracking-[0.16em] uppercase text-[11px] font-medium">
-                HIGHBURY ATELIER
+                HIGHBURY INTERNATIONAL
               </span>
             </div>
 
@@ -694,7 +694,7 @@ export default function ParallaxHeroCraft({
 
           <div className="relative z-10 max-w-7xl w-full mx-auto px-4 sm:px-6 pt-32 pb-12 mt-auto">
             <div className="max-w-lg space-y-4">
-              {/* Atelier Brand Monogram Pill Mobile */}
+              {/* Brand Monogram Pill Mobile */}
               <div
                 className="inline-flex items-center gap-2 px-3 py-1 rounded-full border text-xs font-semibold backdrop-blur-md shadow-xs"
                 style={{
@@ -705,14 +705,14 @@ export default function ParallaxHeroCraft({
               >
                 <Image
                   src={isLight ? "/images/logo/home-monogram-black.png" : "/images/logo/home-monogram-white.png"}
-                  alt="Highbury Atelier Monogram"
+                  alt="Highbury Monogram"
                   width={16}
                   height={16}
                   className="w-4 h-4 object-contain shrink-0"
                   priority
                 />
                 <span className="tracking-[0.16em] uppercase text-[11px] font-medium">
-                  HIGHBURY ATELIER
+                  HIGHBURY INTERNATIONAL
                 </span>
               </div>
 
