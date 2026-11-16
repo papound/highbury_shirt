@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { ShoppingBag, Menu, X, Search, Loader2, Sun, Moon } from "lucide-react";
 import { useCartStore } from "@/hooks/use-cart";
 
@@ -39,6 +39,17 @@ export default function HeaderV3({
   onToggleTheme,
 }: HeaderV3Props) {
   const router = useRouter();
+  const pathname = usePathname();
+  const isHomePage = pathname === "/" || pathname === "/v3";
+
+  // Brand emblem: On Home page, use the modern geometric monogram (white for dark theme, black for light)
+  // On subpages, use the iconic Highbury emblem
+  const logoSrc = isHomePage
+    ? theme === "light"
+      ? "/images/logo/home-monogram-black.png"
+      : "/images/logo/home-monogram-white.png"
+    : "/images/logo/highbury-emblem.png";
+
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -187,11 +198,11 @@ export default function HeaderV3({
               className="inline-flex items-center gap-2.5 hover:opacity-90 transition-opacity cursor-pointer shrink-0"
             >
               <Image
-                src="/images/logo/highbury-emblem.png"
+                src={logoSrc}
                 alt="Highbury Logo"
                 width={32}
                 height={32}
-                className="w-7 h-7 sm:w-8 sm:h-8 object-contain shrink-0"
+                className="w-7 h-7 sm:w-8 sm:h-8 object-contain shrink-0 transition-opacity"
                 priority
               />
               <span

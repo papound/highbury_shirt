@@ -2,12 +2,19 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { Phone, Mail, MapPin, MessageSquare, Ruler } from "lucide-react";
 import { useStorefrontV3Safe } from "../storefront-shell";
 
 export default function V3Footer() {
   const v3 = useStorefrontV3Safe();
   const lang = v3?.lang || "th";
+  const pathname = usePathname();
+  const isHomePage = pathname === "/" || pathname === "/v3";
+
+  const footerLogoSrc = isHomePage
+    ? "/images/logo/home-monogram-white.png"
+    : "/images/logo/highbury-emblem.png";
 
   return (
     <footer className="w-full bg-[#07080B] text-[#9496A1] py-14 sm:py-16 border-t border-[#262830] font-sans">
@@ -21,7 +28,7 @@ export default function V3Footer() {
               className="inline-flex items-center gap-3 hover:opacity-90 transition-opacity"
             >
               <Image
-                src="/images/logo/highbury-emblem.png"
+                src={footerLogoSrc}
                 alt="Highbury International Logo"
                 width={36}
                 height={36}

@@ -288,6 +288,28 @@ export default function ParallaxHeroCraft({
           className="relative z-20 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-36 pb-12 my-auto will-change-[transform,opacity]"
         >
           <div className="max-w-lg lg:max-w-2xl space-y-5">
+            {/* Atelier Brand Monogram Pill */}
+            <div
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full border text-xs font-semibold backdrop-blur-md shadow-xs"
+              style={{
+                backgroundColor: isLight ? "rgba(241, 245, 249, 0.9)" : "rgba(255, 255, 255, 0.06)",
+                borderColor: isLight ? "#E2E8F0" : "rgba(255, 255, 255, 0.12)",
+                color: isLight ? "#0F172A" : "#FFFFFF",
+              }}
+            >
+              <Image
+                src={isLight ? "/images/logo/home-monogram-black.png" : "/images/logo/home-monogram-white.png"}
+                alt="Highbury Atelier Monogram"
+                width={16}
+                height={16}
+                className="w-4 h-4 object-contain shrink-0"
+                priority
+              />
+              <span className="tracking-[0.16em] uppercase text-[11px] font-medium">
+                HIGHBURY ATELIER
+              </span>
+            </div>
+
             <h1
               className={`text-4xl sm:text-5xl lg:text-6xl font-medium tracking-tight leading-[1.35] sm:leading-[1.38] font-sans ${
                 isLight ? "text-[#0F172A]" : "text-white"
@@ -672,6 +694,28 @@ export default function ParallaxHeroCraft({
 
           <div className="relative z-10 max-w-7xl w-full mx-auto px-4 sm:px-6 pt-32 pb-12 mt-auto">
             <div className="max-w-lg space-y-4">
+              {/* Atelier Brand Monogram Pill Mobile */}
+              <div
+                className="inline-flex items-center gap-2 px-3 py-1 rounded-full border text-xs font-semibold backdrop-blur-md shadow-xs"
+                style={{
+                  backgroundColor: isLight ? "rgba(241, 245, 249, 0.9)" : "rgba(255, 255, 255, 0.06)",
+                  borderColor: isLight ? "#E2E8F0" : "rgba(255, 255, 255, 0.12)",
+                  color: isLight ? "#0F172A" : "#FFFFFF",
+                }}
+              >
+                <Image
+                  src={isLight ? "/images/logo/home-monogram-black.png" : "/images/logo/home-monogram-white.png"}
+                  alt="Highbury Atelier Monogram"
+                  width={16}
+                  height={16}
+                  className="w-4 h-4 object-contain shrink-0"
+                  priority
+                />
+                <span className="tracking-[0.16em] uppercase text-[11px] font-medium">
+                  HIGHBURY ATELIER
+                </span>
+              </div>
+
               <h1
                 className={`text-4xl sm:text-5xl font-medium tracking-tight leading-[1.32] ${
                   isLight ? "text-[#0F172A]" : "text-white"
