@@ -210,10 +210,11 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
     loop: displayImages.length > 1,
     skipSnaps: false,
     duration: 25,
+    startIndex: selectedIndex,
   });
 
   const thumbRef = useRef<HTMLDivElement>(null);
-  const isLightboxOpenRef = useRef(false);
+  const isLightboxReadyRef = useRef(false);
   const selectedIndexRef = useRef(selectedIndex);
   selectedIndexRef.current = selectedIndex;
   const dragStartPos = useRef<{ x: number; y: number } | null>(null);
@@ -232,16 +233,14 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
   useEffect(() => {
     if (!emblaApi) return;
     emblaApi.on("select", onSelect);
-    emblaApi.on("reInit", onSelect);
     return () => {
       emblaApi.off("select", onSelect);
-      emblaApi.off("reInit", onSelect);
     };
   }, [emblaApi, onSelect]);
 
-  // Sync when user swipes inside Lightbox
+  // Sync when user swipes inside Lightbox (guarded by isLightboxReadyRef to prevent initial reset to 0)
   const onLightboxSelect = useCallback(() => {
-    if (!lightboxApi) return;
+    if (!lightboxApi || !isLightboxReadyRef.current) return;
     const idx = lightboxApi.selectedScrollSnap();
     setSelectedIndex(idx);
     if (emblaApi && emblaApi.selectedScrollSnap() !== idx) {
@@ -256,29 +255,57 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
   useEffect(() => {
     if (!lightboxApi) return;
     lightboxApi.on("select", onLightboxSelect);
-    lightboxApi.on("reInit", onLightboxSelect);
     return () => {
       lightboxApi.off("select", onLightboxSelect);
-      lightboxApi.off("reInit", onLightboxSelect);
     };
   }, [lightboxApi, onLightboxSelect]);
 
-  // When Lightbox opens, sync its initial position ONCE (prevents race condition during swipe/drag)
+  // When Lightbox opens, sync its initial position safely
   useEffect(() => {
     if (isLightboxOpen && lightboxApi) {
-      if (!isLightboxOpenRef.current) {
-        isLightboxOpenRef.current = true;
-        const target = selectedIndexRef.current;
-        const raf = requestAnimationFrame(() => {
-          lightboxApi.reInit();
-          lightboxApi.scrollTo(target, true);
-        });
-        return () => cancelAnimationFrame(raf);
-      }
-    } else if (!isLightboxOpen) {
-      isLightboxOpenRef.current = false;
+      const target = selectedIndexRef.current;
+      isLightboxReadyRef.current = false;
+      const raf = requestAnimationFrame(() => {
+        lightboxApi.scrollTo(target, true);
+        isLightboxReadyRef.current = true;
+      });
+      return () => cancelAnimationFrame(raf);
+    } else {
+      isLightboxReadyRef.current = false;
     }
   }, [isLightboxOpen, lightboxApi]);
+
+  const openLightbox = useCallback((idx?: number) => {
+    if (typeof idx === "number") {
+      setSelectedIndex(idx);
+      emblaApi?.scrollTo(idx, true);
+    }
+    setIsLightboxOpen(true);
+    if (typeof window !== "undefined") {
+      window.history.pushState({ highburyLightbox: true }, "");
+    }
+  }, [emblaApi]);
+
+  const closeLightbox = useCallback(() => {
+    setIsLightboxOpen(false);
+    if (typeof window !== "undefined" && window.history.state?.highburyLightbox) {
+      window.history.back();
+    }
+  }, []);
+
+  // Handle browser back button (history popstate) to dismiss lightbox gracefully
+  useEffect(() => {
+    if (!isLightboxOpen) return;
+
+    const handlePopState = () => {
+      setIsLightboxOpen(false);
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [isLightboxOpen]);
 
   // Auto-scroll active thumbnail into view
   useEffect(() => {
@@ -297,7 +324,7 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        setIsLightboxOpen(false);
+        closeLightbox();
       } else if (e.key === "ArrowLeft") {
         lightboxApi?.scrollPrev();
       } else if (e.key === "ArrowRight") {
@@ -310,7 +337,7 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
       document.body.style.overflow = originalOverflow;
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isLightboxOpen, lightboxApi]);
+  }, [isLightboxOpen, lightboxApi, closeLightbox]);
 
 
   // Available colors
@@ -506,10 +533,7 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
                   <div
                     key={img.id || img.url || idx}
                     className="relative flex-[0_0_100%] min-w-0 h-full select-none cursor-pointer"
-                    onClick={() => {
-                      setSelectedIndex(idx);
-                      setIsLightboxOpen(true);
-                    }}
+                    onClick={() => openLightbox(idx)}
                   >
                     <Image
                       src={img.url}
@@ -557,7 +581,7 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              setIsLightboxOpen(true);
+              openLightbox();
             }}
             className="absolute top-3 right-3 z-10 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-sm text-xs font-medium transition-all duration-150 shadow-md hover:scale-105 cursor-pointer"
             title="กดเพื่อดูรูปภาพขนาดเต็ม"
@@ -911,7 +935,7 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
             </div>
             <button
               type="button"
-              onClick={() => setIsLightboxOpen(false)}
+              onClick={closeLightbox}
               className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 active:bg-white/30 text-white flex items-center justify-center transition-colors cursor-pointer shrink-0"
               title="ปิด (Esc)"
               aria-label="ปิด"
@@ -941,7 +965,7 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
                       dragStartPos.current = null;
                       // Close only on backdrop click without drag
                       if (dx < 6 && dy < 6 && e.target === e.currentTarget) {
-                        setIsLightboxOpen(false);
+                        closeLightbox();
                       }
                     }}
                   >
@@ -958,6 +982,14 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
                       {img.isMockup && img.color && (
                         <div className="absolute top-4 left-4 z-10 px-3 py-1.5 rounded-full bg-black/70 backdrop-blur-md text-white text-xs font-medium flex items-center gap-2 shadow-md">
                           <span>ภาพตัวอย่าง (Mockup) · สี{img.color}</span>
+                        </div>
+                      )}
+                      {/* Out of Stock Overlay in Lightbox */}
+                      {isColorOutOfStock(img.color) && (
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                          <div className="w-28 h-28 sm:w-36 sm:h-36 rounded-full bg-black/75 !text-white text-base sm:text-xl font-medium flex items-center justify-center text-center whitespace-nowrap shadow-xl border border-white/20">
+                            สินค้าหมด
+                          </div>
                         </div>
                       )}
                     </div>
@@ -1030,6 +1062,13 @@ export default function ProductView({ product, placeholderImage }: ProductViewPr
                         <span className="absolute bottom-0 inset-x-0 bg-black/75 text-[9px] text-white text-center py-0.5 truncate px-0.5 leading-none">
                           {img.color}
                         </span>
+                      )}
+                      {isColorOutOfStock(img.color) && (
+                        <div className="absolute inset-0 bg-black/60 flex items-center justify-center pointer-events-none">
+                          <span className="text-[9px] text-white font-medium px-1 text-center leading-tight">
+                            หมด
+                          </span>
+                        </div>
                       )}
                     </button>
                   );
