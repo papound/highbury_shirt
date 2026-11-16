@@ -187,7 +187,7 @@ export const blogPosts: BlogPost[] = [
     excerpt: "เจาะลึกเอกลักษณ์ของผ้าอ็อกซ์ฟอร์ด โครงสร้างการทอแบบ Basketweave ความทนทาน และเหตุผลที่กลายเป็นเสื้อเชิ้ตตัวโปรดของคนทำงานทั่วโลก",
     category: "เนื้อผ้า",
     date: "2026-04-08",
-    imageUrl: "https://images.unsplash.com/photo-1620012253295-c15c429fccf8?auto=format&fit=crop&q=80&w=800",
+    imageUrl: "https://images.unsplash.com/photo-1598032895397-b9472444bf93?auto=format&fit=crop&q=80&w=800",
     content: `
 ## จากมหาวิทยาลัยสู่ตู้เสื้อผ้าของทุกคนทั่วโลก
 
@@ -260,7 +260,7 @@ export const blogPosts: BlogPost[] = [
     excerpt: "ไม่อยากเสียเงินฟรี ต้องรู้ทัน! ส่อง 5 จุดซ่อนเร้นที่บอกว่าเสื้อเชิ้ตตัวนั้นตัดเย็บอย่างประณีต หรือแค่ผลิตแบบเน้นปริมาณ",
     category: "การตัดเย็บ",
     date: "2026-04-01",
-    imageUrl: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&q=80&w=800",
+    imageUrl: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&q=80&w=800",
     content: `
 ## เสื้อเชิ้ตดูเหมือนๆ กัน... แต่คุณภาพต่างกันมหาศาล
 
