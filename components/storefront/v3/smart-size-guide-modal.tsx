@@ -683,7 +683,7 @@ export default function SmartSizeGuideModal({
             </div>
             <span className={`text-[11px] ${isLight ? "text-[#64748B]" : "text-[#9496A1]"}`}>
               {lang === "th"
-                ? "ข้อมูลมาตรฐานทางการจาก Highbury"
+                ? "ข้อมูลไซส์มาตรฐาน Highbury"
                 : "Official factory standard from Highbury"}
             </span>
           </div>
