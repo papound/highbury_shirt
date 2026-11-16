@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Phone, Mail, MapPin, MessageSquare, Ruler } from "lucide-react";
 import { useStorefrontV3Safe } from "../storefront-shell";
 
@@ -17,9 +18,18 @@ export default function V3Footer() {
           <div className="md:col-span-5 space-y-4">
             <Link
               href="/"
-              className="inline-block text-base font-bold tracking-[0.2em] text-white uppercase font-sans hover:opacity-90 transition-opacity"
+              className="inline-flex items-center gap-3 hover:opacity-90 transition-opacity"
             >
-              HIGHBURY INTERNATIONAL
+              <Image
+                src="/images/logo/highbury-emblem.png"
+                alt="Highbury International Logo"
+                width={36}
+                height={36}
+                className="w-8 h-8 sm:w-9 sm:h-9 object-contain shrink-0"
+              />
+              <span className="text-base font-bold tracking-[0.2em] text-white uppercase font-sans">
+                HIGHBURY INTERNATIONAL
+              </span>
             </Link>
             <p className="text-xs sm:text-sm text-[#9496A1] leading-relaxed max-w-md">
               {lang === "th"
@@ -116,10 +126,10 @@ export default function V3Footer() {
             {lang === "th" ? "สงวนลิขสิทธิ์" : "All rights reserved."}
           </div>
           <div className="flex items-center gap-6">
-            <Link href="/about" className="hover:text-white transition-colors">
+            <Link href="/terms" className="hover:text-white transition-colors">
               {lang === "th" ? "ข้อกำหนดและเงื่อนไข" : "Terms"}
             </Link>
-            <Link href="/about" className="hover:text-white transition-colors">
+            <Link href="/privacy" className="hover:text-white transition-colors">
               {lang === "th" ? "นโยบายความเป็นส่วนตัว" : "Privacy Policy"}
             </Link>
           </div>

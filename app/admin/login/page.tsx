@@ -7,6 +7,7 @@ import { z } from "zod/v3";
 import { signIn, getSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -73,12 +74,17 @@ export default function AdminLoginPage() {
         {/* Glow */}
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-600/10 blur-[120px] rounded-full pointer-events-none" />
         <div className="relative z-10 flex items-center gap-3">
-          <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg">
-            H
-          </div>
+          <Image
+            src="/images/logo/highbury-emblem.png"
+            alt="Highbury International Logo"
+            width={44}
+            height={44}
+            className="w-11 h-11 object-contain drop-shadow"
+            priority
+          />
           <div>
             <div className="text-white font-bold text-xl tracking-tight">HBI Admin</div>
-            <div className="text-blue-400/60 text-xs">Highbury International</div>
+            <div className="text-blue-400/80 text-xs">Highbury International</div>
           </div>
         </div>
         <div className="relative z-10 space-y-4">
@@ -102,10 +108,15 @@ export default function AdminLoginPage() {
       <div className="flex-1 flex items-center justify-center px-6 py-12">
         <div className="w-full max-w-sm">
           {/* Mobile logo */}
-          <div className="lg:hidden flex items-center gap-2 mb-8">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold shadow">
-              H
-            </div>
+          <div className="lg:hidden flex items-center gap-2.5 mb-8">
+            <Image
+              src="/images/logo/highbury-emblem.png"
+              alt="Highbury International Logo"
+              width={36}
+              height={36}
+              className="w-9 h-9 object-contain"
+              priority
+            />
             <span className="text-white font-bold text-lg tracking-tight">HBI Admin</span>
           </div>
 

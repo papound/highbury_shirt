@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod/v3";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -85,9 +86,14 @@ function LoginForm() {
         </div>
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg">
-              H
-            </div>
+            <Image
+              src="/images/logo/highbury-emblem.png"
+              alt="Highbury Logo"
+              width={40}
+              height={40}
+              className="w-10 h-10 object-contain drop-shadow"
+              priority
+            />
             <span className="text-white font-bold text-xl tracking-tight">HIGHBURY</span>
           </div>
           <p className="text-blue-300/70 text-sm">Highbury International</p>
@@ -110,10 +116,15 @@ function LoginForm() {
       <div className="flex-1 flex items-center justify-center px-6 py-12 bg-white">
         <div className="w-full max-w-sm">
           {/* Mobile logo */}
-          <div className="lg:hidden flex items-center gap-2 mb-8">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold shadow">
-              H
-            </div>
+          <div className="lg:hidden flex items-center gap-2.5 mb-8">
+            <Image
+              src="/images/logo/highbury-emblem.png"
+              alt="Highbury Logo"
+              width={32}
+              height={32}
+              className="w-8 h-8 object-contain"
+              priority
+            />
             <span className="font-bold text-lg tracking-tight">HIGHBURY</span>
           </div>
 

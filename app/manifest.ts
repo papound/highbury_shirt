@@ -12,8 +12,18 @@ export default function manifest(): MetadataRoute.Manifest {
     theme_color: "#07080B",
     icons: [
       {
-        src: "/images/logo/highbury-logo.png",
-        sizes: "192x192 512x512",
+        src: "/icon.png",
+        sizes: "512x512",
+        type: "image/png",
+      },
+      {
+        src: "/apple-icon.png",
+        sizes: "180x180",
+        type: "image/png",
+      },
+      {
+        src: "/images/logo/highbury-emblem.png",
+        sizes: "412x412",
         type: "image/png",
       },
     ],

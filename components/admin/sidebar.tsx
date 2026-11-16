@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
@@ -42,13 +43,19 @@ export default function AdminSidebar({ role, name, email }: AdminSidebarProps) {
         {/* Logo */}
         <div className="px-6 py-5 border-b border-sidebar-border/50 flex items-center justify-between">
           <div>
-            <Link href="/admin/dashboard" className="font-bold text-xl tracking-tight text-sidebar-foreground flex items-center gap-2">
-              <div className="bg-brand-blue w-8 h-8 rounded-md flex items-center justify-center bg-blue-600 text-white shadow-sm">
-                H
+            <Link href="/admin/dashboard" className="font-bold text-lg tracking-tight text-sidebar-foreground flex items-center gap-2.5">
+              <Image
+                src="/images/logo/highbury-emblem.png"
+                alt="Highbury International Logo"
+                width={32}
+                height={32}
+                className="w-8 h-8 object-contain shrink-0"
+              />
+              <div>
+                <div className="leading-tight">HB Admin</div>
+                <div className="text-[11px] font-normal text-sidebar-foreground/60">Highbury International</div>
               </div>
-              HB Admin
             </Link>
-            <p className="text-xs text-sidebar-foreground/60 mt-1 ml-10">Highbury International</p>
           </div>
         </div>
         {/* Nav */}

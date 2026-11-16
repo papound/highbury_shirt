@@ -12,9 +12,9 @@ export default function StorefrontFooter({ locale = "th" }: { locale?: "th" | "e
             <Image
               src="/images/logo/highbury-logo-white.png"
               alt="Highbury International"
-              width={140}
-              height={48}
-              className="object-contain mb-4"
+              width={160}
+              height={100}
+              className="object-contain h-14 w-auto mb-4"
             />
             <p className="text-white/70 text-sm leading-relaxed">
               {locale === "th"
@@ -32,6 +32,8 @@ export default function StorefrontFooter({ locale = "th" }: { locale?: "th" | "e
               <li><Link href="/products" className="hover:text-white transition-colors">{locale === "th" ? "สินค้าทั้งหมด" : "All Products"}</Link></li>
               <li><Link href="/blog" className="hover:text-white transition-colors">{locale === "th" ? "บทความ" : "Blog"}</Link></li>
               <li><Link href="/about" className="hover:text-white transition-colors">{locale === "th" ? "เกี่ยวกับเรา" : "About Us"}</Link></li>
+              <li><Link href="/terms" className="hover:text-white transition-colors">{locale === "th" ? "ข้อกำหนดและเงื่อนไข" : "Terms"}</Link></li>
+              <li><Link href="/privacy" className="hover:text-white transition-colors">{locale === "th" ? "นโยบายความเป็นส่วนตัว" : "Privacy Policy"}</Link></li>
             </ul>
           </div>
 

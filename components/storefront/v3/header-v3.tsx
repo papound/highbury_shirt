@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ShoppingBag, Menu, X, Search, Loader2, Sun, Moon } from "lucide-react";
 import { useCartStore } from "@/hooks/use-cart";
@@ -183,11 +184,23 @@ export default function HeaderV3({
                   window.scrollTo({ top: 0, behavior: "smooth" });
                 }
               }}
-              className={`text-lg font-bold tracking-[0.2em] ${
-                theme === "light" ? "text-[#0F172A]" : "text-white"
-              } hover:opacity-90 transition-opacity uppercase font-sans cursor-pointer shrink-0`}
+              className="inline-flex items-center gap-2.5 hover:opacity-90 transition-opacity cursor-pointer shrink-0"
             >
-              HIGHBURY
+              <Image
+                src="/images/logo/highbury-emblem.png"
+                alt="Highbury Logo"
+                width={32}
+                height={32}
+                className="w-7 h-7 sm:w-8 sm:h-8 object-contain shrink-0"
+                priority
+              />
+              <span
+                className={`text-base sm:text-lg font-bold tracking-[0.2em] ${
+                  theme === "light" ? "text-[#0F172A]" : "text-white"
+                } uppercase font-sans`}
+              >
+                HIGHBURY
+              </span>
             </Link>
 
             {/* Center: Desktop Navigation Links */}

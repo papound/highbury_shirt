@@ -7,6 +7,7 @@ import { z } from "zod/v3";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -83,6 +84,16 @@ export default function RegisterPage() {
   return (
     <div className="container mx-auto px-4 py-16 max-w-md">
       <div className="text-center mb-8">
+        <Link href="/" className="inline-block mb-4">
+          <Image
+            src="/images/logo/highbury-emblem.png"
+            alt="Highbury Logo"
+            width={48}
+            height={48}
+            className="w-12 h-12 mx-auto object-contain"
+            priority
+          />
+        </Link>
         <h1 className="text-2xl font-bold">สร้างบัญชีใหม่</h1>
         <p className="text-muted-foreground mt-2">ลงทะเบียนเพื่อติดตามคำสั่งซื้อของคุณ</p>
       </div>

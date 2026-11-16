@@ -27,8 +27,16 @@ export default async function StorefrontHeader({
                 src="/images/logo/highbury-logo.png"
                 alt="Highbury International"
                 width={140}
-                height={48}
-                className="object-contain h-8 md:h-9 w-auto dark:invert"
+                height={88}
+                className="object-contain h-8 md:h-9 w-auto dark:hidden"
+                priority
+              />
+              <Image
+                src="/images/logo/highbury-logo-white.png"
+                alt="Highbury International"
+                width={140}
+                height={88}
+                className="object-contain h-8 md:h-9 w-auto hidden dark:block"
                 priority
               />
             </div>
