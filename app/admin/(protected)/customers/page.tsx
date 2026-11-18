@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Search } from "lucide-react";
+import { Search, X, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { getStatusLabel, getStatusBadgeClass } from "@/lib/order-status";
 import { formatCustomerNo } from "@/lib/customer-no-format";
@@ -56,13 +56,23 @@ interface Order {
   items: { quantity: number; unitPrice: number }[];
 }
 
+interface Pagination {
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+}
+
 interface SearchResult {
   users: User[];
   orders: Order[];
+  pagination?: Pagination;
 }
 
 export default function AdminCustomersPage() {
   const [query, setQuery] = useState("");
+  const [activeQuery, setActiveQuery] = useState("");
+  const [page, setPage] = useState(1);
   const [result, setResult] = useState<SearchResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -70,18 +80,45 @@ export default function AdminCustomersPage() {
   const [loadingUserOrders, setLoadingUserOrders] = useState(false);
   const detailRef = useRef<HTMLDivElement>(null);
 
-  async function search() {
-    if (!query.trim()) return;
+  const fetchCustomers = useCallback(async (targetPage = 1, searchQuery = "") => {
+    const trimmed = searchQuery.trim();
     setLoading(true);
     setSelectedUser(null);
     setUserOrders([]);
+    setPage(targetPage);
+    setActiveQuery(trimmed);
     try {
-      const res = await fetch(`/api/admin/customers?q=${encodeURIComponent(query)}`);
+      const params = new URLSearchParams({
+        page: String(targetPage),
+        pageSize: "20",
+      });
+      if (trimmed) {
+        params.set("q", trimmed);
+      }
+      const res = await fetch(`/api/admin/customers?${params.toString()}`);
       const data = await res.json();
       setResult(data);
     } finally {
       setLoading(false);
     }
+  }, []);
+
+  useEffect(() => {
+    fetchCustomers(1, "");
+  }, [fetchCustomers]);
+
+  function search() {
+    fetchCustomers(1, query);
+  }
+
+  function clearSearch() {
+    setQuery("");
+    fetchCustomers(1, "");
+  }
+
+  function handlePageChange(newPage: number) {
+    if (newPage < 1 || (result?.pagination && newPage > result.pagination.totalPages)) return;
+    fetchCustomers(newPage, activeQuery);
   }
 
   async function loadUserOrders(user: User) {
@@ -111,18 +148,39 @@ export default function AdminCustomersPage() {
 
       {/* Search bar */}
       <div className="flex gap-2 w-full sm:max-w-xl">
-        <Input
-          placeholder="ค้นหาด้วยชื่อ, อีเมล, เบอร์โทร หรือหมายเลขออเดอร์..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && search()}
-          className="text-sm"
-        />
+        <div className="relative flex-1">
+          <Input
+            placeholder="ค้นหาด้วยชื่อ, อีเมล, เบอร์โทร, รหัสลูกค้า หรือหมายเลขออเดอร์..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && search()}
+            className="text-sm pr-8"
+          />
+          {(query || activeQuery) && (
+            <button
+              type="button"
+              onClick={clearSearch}
+              aria-label="ล้างคำค้นหา"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
         <Button onClick={search} disabled={loading} className="shrink-0">
           <Search className="w-4 h-4 sm:mr-1" />
           <span className="hidden sm:inline">{loading ? "กำลังค้นหา..." : "ค้นหา"}</span>
         </Button>
+        {activeQuery && (
+          <Button variant="outline" onClick={clearSearch} disabled={loading} className="shrink-0">
+            แสดงทั้งหมด
+          </Button>
+        )}
       </div>
+
+      {loading && !result && (
+        <p className="text-sm text-muted-foreground">กำลังโหลดข้อมูลลูกค้า...</p>
+      )}
 
       {result && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -131,9 +189,16 @@ export default function AdminCustomersPage() {
             {/* Registered users */}
             {result.users.length > 0 && (
               <div>
-                <p className="text-xs font-semibold text-muted-foreground uppercase mb-2">
-                  สมาชิกที่ลงทะเบียน ({result.users.length})
-                </p>
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase">
+                    สมาชิกที่ลงทะเบียน ({result.pagination?.total ?? result.users.length})
+                  </p>
+                  {result.pagination && result.pagination.totalPages > 1 && (
+                    <span className="text-xs text-muted-foreground">
+                      หน้า {page} จาก {result.pagination.totalPages}
+                    </span>
+                  )}
+                </div>
                 <div className="space-y-2">
                   {result.users.map((user) => (
                     <button
@@ -160,6 +225,74 @@ export default function AdminCustomersPage() {
                     </button>
                   ))}
                 </div>
+
+                {/* Pagination controls */}
+                {result.pagination && (
+                  <div className="mt-4 pt-3 border-t space-y-2">
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                      <span>ทั้งหมด {result.pagination.total} รายการ</span>
+                      <span>
+                        หน้า {page} จาก {Math.max(1, result.pagination.totalPages)}
+                      </span>
+                    </div>
+                    {result.pagination.totalPages > 1 && (
+                      <div className="flex items-center justify-between gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handlePageChange(page - 1)}
+                          disabled={page <= 1 || loading}
+                        >
+                          <ChevronLeft className="w-4 h-4 mr-1" />
+                          ก่อนหน้า
+                        </Button>
+                        <div className="flex items-center gap-1 flex-wrap justify-center">
+                          {Array.from({ length: result.pagination.totalPages }, (_, i) => i + 1)
+                            .filter(
+                              (p) =>
+                                p === 1 ||
+                                p === result.pagination!.totalPages ||
+                                Math.abs(p - page) <= 1
+                            )
+                            .reduce<(number | "ellipsis")[]>((acc, p, idx, arr) => {
+                              if (idx > 0 && p - (arr[idx - 1] as number) > 1) {
+                                acc.push("ellipsis");
+                              }
+                              acc.push(p);
+                              return acc;
+                            }, [])
+                            .map((item, idx) =>
+                              item === "ellipsis" ? (
+                                <span key={`ellipsis-${idx}`} className="px-1 text-xs text-muted-foreground">
+                                  ...
+                                </span>
+                              ) : (
+                                <Button
+                                  key={item}
+                                  variant={item === page ? "default" : "outline"}
+                                  size="sm"
+                                  className="h-8 w-8 p-0 text-xs"
+                                  onClick={() => handlePageChange(item)}
+                                  disabled={loading}
+                                >
+                                  {item}
+                                </Button>
+                              )
+                            )}
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handlePageChange(page + 1)}
+                          disabled={page >= result.pagination.totalPages || loading}
+                        >
+                          ถัดไป
+                          <ChevronRight className="w-4 h-4 ml-1" />
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             )}
 
