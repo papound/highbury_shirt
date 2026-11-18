@@ -1,8 +1,10 @@
+import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import AdminSettingsClient from "@/components/admin/settings-client";
 
 export default async function AdminSettingsPage() {
-  const [users, warehouses, settings] = await Promise.all([
+  const [session, users, warehouses, settings] = await Promise.all([
+    auth(),
     prisma.user.findMany({
       where: { role: { not: "CUSTOMER" } },
       orderBy: { createdAt: "asc" },
@@ -17,7 +19,12 @@ export default async function AdminSettingsPage() {
   return (
     <div className="space-y-8 max-w-4xl">
       <h1 className="text-2xl font-bold">ตั้งค่า</h1>
-      <AdminSettingsClient users={users} warehouses={warehouses} settingsMap={settingsMap} />
+      <AdminSettingsClient
+        users={users}
+        warehouses={warehouses}
+        settingsMap={settingsMap}
+        currentUserRole={session?.user?.role}
+      />
     </div>
   );
 }

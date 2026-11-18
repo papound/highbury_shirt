@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -29,7 +30,8 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Pencil, Trash2, Check, X, Key, Bot, Sparkles, RotateCcw } from "lucide-react";
+import { Pencil, Trash2, Check, X, Key, KeyRound, Bot, Sparkles, RotateCcw } from "lucide-react";
+import { ResetPasswordDialog } from "@/components/admin/reset-password-dialog";
 
 const ROLE_LABELS: Record<string, string> = {
   SUPERADMIN: "Super Admin",
@@ -43,7 +45,9 @@ const DEFAULT_PAUSED_MESSAGE = "เจ้าหน้าที่กำลัง
 const DEFAULT_FALLBACK_MESSAGE = "ขออภัยในความไม่สะดวกนะคะ ขณะนี้ระบบขัดข้องชั่วคราว ทางร้านกำลังประสานงานให้เจ้าหน้าที่เข้ามาดูแลคุณลูกค้าสักครู่นะคะ 🙏";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default function AdminSettingsClient({ users: initialUsers, warehouses: initialWarehouses, settingsMap }: { users: any[]; warehouses: any[]; settingsMap: Record<string, string> }) {
+export default function AdminSettingsClient({ users: initialUsers, warehouses: initialWarehouses, settingsMap, currentUserRole }: { users: any[]; warehouses: any[]; settingsMap: Record<string, string>; currentUserRole?: string }) {
+  const { data: session } = useSession();
+  const isSuperAdmin = (currentUserRole ?? session?.user?.role) === "SUPERADMIN";
   const [users, setUsers] = useState(initialUsers);
   const [warehouses, setWarehouses] = useState(initialWarehouses);
   const [promptpayId, setPromptpayId] = useState(settingsMap["promptpay_id"] ?? "");
@@ -54,6 +58,9 @@ export default function AdminSettingsClient({ users: initialUsers, warehouses: i
   const [botFallbackMessage, setBotFallbackMessage] = useState(settingsMap["bot_fallback_message"] ?? "");
   const [newWarehouse, setNewWarehouse] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Reset password dialog state
+  const [resetPasswordTarget, setResetPasswordTarget] = useState<{ id: string; name?: string | null; email?: string | null } | null>(null);
 
   // Warehouse edit state
   const [editingWarehouseId, setEditingWarehouseId] = useState<string | null>(null);
@@ -451,6 +458,7 @@ export default function AdminSettingsClient({ users: initialUsers, warehouses: i
                 <TableHead>ชื่อ</TableHead>
                 <TableHead>อีเมล</TableHead>
                 <TableHead className="w-36">Role</TableHead>
+                {isSuperAdmin && <TableHead className="w-24 text-right">จัดการ</TableHead>}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -470,6 +478,19 @@ export default function AdminSettingsClient({ users: initialUsers, warehouses: i
                       </SelectContent>
                     </Select>
                   </TableCell>
+                  {isSuperAdmin && (
+                    <TableCell className="text-right">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7"
+                        title="รีเซ็ตรหัสผ่าน"
+                        onClick={() => setResetPasswordTarget({ id: user.id, name: user.name, email: user.email })}
+                      >
+                        <KeyRound className="w-3.5 h-3.5" />
+                      </Button>
+                    </TableCell>
+                  )}
                 </TableRow>
               ))}
             </TableBody>
@@ -495,6 +516,12 @@ export default function AdminSettingsClient({ users: initialUsers, warehouses: i
           <Button onClick={addUser} disabled={loading}>เพิ่มผู้ใช้</Button>
         </div>
       </section>
+
+      <ResetPasswordDialog
+        user={resetPasswordTarget}
+        isOpen={!!resetPasswordTarget}
+        onClose={() => setResetPasswordTarget(null)}
+      />
     </div>
   );
 }

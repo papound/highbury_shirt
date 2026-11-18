@@ -1,14 +1,16 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
+import { useSession } from "next-auth/react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Search, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, X, ChevronLeft, ChevronRight, KeyRound } from "lucide-react";
 import Link from "next/link";
 import { getStatusLabel, getStatusBadgeClass } from "@/lib/order-status";
 import { formatCustomerNo } from "@/lib/customer-no-format";
+import { ResetPasswordDialog } from "@/components/admin/reset-password-dialog";
 
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
   PENDING: { label: "รอดำเนินการ", color: "bg-yellow-100 text-yellow-800" },
@@ -70,6 +72,8 @@ interface SearchResult {
 }
 
 export default function AdminCustomersPage() {
+  const { data: session } = useSession();
+  const isSuperAdmin = session?.user?.role === "SUPERADMIN";
   const [query, setQuery] = useState("");
   const [activeQuery, setActiveQuery] = useState("");
   const [page, setPage] = useState(1);
@@ -78,6 +82,7 @@ export default function AdminCustomersPage() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [userOrders, setUserOrders] = useState<Order[]>([]);
   const [loadingUserOrders, setLoadingUserOrders] = useState(false);
+  const [resetPasswordTarget, setResetPasswordTarget] = useState<User | null>(null);
   const detailRef = useRef<HTMLDivElement>(null);
 
   const fetchCustomers = useCallback(async (targetPage = 1, searchQuery = "") => {
@@ -375,8 +380,21 @@ export default function AdminCustomersPage() {
                       <p className="text-sm text-muted-foreground">{selectedUser.phone}</p>
                     )}
                   </div>
-                  <div className="flex flex-col items-end gap-1">
-                    <Badge variant="outline" className="text-xs">สมาชิก</Badge>
+                  <div className="flex flex-col items-end gap-1.5">
+                    <div className="flex items-center gap-1.5">
+                      <Badge variant="outline" className="text-xs">สมาชิก</Badge>
+                      {isSuperAdmin && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-7 text-xs gap-1"
+                          onClick={() => setResetPasswordTarget(selectedUser)}
+                        >
+                          <KeyRound className="w-3.5 h-3.5" />
+                          รีเซ็ตรหัสผ่าน
+                        </Button>
+                      )}
+                    </div>
                     {selectedUser.customerNo && (
                       <span className="text-xs font-mono text-primary font-semibold">
                         {formatCustomerNo(selectedUser.customerNo)}
@@ -465,6 +483,12 @@ export default function AdminCustomersPage() {
           ) : null}
         </div>
       )}
+
+      <ResetPasswordDialog
+        user={resetPasswordTarget}
+        isOpen={!!resetPasswordTarget}
+        onClose={() => setResetPasswordTarget(null)}
+      />
     </div>
   );
 }
