@@ -38,8 +38,15 @@ export const authConfig: NextAuthConfig = {
       try {
         const targetOrigin = new URL(url).origin;
         const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://highbury.papoundhomelab.ddnsgeek.com";
-        const appOrigin = new URL(appUrl).origin;
-        if (targetOrigin === baseUrl || targetOrigin === appOrigin || targetOrigin === "https://highbury.papoundhomelab.ddnsgeek.com") {
+        const storefrontUrl = process.env.NEXT_PUBLIC_STOREFRONT_URL || "https://highburyshirt.store";
+        const allowedOrigins = new Set([
+          baseUrl,
+          new URL(appUrl).origin,
+          new URL(storefrontUrl).origin,
+          "https://highbury.papoundhomelab.ddnsgeek.com",
+          "https://highburyshirt.store",
+        ]);
+        if (allowedOrigins.has(targetOrigin)) {
           return url;
         }
       } catch {}
