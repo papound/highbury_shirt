@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 import { ShoppingCart, User, Menu, Globe, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
@@ -90,8 +91,9 @@ export default function HeaderActions({ locale, isLoggedIn }: HeaderActionsProps
             <DropdownMenuItem
               className="text-rose-600 focus:bg-rose-500/10 focus:text-rose-600 rounded-lg cursor-pointer py-2.5"
               onClick={async () => {
-                await fetch("/api/auth/signout", { method: "POST" });
-                window.location.href = "/";
+                const targetUrl = process.env.NEXT_PUBLIC_STOREFRONT_URL || "https://highburyshirt.store";
+                await signOut({ callbackUrl: targetUrl, redirect: false });
+                window.location.href = targetUrl;
               }}
             >
               {locale === "th" ? "ออกจากระบบ" : "Sign Out"}
