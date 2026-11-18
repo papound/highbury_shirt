@@ -33,5 +33,17 @@ export const authConfig: NextAuthConfig = {
       }
       return session;
     },
+    redirect({ url, baseUrl }) {
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      try {
+        const targetOrigin = new URL(url).origin;
+        const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://highbury.papoundhomelab.ddnsgeek.com";
+        const appOrigin = new URL(appUrl).origin;
+        if (targetOrigin === baseUrl || targetOrigin === appOrigin || targetOrigin === "https://highbury.papoundhomelab.ddnsgeek.com") {
+          return url;
+        }
+      } catch {}
+      return baseUrl;
+    },
   },
 };
