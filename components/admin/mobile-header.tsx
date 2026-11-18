@@ -159,7 +159,12 @@ export default function MobileHeader({ role, name, email }: MobileHeaderProps) {
                 </div>
                 <div className="flex gap-2">
                   <button
-                    onClick={() => { setOpen(false); signOut({ callbackUrl: "/admin/login" }); }}
+                    onClick={async () => {
+                      setOpen(false);
+                      const targetUrl = process.env.NEXT_PUBLIC_APP_URL || "https://highbury.papoundhomelab.ddnsgeek.com";
+                      await signOut({ callbackUrl: targetUrl, redirect: false });
+                      window.location.href = targetUrl;
+                    }}
                     className="flex-1 py-1.5 text-xs font-semibold bg-red-500 hover:bg-red-600 text-white rounded-md transition-colors"
                   >
                     ออกจากระบบ
