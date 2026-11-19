@@ -24,12 +24,112 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { Plus, Trash2 } from "lucide-react";
+import colorMap from "@/lib/color-map.json";
+import { getColorHex } from "@/lib/placeholders";
 import ProductImageUploader, { type ProductImage } from "./product-image-uploader";
 
 const DEFAULT_SIZES = ["SS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"];
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function resolveImageColor(img: any, variants: any[]): string | null {
+  if (img.variantId) {
+    const matched = variants.find((v) => v.id === img.variantId);
+    if (matched?.color) return matched.color.trim();
+  }
+
+  if (img.altText) {
+    const alt = String(img.altText).trim();
+    const altLower = alt.toLowerCase();
+    const exact = variants.find(
+      (v) => v.color && String(v.color).trim().toLowerCase() === altLower
+    );
+    if (exact) return String(exact.color).trim();
+
+    // Legacy altText format such as "ชื่อสินค้า - สีขาว"
+    const suffixMatch = variants.find(
+      (v) => v.color && altLower.endsWith(`สี${String(v.color).trim().toLowerCase()}`)
+    );
+    if (suffixMatch) return String(suffixMatch.color).trim();
+  }
+
+  if (img.url) {
+    const m = String(img.url).match(/[-_]([0-9]+)(?:[-_][0-9]+)?\.[a-zA-Z0-9]+$/);
+    if (m) {
+      const code = m[1];
+      const matchedBySku = variants.find((v) => {
+        const parts = String(v.sku || "").split("_");
+        return parts.length >= 2 && parts[1] === code;
+      });
+      if (matchedBySku?.color) return String(matchedBySku.color).trim();
+
+      const thaiColor = (colorMap as Record<string, { thai: string }>)[code]?.thai;
+      if (thaiColor) {
+        const matchedByThai = variants.find(
+          (v) => v.color && String(v.color).trim() === thaiColor.trim()
+        );
+        if (matchedByThai?.color) return String(matchedByThai.color).trim();
+      }
+    }
+  }
+
+  return null;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function buildInitialImages(product: any): ProductImage[] {
+  if (!product) return [];
+  const variants = product.variants ?? [];
+  const list: ProductImage[] = [];
+  const seen = new Map<string, number>();
+
+  for (const img of product.images ?? []) {
+    if (!img?.url) continue;
+    const color = resolveImageColor(img, variants);
+    const existingIdx = seen.get(img.url);
+    if (existingIdx === undefined) {
+      seen.set(img.url, list.length);
+      list.push({
+        url: img.url,
+        isPrimary: Boolean(img.isPrimary),
+        color,
+      });
+    } else if (color && !list[existingIdx].color) {
+      list[existingIdx].color = color;
+    }
+  }
+
+  // Merge any legacy per-variant images into the single consolidated list
+  for (const v of variants) {
+    const variantColor = v?.color ? String(v.color).trim() : null;
+    for (const vImg of v?.images ?? []) {
+      if (!vImg?.url) continue;
+      const existingIdx = seen.get(vImg.url);
+      if (existingIdx === undefined) {
+        seen.set(vImg.url, list.length);
+        list.push({
+          url: vImg.url,
+          isPrimary: Boolean(vImg.isPrimary),
+          color: variantColor,
+        });
+      } else {
+        if (variantColor && !list[existingIdx].color) {
+          list[existingIdx].color = variantColor;
+        }
+      }
+    }
+  }
+
+  // Guarantee at most one primary image (default first if non-empty)
+  if (list.length > 0) {
+    const firstPrimary = list.findIndex((img) => img.isPrimary);
+    const primaryIdx = firstPrimary === -1 ? 0 : firstPrimary;
+    return list.map((img, i) => ({ ...img, isPrimary: i === primaryIdx }));
+  }
+
+  return list;
+}
 
 const variantSchema = z.object({
   id: z.string().optional(),
@@ -62,15 +162,7 @@ type FormValues = z.infer<typeof schema>;
 export default function AdminProductForm({ product, categories, warehouses }: { product: any; categories: any[]; warehouses: any[] }) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
-  const [images, setImages] = useState<ProductImage[]>(
-    product?.images?.map((img: any) => ({ url: img.url, isPrimary: img.isPrimary })) ?? []
-  );
-  // Per-variant images indexed by variant position
-  const [variantImagesMap, setVariantImagesMap] = useState<ProductImage[][]>(
-    () => (product?.variants ?? []).map((v: any) =>
-      (v.images ?? []).map((img: any) => ({ url: img.url, isPrimary: img.isPrimary }))
-    )
-  );
+  const [images, setImages] = useState<ProductImage[]>(() => buildInitialImages(product));
   const isNew = !product;
 
   const form = useForm<FormValues>({
@@ -109,8 +201,9 @@ export default function AdminProductForm({ product, categories, warehouses }: { 
 
   const uniqueColorsMap = new Map<string, { hex: string; code: string }>();
   variantsWatch.forEach((v) => {
-    if (v?.color) {
-      const hex = v.colorHex || "#FFFFFF";
+    const colorName = v?.color?.trim();
+    if (colorName) {
+      const hex = v.colorHex || getColorHex(colorName);
       let code = "";
       if (v.sku) {
         const parts = v.sku.split("_");
@@ -118,11 +211,11 @@ export default function AdminProductForm({ product, categories, warehouses }: { 
           code = parts[1];
         }
       }
-      if (!uniqueColorsMap.has(v.color)) {
-        uniqueColorsMap.set(v.color, { hex, code });
-      } else if (code && !uniqueColorsMap.get(v.color)?.code) {
-        const current = uniqueColorsMap.get(v.color)!;
-        uniqueColorsMap.set(v.color, { ...current, code });
+      if (!uniqueColorsMap.has(colorName)) {
+        uniqueColorsMap.set(colorName, { hex, code });
+      } else if (code && !uniqueColorsMap.get(colorName)?.code) {
+        const current = uniqueColorsMap.get(colorName)!;
+        uniqueColorsMap.set(colorName, { ...current, code });
       }
     }
   });
@@ -157,12 +250,10 @@ export default function AdminProductForm({ product, categories, warehouses }: { 
 
   function addVariant(defaults: Parameters<typeof append>[0]) {
     append(defaults);
-    setVariantImagesMap((prev) => [...prev, []]);
   }
 
   function removeVariant(idx: number) {
     remove(idx);
-    setVariantImagesMap((prev) => prev.filter((_, i) => i !== idx));
   }
 
   async function onSubmit(values: FormValues) {
@@ -173,13 +264,13 @@ export default function AdminProductForm({ product, categories, warehouses }: { 
         method: isNew ? "POST" : "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-        ...values,
-        images,
-        variants: values.variants.map((v, i) => ({
-          ...v,
-          variantImages: variantImagesMap[i] ?? [],
-        })),
-      }),
+          ...values,
+          images: images.map((img) => ({
+            url: img.url,
+            isPrimary: img.isPrimary,
+            color: img.color?.trim() || null,
+          })),
+        }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "บันทึกล้มเหลว");
@@ -193,13 +284,27 @@ export default function AdminProductForm({ product, categories, warehouses }: { 
     }
   }
 
+  const productTitle = form.watch("nameTh") || form.watch("name") || "สินค้า";
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        {/* Product Images */}
-        <div className="border rounded-xl p-5 bg-card space-y-3">
-          <h2 className="font-semibold">รูปภาพสินค้า</h2>
-          <ProductImageUploader value={images} onChange={setImages} />
+        {/* Consolidated Product Images & Storefront-Style Color Gallery */}
+        <div className="border rounded-xl p-4 sm:p-5 bg-card space-y-3">
+          <div className="flex items-center justify-between gap-2">
+            <h2 className="font-semibold">รูปภาพสินค้า</h2>
+            {images.length > 0 && (
+              <span className="text-xs text-muted-foreground">
+                ทั้งหมด {images.length} รูป
+              </span>
+            )}
+          </div>
+          <ProductImageUploader
+            value={images}
+            onChange={setImages}
+            colorOptions={uniqueColors}
+            productName={productTitle}
+          />
         </div>
 
         {/* Basic Info */}
@@ -494,24 +599,6 @@ export default function AdminProductForm({ product, categories, warehouses }: { 
                     </div>
                   </div>
                 )}
-
-                {/* Variant Images */}
-                <div className="border-t pt-3">
-                  <p className="text-xs font-medium text-muted-foreground mb-2">
-                    รูปภาพสำหรับสีนี้
-                    {form.watch(`variants.${idx}.color`) ? ` (${form.watch(`variants.${idx}.color`)})` : ""}
-                  </p>
-                  <ProductImageUploader
-                    value={variantImagesMap[idx] ?? []}
-                    onChange={(imgs) =>
-                      setVariantImagesMap((prev) => {
-                        const next = [...prev];
-                        next[idx] = imgs;
-                        return next;
-                      })
-                    }
-                  />
-                </div>
               </div>
             ))}
           </div>
