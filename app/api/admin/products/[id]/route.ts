@@ -11,6 +11,35 @@ async function authorize() {
   return session;
 }
 
+interface IncomingProductImage {
+  url: string;
+  isPrimary?: boolean;
+  color?: string | null;
+  altText?: string | null;
+}
+
+function normalizeProductImages(images: IncomingProductImage[]) {
+  const valid = images
+    .filter((img) => typeof img?.url === "string" && img.url.trim().length > 0)
+    .map((img) => ({
+      url: img.url.trim(),
+      isPrimary: Boolean(img.isPrimary),
+      altText: (img.color ?? img.altText)?.trim() || null,
+    }));
+
+  if (valid.length === 0) return [];
+
+  const primaryIdx = valid.findIndex((img) => img.isPrimary);
+  const effectivePrimaryIdx = primaryIdx === -1 ? 0 : primaryIdx;
+
+  return [
+    { ...valid[effectivePrimaryIdx], isPrimary: true },
+    ...valid
+      .filter((_, idx) => idx !== effectivePrimaryIdx)
+      .map((img) => ({ ...img, isPrimary: false })),
+  ];
+}
+
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   if (!(await authorize())) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -25,16 +54,18 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       data: { nameTh, name, descTh, description, basePrice, categoryId, status, isFeatured },
     });
 
-    // Replace product-level images (variantId IS NULL only)
+    // Replace all product images (consolidated color-tagged model stored at product level with altText = color)
     if (Array.isArray(images)) {
-      await prisma.productImage.deleteMany({ where: { productId: id, variantId: null } });
-      if (images.length > 0) {
+      const normalizedImages = normalizeProductImages(images);
+      await prisma.productImage.deleteMany({ where: { productId: id } });
+      if (normalizedImages.length > 0) {
         await prisma.productImage.createMany({
-          data: images.map((img: { url: string; isPrimary: boolean }, i: number) => ({
+          data: normalizedImages.map((img, i) => ({
             productId: id,
             variantId: null,
             url: img.url,
-            isPrimary: img.isPrimary ?? i === 0,
+            altText: img.altText,
+            isPrimary: img.isPrimary,
             sortOrder: i,
           })),
         });
@@ -69,15 +100,16 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         }
       }
 
-      // Replace variant-level images
-      const variantImages: { url: string; isPrimary: boolean }[] = v.variantImages ?? [];
-      await prisma.productImage.deleteMany({ where: { variantId } });
+      // Optional legacy support if a caller explicitly passes per-variant images
+      const variantImages: IncomingProductImage[] = Array.isArray(v.variantImages) ? v.variantImages : [];
       if (variantImages.length > 0) {
+        await prisma.productImage.deleteMany({ where: { variantId } });
         await prisma.productImage.createMany({
           data: variantImages.map((img, i) => ({
             productId: id,
             variantId,
             url: img.url,
+            altText: (img.color ?? img.altText)?.trim() || v.color || null,
             isPrimary: img.isPrimary ?? i === 0,
             sortOrder: i,
           })),
