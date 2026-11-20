@@ -404,7 +404,7 @@ export default function AdminProductForm({ product, categories, warehouses }: { 
         </div>
 
         {/* Variants */}
-        <div className="border rounded-xl p-5 bg-card space-y-4">
+        <div className="border rounded-xl p-4 sm:p-5 bg-card space-y-4">
           <div className="flex items-center justify-between flex-wrap gap-2">
             <h2 className="font-semibold">Variants (สี/ขนาด)</h2>
             <div className="flex items-center gap-2 flex-wrap justify-end">
@@ -432,73 +432,79 @@ export default function AdminProductForm({ product, categories, warehouses }: { 
           </div>
 
           {fields.length > 0 && (
-            <div className="flex flex-col sm:flex-row gap-3 p-3 bg-muted/10 rounded-lg border">
-              <div className="flex-1">
-                <Input
-                  placeholder="ค้นหาด้วยสี หรือ SKU..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="h-9 bg-background"
-                />
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <Select value={colorFilter} onValueChange={(val) => setColorFilter(val ?? "all")}>
-                  <SelectTrigger className="w-[180px] h-9 bg-background">
-                    <SelectValue placeholder="เลือกสี">
-                      {(val: string | null) => {
-                        if (val === "all") return "สีทั้งหมด";
-                        const data = uniqueColorsMap.get(val || "");
-                        return data?.code ? `${val} (${data.code})` : val;
+            <search className="@container p-3 bg-muted/10 rounded-lg border">
+              <div className="flex flex-col @[560px]:flex-row gap-3">
+                <div className="flex-1 min-w-0">
+                  <Input
+                    type="search"
+                    placeholder="ค้นหาด้วยสี หรือ SKU..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    autoCorrect="off"
+                    autoCapitalize="none"
+                    spellCheck={false}
+                    className="h-9 bg-background"
+                  />
+                </div>
+                <div className="grid grid-cols-1 @[320px]:grid-cols-2 @[560px]:flex @[560px]:flex-wrap @[560px]:items-center gap-2">
+                  <Select value={colorFilter} onValueChange={(val) => setColorFilter(val ?? "all")}>
+                    <SelectTrigger className="w-full min-w-0 @[560px]:w-[190px] h-9 bg-background">
+                      <SelectValue placeholder="เลือกสี">
+                        {(val: string | null) => {
+                          if (val === "all") return "สีทั้งหมด";
+                          const data = uniqueColorsMap.get(val || "");
+                          return data?.code ? `${val} (${data.code})` : val;
+                        }}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all" label="สีทั้งหมด">สีทั้งหมด</SelectItem>
+                      {uniqueColors.map(({ name, hex, code }) => (
+                        <SelectItem key={name} value={name} label={code ? `${name} (${code})` : name}>
+                          <span className="flex items-center gap-2">
+                            <span
+                              className="inline-block w-3 h-3 rounded-full border border-muted-foreground/30 shrink-0"
+                              style={{ backgroundColor: hex }}
+                            />
+                            <span>{code ? `${name} (${code})` : name}</span>
+                          </span>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <Select value={sizeFilter} onValueChange={(val) => setSizeFilter(val ?? "all")}>
+                    <SelectTrigger className="w-full min-w-0 @[560px]:w-[150px] h-9 bg-background">
+                      <SelectValue placeholder="เลือกขนาด">
+                        {(val: string | null) => val === "all" ? "ขนาดทั้งหมด" : val}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all" label="ขนาดทั้งหมด">ขนาดทั้งหมด</SelectItem>
+                      {uniqueSizes.map((size) => (
+                        <SelectItem key={size} value={size} label={size}>{size}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  {(searchQuery || colorFilter !== "all" || sizeFilter !== "all") && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setSearchQuery("");
+                        setColorFilter("all");
+                        setSizeFilter("all");
                       }}
-                    </SelectValue>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all" label="สีทั้งหมด">สีทั้งหมด</SelectItem>
-                    {uniqueColors.map(({ name, hex, code }) => (
-                      <SelectItem key={name} value={name} label={code ? `${name} (${code})` : name}>
-                        <span className="flex items-center gap-2">
-                          <span
-                            className="inline-block w-3 h-3 rounded-full border border-muted-foreground/30 shrink-0"
-                            style={{ backgroundColor: hex }}
-                          />
-                          <span>{code ? `${name} (${code})` : name}</span>
-                        </span>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
-                <Select value={sizeFilter} onValueChange={(val) => setSizeFilter(val ?? "all")}>
-                  <SelectTrigger className="w-[120px] h-9 bg-background">
-                    <SelectValue placeholder="เลือกขนาด">
-                      {(val: string | null) => val === "all" ? "ขนาดทั้งหมด" : val}
-                    </SelectValue>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all" label="ขนาดทั้งหมด">ขนาดทั้งหมด</SelectItem>
-                    {uniqueSizes.map((size) => (
-                      <SelectItem key={size} value={size} label={size}>{size}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
-                {(searchQuery || colorFilter !== "all" || sizeFilter !== "all") && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                      setSearchQuery("");
-                      setColorFilter("all");
-                      setSizeFilter("all");
-                    }}
-                    className="text-xs h-9 text-muted-foreground hover:text-foreground"
-                  >
-                    ล้างตัวกรอง
-                  </Button>
-                )}
+                      className="col-span-full @[560px]:col-span-1 text-xs h-9 text-muted-foreground hover:text-foreground"
+                    >
+                      ล้างตัวกรอง
+                    </Button>
+                  )}
+                </div>
               </div>
-            </div>
+            </search>
           )}
 
           {fields.length === 0 && (
@@ -523,58 +529,86 @@ export default function AdminProductForm({ product, categories, warehouses }: { 
             </div>
           )}
 
+          <datalist id="size-options">
+            {DEFAULT_SIZES.map((s) => <option key={s} value={s} />)}
+          </datalist>
+
           <div className="space-y-3">
             {filteredFields.map(({ field: f, index: idx }) => (
-              <div key={f.id} className="border rounded-lg p-3 bg-muted/20 space-y-3">
-                <div className="grid grid-cols-6 gap-2 items-end">
+              <div key={f.id} className="@container border rounded-lg p-3 bg-muted/20 space-y-3">
+                <div className="grid grid-cols-12 gap-x-2.5 gap-y-3 items-end @[680px]:grid-cols-[minmax(105px,1.2fr)_minmax(150px,1.45fr)_minmax(78px,0.75fr)_minmax(145px,1.5fr)_minmax(86px,0.9fr)_auto] @[680px]:gap-2">
                   <FormField control={form.control} name={`variants.${idx}.color`} render={({ field }) => (
-                    <FormItem className="col-span-2">
+                    <FormItem className="col-span-12 @[440px]:col-span-6 @[680px]:col-span-1 min-w-0">
                       <FormLabel className="text-xs">สี</FormLabel>
                       <FormControl><Input {...field} placeholder="เช่น ขาว" /></FormControl>
                       <FormMessage />
                     </FormItem>
                   )} />
                   <FormField control={form.control} name={`variants.${idx}.colorHex`} render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="col-span-12 @[440px]:col-span-6 @[680px]:col-span-1 min-w-0">
                       <FormLabel className="text-xs">รหัสสี</FormLabel>
-                      <FormControl>
-                        <div className="flex gap-1">
-                          <input type="color" {...field} className="w-10 h-9 rounded border cursor-pointer" />
-                          <Input {...field} className="flex-1" />
-                        </div>
-                      </FormControl>
+                      <div className="flex items-center gap-1.5">
+                        <input
+                          type="color"
+                          value={/^#[0-9a-fA-F]{6}$/.test(field.value) ? field.value : "#000000"}
+                          onChange={field.onChange}
+                          onBlur={field.onBlur}
+                          aria-label="เลือกสี"
+                          className="w-10 h-9 shrink-0 rounded-lg border border-input bg-background p-0.5 cursor-pointer"
+                        />
+                        <FormControl>
+                          <Input
+                            {...field}
+                            placeholder="#000000"
+                            autoCorrect="off"
+                            autoCapitalize="none"
+                            spellCheck={false}
+                            className="flex-1 min-w-0 font-mono"
+                          />
+                        </FormControl>
+                      </div>
                     </FormItem>
                   )} />
                   <FormField control={form.control} name={`variants.${idx}.size`} render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="col-span-4 @[440px]:col-span-3 @[680px]:col-span-1 min-w-0">
                       <FormLabel className="text-xs">ขนาด</FormLabel>
                       <FormControl>
-                        <div>
-                          <Input {...field} placeholder="SS/S/M/L" list="size-options" />
-                          <datalist id="size-options">
-                            {DEFAULT_SIZES.map((s) => <option key={s} value={s} />)}
-                          </datalist>
-                        </div>
+                        <Input {...field} placeholder="SS/S/M/L" list="size-options" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )} />
                   <FormField control={form.control} name={`variants.${idx}.sku`} render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="col-span-8 @[440px]:col-span-5 @[680px]:col-span-1 min-w-0">
                       <FormLabel className="text-xs">SKU</FormLabel>
-                      <FormControl><Input {...field} /></FormControl>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          autoCorrect="off"
+                          autoCapitalize="none"
+                          spellCheck={false}
+                        />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )} />
                   <FormField control={form.control} name={`variants.${idx}.price`} render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="col-span-9 @[440px]:col-span-3 @[680px]:col-span-1 min-w-0">
                       <FormLabel className="text-xs">ราคา</FormLabel>
                       <FormControl><Input type="number" {...field} /></FormControl>
                     </FormItem>
                   )} />
-                  <div className="flex justify-end">
-                    <Button type="button" variant="ghost" size="sm" onClick={() => removeVariant(idx)}>
-                      <Trash2 className="w-4 h-4 text-destructive" />
+                  <div className="col-span-3 @[440px]:col-span-1 @[680px]:col-span-1 flex justify-end">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeVariant(idx)}
+                      aria-label="ลบ Variant"
+                      className="h-9 px-2.5 text-destructive hover:text-destructive hover:bg-destructive/10"
+                    >
+                      <Trash2 className="w-4 h-4 shrink-0" aria-hidden="true" />
+                      <span className="ml-1 text-xs @[440px]:hidden">ลบ</span>
                     </Button>
                   </div>
                 </div>
