@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 concurrency:
   group: deploy-production
@@ -12,6 +13,8 @@ concurrency:
 env:
   REGISTRY: 192.168.1.117:5000
   IMAGE: 192.168.1.117:5000/highbury/app
+  INFISICAL_API_URL: https://infisical.papoundhomelab.ddnsgeek.com
+  INFISICAL_PROJECT_ID: a27fb93f-82c8-4ea4-a71f-ba1b5aeeada7
 
 jobs:
   # ──────────────────────────────────────────────────────────────────────────
@@ -65,6 +68,26 @@ jobs:
     environment: production
 
     steps:
+      - name: Sync .env from Infisical to Production
+        env:
+          INFISICAL_CLIENT_ID: ${{ secrets.INFISICAL_CLIENT_ID }}
+          INFISICAL_CLIENT_SECRET: ${{ secrets.INFISICAL_CLIENT_SECRET }}
+        run: |
+          set -euo pipefail
+          TOKEN=$(infisical login \
+            --method=universal-auth \
+            --client-id="$INFISICAL_CLIENT_ID" \
+            --client-secret="$INFISICAL_CLIENT_SECRET" \
+            --silent --plain)
+
+          infisical export \
+            --projectId="${{ env.INFISICAL_PROJECT_ID }}" \
+            --env=prod \
+            --format=dotenv \
+            --token="$TOKEN" \
+            | ssh -o StrictHostKeyChecking=no root@192.168.1.65 \
+              "umask 077 && cat > /opt/highbury-shirt/.env.tmp && mv /opt/highbury-shirt/.env.tmp /opt/highbury-shirt/.env && chown app:app /opt/highbury-shirt/.env && chmod 600 /opt/highbury-shirt/.env"
+
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1
         with:
@@ -89,7 +112,7 @@ jobs:
 
             echo "==> Resetting local workspace changes..."
             git reset --hard
-            git clean -fd
+            git clean -fd -e .env -e .env.*
 
             echo "==> Pulling latest code and compose configurations..."
             git pull origin main
